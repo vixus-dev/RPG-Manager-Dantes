@@ -35,11 +35,13 @@ Este é meu maior projeto pessoal até hoje, atualmente na versão **2.43.1**.
 
 ### 🧙 Sistema de Classes
 ```
-Cada classe possui habilidades desbloqueadas por nível e modificadores de atributo exclusivos para cada uma delas. existem 19 variações de classes sendo que 7 delas estão implementadas
+Cada classe possui habilidades desbloqueadas por nível e modificadores de atributo exclusivos para cada uma delas.
+existem 19 variações de classes sendo que 7 delas estão implementadas
 ```
 ### 👻 Fantasmas Nobres (Sistema do Invocador)
 ```
-O Invocador pode vincular um **Fantasma Nobre** a si mesmo. Esse fantasma nobre é criado pelo jogador e balanceado pelo mestre, permitindo as mais variaveis habilidades customizadas  
+O Invocador pode vincular um **Fantasma Nobre** a si mesmo.
+Esse fantasma nobre é criado pelo jogador e balanceado pelo mestre, permitindo as mais variaveis habilidades customizadas  
 ```
 
 ### 🗺️ Mapa Tático
@@ -114,7 +116,9 @@ src/
 
 ---
 ## ⚠️Dependencias:
-O projeto utiliza assets de imagem e fontes que não estão incluídos no repositório permitindo customização de inimigos/assets. Certifique-se de ter os recursos na pasta correta antes de rodar.
+
+O projeto utiliza assets de imagem e fontes que não estão incluídos no repositório permitindo customização de inimigos/assets. 
+Certifique-se de ter os recursos na pasta correta antes de rodar.
 
 ```
 > JAVA SDK 21
@@ -124,9 +128,11 @@ O projeto utiliza assets de imagem e fontes que não estão incluídos no reposi
 
 
 ## 📜 Personagens Ativos na Campanha
-
+```
 A campanha conta com um elenco rico de personagens jogadores, cada um com ficha própria, equipamentos e progressão, o tamanho de mesa recomendado é 4 a 6 jogadores.
-devido ao alto número de aliados NPC's que podem entrar na party é necessario um cuidado especial com a escala de dificuldade escolhida. (de 1 a 4 aliados NPC's podem ser adicionados)
+devido ao alto número de aliados NPC's que podem entrar na party é necessario um cuidado especial com a escala de dificuldade escolhida.
+(de 1 a 4 aliados NPC's podem ser adicionados).
+```
 ---
 
 ## 🗒️ Histórico de Versões principais
