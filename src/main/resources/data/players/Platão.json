@@ -1,0 +1,43 @@
+{
+  "xpAtual": 245,
+  "iniciativaBase": 12,
+  "vidaMaximaBase": 75.0,
+  "classe": "???",
+  "atributosBase": {
+    "INSPIRACAO": 3,
+    "INTELIGENCIA": 7,
+    "DESTREZA": 5,
+    "ENDURANCE": 11,
+    "SAGACIDADE": 3,
+    "PERCEPCAO": 3,
+    "SORTE": 2,
+    "FORCA": 9,
+    "CARISMA": 3,
+    "TOPOR": 10
+  },
+  "nome": "Platão",
+  "pontosParaDistribuir": 0,
+  "posX": 5,
+  "posY": 7,
+  "amuleto2": "Anel de Rei",
+  "amuleto1": "Anel de Rei",
+  "manaAtual": 8.0,
+  "raca": "Humano",
+  "carteira": {
+    "prata": 12,
+    "ouro": 35,
+    "bronze": 654
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 175.0,
+  "contadorTU": 6,
+  "armaduraEquipada": "Armadura do Mestre",
+  "nivel": 10,
+  "armaEquipada": "Ataduras de Ferro",
+  "inventario": {},
+  "escudoAtual": 0.0,
+  "racaData": {
+    "vidaNegativaAcumulada": 0.0,
+    "filaContratos": []
+  }
+}

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Separator?>
+
+<BorderPane fx:id="rootPane" prefHeight="600.0" prefWidth="1024.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.CombatController">
+
+   <left>
+      <VBox alignment="TOP_CENTER" prefWidth="100.0" spacing="10.0" styleClass="navigation-bar">
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+         <children>
+            <Button fx:id="btnAbaCombate" mnemonicParsing="false" onAction="#onAbaCombateClick" prefHeight="80.0" prefWidth="80.0" text="Combate" />
+            <Button fx:id="btnAbaLojas" mnemonicParsing="false" onAction="#onAbaLojasClick" prefHeight="80.0" prefWidth="80.0" text="Lojas" />
+            <Button fx:id="btnAbaEditor" mnemonicParsing="false" onAction="#onAbaEditorClick" prefHeight="80.0" prefWidth="80.0" text="Editor" />
+            <Button fx:id="btnAbaLog" mnemonicParsing="false" onAction="#onAbaLogClick" prefHeight="80.0" prefWidth="80.0" text="Log" />
+         </children>
+      </VBox>
+   </left>
+
+   <bottom>
+      <HBox fx:id="gmToolbar" alignment="CENTER" prefHeight="60.0" spacing="15.0" styleClass="gm-toolbar">
+         <children>
+            <Button fx:id="btnCarregarArena" mnemonicParsing="false" onAction="#onCarregarArenaClick" text="Carregar Arena" />
+            <Button fx:id="btnGerenciarCombate" mnemonicParsing="false" onAction="#onGerenciarCombateClick" text="Gerenciar Combate" />
+
+          <Button fx:id="btnIniciarTurno" mnemonicParsing="false" onAction="#onIniciarTurnoClick" 
+                    prefHeight="45.0" prefWidth="200.0" text="PRÓXIMO TURNO" 
+                    textOverrun="CLIP" disable="true"/>
+
+			<Button text="Salvar Estado" onAction="#onSalvarEstadoClick"/>
+            <ToggleButton fx:id="btnCombateState" text="COMBATE: OFF" onAction="#onToggleCombateClick" 
+                          style="-fx-background-color: #333; -fx-text-fill: gray; -fx-border-color: gray; -fx-font-weight: bold; -fx-font-size: 14px;"
+                          prefWidth="140.0" prefHeight="30.0" textOverrun="CLIP"/>
+
+         </children>
+         <padding>
+            <Insets bottom="10.0" top="10.0" />
+         </padding>
+      </HBox>
+   </bottom>
+
+   <center>
+      <BorderPane fx:id="contextPane" BorderPane.alignment="CENTER">
+
+         <top>
+             <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" styleClass="timeline-bar">
+               <padding>
+                  <Insets left="10.0" right="10.0"/>
+               </padding>
+               <children>
+                  <Label text="Próximos Turnos:" style="-fx-text-fill: yellow;" />
+                  <HBox fx:id="timelineContainer" alignment="CENTER_LEFT" spacing="15.0" />
+               </children>
+            </HBox>
+         </top>
+
+         <left>
+             <ScrollPane prefWidth="340.0" VBox.vgrow="ALWAYS" hbarPolicy="NEVER" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+               <content>
+                  <VBox fx:id="playerListContainer" alignment="TOP_LEFT" spacing="2.5" style="-fx-background-color: transparent;">
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </left>
+
+         <right>
+            <ScrollPane prefWidth="340.0" VBox.vgrow="ALWAYS" hbarPolicy="NEVER" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+               <content>
+                  <VBox fx:id="enemyListContainer" alignment="TOP_RIGHT" spacing="2.5" style="-fx-background-color: transparent;">
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </right>
+         
+         </BorderPane>
+   </center>
+</BorderPane>

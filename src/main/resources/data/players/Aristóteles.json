@@ -1,0 +1,48 @@
+{
+  "xpAtual": 245,
+  "iniciativaBase": 20,
+  "vidaMaximaBase": 50.0,
+  "classe": "???",
+  "atributosBase": {
+    "INSPIRACAO": 13,
+    "SORTE": 1,
+    "TOPOR": 7,
+    "INTELIGENCIA": 9,
+    "DESTREZA": 7,
+    "FORCA": 5,
+    "SAGACIDADE": 2,
+    "PERCEPCAO": 11,
+    "ENDURANCE": 7,
+    "CARISMA": 3
+  },
+  "nome": "Aristóteles",
+  "pontosParaDistribuir": 0,
+  "posX": 6,
+  "posY": 5,
+  "amuleto2": "Anel de Rei",
+  "amuleto1": "Anel de Rei",
+  "manaAtual": 6.0,
+  "raca": "Elfo",
+  "carteira": {
+    "prata": 85,
+    "ouro": 100,
+    "bronze": 7819
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 100.0,
+  "contadorTU": 1,
+  "armaduraEquipada": "Manto do Mestre",
+  "nivel": 3,
+  "armaEquipada": {
+    "magiasSalvas": [
+      "Tecnica de Amplificação",
+      "Bola de Fogo",
+      "Barragem de Espadas",
+      "Cura Suprema",
+      "Bênção"
+    ],
+    "nome": "Grimório do Semi-deus"
+  },
+  "inventario": {},
+  "escudoAtual": 0.0
+}

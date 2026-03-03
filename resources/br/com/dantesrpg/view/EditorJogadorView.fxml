@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import java.net.URL?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.EditorJogadorController"
+            prefHeight="600.0" prefWidth="900.0" styleClass="background">
+    
+    <left>
+        <VBox styleClass="editor-column" prefWidth="150.0" spacing="5.0">
+            <VBox fx:id="playerListContainer" VBox.vgrow="ALWAYS" /> <VBox spacing="5.0" style="-fx-padding: 5;">
+                <Button text="Salvar Alterações" onAction="#onSalvarClick" maxWidth="Infinity"/>
+                <Button text="Resetar Alterações" onAction="#onResetarClick" maxWidth="Infinity"/>
+            </VBox>
+            </VBox>
+    </left>
+    
+    <center>
+        <HBox spacing="10.0" style="-fx-padding: 10;">
+            
+            <VBox styleClass="editor-column" HBox.hgrow="ALWAYS" prefWidth="250.0" spacing="10.0">
+                <Label text="Atributos" styleClass="header-label"/>
+                <Label fx:id="labelNivelXP" text="Nível 1 (0/50 XP)" />
+                <Label fx:id="labelPontosParaDistribuir" text="Pontos restantes: 0" />
+                <GridPane fx:id="attributesGrid" vgap="5.0" hgap="10.0" />
+                
+                <Label text="Ranks de Atributo" styleClass="header-label" />
+                <Pane fx:id="radarChartPlaceholder" prefHeight="200.0" style="-fx-border-color: grey;"/>
+                <Label fx:id="labelRanks" text="Ranks: (P, S, A, B, C, D, E)" wrapText="true" />
+            </VBox>
+            
+            <VBox styleClass="editor-column" HBox.hgrow="ALWAYS" prefWidth="250.0" spacing="10.0">
+                <Label text="Equipamento" styleClass="header-label"/>
+                <GridPane vgap="10.0" hgap="10.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                        <ColumnConstraints hgrow="NEVER" />
+                    </columnConstraints>
+                    
+                    <Label text="Arma:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                    <VBox fx:id="armaDetailsPane" spacing="2.0" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                    <Button fx:id="btnDesequiparArma" text="X" onAction="#onDesequiparArmaClick" GridPane.rowIndex="0" GridPane.columnIndex="2" />
+                    
+                    <Label text="Armadura:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                    <VBox fx:id="armaduraDetailsPane" spacing="2.0" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                    <Button fx:id="btnDesequiparArmadura" text="X" onAction="#onDesequiparArmaduraClick" GridPane.rowIndex="1" GridPane.columnIndex="2" />
+                    
+                    <Label text="Amuleto 1:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                    <VBox fx:id="amuleto1DetailsPane" spacing="2.0" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                    <Button fx:id="btnDesequiparAmuleto1" text="X" onAction="#onDesequiparAmuleto1Click" GridPane.rowIndex="2" GridPane.columnIndex="2" />
+                    
+                    <Label text="Amuleto 2:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                    <VBox fx:id="amuleto2DetailsPane" spacing="2.0" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                    <Button fx:id="btnDesequiparAmuleto2" text="X" onAction="#onDesequiparAmuleto2Click" GridPane.rowIndex="3" GridPane.columnIndex="2" />
+                </GridPane>
+                
+                <Label text="Atributos Atuais" styleClass="header-label" style="-fx-padding-top: 20;"/>
+                <ScrollPane fx:id="detailedAttributesScrollPane" VBox.vgrow="ALWAYS" fitToWidth="true">
+                    <VBox fx:id="detailedAttributesPane" spacing="3.0" />
+                </ScrollPane>
+            </VBox>
+            
+            <VBox styleClass="editor-column" HBox.hgrow="ALWAYS" prefWidth="250.0" spacing="10.0">
+                <Label text="Inventário (Bolsa)" styleClass="header-label"/>
+                <ListView fx:id="inventarioListView" VBox.vgrow="ALWAYS" />
+                
+                <Label text="Habilidades" styleClass="header-label" style="-fx-padding-top: 20;"/>
+                <ListView fx:id="habilidadesListView" VBox.vgrow="ALWAYS" />
+            </VBox>
+            
+        </HBox>
+    </center>
+	<stylesheets>
+	<URL value="@style.css" />
+    </stylesheets>
+</BorderPane>

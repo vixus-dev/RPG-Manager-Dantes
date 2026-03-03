@@ -1,0 +1,24 @@
+{
+  "itensOfertados": [
+    {"id": "PocaoDeCuraMédia", "desconto": 0.0},
+	{"id": "PocaoDeManaMédia", "desconto": 0.0},
+	{"id": "Agua Benta", "desconto": 0.0},
+    
+	{"id": "Espingarda", "desconto": 0.0},
+	{"id": "Arco de Fios de Luz", "desconto": 0.0},
+	{"id": "Grimório dos escritor punhetico", "desconto": 0.0},
+	{"id": "Machado Turbulento", "desconto": 0.0},
+	{"id": "Neo Machado de Plasma", "desconto": 0.0},
+	{"id": "Espingarda (Overclock : 2x)", "desconto": 0.02},
+    
+	{"id": "Peitoral de Malha", "desconto": 0.0},
+	{"id": "Armadura do caçador", "desconto": 0.0},
+	{"id": "Exoesqueleto do Êxtase Controlado", "desconto": 0.0},
+	
+	{"id": "Botas de Berseker", "desconto": 0.0},
+	{"id": "Broche da Balança Estagnada", "desconto": 0.0},
+	{"id": "Anel de Rei", "desconto": 0.0},
+	
+	{"id": "CambioBronzeParaPrata", "desconto": 0.0}
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "xpAtual": 150,
+  "iniciativaBase": 21,
+  "vidaMaximaBase": 63.0,
+  "classe": "Feiticeiro",
+  "atributosBase": {
+    "TOPOR": 7,
+    "CARISMA": 1,
+    "INTELIGENCIA": 1,
+    "DESTREZA": 7,
+    "FORCA": 5,
+    "SAGACIDADE": 1,
+    "PERCEPCAO": 1,
+    "ENDURANCE": 8,
+    "INSPIRACAO": 10,
+    "SORTE": 10
+  },
+  "nome": "Lyria",
+  "pontosParaDistribuir": 0,
+  "posX": 4,
+  "posY": 5,
+  "amuleto2": "Amuleto de Ferro",
+  "amuleto1": "Amuleto de Bronze",
+  "manaAtual": 13.0,
+  "raca": "Elfo",
+  "carteira": {
+    "prata": 70,
+    "ouro": 0,
+    "bronze": 13105
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 83.0,
+  "contadorTU": -399,
+  "armaduraEquipada": "Vestes da Luxúria Silenciosa",
+  "nivel": 5,
+  "armaEquipada": "Cajado Eólico da Luxúria",
+  "inventario": {
+    "Toga do Magistrado Esquecido": 1,
+    "Colar dos Ventos Incansáveis": 1,
+    "Cano de Metal": 1
+  },
+  "escudoAtual": 0.0
+}

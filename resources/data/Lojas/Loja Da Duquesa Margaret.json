@@ -1,0 +1,24 @@
+{
+  "itensOfertados": [
+  {"id": "OssoDeReparo", "desconto": 0.0},
+	{"id": "PocaoDeCuraPequena", "desconto": -1.0},
+  {"id": "PocaoDeManaPequena", "desconto": -0.5},
+    
+	{"id": "Estilingue", "desconto": 0.0},
+	{"id": "Pistola Ventus-9", "desconto": -0.2},
+  {"id": "Pistola Carmesim do Vício", "desconto": 0.0},
+	{"id": "Balista Portátil dos Amantes Caídos", "desconto": -0.2},
+	{"id": "Thompson", "desconto": -1.5},
+
+	{"id": "Venda da Imparcialidade", "desconto": 0.0},
+	{"id": "Colete Militar", "desconto": 0.3},
+	{"id": "Vestes da Luxúria Silenciosa", "desconto": 0.0},
+	
+	{"id": "Amuleto de Ferro", "desconto": 0.0},
+	{"id": "Botas de Placa", "desconto": 0.0},
+	{"id": "Medalhão da Promessa", "desconto": 0.0},
+	
+	{"id": "CambioBronzeParaPrata", "desconto": 0.1},
+	{"id": "CambioPrataParaOuro", "desconto": -0.35}
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "xpAtual": 0,
+  "iniciativaBase": 9,
+  "vidaMaximaBase": 16.0,
+  "classe": "Paladino",
+  "atributosBase": {
+    "SORTE": 3,
+    "INTELIGENCIA": 4,
+    "PERCEPCAO": 4,
+    "FORCA": 8,
+    "TOPOR": 2,
+    "CARISMA": 4,
+    "INSPIRACAO": 5,
+    "DESTREZA": 3,
+    "ENDURANCE": 8,
+    "SAGACIDADE": 4
+  },
+  "nome": "Eidan",
+  "pontosParaDistribuir": 0,
+  "posX": 6,
+  "posY": 5,
+  "manaAtual": 8,
+  "raca": "Half-Angel",
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 32
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 16.0,
+  "contadorTU": 5,
+  "nivel": 1,
+  "armaEquipada": "Pálida Vigília",
+  "inventario": {},
+  "escudoAtual": 0.0
+}

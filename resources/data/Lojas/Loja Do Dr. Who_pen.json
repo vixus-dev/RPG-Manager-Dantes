@@ -1,0 +1,27 @@
+{
+  "itensOfertados": [
+  {"id": "PocaoDeCuraGigante", "desconto": -0.2},
+  {"id": "PocaoDeManaGrande", "desconto": 0.0},
+  {"id": "EMP", "desconto": 0.2},
+  {"id": "SeringaAzulM", "desconto": 0.2},
+  {"id": "SeringaAzulG", "desconto": -0.5},
+  {"id": "AntidotoForte", "desconto": 0.01},
+  {"id": "PocaoForcaPequena", "desconto": -1.0},
+    
+	{"id": "Faca de Vibração Íntima", "desconto": 0.0},
+  {"id": "Neo Machado de Plasma", "desconto": 0.10},
+	{"id": "Grimório das Confissões Proibidas", "desconto": 0.10},
+	{"id": "Espada de QuimioPlasma", "desconto": 0.5},
+  {"id": "Neo Espada de Plasma (Overclock : 1x)", "desconto": 0.01},
+
+	{"id": "Couraça do Vento Proibido", "desconto": 0.0},
+	{"id": "Peitoral de Ferro", "desconto": -0.25},
+	{"id": "Colete Militar II", "desconto": 0.1},
+	
+	{"id": "Anel de Rei", "desconto": 0.0},
+	{"id": "Pingente do Olhar Desejado", "desconto": 0.0},
+	{"id": "Pingente de Balança de Carne", "desconto": 0.0},
+	
+	{"id": "CambioBronzeParaPrata", "desconto": 0.1}
+  ]
+}

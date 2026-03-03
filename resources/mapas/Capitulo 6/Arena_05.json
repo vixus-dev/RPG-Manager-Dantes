@@ -1,0 +1,12 @@
+{
+  "paredes": [],
+  "saidas": [],
+  "objetos": [],
+  "inimigos": [
+    {
+      "x": 20,
+      "y": 5,
+      "idMonstro": "Nebrion"
+    }
+  ]
+}

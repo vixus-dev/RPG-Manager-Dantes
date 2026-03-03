@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.MapController">
+    
+    <top>
+        <ToolBar fx:id="topToolbar" style="-fx-background-color: #333; -fx-border-color: #555; -fx-border-width: 0 0 1 0;">
+            <items>
+                <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Mestre:" />
+                <ToggleButton fx:id="btnMovimentoLivre" text="Movimento Livre" onAction="#onMovimentoLivreClick"/>
+                <ToggleButton fx:id="btnEditorMapa" text="Editor de Mapa" onAction="#onEditorMapaClick"/>
+                <Button text="Salvar Mapa" onAction="#onSalvarMapaClick" style="-fx-background-color: #225522; -fx-text-fill: white;"/>
+                <Separator orientation="VERTICAL" />
+                <Button text="Bestiário (Spawn)" onAction="#onBestiarioClick" style="-fx-background-color: #552222; -fx-text-fill: white;"/>
+                <Separator orientation="VERTICAL" />
+                <Label style="-fx-text-fill: gray;" text="Ação:" />
+                <ToggleButton fx:id="toggleMover" text="Mover">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="selectionToggleGroup" />
+                    </toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="toggleMirar" selected="true" text="Mirar" toggleGroup="$selectionToggleGroup" />
+            </items>
+        </ToolBar>
+    </top>
+
+    <center>
+        <ScrollPane fx:id="mapScrollPane" pannable="true" style="-fx-background-color: #222222;">
+            <content>
+                <StackPane alignment="TOP_LEFT">
+                    <GridPane fx:id="mapGrid" style="-fx-background-color: #222222; -fx-grid-lines-visible: true;">
+                    </GridPane>
+                    <Canvas fx:id="aoeCanvas" mouseTransparent="true" />
+                </StackPane>
+            </content>
+        </ScrollPane>
+    </center>
+    
+    </BorderPane>

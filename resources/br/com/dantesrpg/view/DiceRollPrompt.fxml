@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="350.0" spacing="10.0" styleClass="turn-hud-root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.DiceRollPromptController">
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+   <children>
+      <Label fx:id="labelPrompt" text="[Texto do Prompt da Habilidade]" styleClass="label-header" textFill="YELLOW" />
+      <Label text="Insira a rolagem do dado:" />
+      <TextField fx:id="inputRolagem" alignment="CENTER" promptText="Insira o valor..." />
+      <Button fx:id="btnConfirmar" defaultButton="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onConfirmarClick" text="Confirmar Rolagem" />
+   </children>
+</VBox>

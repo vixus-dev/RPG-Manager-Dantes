@@ -1,0 +1,43 @@
+{
+  "xpAtual": 0,
+  "iniciativaBase": 11,
+  "vidaMaximaBase": 175.0,
+  "classe": "???",
+  "atributosBase": {
+    "INSPIRACAO": 3,
+    "INTELIGENCIA": 7,
+    "DESTREZA": 5,
+    "ENDURANCE": 11,
+    "SAGACIDADE": 3,
+    "PERCEPCAO": 3,
+    "SORTE": 2,
+    "FORCA": 9,
+    "CARISMA": 3,
+    "TOPOR": 10
+  },
+  "nome": "Atlas",
+  "pontosParaDistribuir": 0,
+  "posX": 6,
+  "posY": 7,
+  "amuleto2": "Anel de Rei",
+  "amuleto1": "Anel de Rei",
+  "manaAtual": 8.0,
+  "raca": "Humano",
+  "carteira": {
+    "prata": 12,
+    "ouro": 35,
+    "bronze": 654
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 136.5,
+  "contadorTU": 7,
+  "armaduraEquipada": "Armadura do Mestre",
+  "nivel": 10,
+  "armaEquipada": "Ataduras de Ferro",
+  "inventario": {},
+  "escudoAtual": 0.0,
+  "racaData": {
+    "vidaNegativaAcumulada": 0.0,
+    "filaContratos": []
+  }
+}

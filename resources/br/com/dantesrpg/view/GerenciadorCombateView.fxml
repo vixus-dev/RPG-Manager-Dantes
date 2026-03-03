@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="650.0" prefWidth="1000.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.GerenciadorCombateController">
+   
+   <top>
+      <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #2a2a2a; -fx-padding: 10; -fx-border-color: #555; -fx-border-width: 0 0 1 0;">
+         <children>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: cyan;" text="EFEITO DE ANDAR:" />
+            <ComboBox fx:id="comboEfeitoAndar" prefWidth="250.0" promptText="Selecione o Andar..." />
+            <CheckBox fx:id="checkEfeitoAndarAtivo" text="ATIVO" textFill="LIME" />
+            <Label text="|" textFill="GRAY" style="-fx-font-size: 20px;" />
+            <Button onAction="#onCurarTodosClick" style="-fx-background-color: green; -fx-text-fill: white;" text="Curar Todos" />
+         </children>
+      </HBox>
+   </top>
+
+   <center>
+      <SplitPane dividerPositions="0.45" style="-fx-background-color: transparent;">
+         
+         <VBox spacing="5.0" style="-fx-padding: 10;">
+            <Label styleClass="header-label" text="Combatentes" />
+            <TableView fx:id="tabelaCombatentes" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colNome" prefWidth="140.0" text="Nome" />
+                  <TableColumn fx:id="colHP" prefWidth="70.0" text="HP" />
+                  <TableColumn fx:id="colTU" prefWidth="50.0" text="TU" />
+                  <TableColumn fx:id="colFaccao" prefWidth="80.0" text="Facção" />
+                  <TableColumn fx:id="colStatus" prefWidth="70.0" text="Status" />
+               </columns>
+            </TableView>
+            <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                <Button onAction="#atualizarTabela" text="Atualizar Lista" />
+            </HBox>
+         </VBox>
+
+         <TabPane fx:id="tabPaneDetalhes" tabClosingPolicy="UNAVAILABLE" style="-fx-background-color: #222;">
+            
+            <Tab text="Principal">
+               <VBox fx:id="painelPrincipal" spacing="15.0" style="-fx-padding: 15;">
+                  <Label fx:id="lblNomeSelecionado" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: yellow;" text="Selecione um Personagem" />
+
+                  <VBox spacing="5.0" style="-fx-border-color: #444; -fx-padding: 10; -fx-border-radius: 5;">
+                      <Label styleClass="header-label" text="Status Vital" />
+                      <GridPane hgap="10.0" vgap="10.0">
+                          <columnConstraints>
+                             <ColumnConstraints hgrow="SOMETIMES" percentWidth="30" />
+                             <ColumnConstraints hgrow="SOMETIMES" percentWidth="40" />
+                             <ColumnConstraints hgrow="SOMETIMES" percentWidth="30" />
+                          </columnConstraints>
+                          <rowConstraints>
+                             <RowConstraints /> <RowConstraints /> <RowConstraints /> <RowConstraints />
+                          </rowConstraints>
+                          
+                          <Label text="Vida Atual:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                          <TextField fx:id="inputVida" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                          
+                          <Label text="Escudo Atual:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill: cyan;"/>
+                          <TextField fx:id="inputEscudo" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                          
+                          <Label text="Mana Atual:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                          <TextField fx:id="inputMana" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                          
+                          <Label text="Contador TU:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                          <TextField fx:id="inputTU" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+        
+                          <Button maxHeight="Infinity" onAction="#onAplicarStatusClick" style="-fx-base: #00AA00;" text="APLICAR" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.rowSpan="4" maxWidth="Infinity"/>
+                      </GridPane>
+                      
+                      <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-padding: 5 0 0 0;">
+                          <Button onAction="#onReviverClick" style="-fx-background-color: #005500; -fx-text-fill: white;" text="Reviver" />
+                          <Button onAction="#onDescansarClick" style="-fx-background-color: #000088; -fx-text-fill: white;" text="Descansar" />
+                          <Button onAction="#onMatarClick" style="-fx-background-color: #880000; -fx-text-fill: white;" text="Kill" />
+                      </HBox>
+                      <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-padding: 10 0 0 0; -fx-border-color: #444; -fx-border-width: 1 0 0 0;">
+                          <Label text="XP:" style="-fx-text-fill: violet; -fx-font-weight: bold;"/>
+                          <TextField fx:id="inputXPManual" promptText="Quantidade" prefWidth="80.0" />
+                          <Button text="Adicionar XP" onAction="#onAdicionarXPClick" style="-fx-background-color: violet; -fx-text-fill: black;"/>
+                      </HBox>
+                  </VBox>
+
+                  <VBox spacing="10.0" style="-fx-border-color: #444; -fx-padding: 10; -fx-border-radius: 5;">
+                      <Label styleClass="header-label" text="Controle de Sessão" />
+                      <CheckBox fx:id="checkAusente" onAction="#onCheckAusenteChange" text="Jogador Ausente (Ocultar)" textFill="WHITE" />
+                      <CheckBox fx:id="checkProtagonista" onAction="#onCheckProtagonistaChange" text="Modo Protagonista (? HP, Imune)" textFill="GOLD" />
+                  </VBox>
+                  
+                   <VBox spacing="5.0" style="-fx-border-color: #444; -fx-padding: 10; -fx-border-radius: 5;">
+                        <Label styleClass="header-label" text="Finanças" />
+                        <GridPane hgap="5.0" vgap="5.0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="20" />
+                                <ColumnConstraints percentWidth="50" />
+                                <ColumnConstraints percentWidth="30" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints /> <RowConstraints /> <RowConstraints />
+                            </rowConstraints>
+                            <Label text="Ouro:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-text-fill: gold;"/>
+                            <TextField fx:id="inputOuro" text="0" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <Label text="Prata:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill: silver;"/>
+                            <TextField fx:id="inputPrata" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="Bronze:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-text-fill: #cd7f32;"/>
+                            <TextField fx:id="inputBronze" text="0" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Button text="Setar $" onAction="#onSetarMoedasClick" GridPane.rowIndex="0" GridPane.columnIndex="2" GridPane.rowSpan="3" maxHeight="Infinity" maxWidth="Infinity"/>
+                        </GridPane>
+                  </VBox>
+
+               </VBox>
+            </Tab>
+
+            <Tab text="Inventário">
+               <VBox spacing="10.0" style="-fx-padding: 15;">
+                   <VBox spacing="5.0" style="-fx-border-color: #444; -fx-padding: 10; -fx-border-radius: 5;" VBox.vgrow="ALWAYS">
+                       <Label styleClass="header-label" text="Adicionar Item (Loot/Drop)" />
+                       <TextField fx:id="inputBuscaItem" promptText="Filtrar item para adicionar..." />
+                       <ListView fx:id="listaItensFiltrados" VBox.vgrow="ALWAYS" style="-fx-max-height: 150px;"/>
+                       <HBox alignment="CENTER_LEFT" spacing="5.0">
+                           <Label text="Qtd:" />
+                           <TextField fx:id="inputQtdItem" prefWidth="50.0" text="1" />
+                           <Button maxWidth="Infinity" onAction="#onAdicionarItemClick" text="Adicionar" HBox.hgrow="ALWAYS" />
+                       </HBox>
+                   </VBox>
+                   
+                   <VBox spacing="5.0" style="-fx-border-color: #522; -fx-padding: 10; -fx-border-radius: 5;" VBox.vgrow="ALWAYS">
+                       <Label styleClass="header-label" text="Inventário Atual (Selecionado)" style="-fx-text-fill: lightcoral;"/>
+                       <ListView fx:id="listaInventarioAtual" VBox.vgrow="ALWAYS" />
+                       <Button maxWidth="Infinity" onAction="#onRemoverItemClick" text="Remover Item Selecionado" style="-fx-background-color: #880000; -fx-text-fill: white;" />
+                   </VBox>
+               </VBox>
+            </Tab>
+
+            <Tab text="Efeitos">
+               <VBox spacing="10.0" style="-fx-padding: 15;">
+                   <Label styleClass="header-label" text="Aplicar Efeito Manual" />
+                   <GridPane hgap="5.0" vgap="10.0">
+                        <columnConstraints>
+                             <ColumnConstraints percentWidth="30" />
+                             <ColumnConstraints percentWidth="70" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints /> <RowConstraints /> <RowConstraints />
+                        </rowConstraints>
+                        
+                        <Label text="Efeito:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="comboPresetEfeito" maxWidth="Infinity" promptText="Selecionar..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        
+                        <Label text="Duração (TU):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <TextField fx:id="inputDuracaoEfeito" text="300" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        
+                        <Label text="Valor (Dano):" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <TextField fx:id="inputValorEfeito" promptText="Dano tick / Valor Buff" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                   </GridPane>
+                   
+                   <Button maxWidth="Infinity" onAction="#onAdicionarEfeitoManualClick" style="-fx-background-color: purple; -fx-text-fill: white;" text="Aplicar Efeito" />
+                   <Button onAction="#onLimparEfeitosClick" style="-fx-background-color: #880000; -fx-text-fill: white;" text="Limpar Todos os Efeitos" maxWidth="Infinity"/>
+               </VBox>
+            </Tab>
+
+            <Tab text="Sistema">
+               <VBox spacing="20.0" style="-fx-padding: 20;" alignment="TOP_CENTER">
+                   <Label styleClass="header-label" text="Persistência de Sessão" />
+                   <Button onAction="#onSalvarTudoClick" style="-fx-background-color: blue; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;" text="SALVAR ESTADO ATUAL" maxWidth="Infinity" prefHeight="50"/>
+                   <Label text="Salva vida, mana, posição e inventário de todos." style="-fx-text-fill: gray;" />
+                   
+                   <Button onAction="#onCarregarTudoClick" style="-fx-background-color: #444; -fx-text-fill: white;" text="Carregar Último Save" maxWidth="Infinity" />
+                   <Label text="Reverte para o último estado salvo no disco." style="-fx-text-fill: gray;" />
+               </VBox>
+            </Tab>
+
+         </TabPane>
+      </SplitPane>
+   </center>
+</BorderPane>

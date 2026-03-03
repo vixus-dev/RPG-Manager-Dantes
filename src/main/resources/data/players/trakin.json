@@ -1,0 +1,37 @@
+{
+  "xpAtual": 18,
+  "iniciativaBase": 8,
+  "vidaMaximaBase": 25.0,
+  "classe": "Mestre das Balas",
+  "atributosBase": {
+    "FORCA": 2,
+    "INTELIGENCIA": 4,
+    "DESTREZA": 6,
+    "SAGACIDADE": 8,
+    "PERCEPCAO": 6,
+    "SORTE": 6,
+    "ENDURANCE": 5,
+    "INSPIRACAO": 4,
+    "CARISMA": 4,
+    "TOPOR": 2
+  },
+  "nome": "Trakin",
+  "pontosParaDistribuir": 0,
+  "posX": 4,
+  "posY": 6,
+  "amuleto1": "Botas da Velocidade",
+  "manaAtual": 8.0,
+  "raca": "Marionette",
+  "carteira": {
+    "prata": 1,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 25.0,
+  "contadorTU": 4,
+  "nivel": 2,
+  "armaEquipada": "Terrore",
+  "inventario": {},
+  "escudoAtual": 0.0
+}

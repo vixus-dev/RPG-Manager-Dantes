@@ -1,0 +1,25 @@
+{
+  "itensOfertados": [
+  	{"id": "PocaoDeCuraGrande", "desconto": 0.1},
+  	{"id": "PocaoDeManaGrande", "desconto": 0.15},
+  	{"id": "SeringaAzulP", "desconto": 0.0},
+  	{"id": "SeringaAzulM", "desconto": 0.2},
+  	{"id": "SoroDaLucidez", "desconto": -0.25},
+    
+	{"id": "Neo Espada de Plasma", "desconto": -0.2},
+  	{"id": "Neo Machado de Plasma", "desconto": 0.0},
+	{"id": "Cajado Eólico da Luxúria", "desconto": 0.2},
+	{"id": "Neo Katana", "desconto": 0.1},
+
+	{"id": "Pele Sintética da Tentação", "desconto": -0.2},
+	{"id": "Exoesqueleto do Êxtase Controlado", "desconto": 0.0},
+	{"id": "Nano-Armadura MK1", "desconto": 0.0},
+	
+	{"id": "Cranio de Esqueleto", "desconto": 0.0},
+	{"id": "Colar dos Ventos Incansáveis", "desconto": 0.0},
+	{"id": "Pingente de Coração", "desconto": 0.0},
+	
+	{"id": "CambioBronzeParaPrata", "desconto": 0.1},
+	{"id": "CambioPrataParaOuro", "desconto": -0.35}
+  ]
+}

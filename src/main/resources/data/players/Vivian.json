@@ -1,0 +1,43 @@
+{
+  "xpAtual": 128,
+  "iniciativaBase": 15,
+  "vidaMaximaBase": 30.0,
+  "classe": "Ladino",
+  "atributosBase": {
+    "INSPIRACAO": 1,
+    "SAGACIDADE": 1,
+    "SORTE": 1,
+    "CARISMA": 10,
+    "FORCA": 4,
+    "INTELIGENCIA": 5,
+    "PERCEPCAO": 6,
+    "DESTREZA": 10,
+    "TOPOR": 10,
+    "ENDURANCE": 4
+  },
+  "nome": "Vivian",
+  "pontosParaDistribuir": 0,
+  "posX": 4,
+  "posY": 6,
+  "amuleto2": "Colar de Tinta Seca",
+  "amuleto1": "Colar de Tinta Seca",
+  "manaAtual": 6.5,
+  "raca": "Half-Demon",
+  "carteira": {
+    "prata": 748,
+    "ouro": 12,
+    "bronze": 150
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 65.0,
+  "contadorTU": 4,
+  "armaduraEquipada": "Colete Militar II",
+  "nivel": 5,
+  "armaEquipada": "Thompson da Madame",
+  "inventario": {
+    "Espingarda (Overclock : 2x)": 1,
+    "Colete Militar": 1,
+    "PocaoDeCuraGrande": 1
+  },
+  "escudoAtual": 0.0
+}

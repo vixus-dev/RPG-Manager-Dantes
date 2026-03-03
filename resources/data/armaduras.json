@@ -1,0 +1,253 @@
+{
+  "Peitoral de Couro": {
+    "classeItem": "Armadura",
+    "nome": "Peitoral de Couro",
+    "descricao": "Leve e flexível.",
+    "valorMoedas": 2000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 15,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MOVIMENTO": 1.0
+    }
+  },
+  "Peitoral de Ferro": {
+    "classeItem": "Armadura",
+    "nome": "Peitoral de Ferro",
+    "descricao": "não tão leve e nem tão flexível.",
+    "valorMoedas": 8000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 30,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MOVIMENTO": 1.0
+    }
+  },
+  "Toga do Magistrado Esquecido": {
+    "classeItem": "Armadura",
+    "nome": "Toga do Magistrado Esquecido",
+    "descricao": "Para aqueles que julgam sem sujar as mãos.",
+    "valorMoedas": 8000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 40,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MP_MAXIMO" : 1
+    }
+  },
+  "Peitoral da Guarda de Marfim": {
+    "classeItem": "Armadura",
+    "nome": "Peitoral da Guarda de Marfim",
+    "descricao": "Uma couraça feita de um material que parece mármore polido, mas é resistente como aço. Possui relevos de leis escritas em grego antigo.",
+    "valorMoedas": 1000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 70,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MOVIMENTO": -1.0
+    }
+  },
+  "Venda da Imparcialidade": {
+    "classeItem": "Armadura",
+    "nome": "Venda da Imparcialidade",
+    "descricao": "Uma faixa de seda bege que cobre os olhos, mas permite ao usuário enxergar a 'essência' das coisas.",
+    "valorMoedas": 1200,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 15,
+    "modificadoresDeAtributo": { "PERCEPCAO": 1},
+    "modificadoresStatus": {
+      "TAXA_CRITICA" : 0.05,
+      "HP_MAXIMO" : 12
+    }
+  },
+  "Manto do Mestre": {
+    "classeItem": "Armadura",
+    "nome": "Manto do Mestre",
+    "descricao": "Leve e flexível.",
+    "valorMoedas": 3500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 1,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 25.0
+    }
+  },
+  "Armadura do Mestre": {
+      "classeItem": "Armadura",
+      "nome": "Armadura do Mestre",
+      "descricao": "Leve e flexível.",
+      "valorMoedas": 10000,
+      "tipoMoeda": "BRONZE",
+      "armaduraBase": 50,
+      "modificadoresDeAtributo": {
+		"FORCA" : 1, "PERCEPCAO" : 1, "ENDURANCE" : 1, "CARISMA" : 1, "INTELIGENCIA" : 1, "DESTREZA" : 1, "SORTE" : 1, "INSPIRACAO" : 1, "SAGACIDADE" : 1, "TOPOR" : 1
+	  },
+      "modificadoresStatus": {
+        "HP_MAXIMO": 50.0
+      }
+    },
+  "Peitoral de Malha": {
+    "classeItem": "Armadura",
+    "nome": "Peitoral de Malha",
+    "descricao": "Flexível e resistente.",
+    "valorMoedas": 5000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 30,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MOVIMENTO": -1.0
+    }
+  },
+  "Armadura de Ferro": {
+    "classeItem": "Armadura",
+    "nome": "Armadura de Ferro",
+    "descricao": "Duro e pesado",
+    "valorMoedas": 1200,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MOVIMENTO": -1.0
+    }
+  },
+  "Manto De Invocador": {
+    "classeItem": "Armadura",
+    "nome": "Manto De Invocador",
+    "descricao": "Leve e flexível, ótimo para magos.",
+    "valorMoedas": 3000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 10,
+    "modificadoresDeAtributo": {
+		"INSPIRACAO" : 1
+	},
+    "modificadoresStatus": {
+      "MP_MAXIMO": 1.0
+    }
+  },
+  "Colete Militar": {
+    "classeItem": "Armadura",
+    "nome": "Colete Militar",
+    "descricao": "Leve e flexível, ótimo para soldados.",
+    "valorMoedas": 5000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 20,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 20.0
+    }
+  },
+  "Colete Militar II": {
+    "classeItem": "Armadura",
+    "nome": "Colete Militar II",
+    "descricao": "Leve e ótimo para soldados. um modelo melhorado com tecnologia para cauterizar plasma",
+    "valorMoedas": 12000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 35.0,
+      "REDUCAO_DANO_MODIFICADOR" : 0.1
+    }
+  },
+  "Armadura do caçador": {
+    "classeItem": "Armadura",
+    "nome": "Armadura do caçador",
+    "descricao": "Leve e com bastante odor de suor, por que será?",
+    "valorMoedas": 3000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 20,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "DANO_CRITICO": 0.2
+    }
+  },
+  "Couraça do Vento Proibido": {
+    "classeItem": "Armadura",
+    "nome": "Couraça do Vento Proibido",
+    "descricao": "uma couraça que possui símbolos de vento espalhados em seu corpo",
+    "valorMoedas": 11000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 40,
+    "modificadoresDeAtributo": {}
+  },
+  "Couraça do Vento Proibido SHINY": {
+    "classeItem": "Armadura",
+    "nome": "Couraça do Vento Proibido SHINY",
+    "descricao": "uma couraça dourada e branca que possui símbolos de vento espalhados em seu corpo",
+    "valorMoedas": 15000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {}
+  },
+  "Pele Sintética da Tentação": {
+    "classeItem": "Armadura",
+    "nome": "Pele Sintética da Tentação",
+    "descricao": "uma espécie de roupa de látex semitransparente rosa neon",
+    "valorMoedas": 10000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 10,
+    "modificadoresDeAtributo": {
+    },
+    "modificadoresStatus": {
+      "DANO_CRITICO": 0.20,
+      "TAXA_CRITICA": 0.05,
+      "HP_MAXIMO": -15,
+      "MOVIMENTO" : 2
+    }
+  },
+  "Nano-Armadura MK1": {
+    "classeItem": "Armadura",
+    "nome": "Nano-Armadura MK1",
+    "descricao": "uma",
+    "valorMoedas": 50000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {
+      "FORCA" : 1, "INSPIRACAO": 1, "SAGACIDADE": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 25,
+      "MOVIMENTO" : 2
+    }
+  },
+  "Exoesqueleto do Êxtase Controlado": {
+    "classeItem": "Armadura",
+    "nome": "Exoesqueleto do Êxtase Controlado",
+    "descricao": "uma armadura de metal pesado. pique homem de ferro tlg?",
+    "valorMoedas": 16000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 100,
+    "modificadoresDeAtributo": {
+    },
+    "modificadoresStatus": {
+      "MOVIMENTO" : -2
+    }
+  },
+  "Couraça de Ossos Reforçados": {
+    "classeItem": "Armadura",
+    "nome": "Couraça de Ossos Reforçados",
+    "descricao": "uma armadura de Ossos presos por parafusos e rebites. cobre o torax inteiro, NÃO FAÇA MOVIMENTOS BRUSCOS",
+    "valorMoedas": 20000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 75,
+    "modificadoresDeAtributo": {
+    },
+    "modificadoresStatus": {
+      "MOVIMENTO" : 1, "HP_MAXIMO" : 25
+    }
+  },
+  "Vestes da Luxúria Silenciosa": {
+    "classeItem": "Armadura",
+    "nome": "Vestes da Luxúria Silenciosa",
+    "descricao": "uma espécie de túnica de mago com cordas no interior, demarcando as partes intimas de quem usa",
+    "valorMoedas": 13000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 30,
+    "modificadoresDeAtributo": {
+      "INSPIRACAO" : 1
+    },
+    "modificadoresStatus": {
+      "TAXA_CRITICA" : 0.05
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "xpAtual": 0,
+  "iniciativaBase": 9,
+  "vidaMaximaBase": 22.0,
+  "classe": "Pugilista",
+  "atributosBase": {
+    "SORTE": 2,
+    "INTELIGENCIA": 2,
+    "PERCEPCAO": 6,
+    "FORCA": 10,
+    "TOPOR": 3,
+    "CARISMA": 3,
+    "INSPIRACAO": 2,
+    "DESTREZA": 7,
+    "ENDURANCE": 8,
+    "SAGACIDADE": 2
+  },
+  "nome": "Alexei",
+  "pontosParaDistribuir": 0,
+  "posX": 5,
+  "posY": 5,
+  "manaAtual": 7.0,
+  "raca": "Humano",
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 22.0,
+  "contadorTU": 2,
+  "nivel": 1,
+  "armaEquipada": "Punho Infinito",
+  "inventario": {},
+  "escudoAtual": 0.0
+}

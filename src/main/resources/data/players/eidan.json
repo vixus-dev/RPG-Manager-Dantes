@@ -1,0 +1,49 @@
+{
+  "xpAtual": 1007,
+  "iniciativaBase": -3,
+  "vidaMaximaBase": 91.0,
+  "classe": "Paladino",
+  "atributosBase": {
+    "INSPIRACAO": 8,
+    "SAGACIDADE": 5,
+    "SORTE": 3,
+    "CARISMA": 4,
+    "FORCA": 10,
+    "INTELIGENCIA": 4,
+    "PERCEPCAO": 5,
+    "DESTREZA": 7,
+    "TOPOR": 2,
+    "ENDURANCE": 9
+  },
+  "nome": "Eidan",
+  "pontosParaDistribuir": 0,
+  "posX": 5,
+  "posY": 4,
+  "amuleto2": "Colar de Tinta Seca",
+  "amuleto1": "Cranio de esqueleto shiny",
+  "manaAtual": 10.5,
+  "raca": "Half-Angel",
+  "carteira": {
+    "prata": 280,
+    "ouro": 0,
+    "bronze": 82585
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 121.61511856617646,
+  "contadorTU": 5,
+  "armaduraEquipada": "Armadura do Mestre",
+  "nivel": 6,
+  "armaEquipada": "Pálida Vigília",
+  "inventario": {
+    "BebidaAlcolica": 10,
+    "PocaoDeCuraPequena": 1,
+    "Lança Cesariana": 1,
+    "Amuleto de Julius Cesarianus": 1,
+    "Espingarda": 1,
+    "Anel de couro": 1,
+    "Neo Espada de Plasma SHINY": 1,
+    "Machado": 1,
+    "PocaoDeCuraGrande": 2
+  },
+  "escudoAtual": 0.0
+}

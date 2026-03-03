@@ -1,0 +1,334 @@
+@font-face {
+    font-family: Oxanium;
+    src: url('../../../../fonts/Oxanium-Regular.ttf'); 
+}
+@font-face {
+    font-family: Oxanium;
+    font-weight: bold;
+    src: url('../../../../fonts/Oxanium-Bold.ttf'); 
+}
+
+.root {
+    -fx-font-family: 'Oxanium';
+    -fx-base: #333333; 
+    -fx-control-inner-background: #444444; 
+    -fx-background: #1e1e1e; 
+    -fx-text-fill: white; 
+}
+
+/* Barra de Navegação Esquerda */
+.navigation-bar { -fx-background-color: #404040; }
+.navigation-bar .button { -fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 5; }
+.navigation-bar .button:hover { -fx-background-color: #666666; }
+.navigation-bar .button:pressed, .navigation-bar .button:focused { -fx-background-color: #777777; -fx-border-color: cyan; -fx-border-width: 1; -fx-border-radius: 5; }
+
+.center-pane { -fx-background-color: #111111; }
+
+/* Barra de Ferramentas GM */
+.gm-toolbar { -fx-background-color: #404040; -fx-border-color: transparent transparent #222222 transparent; -fx-border-width: 2px; }
+.gm-toolbar .button { -fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 3; -fx-padding: 5 15; }
+.gm-toolbar .button:hover { -fx-background-color: #666666; -fx-border-color: cyan; -fx-border-width: 1px; -fx-border-radius: 3; }
+.gm-toolbar .button:pressed { -fx-background-color: #777777; }
+
+#btnIniciarTurno { -fx-font-weight: bold; -fx-font-size: 15px; -fx-background-color: #2a2a2a; -fx-border-color: yellow; -fx-border-width: 2px; }
+#btnIniciarTurno:hover { -fx-background-color: #3a3a3a; -fx-border-color: white; }
+
+/* Timeline */
+.timeline-bar { -fx-background-color: #222222; }
+.timeline-label { -fx-font-size: 13px; }
+.timeline-label-player { -fx-text-fill: cyan; -fx-font-weight: bold; }
+.timeline-label-enemy { -fx-text-fill: lightcoral; }
+
+/* Player Card */
+.player-card { -fx-font-family: 'Oxanium'; }
+.diamond-shape { -fx-fill: #3a3a3a; -fx-stroke-width: 2; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 5, 0.1, 0, 1); }
+.diamond-shape-player { -fx-stroke: cyan; }
+.diamond-shape-enemy { -fx-stroke: #FF4444; }
+.diamond-shape-highlighted { -fx-stroke: yellow; -fx-stroke-width: 3; }
+
+.bar-text { -fx-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 0 0 0 5; -fx-effect: dropshadow(gaussian, black, 2, 0.8, 0, 0); }
+.bar-track { -fx-fill: black; -fx-stroke: transparent; }
+.hp-bar-fill { -fx-fill: linear-gradient(to right, #00FF00, #33AA33); -fx-stroke: transparent; }
+.mp-bar-fill { -fx-fill: linear-gradient(to right, #00FFFF, #0077FF); -fx-stroke: transparent; }
+.passive-bar-fill { -fx-fill: linear-gradient(to right, #FFFF00, #FFAA00); -fx-stroke: transparent; }
+.contract-bar-fill {
+    -fx-fill: linear-gradient(from 0px 0px to 10px 10px, repeat, #330000 0%, #330000 49%, #550000 50%, #550000 100%);
+    -fx-stroke: #AA0000; -fx-stroke-width: 1; -fx-effect: dropshadow(gaussian, black, 3, 0.5, 0, 0);
+}
+.player-card .label-name { -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 2, 0.7, 0, 0); }
+.shield-track { -fx-fill: rgba(0, 0, 0, 0.3); -fx-stroke: transparent; }
+.shield-bar-fill { -fx-fill: linear-gradient(to right, #2B7FFF, #155DFC); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, blue, 5, 0.3, 0, 0); }
+.blood-shield-bar-fill { -fx-fill: linear-gradient(to right, #8B0000, #FF0000); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, red, 5, 0.3, 0, 0); }
+.debt-bar-fill { -fx-fill: linear-gradient(to right, #FF4444, #AA0000); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, red, 5, 0.3, 0, 0); }
+
+/* Detailed HUD */
+.turn-hud-root { -fx-background-color: #1a1a1a; -fx-border-color: yellow; -fx-border-width: 1; -fx-font-size: 13px; }
+.details-column { -fx-border-color: cyan; -fx-padding: 10; }
+.turn-hud-root .label { -fx-text-fill: white; }
+.turn-hud-root .label-header { -fx-font-weight: bold; -fx-font-size: 16px; }
+.turn-hud-root .label-subheader { -fx-font-weight: bold; -fx-text-fill: lightgrey; }
+.turn-hud-root .label-value-hp { -fx-text-fill: lightgreen; }
+.turn-hud-root .label-value-mp { -fx-text-fill: lightblue; }
+.turn-hud-root .button { -fx-background-color: #444444; -fx-text-fill: white; -fx-background-radius: 3; -fx-border-radius: 3; -fx-border-color: grey; -fx-border-width: 1; }
+.turn-hud-root .button:hover { -fx-background-color: #555555; -fx-border-color: cyan; }
+.turn-hud-root .button:pressed { -fx-background-color: #666666; }
+.detailed-attributes-pane { -fx-background-color: #D3D3D3; -fx-padding: 10; -fx-background-radius: 5; }
+.detailed-attributes-pane .label { -fx-text-fill: black; }
+.detailed-attributes-pane .label-header { -fx-font-weight: bold; }
+
+/* Efeitos */
+.effects-container .label { -fx-padding: 3 6; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 11px; }
+.effect-icon { -fx-font-size: 9px; -fx-font-weight: bold; -fx-padding: 1px; -fx-border-radius: 4; -fx-background-radius: 4; -fx-alignment: center; -fx-pref-width: 18px; -fx-pref-height: 18px; -fx-border-width: 1; -fx-background-insets: 0; }
+.effect-icon-buff { -fx-background-color: lightblue; -fx-text-fill: black; -fx-border-color: darkblue; }
+.effect-icon-debuff { -fx-background-color: lightcoral; -fx-text-fill: black; -fx-border-color: darkred; }
+.effect-icon-dot { -fx-background-color: violet; -fx-text-fill: black; -fx-border-color: purple; }
+
+/* Classe base para bordas das células */
+.map-cell {
+    -fx-border-color: rgba(0,0,0,0.2);
+    -fx-border-width: 0.5;
+}
+
+/* Chão Padrão */
+.map-floor {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/chao.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+.map-floor2 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/chaoqueimado.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+.map-floor3 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/chaoarea2.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+.map-floor4 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/greekfloor.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+.map-floor5 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/ChaoCap4.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+.map-floor6 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/ChaoCap42.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+.map-floor7 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/ChaoCap5.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+.map-grass1 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/grass.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+/* Parede */
+.map-wall {
+    -fx-background-color: #555555;
+    -fx-background-image: url('../textures/parede.png');
+    -fx-background-size: cover;
+}
+
+.map-wall2 {
+    -fx-background-color: #555555;
+    -fx-background-image: url('../textures/parede2.png');
+    -fx-background-size: cover;
+}
+.map-wall3 {
+    -fx-background-color: #555555;
+    -fx-background-image: url('../textures/paredeV2.png');
+    -fx-background-size: cover;
+}
+
+.map-wall4 {
+    -fx-background-color: #555555;
+    -fx-background-image: url('../textures/greekwall.png');
+    -fx-background-size: cover;
+}
+
+.map-wall5 {
+    -fx-background-color: #555555;
+    -fx-background-image: url('../textures/paredeLune.png');
+    -fx-background-size: cover;
+}
+
+.map-wall6 {
+    -fx-background-color: #555555;
+    -fx-background-image: url('../textures/NeonWall.png');
+    -fx-background-size: cover;
+}
+
+/* Fog of War */
+.map-fog {
+    -fx-background-color: #000000;
+    -fx-background-image: url('../textures/nevoa.png'); 
+    -fx-background-size: cover;
+}
+
+/* Objeto */
+.map-object-light {
+    -fx-background-color: #B8860B;
+    -fx-background-image: url('../textures/objeto.png');
+    -fx-background-size: cover;
+}
+
+/* Saída */
+.map-exit {
+    -fx-background-color: #00FF00;
+    -fx-background-image: url('../textures/porta.png');
+    -fx-background-size: cover;
+}
+
+/* carvão */
+.map-coal {
+    -fx-background-color: #1a1a1a; 
+    -fx-background-image: url('../textures/carvao.png'); 
+    -fx-background-size: cover;
+}
+
+.map-lava {
+    -fx-background-color: #cf1020; /* Vermelho sangue/fogo */
+    -fx-background-image: url('../textures/Lava.png'); 
+    -fx-background-size: cover;
+}
+
+/* Efeito de Fogo (Overlay Básico) */
+.effect-fire {
+    -fx-border-color: orangered;
+    -fx-border-width: 3;
+    -fx-effect: innershadow(gaussian, rgba(255, 69, 0, 0.6), 20, 0, 0, 0);
+}
+
+.effect-portal {
+    -fx-border-color: cyan;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    /* Efeito de brilho pulsante */
+    -fx-effect: innershadow(gaussian, rgba(0, 255, 255, 0.8), 20, 0, 0, 0);
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Carvão Aceso (Fase 2 - Visual mais intenso) */
+.map-coal-burning {
+    -fx-background-color: #330000;
+    -fx-border-color: red;
+}
+
+.enemy-hitbox-extra {
+    -fx-background-color: rgba(255, 0, 0, 0.35); /* Fundo vermelho transparente */
+    -fx-border-color: #ff0000;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+}
+
+/* --- ALCANCE DE ATAQUE --- */
+
+.ataque-alcance-melee {
+    -fx-border-color: rgba(255, 0, 0, 0.8); 
+    -fx-border-width: 2;
+    /* Efeito de preenchimento vermelho por cima da textura */
+    -fx-effect: innershadow(gaussian, rgba(255, 0, 0, 0.5), 20, 0, 0, 0);
+}
+
+.ataque-alcance-ranged {
+    -fx-border-color: rgba(255, 0, 0, 0.8); 
+    -fx-border-width: 2;
+    /* Efeito de preenchimento laranja */
+    -fx-effect: innershadow(gaussian, rgba(255, 100, 0, 0.5), 20, 0, 0, 0);
+}
+
+.ataque-alcance-aoe {
+    -fx-border-color: rgba(255, 0, 255, 0.8);
+    -fx-border-width: 2;
+    /* Efeito de preenchimento magenta */
+    -fx-effect: innershadow(gaussian, rgba(255, 0, 255, 0.5), 20, 0, 0, 0);
+}
+
+/* --- MOVIMENTO --- */
+
+.movimento-alcance {
+    -fx-border-color: rgba(100, 200, 255, 0.8);
+    -fx-border-width: 2;
+    /* Efeito de preenchimento azul */
+    -fx-effect: innershadow(gaussian, rgba(0, 150, 255, 0.4), 20, 0, 0, 0);
+}
+
+
+/* --- DOMÍNIOS E AURAS --- */
+.zona-dominio-alexei {
+    -fx-border-color: yellow;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    /* Brilho amarelo intenso */
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 0, 0.3), 15, 0.5, 0, 0);
+}
+
+.zona-dominio-lyria {
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-style: dotted;
+    /* Brilho branco/ciano */
+    -fx-effect: innershadow(gaussian, rgba(200, 255, 255, 0.3), 15, 0.5, 0, 0);
+}
+
+.zona-aura-darrell {
+    -fx-border-color: #00FF66;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    /* Brilho verde */
+    -fx-effect: innershadow(gaussian, rgba(0, 255, 100, 0.3), 15, 0.5, 0, 0);
+}
+
+
+/* --- GUARDIÃO --- */
+
+.alcance-guardiao {
+    -fx-border-color: gold;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
+    /* Brilho Dourado Forte */
+    -fx-effect: innershadow(gaussian, rgba(255, 215, 0, 0.5), 25, 0.5, 0, 0);
+}
+
+/* --- OUTROS --- */
+
+.peao-borda-aoe {
+    -fx-stroke: red;
+    -fx-stroke-width: 3;
+    -fx-fill: transparent;
+    -fx-effect: dropshadow(gaussian, red, 5, 0.0, 0, 0);
+}
+
+#mapToolbar .toggle-button {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+#mapToolbar .toggle-button:selected {
+    -fx-background-color: cyan;
+    -fx-text-fill: black;
+}

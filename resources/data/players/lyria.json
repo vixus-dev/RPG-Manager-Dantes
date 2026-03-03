@@ -1,0 +1,36 @@
+{
+  "xpAtual": 0,
+  "iniciativaBase": 16,
+  "vidaMaximaBase": 26.0,
+  "classe": "Feiticeiro",
+  "atributosBase": {
+    "SORTE": 10,
+    "INTELIGENCIA": 1,
+    "PERCEPCAO": 1,
+    "FORCA": 3,
+    "TOPOR": 7,
+    "CARISMA": 1,
+    "INSPIRACAO": 10,
+    "DESTREZA": 1,
+    "ENDURANCE": 8,
+    "SAGACIDADE": 1
+  },
+  "nome": "Lyria",
+  "pontosParaDistribuir": 0,
+  "posX": 4,
+  "posY": 5,
+  "manaAtual": 11,
+  "raca": "Elfo",
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 26.0,
+  "contadorTU": 3,
+  "nivel": 1,
+  "armaEquipada": "Catalisador Básico",
+  "inventario": {},
+  "escudoAtual": 0.0
+}

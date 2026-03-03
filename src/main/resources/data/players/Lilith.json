@@ -1,0 +1,43 @@
+{
+  "xpAtual": 1000,
+  "iniciativaBase": 28,
+  "vidaMaximaBase": 50.0,
+  "classe": "Invocador",
+  "atributosBase": {
+    "INSPIRACAO": 11,
+    "SAGACIDADE": 6,
+    "SORTE": 2,
+    "CARISMA": 7,
+    "FORCA": 6,
+    "INTELIGENCIA": 8,
+    "PERCEPCAO": 6,
+    "DESTREZA": 8,
+    "TOPOR": 5,
+    "ENDURANCE": 8
+  },
+  "nome": "Lilith",
+  "pontosParaDistribuir": 0,
+  "posX": 4,
+  "posY": 5,
+  "amuleto2": "Pingente de Cruz",
+  "amuleto1": "Anel de Rei",
+  "manaAtual": 11.0,
+  "raca": "Half-Demon",
+  "carteira": {
+    "prata": 50,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 110.0,
+  "contadorTU": 2,
+  "armaduraEquipada": "Colete Militar II",
+  "nivel": 5,
+  "armaEquipada": "Rubrum",
+  "inventario": {
+    "Colete Militar": 1,
+    "Cajado Eólico da Luxúria": 1,
+    "MoedaDeAjuda": 1
+  },
+  "escudoAtual": 0.0
+}

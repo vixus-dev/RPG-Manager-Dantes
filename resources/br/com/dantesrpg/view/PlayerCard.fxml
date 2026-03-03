@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?> 
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="90.0" prefWidth="260.0" styleClass="player-card" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.PlayerCardController">
+   <children>
+      <Polygon fx:id="hpTrack" points="95,25, 250,25, 260,43, 95,43" styleClass="bar-track"/>
+      <Polygon fx:id="mpTrack" points="95,47, 260,47, 250,65, 95,65" styleClass="bar-track"/>
+      <Polygon fx:id="passiveTrack" points="95,69, 250,69, 240,80, 95,80" styleClass="bar-track"/>
+      
+      <Polygon fx:id="contractBarPolygon" styleClass="contract-bar-fill" visible="false"/>
+      <Label fx:id="labelContractCount" text="+1" visible="false" 
+       layoutX="150.0" layoutY="25.0" 
+       style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-effect: dropshadow(gaussian, black, 2, 1.0, 0, 0);" 
+       AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="25.0"/>
+
+      <Polygon fx:id="hpBarPolygon" styleClass="hp-bar-fill"/>
+      <Polygon fx:id="mpBarPolygon" styleClass="mp-bar-fill"/>
+      <Polygon fx:id="passiveBarPolygon" styleClass="passive-bar-fill"/>
+
+      <Polygon fx:id="shieldTrack" points="95,25, 250,25, 260,43, 95,43" styleClass="shield-track"/>
+      <Polygon fx:id="shieldBarPolygon" styleClass="shield-bar-fill"/>
+      <Pane fx:id="hpBarContainer" layoutX="95.0" layoutY="25.0" prefHeight="18.0" prefWidth="160.0" mouseTransparent="true" />
+      <Polygon fx:id="diamondShape" points="60,0, 120.5,45, 60,90, 0,45" styleClass="diamond-shape"/>
+
+     <StackPane layoutX="0.0" layoutY="0.0" prefHeight="90.0" prefWidth="120.0">
+    <clip>
+        <Polygon points="60,0, 120,45, 60,90, 0,45" />
+    </clip>
+    <children>
+        <ImageView fx:id="imgPersonagem"
+                   fitWidth="120.0"
+                   fitHeight="90.0"
+                   preserveRatio="false"
+                   smooth="true"
+                   cache="true" />
+    </children>
+</StackPane>
+
+      <Label fx:id="labelNome" layoutX="100.0" layoutY="5.0" styleClass="label-name" text="Nome Personagem" AnchorPane.topAnchor="5.0"/>
+      
+      <Label fx:id="labelHPShieldText" text="100/100" styleClass="bar-text" layoutX="125.0" layoutY="28.0"/>
+      
+      <Label fx:id="labelMPText" text="50/50" styleClass="bar-text" layoutX="125.0" layoutY="50.0"/>
+      
+      <HBox fx:id="cardEffectsContainer" alignment="CENTER_LEFT" spacing="3.0" layoutX="10.0" layoutY="68.0" maxWidth="100.0" AnchorPane.leftAnchor="10.0" AnchorPane.bottomAnchor="5.0"/>
+
+   </children>
+</AnchorPane>

@@ -1,0 +1,44 @@
+{
+  "xpAtual": 128,
+  "iniciativaBase": 12,
+  "vidaMaximaBase": 17.0,
+  "classe": "Ladino",
+  "atributosBase": {
+    "INTELIGENCIA": 7,
+    "PERCEPCAO": 6,
+    "DESTREZA": 13,
+    "CARISMA": 4,
+    "TOPOR": 4,
+    "FORCA": 3,
+    "SORTE": 4,
+    "INSPIRACAO": 1,
+    "ENDURANCE": 3,
+    "SAGACIDADE": 6
+  },
+  "nome": "Ayame",
+  "pontosParaDistribuir": 0,
+  "posX": 23,
+  "posY": 12,
+  "amuleto2": "Colar de Tinta Seca",
+  "amuleto1": "Colar de Tinta Seca",
+  "manaAtual": 4.5,
+  "raca": "Vampiro",
+  "carteira": {
+    "prata": 1,
+    "ouro": 0,
+    "bronze": 100
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 27.0,
+  "contadorTU": 0,
+  "armaduraEquipada": "Armadura do Mestre",
+  "nivel": 4,
+  "armaEquipada": "Murasame",
+  "inventario": {
+    "Cranio de Esqueleto": 1,
+    "Amuleto de Bronze": 1,
+    "Botas de Placa": 1,
+    "OssoDeReparo": 1
+  },
+  "escudoAtual": 0.0
+}

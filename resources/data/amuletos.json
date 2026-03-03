@@ -1,0 +1,262 @@
+{
+  "Seixo da Absolvição": {
+    "classeItem": "Amuleto",
+    "nome": "Seixo da Absolvição",
+    "descricao": "Uma pedra perfeitamente redonda e branca, usada antigamente por jurados para votar pela inocência de uma alma. Ela emana uma frieza reconfortante.",
+    "valorMoedas": 3500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {"INSPIRACAO" : 1},
+    "modificadoresStatus": { "HP_MAXIMO": 15.0 }
+  },
+  "Broche da Balança Estagnada": {
+    "classeItem": "Amuleto",
+    "nome": "Broche da Balança Estagnada",
+    "descricao": "Um broche de ouro pálido no formato de uma balança que nunca se move, simbolizando uma justiça que parou no tempo.",
+    "valorMoedas": 4000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {"TOPOR" : 2},
+    "modificadoresStatus": { "ARMADURA_TOTAL": 20 }
+  },
+  "Pingente de Balança de Carne": {
+    "classeItem": "Amuleto",
+    "nome": "Pingente de Balança de Carne",
+    "descricao": "Um pingente de uma balança feita de carne viva, é fofo ver ele respirando",
+    "valorMoedas": 12000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 20,
+    "modificadoresDeAtributo": {"TOPOR" : 1, "ENDURANCE" : 1},
+    "modificadoresStatus": { "HP_MAXIMO": 15 }
+  },
+  "Anel de couro": {
+    "classeItem": "Amuleto",
+    "nome": "Anel de couro",
+    "descricao": "Concede vida.",
+    "valorMoedas": 5000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "HP_MAXIMO": 12.0 }
+  },
+  "Colar de Tinta Seca": {
+    "classeItem": "Amuleto",
+    "nome": "Colar de Tinta Seca",
+    "descricao": "Um pequeno frasco de vidro pendurado em uma corrente, contendo a tinta negra usada para escrever as sentenças eternas. A tinta parece se mover sozinha lá dentro.",
+    "valorMoedas": 6500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {"PERCEPCAO": 1},
+    "modificadoresStatus": { "DANO_BONUS_PERCENTUAL": 0.10 }
+  },
+  "Anel de Rei": {
+    "classeItem": "Amuleto",
+    "nome": "Anel de Rei",
+    "descricao": "Concede vida pra uma desgraça",
+    "valorMoedas": 9000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "MOVIMENTO": 1, "HP_MAXIMO": 25.0 }
+  },
+  "Anel de Prata": {
+      "classeItem": "Amuleto",
+      "nome": "Anel de Prata",
+      "descricao": "Concede vida.",
+      "valorMoedas": 2500,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 0,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": { "HP_MAXIMO": 20.0 }
+    },
+  "Amuleto de Bronze": {
+    "classeItem": "Amuleto",
+    "nome": "Amuleto de Bronze",
+    "descricao": "Estranhamente ainda não foi corroido?",
+    "valorMoedas": 2500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "HP_MAXIMO": 10.0 }
+  },
+  "Amuleto de Ferro": {
+    "classeItem": "Amuleto",
+    "nome": "Amuleto de Ferro",
+    "descricao": "Duro como metal solido!",
+    "valorMoedas": 5000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "HP_MAXIMO": 10.0, "REDUCAO_DANO_MODIFICADOR": 0.025 }
+  },
+  "Botas da Velocidade": {
+    "classeItem": "Amuleto",
+    "nome": "Botas da Velocidade",
+    "descricao": "Corra mais rápido do que antes!",
+    "valorMoedas": 1250,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "MOVIMENTO": 2 }
+  },
+  "Botas de Placa": {
+    "classeItem": "Amuleto",
+    "nome": "Botas de Placa",
+    "descricao": "igual sexo, com proteção da pra sentir menos:(",
+    "valorMoedas": 4500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 10,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "MOVIMENTO": 1, "REDUCAO_DANO_MODIFICADOR": 0.05 }
+  },
+  "Botas de Berseker": {
+    "classeItem": "Amuleto",
+    "nome": "Botas de Berseker",
+    "descricao": "Corra mais rápido do que antes com mais raiva!",
+    "valorMoedas": 2500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "MOVIMENTO": 1, "DANO_BONUS_PERCENTUAL": 0.05 }
+  },
+  "Pingente de Prata": {
+    "classeItem": "Amuleto",
+    "nome": "Pingente de Prata",
+    "descricao": "Um pingente curioso, ao colocar contra a luz ele brilha bastante.",
+    "valorMoedas": 1000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "RESISTENCIA_DOT": 5.0, "HP_MAXIMO": 10 }
+  },
+  "Pingente de Cruz": {
+    "classeItem": "Amuleto",
+    "nome": "Pingente de Cruz",
+    "descricao": "Um pingente em formato de cruz, traz memórias.",
+    "valorMoedas": 1500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 5,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "MP_MAXIMO": 1.0 }
+  },
+  "Cranio de Esqueleto": {
+    "classeItem": "Amuleto",
+    "nome": "Cranio de Esqueleto",
+    "descricao": "Um simples Cranio de esqueleto, esperava o que?",
+    "valorMoedas": 1000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 10,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {}
+  },
+  "Placa de Metal": {
+    "classeItem": "Amuleto",
+    "nome": "Placa de Metal",
+    "descricao": "Uma placa de metal, aparentemente serve como uma especie de carapaça",
+    "valorMoedas": 2000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 10,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": { "HP_MAXIMO": 12.0, "REDUCAO_DANO_MODIFICADOR": 0.025 }
+  },
+  "Cranio de esqueleto shiny": {
+      "classeItem": "Amuleto",
+      "nome": "Cranio de esqueleto shiny",
+      "descricao": "Um simples Cranio de esqueleto? espera por que é dourado?",
+      "valorMoedas": 2000,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 20,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": { "MOVIMENTO": 1, "HP_MAXIMO": 10.0}
+    },
+    "Amuleto do Prazer Contido": {
+      "classeItem": "Amuleto",
+      "nome": "Amuleto do Prazer Contido",
+      "descricao": "Um amuleto com um simbolo parecido com o do caça fantasmas, mas com os dois generos no lugar do fantasma",
+      "valorMoedas": 6000,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 20,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": {"HP_MAXIMO": 10.0}
+    },
+    "Colar dos Ventos Incansáveis": {
+      "classeItem": "Amuleto",
+      "nome": "Colar dos Ventos Incansáveis",
+      "descricao": "Um colar com um simbolo de infinito, é possivel sentir uma brisa saindo desse simbolo",
+      "valorMoedas": 11000,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 0,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": {"MOVIMENTO": 2.0, "DANO_BONUS_PERCENTUAL" : 0.075}
+    },
+    "Pingente do Olhar Desejado": {
+      "classeItem": "Amuleto",
+      "nome": "Pingente do Olhar Desejado",
+      "descricao": "Um pingente com um olho estranhamente atraente",
+      "valorMoedas": 9500,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 0,
+      "modificadoresDeAtributo": {"CARISMA" : 2},
+      "modificadoresStatus": {"HP_MAXIMO": 20.0, "MP_MAXIMO" : -2}
+    },
+    "Pingente de Coração": {
+      "classeItem": "Amuleto",
+      "nome": "Pingente de Coração",
+      "descricao": "o nome é autoexplicativo parça, se tu n sabe se mata",
+      "valorMoedas": 9500,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 0,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": {"MOVIMENTO": 1.0, "HP_MAXIMO" : 20}
+    },
+    "Pingente de Coração SHINY": {
+      "classeItem": "Amuleto",
+      "nome": "Pingente de Coração SHINY",
+      "descricao": "Um pingente com o formato de coração. emana um brilho azulado",
+      "valorMoedas": 11500,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 0,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": {"MOVIMENTO": 2.0, "HP_MAXIMO" : 20, "DANO_BONUS_PERCENTUAL" : 0.05}
+    },
+    "Amuleto de Julius Cesarianus": {
+      "classeItem": "Amuleto",
+      "nome": "Amuleto de Julius Cesarianus",
+      "descricao": "Um pingente com uma foto de julius cesarianus com seu pai e sua mãe",
+      "valorMoedas": 12500,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 20,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": {"MOVIMENTO": 1.0, "HP_MAXIMO" : 25, "DANO_BONUS_PERCENTUAL" : 0.075}
+    },
+    "Medalhão da Promessa": {
+      "classeItem": "Amuleto",
+      "nome": "Medalhão da Promessa",
+      "descricao": "Um medalhão com uma promessa escrita dentro. é incompreensivel o final da mensagem",
+      "valorMoedas": 9000,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 10,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": {"RESISTENCIA_DOT": 7.5, "MP_MAXIMO" : -1}
+    },
+    "Medalhão da Promessa SHINY": {
+      "classeItem": "Amuleto",
+      "nome": "Medalhão da Promessa SHINY",
+      "descricao": "Ainda vamos se encontrar novamente Irmãozão, eu prometo, ass - ████",
+      "valorMoedas": 14500,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 20,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": {"RESISTENCIA_DOT": 15, "MP_MAXIMO" : -1, "DANO_BONUS_PERCENTUAL": 0.10}
+    },
+    "Amuleto de Crânio do Mustaine": {
+      "classeItem": "Amuleto",
+      "nome": "Amuleto de Crânio do Mustaine",
+      "descricao": "Um cranio de um gato heroico. ter ele por perto aquece seu coração",
+      "valorMoedas": 100000,
+      "tipoMoeda": "BRONZE",
+      "armaduraBonus": 0,
+      "modificadoresDeAtributo": {},
+      "modificadoresStatus": {"DANO_BONUS_PERCENTUAL": 0.25, "HP_MAXIMO" : 50, "REDUCAO_DANO_MODIFICADOR" : 0.15}
+    }
+}

@@ -1,0 +1,42 @@
+{
+  "xpAtual": 0,
+  "iniciativaBase": 10,
+  "vidaMaximaBase": 75.0,
+  "classe": "Pugilista",
+  "atributosBase": {
+    "INSPIRACAO": 3,
+    "INTELIGENCIA": 4,
+    "DESTREZA": 8,
+    "ENDURANCE": 13,
+    "SAGACIDADE": 2,
+    "PERCEPCAO": 4,
+    "SORTE": 1,
+    "FORCA": 10,
+    "CARISMA": 5,
+    "TOPOR": 8
+  },
+  "nome": "Julius Cesarius",
+  "pontosParaDistribuir": 0,
+  "posX": 4,
+  "posY": 7,
+  "amuleto2": "Amuleto de Julius Cesarianus",
+  "amuleto1": "Amuleto de Julius Cesarianus",
+  "manaAtual": 3.5,
+  "raca": "Half-Angel",
+  "carteira": {
+    "prata": 85,
+    "ouro": 100,
+    "bronze": 7819
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 150.0,
+  "contadorTU": 5,
+  "armaduraEquipada": "Couraça de Ossos Reforçados",
+  "nivel": 5,
+  "armaEquipada": "Lança Cesariana",
+  "inventario": {
+    "PocaoDeCuraMédia": 1,
+    "PocaoDeCuraGrande": 2
+  },
+  "escudoAtual": 0.0
+}

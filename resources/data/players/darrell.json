@@ -1,0 +1,39 @@
+{
+  "xpAtual": 0,
+  "iniciativaBase": 16,
+  "vidaMaximaBase": 11.0,
+  "classe": "Ilusionista",
+  "atributosBase": {
+    "SORTE": 1,
+    "INTELIGENCIA": 7,
+    "PERCEPCAO": 5,
+    "FORCA": 1,
+    "TOPOR": 1,
+    "CARISMA": 9,
+    "INSPIRACAO": 10,
+    "DESTREZA": 9,
+    "ENDURANCE": 1,
+    "SAGACIDADE": 1
+  },
+  "nome": "Darrell",
+  "pontosParaDistribuir": 0,
+  "posX": 6,
+  "posY": 6,
+  "manaAtual": 11,
+  "raca": "Anjo-Caido",
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 400
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 11.0,
+  "contadorTU": 0,
+  "nivel": 1,
+  "armaEquipada": "Pistola de Duelo",
+  "inventario": {
+    "PocaoDeCuraPequena": 1,
+    "PocaoDeManaPequena": 1
+  },
+  "escudoAtual": 0.0
+}

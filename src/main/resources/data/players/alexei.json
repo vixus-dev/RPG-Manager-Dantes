@@ -1,0 +1,51 @@
+{
+  "xpAtual": 1351,
+  "iniciativaBase": 22,
+  "vidaMaximaBase": 74.0,
+  "classe": "Pugilista",
+  "atributosBase": {
+    "INSPIRACAO": 2,
+    "SAGACIDADE": 2,
+    "SORTE": 2,
+    "CARISMA": 3,
+    "FORCA": 16,
+    "INTELIGENCIA": 2,
+    "PERCEPCAO": 8,
+    "DESTREZA": 10,
+    "TOPOR": 4,
+    "ENDURANCE": 8
+  },
+  "nome": "Alexei",
+  "pontosParaDistribuir": 0,
+  "posX": 4,
+  "posY": 4,
+  "amuleto2": "Colar de Tinta Seca",
+  "amuleto1": "Medalhão da Promessa SHINY",
+  "manaAtual": 6.0,
+  "raca": "Humano",
+  "carteira": {
+    "prata": 8,
+    "ouro": 0,
+    "bronze": 99
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 74.0,
+  "contadorTU": 3,
+  "armaduraEquipada": "Peitoral da Guarda de Marfim",
+  "nivel": 6,
+  "armaEquipada": "Espada GPC",
+  "inventario": {
+    "Cranio de esqueleto shiny": 1,
+    "Amuleto de Ferro": 1,
+    "Colar de Tinta Seca": 1,
+    "OssoDeReparo": 1,
+    "PocaoDeCuraGrande": 8,
+    "Punho Infinito": 1,
+    "Lança": 1
+  },
+  "escudoAtual": 0.0,
+  "racaData": {
+    "vidaNegativaAcumulada": 0.0,
+    "filaContratos": []
+  }
+}

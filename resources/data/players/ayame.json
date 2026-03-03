@@ -1,0 +1,38 @@
+{
+  "xpAtual": 0,
+  "iniciativaBase": 15,
+  "vidaMaximaBase": 17.0,
+  "classe": "Ladino",
+  "atributosBase": {
+    "SORTE": 4,
+    "INTELIGENCIA": 7,
+    "PERCEPCAO": 6,
+    "FORCA": 3,
+    "TOPOR": 4,
+    "CARISMA": 4,
+    "INSPIRACAO": 1,
+    "DESTREZA": 7,
+    "ENDURANCE": 3,
+    "SAGACIDADE": 6
+  },
+  "nome": "Ayame",
+  "pontosParaDistribuir": 0,
+  "posX": 5,
+  "posY": 6,
+  "manaAtual": 6,
+  "raca": "Vampiro",
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 17.0,
+  "contadorTU": 1,
+  "nivel": 1,
+  "armaEquipada": "Murasame",
+  "inventario": {
+    "OssoDeReparo": 1
+  },
+  "escudoAtual": 0.0
+}
