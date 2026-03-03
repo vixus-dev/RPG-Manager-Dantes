@@ -1,4 +1,4 @@
-# 🔥 RPG Manager: "A Decandencia"
+# 🔥 RPG Manager: "A Decadencia"
 
 > *"BE GONE"*  
 > — Sisyphus prime
