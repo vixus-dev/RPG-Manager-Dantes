@@ -36,7 +36,12 @@ public class SwordOfHope extends Habilidade {
 
 		int inspiracao = conjurador.getAtributosFinais().getOrDefault(Atributo.INSPIRACAO, 0);
 		Arma arma = conjurador.getArmaEquipada();
-		int danoBaseArma = (arma != null) ? arma.getDanoBase() : 1;
+		double danoBaseArma = (arma != null) ? arma.getDanoBase() : 1;
+		if (arma != null && conjurador.getRaca() != null) {
+			Personagem alvoReferencia = alvos.isEmpty() ? null : alvos.get(0);
+			danoBaseArma *= conjurador.getRaca().getMultiplicadorBonusDanoArma(conjurador, arma, alvoReferencia,
+					estado, null);
+		}
 
 		double danoCalculado = (danoBaseArma + (inspiracao * 2)) * 4.0;
 

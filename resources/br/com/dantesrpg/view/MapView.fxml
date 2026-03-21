@@ -26,16 +26,17 @@
                 <Separator orientation="VERTICAL" />
                 <Button text="Bestiário (Spawn)" onAction="#onBestiarioClick" style="-fx-background-color: #552222; -fx-text-fill: white;"/>
                 <Separator orientation="VERTICAL" />
-                <Label style="-fx-text-fill: gray;" text="Ação:" />
-                <ToggleButton fx:id="toggleMover" text="Mover">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="selectionToggleGroup" />
-                    </toggleGroup>
-                </ToggleButton>
-                <ToggleButton fx:id="toggleMirar" selected="true" text="Mirar" toggleGroup="$selectionToggleGroup" />
-            </items>
-        </ToolBar>
-    </top>
+                 <Label style="-fx-text-fill: gray;" text="Ação:" />
+                 <ToggleButton fx:id="toggleMover" text="Mover">
+                     <toggleGroup>
+                         <ToggleGroup fx:id="selectionToggleGroup" />
+                     </toggleGroup>
+                 </ToggleButton>
+                 <ToggleButton fx:id="toggleMirar" selected="true" text="Mirar" toggleGroup="$selectionToggleGroup" />
+                 <Button fx:id="btnPularSquad" managed="false" onAction="#onPularSquadClick" style="-fx-background-color: #7a4b00; -fx-text-fill: white;" text="Encerrar Fila de Clones" visible="false" />
+             </items>
+         </ToolBar>
+     </top>
 
     <center>
         <ScrollPane fx:id="mapScrollPane" pannable="true" style="-fx-background-color: #222222;">

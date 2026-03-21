@@ -272,8 +272,8 @@ public class DamageResolutionController {
 					if (evento.getLabel().contains("Eco"))
 						tipo = TipoAcao.ECO;
 
-					mainController.getCombatManager().aplicarDanoAoAlvo(atacante, alvo, danoFinal, false, tipo, estado,
-							0);
+					mainController.getCombatManager().aplicarDanoAoAlvoResolvido(atacante, alvo, danoFinal, false,
+							tipo, estado, 0);
 				} else {
 					System.out.println(">>> Dano anulado (Esquiva/Bloqueio total). Efeitos on-hit cancelados.");
 				}

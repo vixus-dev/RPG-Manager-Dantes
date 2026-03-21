@@ -70,6 +70,8 @@ public class EffectFactory {
 		if (presets.containsKey(nomePreset)) {
 			Efeito e = presets.get(nomePreset).create(duracao, valorAuxiliar);
 			if (e.getNome().equals("Buff Manual")) {
+				return new Efeito(nomePreset, e.getTipo(), e.getDuracaoTUInicial(), e.getModificadores(),
+						e.getDanoPorTick(), e.getIntervaloTickTU());
 			}
 			return e;
 		}

@@ -229,4 +229,32 @@ public abstract class Arma extends Item {
 		return tamanhoArea;
 	}
 
+	public boolean hasAtaqueAlternativoBasico() {
+		return isRequerMunicao();
+	}
+
+	public String getNomeAtaqueAlternativoBasico() {
+		return "Coronhada";
+	}
+
+	public String getDescricaoAtaqueAlternativoBasico() {
+		return "0.5x Dano, alcance 1";
+	}
+
+	public double getMultiplicadorAtaqueAlternativoBasico() {
+		return 0.50;
+	}
+
+	public int getAlcanceAtaqueAlternativoBasico() {
+		return 1;
+	}
+
+	public TipoAlvo getTipoAlvoAtaqueAlternativoBasico() {
+		return TipoAlvo.INDIVIDUAL;
+	}
+
+	public int getAnguloAtaqueAlternativoBasico() {
+		return getAnguloCone();
+	}
+
 }

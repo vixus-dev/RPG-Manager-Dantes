@@ -1,0 +1,40 @@
+{
+  "xpAtual": 245,
+  "iniciativaBase": 20,
+  "vidaMaximaBase": 50.0,
+  "classe": "Barbaro",
+  "atributosBase": {
+    "SAGACIDADE": 7,
+    "INTELIGENCIA": 1,
+    "PERCEPCAO": 3,
+    "FORCA": 10,
+    "SORTE": 1,
+    "TOPOR": 4,
+    "ENDURANCE": 10,
+    "CARISMA": 1,
+    "DESTREZA": 7,
+    "INSPIRACAO": 1
+  },
+  "nome": "Arkos",
+  "pontosParaDistribuir": 0,
+  "posX": 5,
+  "posY": 5,
+  "amuleto2": "",
+  "amuleto1": "",
+  "manaAtual": 4.0,
+  "raca": "Anao",
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 112.5,
+  "contadorTU": 3,
+  "armaduraEquipada": "",
+  "nivel": 6,
+  "armaEquipada": "Laminas Do Exterminio",
+  "inventario": {
+  },
+  "escudoAtual": 0.0
+}

@@ -5,12 +5,12 @@ import java.util.List;
 
 public abstract class FantasmaNobre {
 
-	// Para a UI (Botão e Tooltip)
+	// Para a UI (BotÃ£o e Tooltip)
 	public abstract String getNome();
 
 	public abstract String getDescricao();
 
-	// Para a Lógica de Ativação (Custos)
+	// Para a LÃ³gica de AtivaÃ§Ã£o (Custos)
 	public abstract int getCustoMana();
 
 	public abstract int getCustoTU();
@@ -29,12 +29,33 @@ public abstract class FantasmaNobre {
 	/**
 	 * Se TipoAlvo.MULTIPLOS, define quantos alvos pode selecionar.
 	 * 
-	 * @return O número de alvos.
+	 * @return O nÃºmero de alvos.
 	 */
 	public abstract int getNumeroDeAlvos();
 
 	public List<String> getOpcoesSelection() {
-		return null; // Padrão: sem opções
+		return null; // PadrÃ£o: sem opÃ§Ãµes
+	}
+
+	public boolean podeExecutar(Personagem conjurador) {
+		return getMotivoBloqueio(conjurador) == null;
+	}
+
+	public String getMotivoBloqueio(Personagem conjurador) {
+		return null;
+	}
+
+	public void onCombatStart(Personagem conjurador, EstadoCombate estado, CombatManager manager) {
+	}
+
+	public void onTurnStart(Personagem conjurador, EstadoCombate estado, CombatManager manager) {
+	}
+
+	public void onDamageDealt(Personagem conjurador, Personagem alvo, double danoCausado, EstadoCombate estado,
+			CombatManager manager) {
+	}
+
+	public void onCriticalHit(Personagem conjurador, Personagem alvo, EstadoCombate estado, CombatManager manager) {
 	}
 
 	public abstract void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado,

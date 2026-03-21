@@ -36,6 +36,11 @@ public class DoubleDown extends Habilidade {
 		// Causa Dano Direto (Impacto)
 		Arma arma = conjurador.getArmaEquipada();
 		double danoArma = (arma != null) ? arma.getDanoBase() : 10;
+		if (arma != null && conjurador.getRaca() != null) {
+			Personagem alvoReferencia = alvos.isEmpty() ? null : alvos.get(0);
+			danoArma *= conjurador.getRaca().getMultiplicadorBonusDanoArma(conjurador, arma, alvoReferencia, estado,
+					null);
+		}
 		double danoFinal = danoArma * getMultiplicadorDeDano();
 
 		for (Personagem alvo : alvos) {

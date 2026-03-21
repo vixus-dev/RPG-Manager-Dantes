@@ -35,11 +35,7 @@ public class TrocaIlusoria extends Habilidade {
 
 		// Mata o clone (Dano massivo direto ou setVida 0)
 		sacrificio.setVidaAtual(0, estado, manager.getController());
-		conjurador.removerCloneMorto(sacrificio);
-
-		// Aplica Stealth
-		Efeito stealth = new Efeito("Stealth", TipoEfeito.BUFF, 9999, Map.of(), 0, 0);
-		conjurador.adicionarEfeito(stealth);
+		manager.processarMorteClone(sacrificio, estado);
 
 		// Cura (10% HP Max + 1% por ponto de PE)
 		int percepcao = (int) ((conjurador.getVidaMaxima() * 0.01)

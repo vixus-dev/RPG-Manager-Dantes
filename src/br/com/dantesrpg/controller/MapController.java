@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -63,6 +64,8 @@ public class MapController {
 	private ToggleButton btnMovimentoLivre;
 	@FXML
 	private ToggleButton btnEditorMapa;
+	@FXML
+	private Button btnPularSquad;
 
 	private CombatController mainController;
 
@@ -431,6 +434,10 @@ public class MapController {
 
 		// MODO MOVER
 		if (toggleMover.isSelected()) {
+			if (atorAtual.getRaca() != null && !atorAtual.getRaca().podeSeMover(atorAtual)) {
+				System.out.println("MAPA: " + atorAtual.getNome() + " nao pode se mover enquanto estiver em postura.");
+				return;
+			}
 			if (celulasAlcanceMovimento.contains(cell)) {
 				// Prioridade: Saída
 				if (cell.getStyleClass().contains("map-exit")) {
@@ -635,6 +642,20 @@ public class MapController {
 		} else {
 			System.out.println("MAPA: Modo Mirar (Squad/Normal).");
 			calcularEExibirAtaqueRange(atorAtual, habilidadeAtual);
+		}
+	}
+
+	private void atualizarBotaoPularSquad() {
+		if (btnPularSquad == null)
+			return;
+
+		boolean mostrar = modoSquad && !filaClonesSquad.isEmpty();
+		btnPularSquad.setVisible(mostrar);
+		btnPularSquad.setManaged(mostrar);
+		btnPularSquad.setDisable(!mostrar);
+
+		if (mostrar) {
+			btnPularSquad.setText("Encerrar Fila de Clones (" + filaClonesSquad.size() + ")");
 		}
 	}
 
@@ -1447,6 +1468,12 @@ public class MapController {
 
 	private void calcularEExibirMovimento(Personagem ator) {
 		limparDestaquesAlcance();
+		if (ator == null)
+			return;
+		if (ator.getRaca() != null && !ator.getRaca().podeSeMover(ator)) {
+			System.out.println("DEBUG: Movimento bloqueado por postura de " + ator.getNome() + ".");
+			return;
+		}
 		int startX = ator.getPosX();
 		int startY = ator.getPosY();
 		int maxDist = ator.getMovimentoRestanteTurno();
@@ -1675,9 +1702,7 @@ public class MapController {
 				if (!alvoValido)
 					continue;
 
-				if (p.getPosX() >= 0 && p.getPosX() < gridLargura && p.getPosY() >= 0 && p.getPosY() < gridAltura) {
-					Pane celulaDoPeao = celulasDoGrid[p.getPosX()][p.getPosY()];
-					if (celulasDaForma.contains(celulaDoPeao)) {
+				if (personagemIntersecaForma(p, celulasDaForma)) {
 						boolean isAliado = p.getFaccao().equals(ator.getFaccao());
 						if (p == ator && !habilidade.afetaSiMesmo())
 							continue;
@@ -1692,11 +1717,28 @@ public class MapController {
 							}
 						}
 						alvosEncontrados.add(p);
-					}
 				}
 			}
 		}
 		return alvosEncontrados;
+	}
+
+	private boolean personagemIntersecaForma(Personagem personagem, Set<Pane> celulasDaForma) {
+		if (personagem == null || celulasDaForma == null || celulasDaForma.isEmpty())
+			return false;
+
+		for (int y = personagem.getPosY(); y < personagem.getPosY() + personagem.getTamanhoY(); y++) {
+			for (int x = personagem.getPosX(); x < personagem.getPosX() + personagem.getTamanhoX(); x++) {
+				if (!dentroDoGrid(x, y))
+					continue;
+
+				if (celulasDaForma.contains(celulasDoGrid[x][y])) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public void sairModoSelecao() {
@@ -1715,6 +1757,8 @@ public class MapController {
 		if (mapGrid.getScene() != null) {
 			mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
 		}
+
+		atualizarBotaoPularSquad();
 	}
 
 	public void toggleModoMovimentoLivre() {
@@ -1959,17 +2003,27 @@ public class MapController {
 
 	public void iniciarSelecaoSquad(List<Personagem> clones, Habilidade habilidade, int rolagem) {
 		this.modoSquad = true;
+		this.modoSelecaoAlvo = true;
 		this.habilidadeAtual = habilidade;
 		this.rolagemSquadGlobal = rolagem;
 		this.filaClonesSquad.clear();
 		this.ataquesDeclaradosSquad.clear();
 		this.filaClonesSquad.addAll(clones);
+		atualizarBotaoPularSquad();
 
 		// Inicia o primeiro
 		prepararProximoCloneSquad();
 	}
 
 	private void prepararProximoCloneSquad() {
+		while (!filaClonesSquad.isEmpty()) {
+			Personagem proximo = filaClonesSquad.peek();
+			if (proximo != null && proximo.isAtivoNoCombate()) {
+				break;
+			}
+			filaClonesSquad.poll();
+		}
+
 		if (filaClonesSquad.isEmpty()) {
 			finalizarSquad();
 			return;
@@ -1979,16 +2033,32 @@ public class MapController {
 		this.atorAtual = filaClonesSquad.peek();
 
 		System.out.println("MAPA (SQUAD): Vez de " + atorAtual.getNome());
+		atualizarBotaoPularSquad();
+		prepararMiraParaCloneAtual();
+	}
 
-		toggleMover.setSelected(true);
-		toggleMirar.setSelected(false);
+	private void prepararMiraParaCloneAtual() {
+		if (atorAtual == null)
+			return;
+
+		this.modoSelecaoAlvo = true;
+		toggleMover.setSelected(false);
+		toggleMirar.setSelected(true);
 
 		limparCanvas();
 		limparDestaquesAlcance();
-		calcularEExibirMovimento(atorAtual);
+		calcularEExibirAtaqueRange(atorAtual, habilidadeAtual);
+
+		if (mapGrid.getScene() != null) {
+			mapGrid.getScene().setCursor(javafx.scene.Cursor.CROSSHAIR);
+		}
 	}
 
 	private void tratarCliqueSquad(Pane cell, int x, int y) {
+		if (toggleMover.isSelected() && atorAtual.getRaca() != null && !atorAtual.getRaca().podeSeMover(atorAtual)) {
+			System.out.println("SQUAD: " + atorAtual.getNome() + " nao pode se mover enquanto estiver em postura.");
+			return;
+		}
 		// CLONE ATUAL: atorAtual
 
 		// --- LÓGICA DE MOVIMENTO (Se toggleMover estiver ativo) ---
@@ -2044,9 +2114,21 @@ public class MapController {
 	}
 
 	private void finalizarSquad() {
+		Map<Personagem, Personagem> ataquesFinalizados = new HashMap<>(ataquesDeclaradosSquad);
 		this.modoSquad = false;
+		this.filaClonesSquad.clear();
+		atualizarBotaoPularSquad();
 		sairModoSelecao();
-		mainController.retornarDoSquadComAlvos(ataquesDeclaradosSquad);
+		mainController.retornarDoSquadComAlvos(ataquesFinalizados);
+	}
+
+	@FXML
+	private void onPularSquadClick() {
+		if (!modoSquad)
+			return;
+
+		System.out.println("SQUAD: Seleção encerrada manualmente. Clones restantes serão pulados.");
+		finalizarSquad();
 	}
 
 	public javafx.util.Pair<Integer, Integer> encontrarCelulaLivreMaisProxima(int centroX, int centroY) {

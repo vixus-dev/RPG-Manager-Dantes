@@ -170,7 +170,7 @@ public class DetailedTurnHUDController {
 			// --- REGRA DO CLONE ---
 			// Apenas a última habilidade usada pelo criador
 			Habilidade ultimaHab = atorAtual.getCriador().getUltimaHabilidadeUsada();
-			if (ultimaHab != null) {
+			if (ultimaHab != null && mainController.getCombatManager().habilidadePodeSerCopiadaPorClone(ultimaHab)) {
 				habilidadesParaMostrar.add(ultimaHab);
 			}
 		} else {
@@ -214,7 +214,21 @@ public class DetailedTurnHUDController {
 
 				if (atorAtual.getEfeitosAtivos().containsKey("CD:" + fn.getNome())) {
 					btnFN.setDisable(true);
-					btnFN.setText(fn.getNome() + " (Recarga)");
+					btnFN.setText("FN: " + fn.getNome() + "\n(Recarga)");
+					btnFN.setTooltip(new Tooltip("Fantasma nobre em recarga."));
+				} else if (atorAtual.getManaAtual() < fn.getCustoMana()) {
+					btnFN.setDisable(true);
+					btnFN.setText("FN: " + fn.getNome() + "\n(Sem Mana)");
+					btnFN.setTooltip(new Tooltip("Mana insuficiente."));
+					btnFN.setStyle(btnFN.getStyle() + " -fx-opacity: 0.5;");
+				} else {
+					String motivoBloqueioFn = fn.getMotivoBloqueio(atorAtual);
+					if (motivoBloqueioFn != null) {
+						btnFN.setDisable(true);
+						btnFN.setText("FN: " + fn.getNome() + "\n(Indisponivel)");
+						btnFN.setTooltip(new Tooltip(motivoBloqueioFn));
+						btnFN.setStyle(btnFN.getStyle() + " -fx-opacity: 0.5;");
+					}
 				}
 
 				btnFN.setOnAction(e -> {
@@ -433,9 +447,14 @@ public class DetailedTurnHUDController {
 
 	private void configurarOpcoesArma() {
 		Arma arma = atorAtual.getArmaEquipada();
+		boolean temAtaqueAlternativo = arma != null && arma.hasAtaqueAlternativoBasico();
 
 		// usando instanceof ou checa a classe
 		boolean isRanged = (arma instanceof br.com.dantesrpg.model.ArmaRanged);
+		this.isModoCoronhadaSelecionado = false;
+		btnCoronhada.setText((arma != null) ? arma.getNomeAtaqueAlternativoBasico() : "Coronhada");
+		btnCoronhada.setStyle("");
+		lblActionDesc.setStyle("");
 
 		if (isRanged) {
 			// É Ranged
@@ -445,8 +464,8 @@ public class DetailedTurnHUDController {
 			toggleNormal.setManaged(true);
 			toggleForte.setVisible(true);
 			toggleForte.setManaged(true);
-			btnCoronhada.setVisible(true);
-			btnCoronhada.setManaged(true);
+			btnCoronhada.setVisible(temAtaqueAlternativo);
+			btnCoronhada.setManaged(temAtaqueAlternativo);
 
 			// Atualiza descrição com Munição
 			lblActionDesc.setText(
@@ -479,20 +498,18 @@ public class DetailedTurnHUDController {
 			if (arma.getMunicaoAtual() <= 0) {
 				toggleNormal.setDisable(true);
 				toggleForte.setDisable(true);
-				btnCoronhada.fire(); // Auto-seleciona coronhada ou avisa
+				if (temAtaqueAlternativo) {
+					btnCoronhada.fire();
+				}
 			} else {
 				toggleNormal.setDisable(false);
 				toggleForte.setDisable(false);
 			}
 			btnCoronhada.setOnAction(e -> {
-				// Seleciona modo Coronhada visualmente
-				toggleNormal.setSelected(false);
-				toggleForte.setSelected(false);
-
-				lblInfoModo.setText("Coronhada: 0.5x Dano, Melee");
 				btnCoronhada.setStyle("-fx-base: #AA5500; -fx-border-color: white;");
-
 				this.isModoCoronhadaSelecionado = true;
+				atualizarTextoModo();
+				atualizarEstimativaDano();
 			});
 
 			// Reset do estado coronhada se clicar nos outros
@@ -500,11 +517,13 @@ public class DetailedTurnHUDController {
 				this.isModoCoronhadaSelecionado = false;
 				btnCoronhada.setStyle("");
 				atualizarTextoModo();
+				atualizarEstimativaDano();
 			});
 			toggleForte.setOnAction(e -> {
 				this.isModoCoronhadaSelecionado = false;
 				btnCoronhada.setStyle("");
 				atualizarTextoModo();
+				atualizarEstimativaDano();
 			});
 		} else {
 			// É Melee
@@ -514,11 +533,40 @@ public class DetailedTurnHUDController {
 			toggleNormal.setManaged(true);
 			toggleForte.setVisible(true);
 			toggleForte.setManaged(true);
-			btnCoronhada.setVisible(false);
-			btnCoronhada.setManaged(false);
+			btnCoronhada.setVisible(temAtaqueAlternativo);
+			btnCoronhada.setManaged(temAtaqueAlternativo);
 			boxRajada.setVisible(false);
 			boxRajada.setManaged(false);
+			lblActionDesc.setText(arma != null ? arma.getDescricao() : "Ataque com a arma equipada.");
+			toggleNormal.setDisable(false);
+			toggleForte.setDisable(false);
+			toggleFraco.setDisable(false);
 		}
+
+		toggleFraco.setOnAction(e -> {
+			this.isModoCoronhadaSelecionado = false;
+			btnCoronhada.setStyle("");
+			atualizarTextoModo();
+			atualizarEstimativaDano();
+		});
+		toggleNormal.setOnAction(e -> {
+			this.isModoCoronhadaSelecionado = false;
+			btnCoronhada.setStyle("");
+			atualizarTextoModo();
+			atualizarEstimativaDano();
+		});
+		toggleForte.setOnAction(e -> {
+			this.isModoCoronhadaSelecionado = false;
+			btnCoronhada.setStyle("");
+			atualizarTextoModo();
+			atualizarEstimativaDano();
+		});
+		btnCoronhada.setOnAction(e -> {
+			this.isModoCoronhadaSelecionado = true;
+			btnCoronhada.setStyle("-fx-base: #AA5500; -fx-border-color: white;");
+			atualizarTextoModo();
+			atualizarEstimativaDano();
+		});
 
 		toggleNormal.setSelected(true);
 
@@ -727,8 +775,44 @@ public class DetailedTurnHUDController {
 		diceInputsBox.getChildren().addAll(lbl, tf);
 	}
 
+	private int obterRolagemAtributoAtual() {
+		if (inputDadoAtributo == null || inputDadoAtributo.getText().isEmpty())
+			return 0;
+
+		try {
+			return Integer.parseInt(inputDadoAtributo.getText());
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	private ModoAtaque obterModoAtaqueAtual() {
+		if (!isAtaqueBasico)
+			return ModoAtaque.NORMAL;
+
+		if (this.isModoCoronhadaSelecionado)
+			return ModoAtaque.CORONHADA;
+		if (toggleFraco.isSelected())
+			return ModoAtaque.FRACO;
+		if (toggleForte.isSelected())
+			return ModoAtaque.FORTE;
+		return ModoAtaque.NORMAL;
+	}
+
+	private int obterTirosExtrasAtuais() {
+		if (!isAtaqueBasico || !boxRajada.isVisible())
+			return 0;
+
+		return (int) sliderRajada.getValue();
+	}
+
 	@FXML
 	private void onConfirmarAcaoClick() {
+		if (atorAtual != null && atorAtual.isClone() && habilidadeSelecionada != null && !verificaSePrecisaAlvo()) {
+			mainController.executarAcaoClonesSemAlvo(habilidadeSelecionada, obterRolagemAtributoAtual());
+			return;
+		}
+
 		// Coleta dados
 		AcaoMestreInput input;
 		if (fantasmaNobreSelecionado != null) {
@@ -812,9 +896,12 @@ public class DetailedTurnHUDController {
 		// O ideal é passar o 'input' simulado para o manager, mas para simplificar aqui:
 		double modVisual = 1.0;
 		if (isAtaqueBasico) {
-			if (toggleFraco.isSelected())
+			Arma arma = atorAtual != null ? atorAtual.getArmaEquipada() : null;
+			if (this.isModoCoronhadaSelecionado && arma != null)
+				modVisual = arma.getMultiplicadorAtaqueAlternativoBasico();
+			else if (toggleFraco.isSelected())
 				modVisual = 0.75;
-			if (toggleForte.isSelected())
+			else if (toggleForte.isSelected())
 				modVisual = 1.25;
 			// Rajada é complexa de estimar aqui, mostra apenas o base (puta preguiça prç)
 		}
@@ -823,7 +910,11 @@ public class DetailedTurnHUDController {
 	}
 
 	private void atualizarTextoModo() {
-		if (toggleFraco.isSelected())
+		Arma arma = atorAtual != null ? atorAtual.getArmaEquipada() : null;
+		if (this.isModoCoronhadaSelecionado && arma != null)
+			lblInfoModo
+					.setText(arma.getNomeAtaqueAlternativoBasico() + ": " + arma.getDescricaoAtaqueAlternativoBasico());
+		else if (toggleFraco.isSelected())
 			lblInfoModo.setText("0.75x Dano, -20% TU");
 		else if (toggleForte.isSelected())
 			lblInfoModo.setText("1.25x Dano, +20% TU, +1 Alcance");
@@ -852,12 +943,60 @@ public class DetailedTurnHUDController {
 		}
 	}
 
+	private Habilidade criarHabilidadeSelecaoAtaqueBasico() {
+		Arma arma = atorAtual.getArmaEquipada();
+		int alcanceBase = (arma != null) ? arma.getAlcance() : 1;
+		TipoAlvo tipoAlvoBase = (arma != null) ? arma.getTipoAlvo() : TipoAlvo.INDIVIDUAL;
+		int anguloConeBase = (arma != null) ? arma.getAnguloCone() : 0;
+
+		if (this.isModoCoronhadaSelecionado) {
+			if (arma != null) {
+				alcanceBase = arma.getAlcanceAtaqueAlternativoBasico();
+				tipoAlvoBase = arma.getTipoAlvoAtaqueAlternativoBasico();
+				anguloConeBase = arma.getAnguloAtaqueAlternativoBasico();
+			} else {
+				alcanceBase = 1;
+				tipoAlvoBase = TipoAlvo.INDIVIDUAL;
+				anguloConeBase = 0;
+			}
+		} else if (toggleForte.isSelected()) {
+			alcanceBase += 1;
+		}
+
+		final int alcanceFinal = alcanceBase;
+		final TipoAlvo tipoAlvoFinal = tipoAlvoBase;
+		final int anguloConeFinal = anguloConeBase;
+
+		return new Habilidade("Ataque BÃ¡sico", "", TipoHabilidade.ATIVA, 0, 0, 0, tipoAlvoFinal,
+				(arma != null ? arma.getTamanhoArea() : 0), 0, 0, null) {
+			@Override
+			public int getAlcanceMaximo() {
+				return alcanceFinal;
+			}
+
+			@Override
+			public int getAnguloCone() {
+				return anguloConeFinal;
+			}
+
+			@Override
+			public void executar(Personagem c, List<Personagem> a, EstadoCombate es, CombatManager m) {
+			}
+		};
+	}
+
 	@FXML
 	private void onSelecionarAlvoClick() {
 		if (mainController == null)
 			return;
 
+		Habilidade habilidadeParaExecutar = habilidadeSelecionada;
+		Habilidade habilidadeParaSelecionar = null;
+
 		if (isAtaqueBasico) {
+			habilidadeParaExecutar = null;
+			habilidadeParaSelecionar = criarHabilidadeSelecaoAtaqueBasico();
+			if (false) {
 			Arma arma = atorAtual.getArmaEquipada();
 			int alcanceBase = (arma != null) ? arma.getAlcance() : 1;
 
@@ -892,9 +1031,13 @@ public class DetailedTurnHUDController {
 			};
 
 			mainController.iniciarSelecaoDeAlvo(dummyBasic, atorAtual);
+			}
 
 		} else if (habilidadeSelecionada != null) {
+			habilidadeParaSelecionar = habilidadeSelecionada;
+			if (false) {
 			mainController.iniciarSelecaoDeAlvo(habilidadeSelecionada, atorAtual);
+			}
 
 		} else if (fantasmaNobreSelecionado != null) {
 			Habilidade dummyFN = new Habilidade(fantasmaNobreSelecionado.getNome(), "", TipoHabilidade.ATIVA, 0, 0, 0,
@@ -908,7 +1051,17 @@ public class DetailedTurnHUDController {
 				public void executar(Personagem c, List<Personagem> a, EstadoCombate es, CombatManager m) {
 				}
 			};
+			habilidadeParaSelecionar = dummyFN;
+			if (false) {
 			mainController.iniciarSelecaoDeAlvo(dummyFN, atorAtual);
+			}
+		}
+
+		if (atorAtual != null && atorAtual.isClone() && habilidadeParaSelecionar != null) {
+			mainController.iniciarAtaqueSquad(habilidadeParaExecutar, habilidadeParaSelecionar,
+					obterRolagemAtributoAtual(), obterModoAtaqueAtual(), obterTirosExtrasAtuais());
+		} else if (habilidadeParaSelecionar != null) {
+			mainController.iniciarSelecaoDeAlvo(habilidadeParaSelecionar, atorAtual);
 		}
 
 		btnConfirmarAcao.getScene().getWindow().hide();

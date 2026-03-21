@@ -83,7 +83,7 @@ public class KickTheChair extends Habilidade {
 
 			// --- Mata o Clone ---
 			clone.setVidaAtual(0, estado, manager.getController());
-			conjurador.removerCloneMorto(clone);
+			manager.processarMorteClone(clone, estado);
 		}
 
 		conjurador.recalcularAtributosEstatisticas();

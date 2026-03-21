@@ -1,8 +1,7 @@
-
 package br.com.dantesrpg.model;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.model.enums.Atributo;
@@ -31,11 +30,11 @@ public abstract class Raça {
 
 	public void onHpChanged(Personagem personagem, double hpAntigo, double hpNovo, EstadoCombate estado,
 			CombatController controller) {
-		// Padrão: não faz nada
+		// Padrao: nao faz nada
 	}
 
 	public void onTimeAdvanced(Personagem personagem, EstadoCombate estado, CombatController controller) {
-		// Padrão: não faz nada
+		// Padrao: nao faz nada
 	}
 
 	public boolean onHpChangeAttempt(Personagem personagem, double vidaAntiga, double novaVida, EstadoCombate estado,
@@ -45,70 +44,76 @@ public abstract class Raça {
 
 	public void onDamageTaken(Personagem personagem, Personagem atacante, double danoRecebido, EstadoCombate estado,
 			CombatManager manager) {
-		// Padrão: não faz nada
+		// Padrao: nao faz nada
 	}
 
 	public void onDamageDealt(Personagem personagem, Personagem alvo, double danoCausado, EstadoCombate estado,
 			br.com.dantesrpg.controller.CombatController controller) {
-		// Padrão: não faz nada
+		// Padrao: nao faz nada
 	}
 
-	/** Chamado quando o personagem acerta um crítico. */
 	public void onCriticalHit(Personagem personagem, Personagem alvo, EstadoCombate estado) {
-		// Ex: Half-breeds ganham stacks, Marionette inicia cascata
+		// Padrao: nao faz nada
 	}
 
-	/**
-	 * Chamado quando o personagem usa uma ação (ataque, habilidade, item, etc.).
-	 */
 	public void onActionUsed(Personagem personagem, TipoAcao tipoAcaoAnterior, TipoAcao tipoAcaoAtual,
 			EstadoCombate estado) {
-		// Padrão: não faz nada
+		// Padrao: nao faz nada
 	}
 
-	/** Chamado no início do turno do personagem. */
 	public void onTurnStart(Personagem personagem, EstadoCombate estado) {
-		// Ex: Drenar Fúria/Devil Trigger/Benevolência
+		// Padrao: nao faz nada
 	}
 
-	/** Chamado quando um efeito expira ou é aplicado/removido (pode ser útil). */
 	public void onEffectUpdate(Personagem personagem, Efeito efeito, boolean isAplicado) {
-		// Ex: Alguma raça pode reagir a certos status?
+		// Padrao: nao faz nada
 	}
 
-	// --- Métodos para Modificadores (Opcional, mas útil) ---
-
-	/** Retorna modificadores de atributo aplicados pela raça (Ex: Orc). */
 	public Map<Atributo, Integer> getAttributeModifiers(Personagem personagem) {
-		return null; // Padrão: sem modificadores
+		return null;
 	}
 
-	/**
-	 * Retorna modificadores temporários de atributo (Ex: Transformação Lobisomem).
-	 */
 	public Map<Atributo, Integer> getTemporaryAttributeModifiers(Personagem personagem) {
-		return null; // Padrão: sem modificadores temporários
+		return null;
 	}
 
 	public abstract List<Habilidade> getRacialAbilities(Personagem personagem);
 
-	/** Hook para bônus de dano percentual (Ex: Humano) */
 	public double getBonusDanoPercentual(Personagem personagem) {
-		return 0.0; // Padrão: 0
+		return 0.0;
 	}
 
-	/** Hook para redução de custo de TU percentual (Ex: Humano) */
 	public double getReducaoTUPercentual(Personagem personagem) {
-		return 0.0; // Padrão: 0
+		return 0.0;
 	}
 
-	/** Hook para redução de HP máximo (Ex: Contrato de Vida Humano) */
 	public double getReducaoHpMaximo(Personagem personagem) {
-		return 0.0; // Padrão: 0
+		return 0.0;
+	}
+
+	public double getMultiplicadorBonusDanoArma(Personagem personagem, Arma arma, Personagem alvo,
+			EstadoCombate estado, AcaoMestreInput input) {
+		return 1.0;
+	}
+
+	public double getMultiplicadorDanoRecebidoPreArmadura(Personagem personagem, Personagem atacante,
+			EstadoCombate estado) {
+		return 1.0;
+	}
+
+	public int getCustoTUExtra(Personagem personagem, Habilidade habilidade, TipoAcao tipoAcaoAtual) {
+		return 0;
+	}
+
+	public boolean podeSeMover(Personagem personagem) {
+		return true;
+	}
+
+	public boolean isImuneMovimentoForcado(Personagem personagem) {
+		return false;
 	}
 
 	public double onCuraAttempt(Personagem personagem, double curaRecebida) {
-		return curaRecebida; // Padrão: raça não interfere
+		return curaRecebida;
 	}
-
 }

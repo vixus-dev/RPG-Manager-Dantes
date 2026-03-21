@@ -71,6 +71,10 @@ public class HabilidadeFactory {
 		registro.put("Ilusão", Ilusao::new);
 		registro.put("Rezar", Rezar::new);
 		registro.put("Auto-Guarda", NanoGuarda::new);
+		registro.put("Raiva Imparável", RaivaImparavel::new);
+		registro.put("Balanço Temerário", BalancoTemerario::new);
+		registro.put("Grito de Guerra", GritoDeGuerra::new);
+		registro.put("Golpe Devastador", GolpeDevastador::new);
 	}
 
 	public static Habilidade criarHabilidadePorNome(String nome) {

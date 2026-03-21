@@ -4,15 +4,19 @@ import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.controller.MapController;
 import br.com.dantesrpg.model.classes.Invocador;
 import br.com.dantesrpg.model.enums.Atributo;
+import br.com.dantesrpg.model.enums.ModoAtaque;
 import br.com.dantesrpg.model.enums.TipoAcao;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
+import br.com.dantesrpg.model.habilidades.classe.Borderline;
 import br.com.dantesrpg.model.habilidades.classe.DistortedSolo;
 import br.com.dantesrpg.model.habilidades.classe.FulgorNegro;
+import br.com.dantesrpg.model.habilidades.classe.Ilusao;
 import br.com.dantesrpg.model.habilidades.classe.PlainSolo;
 import br.com.dantesrpg.model.habilidades.classe.WhaWhaSolo;
 import br.com.dantesrpg.model.racas.Elfo;
 import br.com.dantesrpg.model.racas.Marionette;
+import br.com.dantesrpg.model.util.BarbaroUtils;
 import br.com.dantesrpg.model.util.DamageEvent;
 import br.com.dantesrpg.model.util.DiceRoller;
 import java.util.Random;
@@ -57,17 +61,6 @@ public class CombatManager {
 			return;
 		}
 
-		if (proximoAtor.getClasse() instanceof Invocador) {
-			long selosVivos = estado.getCombatentes().stream()
-					.filter(p -> p.isAtivoNoCombate() && p.temPropriedade("PORTADOR_SELO:" + proximoAtor.getNome()))
-					.count();
-
-			if (selosVivos > 0) {
-				proximoAtor.setManaMaxima(proximoAtor.getManaMaxima() + (int) selosVivos);
-				System.out.println(">>> SELOS: " + proximoAtor.getNome() + " ganhou +" + selosVivos + " mana.");
-			}
-		}
-
 		int tempoDecorrido = proximoAtor.getContadorTU()
 				- (atorAtualAnterior != null ? atorAtualAnterior.getContadorTU() : 0);
 		if (tempoDecorrido < 0)
@@ -77,13 +70,14 @@ public class CombatManager {
 			p.reduzirDuracaoEfeitos(tempoDecorrido);
 		}
 
+		atualizarAuras(estado);
+
 		// Salva este ator como o anterior para o próximo ciclo
 		this.atorAtualAnterior = proximoAtor;
 
 		// Avança o tempo global se necessário (para Spawns, cooldowns globais, etc)
 		int tempoParaAvancar = proximoAtor.getContadorTU();
 		if (tempoParaAvancar > 0) {
-			atualizarAuras(estado);
 			avancarTempo(tempoParaAvancar, estado);
 		}
 
@@ -306,7 +300,12 @@ public class CombatManager {
 						double danoFinalDoT = 0; // Double
 
 						if (efeito.getNome().equals("Hemorragia")) {
-							danoFinalDoT = p.getVidaMaxima() * 0.02;
+							double percentualHemorragia = 0.02;
+							if (efeito.getModificadores() != null) {
+								percentualHemorragia = efeito.getModificadores().getOrDefault("PERCENTUAL_HP_MAX",
+										percentualHemorragia);
+							}
+							danoFinalDoT = p.getVidaMaxima() * percentualHemorragia;
 						} else {
 							double danoDoTBruto = efeito.getDanoPorTick();
 							danoFinalDoT = danoDoTBruto * (1.0 - p.getReducaoDoTTopor());
@@ -628,7 +627,7 @@ public class CombatManager {
 
 			} else {
 				// Execução Padrão (Fulgor, Solos, etc)
-				if (!ator.isClone()) {
+				if (!ator.isClone() || habilidadePodeSerCopiadaPorClone(habilidade)) {
 					aplicarEfeitosDaHabilidade(ator, habilidade, alvos, estado, this);
 				}
 			}
@@ -664,7 +663,7 @@ public class CombatManager {
 		else if (custoManaFinal < 0)
 			ator.setManaAtual(ator.getManaAtual() - custoManaFinal);
 
-		int custoTUFinal = calcularCustoTUFinal(ator, custoTUBase);
+		int custoTUFinal = calcularCustoTUFinal(ator, custoTUBase, habilidade, tipoAcaoAtual);
 		double multiplicadorLento = ator.getMultiplicadorCustoTU();
 		custoTUFinal = (int) (custoTUFinal * multiplicadorLento);
 
@@ -679,7 +678,9 @@ public class CombatManager {
 		// Hook onActionUsed (Movido para o final)
 		chamarHookAcaoUsada(ator, tipoAcaoAtual, estado);
 
-		ator.setUltimaHabilidadeUsada(habilidade);
+		if (habilidade != null) {
+			ator.setUltimaHabilidadeUsada(normalizarHabilidadeCopiavelParaClone(habilidade));
+		}
 		verificarManaPassivaModoJustica(ator, estado);
 	}
 
@@ -749,7 +750,7 @@ public class CombatManager {
 
 			// Bonus da Arma (requer alvo, se null assume 1.0)
 			if (alvo != null) {
-				dano *= arma.getBonusDanoArma(ator, alvo, null, inputDummy);
+				dano *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, null, inputDummy);
 			}
 
 			dano *= multiplicadorHabilidade;
@@ -784,6 +785,7 @@ public class CombatManager {
 		boolean isArmaRanged = (arma instanceof br.com.dantesrpg.model.ArmaRanged)
 				|| "Ranged".equalsIgnoreCase(arma.getTipo());
 		boolean isModoCoronhada = (input.getModoAtaque() == br.com.dantesrpg.model.enums.ModoAtaque.CORONHADA);
+		double multiplicadorAtaqueAlternativo = arma.getMultiplicadorAtaqueAlternativoBasico();
 
 		// Só é rajada se for arma ranged, sem habilidade e não for coronhada
 		boolean isRajada = (habilidade == null && isArmaRanged && !isModoCoronhada);
@@ -837,7 +839,7 @@ public class CombatManager {
 				if (input.getModoAtaque() == br.com.dantesrpg.model.enums.ModoAtaque.FORTE)
 					modModo = 1.25;
 				if (isModoCoronhada)
-					modModo = 0.50;
+					modModo = multiplicadorAtaqueAlternativo;
 
 				double multiplicadorFinal = multiplicadorHabilidade * modModo;
 
@@ -904,13 +906,40 @@ public class CombatManager {
 
 	// --- Métodos Auxiliares para Limpar o Código Acima ---
 
+	private double getMultiplicadorBonusDanoComArma(Personagem ator, Arma arma, Personagem alvo, EstadoCombate estado,
+			AcaoMestreInput input) {
+		if (arma == null) {
+			return 1.0;
+		}
+
+		double multiplicador = arma.getBonusDanoArma(ator, alvo, estado, input);
+		if (ator != null && ator.getRaca() != null) {
+			multiplicador *= ator.getRaca().getMultiplicadorBonusDanoArma(ator, arma, alvo, estado, input);
+		}
+		return multiplicador;
+	}
+
+	private double aplicarReducaoDanoPreArmadura(double danoBruto, Personagem ator, Personagem alvo,
+			EstadoCombate estado) {
+		if (danoBruto <= 0 || alvo == null || alvo.getRaca() == null) {
+			return danoBruto;
+		}
+
+		double multiplicador = alvo.getRaca().getMultiplicadorDanoRecebidoPreArmadura(alvo, ator, estado);
+		return Math.max(0, danoBruto * Math.max(0.0, multiplicador));
+	}
+
 	private double aplicarReducaoArmadura(double danoBruto, Personagem ator, Personagem alvo, EstadoCombate estado) {
+		double danoAjustado = aplicarReducaoDanoPreArmadura(danoBruto, ator, alvo, estado);
 		double reducaoArmadura = alvo.getReducaoDanoArmadura() + alvo.getReducaoDanoTopor();
-		double pularDefesa = ator.getArmaEquipada().getIgnorarDefesaPercentual(ator, alvo, estado);
+		double pularDefesa = 0.0;
+		if (ator != null && ator.getArmaEquipada() != null) {
+			pularDefesa = ator.getArmaEquipada().getIgnorarDefesaPercentual(ator, alvo, estado);
+		}
 		reducaoArmadura -= (reducaoArmadura * pularDefesa);
 		if (alvo.getEfeitosAtivos().containsKey("Ruptura"))
 			reducaoArmadura -= 0.25;
-		return Math.max(0, danoBruto * (1.0 - reducaoArmadura));
+		return Math.max(0, danoAjustado * (1.0 - reducaoArmadura));
 	}
 
 	private DamageEvent criarEventoDano(double danoEstimado, String label, boolean isCritico, Personagem ator,
@@ -947,7 +976,7 @@ public class CombatManager {
 		if (ator.getBonusDanoPercentual() > 0)
 			danoParaCascata *= (1.0 + ator.getBonusDanoPercentual());
 		danoParaCascata *= (1.0 + ator.getSortePercentual());
-		danoParaCascata *= arma.getBonusDanoArma(ator, alvo, estado, input);
+		danoParaCascata *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, estado, input);
 
 		// Redução de Armadura do Alvo (Para o dano exibido ser real)
 		double reducaoArmadura = alvo.getReducaoDanoArmadura() + alvo.getReducaoDanoTopor();
@@ -956,7 +985,7 @@ public class CombatManager {
 		if (ator.getBonusDanoPercentual() > 0)
 			danoParaCascata *= (1.0 + ator.getBonusDanoPercentual());
 		danoParaCascata *= (1.0 + ator.getSortePercentual());
-		danoParaCascata *= arma.getBonusDanoArma(ator, alvo, estado, input);
+		danoParaCascata *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, estado, input);
 
 		int nivel = 1;
 		while (nivel <= 7) {
@@ -967,7 +996,7 @@ public class CombatManager {
 			boolean cascataCrit = (Math.random() < ator.getTaxaCritica());
 			double modCrit = cascataCrit ? (1.0 + ator.getDanoCritico()) : 1.0;
 
-			double danoPosArmadura = (danoBrutoCascata * modCrit) * (1.0 - reducaoArmadura);
+			double danoPosArmadura = aplicarReducaoArmadura(danoBrutoCascata * modCrit, ator, alvo, estado);
 
 			listaEventos.add(new DamageEvent(danoPosArmadura, "Cascata " + nivel, cascataCrit, null));
 
@@ -1041,7 +1070,7 @@ public class CombatManager {
 			dano *= (1.0 + bonusPercent);
 		}
 
-		dano *= arma.getBonusDanoArma(ator, alvo, estado, input);
+		dano *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, estado, input);
 		dano *= modHabilidade;
 		dano *= modCritico;
 
@@ -1094,6 +1123,13 @@ public class CombatManager {
 					aplicarEfeito(alvo, efeito);
 				}
 			}
+		}
+
+		if (ator.getEfeitosAtivos().containsKey(BarbaroUtils.EFEITO_BALANCO_TEMERARIO) && Math.random() <= 0.50) {
+			int danoChoque = Math.max(1, (int) Math.ceil(arma.getDanoBase() * 0.25));
+			Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 100, danoChoque);
+			aplicarEfeito(alvo, choque);
+			System.out.println(">>> Balanço Temerário aplicou Choque em " + alvo.getNome() + ".");
 		}
 	}
 
@@ -1171,6 +1207,12 @@ public class CombatManager {
 			// Notifica se foi crítico (Half-Angel ganha +1 extra)
 			if (isCritico) {
 				ator.getRaca().onCriticalHit(ator, alvo, estado);
+			}
+		}
+		if (danoTick > 0 && ator.getFantasmaNobre() != null) {
+			ator.getFantasmaNobre().onDamageDealt(ator, alvo, danoTick, estado, this);
+			if (isCritico) {
+				ator.getFantasmaNobre().onCriticalHit(ator, alvo, estado, this);
 			}
 		}
 		// Hook de Dados Extras
@@ -1253,6 +1295,7 @@ public class CombatManager {
 			double danoCalculado = arma.getDanoBase() * (1 + (0.075 * rolagemDadoAtributo));
 			if (ator.getBonusDanoPercentual() > 0)
 				danoCalculado *= (1.0 + ator.getBonusDanoPercentual());
+			danoCalculado *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, estado, input);
 
 			double multiplicador;
 			boolean isCrit = false;
@@ -1269,9 +1312,7 @@ public class CombatManager {
 
 			double danoBruto = danoCalculado * multiplicador;
 
-			// Armadura
-			double reducaoArmadura = alvo.getReducaoDanoArmadura() + alvo.getReducaoDanoTopor();
-			double danoPosArmadura = danoBruto * (1.0 - reducaoArmadura);
+			double danoPosArmadura = aplicarReducaoArmadura(danoBruto, ator, alvo, estado);
 
 			List<DamageEvent> eventos = new ArrayList<>();
 
@@ -1324,6 +1365,11 @@ public class CombatManager {
 	}
 
 	private int calcularCustoTUFinal(Personagem conjurador, int custoTUBase) {
+		return calcularCustoTUFinal(conjurador, custoTUBase, null, TipoAcao.OUTRO);
+	}
+
+	private int calcularCustoTUFinal(Personagem conjurador, int custoTUBase, Habilidade habilidade,
+			TipoAcao tipoAcaoAtual) {
 		double modTU = 1.0; // 100%
 		int custoExtraFixo = 0;
 
@@ -1361,6 +1407,7 @@ public class CombatManager {
 			if (reducaoRaca > 0) {
 				modTU -= reducaoRaca;
 			}
+			custoExtraFixo += conjurador.getRaca().getCustoTUExtra(conjurador, habilidade, tipoAcaoAtual);
 		}
 
 		int custoFinalPercentual = (int) (custoTUBase * Math.max(0.0, modTU));
@@ -1463,11 +1510,26 @@ public class CombatManager {
 	public void aplicarDanoAoAlvo(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado) {
 		// Sobrecarga para manter compatibilidade com códigos antigos (dot, ambiente)
-		aplicarDanoAoAlvo(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, 0);
+		aplicarDanoAoAlvoInterno(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, 0, false);
 	}
 
 	public void aplicarDanoAoAlvo(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal) {
+		aplicarDanoAoAlvoInterno(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, ataqueTotal, false);
+	}
+
+	public void aplicarDanoAoAlvoResolvido(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
+			TipoAcao tipoAcaoDano, EstadoCombate estado) {
+		aplicarDanoAoAlvoResolvido(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, 0);
+	}
+
+	public void aplicarDanoAoAlvoResolvido(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
+			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal) {
+		aplicarDanoAoAlvoInterno(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, ataqueTotal, true);
+	}
+
+	private void aplicarDanoAoAlvoInterno(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
+			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal, boolean danoJaResolvido) {
 		if (alvo == null || dano <= 0)
 			return;
 
@@ -1549,6 +1611,13 @@ public class CombatManager {
 		}
 		if (alvo.getEfeitosAtivos().containsKey("Dormindo")) {
 			alvo.removerEfeito("Dormindo");
+		}
+
+		if (!danoJaResolvido) {
+			dano = aplicarReducaoDanoPreArmadura(dano, ator, alvo, estado);
+			if (dano <= 0) {
+				return;
+			}
 		}
 
 		if (ator != null && ator.isVivo() && !ignoraEscudo) {
@@ -1704,13 +1773,7 @@ public class CombatManager {
 
 				// Clone Morrendo -> Stealth no Criador
 				if (alvo.isClone()) {
-					Personagem criador = alvo.getCriador();
-					if (criador != null && criador.isAtivoNoCombate()) {
-						System.out.println(">>> Clone destruído! " + criador.getNome() + " ganha Stealth!");
-						Efeito stealth = new Efeito("Stealth", TipoEfeito.BUFF, 9999, Map.of(), 0, 0);
-						aplicarEfeito(criador, stealth);
-						criador.removerCloneMorto(alvo);
-					}
+					processarMorteClone(alvo, estado);
 				}
 
 				// Objeto Destrutível
@@ -1847,14 +1910,15 @@ public class CombatManager {
 			int qtdSelos = contagemSelos.getOrDefault(mestre, 0);
 			String keyBuff = "Vínculo de Selo";
 
+			Efeito efeitoExistente = mestre.getEfeitosAtivos().get(keyBuff);
+
 			if (qtdSelos > 0) {
-				Efeito efeitoExistente = mestre.getEfeitosAtivos().get("Vínculo de Selo");
 
 				if (efeitoExistente == null) {
 					// Cria pela primeira vez
 					Map<String, Double> mods = new HashMap<>();
 					mods.put("MP_MAXIMO", (double) qtdSelos);
-					Efeito novoBuff = new Efeito("Vínculo de Selo", TipoEfeito.BUFF, 9999, mods, 0, 0);
+					Efeito novoBuff = new Efeito(keyBuff, TipoEfeito.BUFF, 9999, mods, 0, 0);
 					novoBuff.setStacks(qtdSelos);
 					mestre.adicionarEfeito(novoBuff);
 				} else {
@@ -1866,6 +1930,8 @@ public class CombatManager {
 						System.out.println(">>> SELOS: Atualizado para " + qtdSelos);
 					}
 				}
+			} else if (efeitoExistente != null) {
+				mestre.removerEfeito(keyBuff);
 			}
 		}
 	}
@@ -1898,21 +1964,61 @@ public class CombatManager {
 	}
 
 	public void executarAtaqueCoordenado(Map<Personagem, Personagem> ataques, Habilidade habilidade, int rolagemGlobal,
-			EstadoCombate estado, List<Personagem> todosOsClonesDoEsquadrao) {
-		System.out.println("=== EXECUTANDO ATAQUE COORDENADO DE CLONES (Sincronizado) ===");
+			ModoAtaque modoAtaque, int tirosExtras, EstadoCombate estado, List<Personagem> todosOsClonesDoEsquadrao) {
+		System.out.println("=== EXECUTANDO ACAO COORDENADA DE CLONES ===");
 
-		// 1. Agrupa: Qual Alvo -> Lista de Atacantes
-		Map<Personagem, List<Personagem>> alvosAgrupados = new HashMap<>();
+		if (todosOsClonesDoEsquadrao == null || todosOsClonesDoEsquadrao.isEmpty())
+			return;
 
-		for (Map.Entry<Personagem, Personagem> entry : ataques.entrySet()) {
-			Personagem atacante = entry.getKey();
-			Personagem alvo = entry.getValue();
-			alvosAgrupados.putIfAbsent(alvo, new ArrayList<>());
-			alvosAgrupados.get(alvo).add(atacante);
+		Map<Personagem, Integer> tuInicialPorClone = new HashMap<>();
+		for (Personagem clone : todosOsClonesDoEsquadrao) {
+			if (clone == null || !clone.isAtivoNoCombate())
+				continue;
+
+			int tuInicial = clone.getContadorTU();
+			tuInicialPorClone.put(clone, tuInicial);
 		}
+
+		if (tuInicialPorClone.isEmpty())
+			return;
 
 		int somaTotalTU = 0;
 		int numeroAcoes = 0;
+		boolean exigeAlvo = ataques != null && !ataques.isEmpty();
+
+		if (!exigeAlvo) {
+			for (Personagem clone : todosOsClonesDoEsquadrao) {
+				if (!tuInicialPorClone.containsKey(clone))
+					continue;
+
+				System.out.println("   -> Clone " + clone.getNome() + " executa "
+						+ (habilidade != null ? habilidade.getNome() : "Ataque Basico") + ".");
+
+				AcaoMestreInput input = new AcaoMestreInput(clone, new ArrayList<>(), habilidade);
+				input.adicionarResultadoDado("DADO_ATRIBUTO", rolagemGlobal);
+				input.setModoAtaque(modoAtaque != null ? modoAtaque : ModoAtaque.NORMAL);
+				input.setTirosExtras(Math.max(0, tirosExtras));
+
+				resolverAcao(input, estado);
+
+				int custoDestaAcao = Math.max(0, clone.getContadorTU() - tuInicialPorClone.get(clone));
+				somaTotalTU += custoDestaAcao;
+				numeroAcoes++;
+			}
+		}
+
+		Map<Personagem, List<Personagem>> alvosAgrupados = new HashMap<>();
+		if (exigeAlvo) {
+			for (Map.Entry<Personagem, Personagem> ataque : ataques.entrySet()) {
+				Personagem clone = ataque.getKey();
+				Personagem alvo = ataque.getValue();
+
+				if (!tuInicialPorClone.containsKey(clone) || alvo == null || !alvo.isAtivoNoCombate())
+					continue;
+
+				alvosAgrupados.computeIfAbsent(alvo, key -> new ArrayList<>()).add(clone);
+			}
+		}
 
 		// Resolve por Alvo e Calcula Custos (SEM aplicar ainda)
 		for (Map.Entry<Personagem, List<Personagem>> entry : alvosAgrupados.entrySet()) {
@@ -1925,14 +2031,19 @@ public class CombatManager {
 				AcaoMestreInput input = new AcaoMestreInput(atacante, List.of(alvo), habilidade);
 				input.adicionarResultadoDado("DADO_ATRIBUTO", rolagemGlobal);
 
-				int custoDestaAcao = 0;
+				input.setModoAtaque(modoAtaque != null ? modoAtaque : ModoAtaque.NORMAL);
+				input.setTirosExtras(Math.max(0, tirosExtras));
 
-				if (habilidade != null) {
+				resolverAcao(input, estado);
+
+				int custoDestaAcao = Math.max(0, atacante.getContadorTU() - tuInicialPorClone.get(atacante));
+				if (false) {
+
 					// Lógica de Habilidade
 					resolverDanoPadrao(atacante, atacante.getArmaEquipada(), rolagemGlobal, List.of(alvo),
 							habilidade.getMultiplicadorDeDano(), TipoAcao.HABILIDADE, habilidade, estado, input);
 					custoDestaAcao = habilidade.getCustoTU();
-				} else {
+				} else if (false) {
 					// Lógica de Ataque Básico
 					resolverDanoPadrao(atacante, atacante.getArmaEquipada(), rolagemGlobal, List.of(alvo), 1.0,
 							TipoAcao.ATAQUE_BASICO, null, estado, input);
@@ -1943,6 +2054,8 @@ public class CombatManager {
 
 				// Calcula reduções (ex: Estado Dourado, etc) sem aplicar no personagem ainda
 				custoDestaAcao = calcularCustoTUFinal(atacante, custoDestaAcao);
+
+				custoDestaAcao = Math.max(0, atacante.getContadorTU() - tuInicialPorClone.get(atacante));
 
 				somaTotalTU += custoDestaAcao;
 				numeroAcoes++;
@@ -1966,8 +2079,9 @@ public class CombatManager {
 		if (todosOsClonesDoEsquadrao != null) {
 			for (Personagem clone : todosOsClonesDoEsquadrao) {
 				// Só aplica se o clone estiver vivo/ativo
-				if (clone.isAtivoNoCombate()) {
-					clone.setContadorTU(clone.getContadorTU() + mediaTU);
+				Integer tuInicial = tuInicialPorClone.get(clone);
+				if (clone.isAtivoNoCombate() && tuInicial != null) {
+					clone.setContadorTU(tuInicial + mediaTU);
 					System.out.println("   -> " + clone.getNome() + " avançou +" + mediaTU + " TU.");
 				}
 			}
@@ -2030,6 +2144,7 @@ public class CombatManager {
 		}
 
 		double danoCalculado = ator.getArmaEquipada().getDanoBase() * 0.50;
+		danoCalculado *= getMultiplicadorBonusDanoComArma(ator, ator.getArmaEquipada(), alvo, estado, null);
 		int danoTick = Math.max(1, (int) danoCalculado);
 
 		aplicarDanoAoAlvo(ator, alvo, danoTick, false, TipoAcao.REACAO_FANTASMA, estado);
@@ -2042,6 +2157,9 @@ public class CombatManager {
 		// Chama o hook de início de turno da Raça (para Elfos, etc.)
 		if (ator.getRaca() != null) {
 			ator.getRaca().onTurnStart(ator, estado);
+		}
+		if (ator.getFantasmaNobre() != null) {
+			ator.getFantasmaNobre().onTurnStart(ator, estado, this);
 		}
 
 		// Verifica se o Ringue do Alexei está sendo preparado
@@ -2078,6 +2196,37 @@ public class CombatManager {
 	public void solicitarSpawnClone(Personagem invocador) {
 		if (mainController != null) {
 			mainController.spawnarCloneIlusao(invocador);
+		}
+	}
+
+	public boolean habilidadePodeSerCopiadaPorClone(Habilidade habilidade) {
+		if (habilidade == null)
+			return false;
+
+		return !(habilidade instanceof Ilusao) && !(habilidade instanceof Borderline);
+	}
+
+	private Habilidade normalizarHabilidadeCopiavelParaClone(Habilidade habilidade) {
+		return habilidadePodeSerCopiadaPorClone(habilidade) ? habilidade : null;
+	}
+
+	public void processarMorteClone(Personagem clone, EstadoCombate estado) {
+		if (clone == null || !clone.isClone())
+			return;
+
+		Personagem criador = clone.getCriador();
+		if (criador != null) {
+			if (criador.isAtivoNoCombate()) {
+				System.out.println(">>> Clone destruido! " + criador.getNome() + " ganha Stealth!");
+				Efeito stealth = new Efeito("Stealth", TipoEfeito.BUFF, 9999, Map.of(), 0, 0);
+				aplicarEfeito(criador, stealth);
+			}
+
+			criador.removerCloneMorto(clone);
+		}
+
+		if (estado != null) {
+			estado.getCombatentes().remove(clone);
 		}
 	}
 

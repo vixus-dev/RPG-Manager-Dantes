@@ -4,16 +4,16 @@
   "vidaMaximaBase": 30.0,
   "classe": "Ladino",
   "atributosBase": {
-    "INSPIRACAO": 1,
     "SAGACIDADE": 1,
-    "SORTE": 1,
-    "CARISMA": 10,
-    "FORCA": 4,
     "INTELIGENCIA": 5,
+    "FORCA": 4,
     "PERCEPCAO": 6,
-    "DESTREZA": 10,
+    "SORTE": 1,
     "TOPOR": 10,
-    "ENDURANCE": 4
+    "ENDURANCE": 4,
+    "CARISMA": 10,
+    "DESTREZA": 10,
+    "INSPIRACAO": 1
   },
   "nome": "Vivian",
   "pontosParaDistribuir": 0,

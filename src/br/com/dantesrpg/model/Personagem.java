@@ -7,6 +7,7 @@ import br.com.dantesrpg.model.racas.HalfAngel;
 import br.com.dantesrpg.model.racas.HalfDemon;
 import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.racas.Marionette;
+import br.com.dantesrpg.model.util.BarbaroUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -444,6 +445,11 @@ public class Personagem {
 
 		if (this.raca != null && Math.abs(this.vidaAtual - vidaAntiga) > 0.01) {
 			this.raca.onHpChanged(this, vidaAntiga, this.vidaAtual, estado, controller);
+		}
+
+		if (curaRecebida > 0 && BarbaroUtils.temContratoAtivo(this) && this.vidaAtual >= (this.vidaMaxima - 0.01)) {
+			System.out.println(">>> " + this.nome + " curou completamente e encerrou o Contrato Bárbaro.");
+			BarbaroUtils.encerrarContrato(this);
 		}
 	}
 
@@ -901,6 +907,8 @@ public class Personagem {
 	}
 
 	public void registrarClone(Personagem clone) {
+		if (clone == null || this.clonesAtivos.contains(clone))
+			return;
 		this.clonesAtivos.add(clone);
 		clone.setCloneStatus(true, this);
 	}
@@ -937,6 +945,10 @@ public class Personagem {
 
 	public void removerClone(Personagem clone) {
 		this.clonesAtivos.remove(clone);
+	}
+
+	public void limparClonesAtivos() {
+		this.clonesAtivos.clear();
 	}
 
 	public Habilidade getUltimaHabilidadeUsada() {

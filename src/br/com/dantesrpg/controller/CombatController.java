@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 // Imports do seu Model
 import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.classes.ClassePlaceholder;
+import br.com.dantesrpg.model.classes.Barbaro;
 import br.com.dantesrpg.model.classes.Feiticeiro;
 import br.com.dantesrpg.model.classes.Ilusionista;
 import br.com.dantesrpg.model.classes.Invocador;
@@ -51,11 +52,13 @@ import br.com.dantesrpg.model.classes.Paladino;
 import br.com.dantesrpg.model.classes.Pugilista;
 import br.com.dantesrpg.model.elementos.ObjetoDestrutivel;
 import br.com.dantesrpg.model.enums.Atributo;
+import br.com.dantesrpg.model.enums.ModoAtaque;
 import br.com.dantesrpg.model.enums.Raridade;
 import br.com.dantesrpg.model.enums.TipoAcao;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.racas.AnjoCaido;
+import br.com.dantesrpg.model.racas.Anao;
 import br.com.dantesrpg.model.racas.Elfo;
 import br.com.dantesrpg.model.racas.HalfAngel;
 import br.com.dantesrpg.model.racas.HalfDemon;
@@ -63,6 +66,7 @@ import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.racas.Marionette;
 import br.com.dantesrpg.model.racas.RaçaPlaceholder;
 import br.com.dantesrpg.model.racas.Vampiro;
+import br.com.dantesrpg.model.util.BarbaroUtils;
 import br.com.dantesrpg.model.util.FileLoader;
 import javafx.stage.FileChooser;
 import java.io.File;
@@ -73,6 +77,7 @@ import br.com.dantesrpg.model.armas.unicas.Rubrum;
 import br.com.dantesrpg.model.armas.unicas.Murasame;
 import br.com.dantesrpg.model.armas.unicas.Terrore;
 import br.com.dantesrpg.model.armas.unicas.PalidaVigilia;
+import br.com.dantesrpg.model.armas.unicas.LaminasDoExterminio;
 
 // Imports para os Fantasmas Nobres
 import br.com.dantesrpg.model.fantasmasnobres.RingOfTheUndyingWill;
@@ -80,6 +85,7 @@ import br.com.dantesrpg.model.fantasmasnobres.VigiliaEterna;
 import br.com.dantesrpg.model.fantasmasnobres.AcertoDeContas;
 import br.com.dantesrpg.model.fantasmasnobres.InvocacaoMurasame;
 import br.com.dantesrpg.model.fantasmasnobres.ApostadorIncansavel;
+import br.com.dantesrpg.model.fantasmasnobres.IraDeAnthyros;
 import br.com.dantesrpg.model.items.Consumivel;
 import br.com.dantesrpg.model.items.EssenciaInimigo;
 import br.com.dantesrpg.model.FantasmaNobre;
@@ -135,6 +141,8 @@ public class CombatController {
 
 	private Habilidade habilidadeSquadTemp;
 	private int rolagemSquadTemp;
+	private ModoAtaque modoAtaqueSquadTemp = ModoAtaque.NORMAL;
+	private int tirosExtrasSquadTemp;
 	private Map<Personagem, Personagem> ataquesSquadTemp;
 
 	private Map<String, Map<String, Object>> armoryDatabase;
@@ -192,6 +200,9 @@ public class CombatController {
 		for (Personagem p : estadoCombate.getCombatentes()) {
 			if (p.getArmaEquipada() != null) {
 				p.getArmaEquipada().onCombatStart(p, estadoCombate);
+			}
+			if (p.getFantasmaNobre() != null) {
+				p.getFantasmaNobre().onCombatStart(p, estadoCombate, combatManager);
 			}
 		}
 
@@ -391,6 +402,9 @@ public class CombatController {
 			// Distribui XP
 			combatManager.distribuirXpAposCombate(estadoCombate);
 			br.com.dantesrpg.model.util.SessionLogger.log("--- Combate Finalizado pelo Mestre ---");
+			encerrarContratosBarbaros();
+			encerrarPosturasAnao();
+			limparClonesDoCombate();
 
 			// Limpa dados temporários
 			estadoCombate.setAtorAtual(null);
@@ -672,6 +686,9 @@ public class CombatController {
 				if (nome.equals("Lilith")) {
 					p.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.InvocacaoSangrenta());
 				}
+				if (nome.equals("Arkos")) {
+					p.setFantasmaNobre(new IraDeAnthyros());
+				}
 
 				if (data.containsKey("racaData") && p.getRaca() instanceof Humano) {
 					Map<String, Object> racaData = (Map<String, Object>) data.get("racaData");
@@ -738,6 +755,27 @@ public class CombatController {
 
 		Personagem ator = input.getAtor();
 		FantasmaNobre fn = ator.getFantasmaNobre(); // Pega o FN do ator
+		if (fn == null) {
+			System.err.println("Erro: " + ator.getNome() + " tentou usar FN, mas nao tem um FN equipado.");
+			return;
+		}
+
+		String cooldownEffectNameFn = "CD:" + fn.getNome();
+		if (ator.getEfeitosAtivos().containsKey(cooldownEffectNameFn)) {
+			System.out.println(">>> " + fn.getNome() + " ainda esta em recarga.");
+			return;
+		}
+
+		if (ator.getManaAtual() < fn.getCustoMana()) {
+			System.out.println(">>> " + ator.getNome() + " nao tem mana suficiente para usar " + fn.getNome() + ".");
+			return;
+		}
+
+		String motivoBloqueio = fn.getMotivoBloqueio(ator);
+		if (motivoBloqueio != null) {
+			System.out.println(">>> " + motivoBloqueio);
+			return;
+		}
 
 		if (fn == null) {
 			System.err.println("Erro: " + ator.getNome() + " tentou usar FN, mas não tem um FN equipado.");
@@ -867,6 +905,8 @@ public class CombatController {
 	private Raça mapearRaca(String nomeRaca) {
 		if ("Humano".equalsIgnoreCase(nomeRaca))
 			return new Humano();
+		if ("Anao".equalsIgnoreCase(nomeRaca) || "Anao".equalsIgnoreCase(nomeRaca))
+			return new Anao();
 		if ("Vampiro".equalsIgnoreCase(nomeRaca))
 			return new Vampiro();
 		if ("Elfo".equalsIgnoreCase(nomeRaca))
@@ -884,6 +924,8 @@ public class CombatController {
 	}
 
 	private Classe mapearClasse(String nomeClasse) {
+		if ("Barbaro".equalsIgnoreCase(nomeClasse) || "Bárbaro".equalsIgnoreCase(nomeClasse))
+			return new Barbaro();
 		if ("Pugilista".equalsIgnoreCase(nomeClasse))
 			return new Pugilista();
 		if ("Feiticeiro".equalsIgnoreCase(nomeClasse))
@@ -1068,6 +1110,7 @@ public class CombatController {
 		Personagem lilith = carregarPersonagemComGson("lilith");
 		Personagem eidan = carregarPersonagemComGson("eidan");
 		Personagem darrell = carregarPersonagemComGson("darrell");
+		Personagem Arkos = carregarPersonagemComGson("Arkos");
 
 		// personagens extras
 		Personagem Aristóteles = carregarPersonagemComGson("Aristóteles");
@@ -1098,11 +1141,18 @@ public class CombatController {
 			eidan.setPosY(4);
 			players.add(eidan);
 		}
+		
+		if (Arkos != null) {
+			Arkos.setPosX(5);
+			Arkos.setPosY(5);
+			players.add(Arkos);
+		}
+		/*
 		if (darrell != null) {
 			darrell.setPosX(5);
 			darrell.setPosY(5);
 			players.add(darrell);
-		}
+		} */
 
 		if (Virgilio != null) {
 			Virgilio.setPosX(5);
@@ -1253,6 +1303,7 @@ public class CombatController {
 
 		} else {
 			// Turno Normal
+			this.clonesSquadAtuais = null;
 			iniciarTurnoParaAtor(atorAtual);
 		}
 	}
@@ -1283,14 +1334,15 @@ public class CombatController {
 			if (controller.isConfirmado()) {
 				int rolagem = controller.getResultadoRolagem();
 				int atributoEndurance = p.getAtributosFinais().getOrDefault(Atributo.ENDURANCE, 0);
-				int total = rolagem + atributoEndurance; 
-				boolean sucesso = (controller.getResultadoRolagem() >= na);
+				int total = rolagem + atributoEndurance;
+				boolean sucesso = (total >= na);
 
-				humano.resolverResultadoTeste(p, sucesso, controller.getResultadoRolagem());
+				humano.resolverResultadoTeste(p, sucesso, total);
 
 				// Feedback visual e atualizações
-				br.com.dantesrpg.model.util.SessionLogger.log(p.getNome() + " Rolagem: "
-						+ controller.getResultadoRolagem() + " vs NA " + na + " -> " + (sucesso ? "SUCESSO" : "FALHA"));
+				br.com.dantesrpg.model.util.SessionLogger
+						.log(p.getNome() + " Rolagem: " + rolagem + " + END(" + atributoEndurance + ") = " + total
+								+ " vs NA " + na + " -> " + (sucesso ? "SUCESSO" : "FALHA"));
 				atualizarInterfaceTotal();
 			}
 
@@ -1302,23 +1354,56 @@ public class CombatController {
 	// Variável para guardar o estado
 	private List<Personagem> clonesSquadAtuais;
 
-	public void iniciarAtaqueSquad(Habilidade habilidade, int rolagemGlobal) {
-		this.habilidadeSquadTemp = habilidade;
+	private void limparEstadoSquadTemporario() {
+		habilidadeSquadTemp = null;
+		ataquesSquadTemp = null;
+		rolagemSquadTemp = 0;
+		modoAtaqueSquadTemp = ModoAtaque.NORMAL;
+		tirosExtrasSquadTemp = 0;
+		clonesSquadAtuais = null;
+	}
+
+	public void iniciarAtaqueSquad(Habilidade habilidadeAcao, Habilidade habilidadeSelecao, int rolagemGlobal,
+			ModoAtaque modoAtaque, int tirosExtras) {
+		this.habilidadeSquadTemp = habilidadeAcao;
 		this.rolagemSquadTemp = rolagemGlobal;
+		this.modoAtaqueSquadTemp = modoAtaque != null ? modoAtaque : ModoAtaque.NORMAL;
+		this.tirosExtrasSquadTemp = Math.max(0, tirosExtras);
 		if (detailedTurnHudStage != null)
 			detailedTurnHudStage.hide();
 		if (mapController != null && clonesSquadAtuais != null) {
-			mapController.iniciarSelecaoSquad(clonesSquadAtuais, habilidade, rolagemGlobal);
+			mapController.iniciarSelecaoSquad(clonesSquadAtuais, habilidadeSelecao, rolagemGlobal);
 		}
 	}
 
+	public void executarAcaoClonesSemAlvo(Habilidade habilidade, int rolagemGlobal) {
+		if (this.clonesSquadAtuais == null)
+			this.clonesSquadAtuais = new ArrayList<>();
+
+		if (detailedTurnHudStage != null)
+			detailedTurnHudStage.hide();
+
+		combatManager.executarAtaqueCoordenado(new HashMap<>(), habilidade, rolagemGlobal, ModoAtaque.NORMAL, 0,
+				estadoCombate, this.clonesSquadAtuais);
+
+		limparEstadoSquadTemporario();
+		avancarTurnoAposAcao();
+	}
+
 	public void retornarDoSquadComAlvos(Map<Personagem, Personagem> ataquesDefinidos) {
-		this.ataquesSquadTemp = ataquesDefinidos;
+		this.ataquesSquadTemp = (ataquesDefinidos != null) ? new HashMap<>(ataquesDefinidos) : new HashMap<>();
+
+		if (this.ataquesSquadTemp.isEmpty()) {
+			System.out.println("SQUAD: Nenhum alvo foi travado. Encerrando o turno dos clones.");
+			passarTurnoSquadAtual();
+			return;
+		}
 
 		System.out.println("SQUAD: Todos os alvos selecionados. Retornando à HUD.");
 
 		if (detailedTurnHudController != null) {
-			detailedTurnHudController.configurarConfirmacaoSquad(ataquesDefinidos.size());
+			detailedTurnHudController.adicionarAlvos(new ArrayList<>(this.ataquesSquadTemp.values()));
+			detailedTurnHudController.configurarConfirmacaoSquad(this.ataquesSquadTemp.size());
 			detailedTurnHudStage.show();
 			detailedTurnHudStage.toFront(); // Garante que venha para frente
 		}
@@ -1334,14 +1419,11 @@ public class CombatController {
 			this.clonesSquadAtuais = new ArrayList<>();
 
 		// Chama o manager passando a lista COMPLETA de clones
-		combatManager.executarAtaqueCoordenado(ataquesSquadTemp, habilidadeSquadTemp, rolagemSquadTemp, estadoCombate,
-				this.clonesSquadAtuais
-		);
+		combatManager.executarAtaqueCoordenado(ataquesSquadTemp, habilidadeSquadTemp, rolagemSquadTemp,
+				modoAtaqueSquadTemp, tirosExtrasSquadTemp, estadoCombate, this.clonesSquadAtuais);
 
 		// Limpa temp
-		habilidadeSquadTemp = null;
-		ataquesSquadTemp = null;
-		rolagemSquadTemp = 0;
+		limparEstadoSquadTemporario();
 
 		// Encerra o turno e atualiza a timeline
 		avancarTurnoAposAcao();
@@ -1351,7 +1433,8 @@ public class CombatController {
 			int rolagemGlobal) {
 		List<Personagem> envolvidos = new ArrayList<>(ataques.keySet());
 
-		combatManager.executarAtaqueCoordenado(ataques, habilidade, rolagemGlobal, this.estadoCombate, envolvidos);
+		combatManager.executarAtaqueCoordenado(ataques, habilidade, rolagemGlobal, ModoAtaque.NORMAL, 0,
+				this.estadoCombate, envolvidos);
 
 		avancarTurnoAposAcao();
 	}
@@ -1524,6 +1607,30 @@ public class CombatController {
 
 		Personagem ator = input.getAtor();
 
+		if (devePassarSquadDeClones(ator)) {
+			System.out.println("SQUAD: Encerrando o turno de todos os clones restantes.");
+			passarTurnoSquadAtual();
+			return;
+		}
+
+		aplicarPassarVez(ator);
+		fecharHudEAvançar();
+	}
+
+	private boolean devePassarSquadDeClones(Personagem ator) {
+		if (ator == null || !ator.isClone() || clonesSquadAtuais == null || clonesSquadAtuais.isEmpty())
+			return false;
+
+		Personagem criador = ator.getCriador();
+		return criador != null && clonesSquadAtuais.stream()
+				.anyMatch(clone -> clone != null && clone.isAtivoNoCombate() && clone.isClone()
+						&& clone.getCriador() == criador);
+	}
+
+	private void aplicarPassarVez(Personagem ator) {
+		if (ator == null)
+			return;
+
 		if (!(ator.getRaca() instanceof Marionette)) {
 			System.out.println(ator.getNome() + " decide Passar a Vez.");
 
@@ -1545,7 +1652,41 @@ public class CombatController {
 			ator.getRaca().onActionUsed(ator, tipoAcaoAnterior, tipoAcaoAtual, estadoCombate);
 		}
 		combatManager.setUltimoTipoAcao(ator, tipoAcaoAtual);
+	}
 
+	public void passarTurnoSquadAtual() {
+		if (clonesSquadAtuais == null || clonesSquadAtuais.isEmpty()) {
+			aplicarPassarVez(estadoCombate != null ? estadoCombate.getAtorAtual() : null);
+			limparEstadoSquadTemporario();
+			fecharHudEAvançar();
+			return;
+		}
+
+		Personagem criador = null;
+		Personagem atorAtual = estadoCombate != null ? estadoCombate.getAtorAtual() : null;
+		if (atorAtual != null && atorAtual.isClone()) {
+			criador = atorAtual.getCriador();
+		}
+
+		if (criador == null) {
+			for (Personagem clone : clonesSquadAtuais) {
+				if (clone != null && clone.isAtivoNoCombate() && clone.isClone()) {
+					criador = clone.getCriador();
+					break;
+				}
+			}
+		}
+
+		for (Personagem clone : new ArrayList<>(clonesSquadAtuais)) {
+			if (clone == null || !clone.isAtivoNoCombate() || !clone.isClone())
+				continue;
+			if (criador != null && clone.getCriador() != criador)
+				continue;
+
+			aplicarPassarVez(clone);
+		}
+
+		limparEstadoSquadTemporario();
 		fecharHudEAvançar();
 	}
 
@@ -1682,6 +1823,9 @@ public class CombatController {
 	public void carregarNovaArenaLogic() {
 		System.out.println(">>> Viajando para nova área...");
 		// Remove inimigos mortos/vivos antigos
+		encerrarContratosBarbaros();
+		encerrarPosturasAnao();
+		limparClonesDoCombate();
 		estadoCombate.getCombatentes().removeIf(p -> !isPlayer(p));
 
 		// Reseta TUs baseados na iniciativa
@@ -1692,6 +1836,50 @@ public class CombatController {
 
 		if (mapController != null) {
 			mapController.desenharPeoes(estadoCombate.getCombatentes());
+		}
+	}
+
+	private void limparClonesDoCombate() {
+		if (estadoCombate == null)
+			return;
+
+		for (Personagem p : estadoCombate.getCombatentes()) {
+			if (p != null && !p.isClone()) {
+				p.limparClonesAtivos();
+			}
+		}
+
+		estadoCombate.getCombatentes().removeIf(Personagem::isClone);
+		limparEstadoSquadTemporario();
+
+		if (detailedTurnHudStage != null) {
+			detailedTurnHudStage.hide();
+		}
+
+		if (mapController != null) {
+			mapController.sairModoSelecao();
+		}
+	}
+
+	private void encerrarContratosBarbaros() {
+		if (estadoCombate == null) {
+			return;
+		}
+
+		for (Personagem personagem : estadoCombate.getCombatentes()) {
+			BarbaroUtils.encerrarContrato(personagem);
+		}
+	}
+
+	private void encerrarPosturasAnao() {
+		if (estadoCombate == null) {
+			return;
+		}
+
+		for (Personagem personagem : estadoCombate.getCombatentes()) {
+			if (personagem.getRaca() instanceof Anao) {
+				((Anao) personagem.getRaca()).encerrarPostura(personagem);
+			}
 		}
 	}
 
@@ -2001,8 +2189,6 @@ public class CombatController {
 		Arma armaCopia = criarCopiaDaArma(invocador.getArmaEquipada());
 		clone.setArmaEquipada(armaCopia);
 
-		invocador.registrarClone(clone);
-
 		if (mapController != null) {
 			javafx.util.Pair<Integer, Integer> posLivre = mapController
 					.encontrarCelulaLivreMaisProxima(invocador.getPosX(), invocador.getPosY());
@@ -2013,6 +2199,7 @@ public class CombatController {
 
 				this.estadoCombate.getCombatentes().add(clone);
 				clone.setContadorTU(invocador.getContadorTU() + 50);
+				invocador.registrarClone(clone);
 
 				popularListasDeCombatentes();
 				atualizarTimelineTU();
@@ -2171,6 +2358,8 @@ public class CombatController {
 			return new PalidaVigilia();
 		if (nomeArma.equals("Rubrum"))
 			return new Rubrum();
+		if (nomeArma.equals("Lâminas do Extermínio"))
+			return new LaminasDoExterminio();
 
 		if (nomeArma.equals("Espada-Serra"))
 			return new br.com.dantesrpg.model.armas.boss.EspadaSerra();
@@ -2906,6 +3095,8 @@ public class CombatController {
 		br.com.dantesrpg.model.util.SessionLogger.log(">>> Viajando para nova área: " + mapaFile.getName());
 
 		// Remove Inimigos e Clones antigos
+		encerrarContratosBarbaros();
+		limparClonesDoCombate();
 		estadoCombate.getCombatentes().removeIf(p -> !isPlayer(p));
 
 		// Carrega o Mapa Visual

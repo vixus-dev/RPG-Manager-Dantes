@@ -1,19 +1,19 @@
 {
   "xpAtual": 1007,
-  "iniciativaBase": -3,
+  "iniciativaBase": -4,
   "vidaMaximaBase": 91.0,
   "classe": "Paladino",
   "atributosBase": {
-    "INSPIRACAO": 8,
     "SAGACIDADE": 5,
-    "SORTE": 3,
-    "CARISMA": 4,
-    "FORCA": 10,
     "INTELIGENCIA": 4,
+    "FORCA": 10,
     "PERCEPCAO": 5,
-    "DESTREZA": 7,
+    "SORTE": 3,
     "TOPOR": 2,
-    "ENDURANCE": 9
+    "ENDURANCE": 9,
+    "CARISMA": 4,
+    "DESTREZA": 7,
+    "INSPIRACAO": 8
   },
   "nome": "Eidan",
   "pontosParaDistribuir": 0,

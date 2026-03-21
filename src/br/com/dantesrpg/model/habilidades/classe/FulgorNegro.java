@@ -92,6 +92,10 @@ public class FulgorNegro extends Habilidade {
 			if (ator.getBonusDanoPercentual() > 0) {
 				danoCalculado *= (1.0 + ator.getBonusDanoPercentual());
 			}
+			if (ator.getRaca() != null) {
+				Personagem alvoReferencia = alvos.isEmpty() ? null : alvos.get(0);
+				danoCalculado *= ator.getRaca().getMultiplicadorBonusDanoArma(ator, arma, alvoReferencia, estado, input);
+			}
 
 			danoCalculado *= this.getMultiplicadorDeDano();
 
