@@ -1142,29 +1142,37 @@ public class CombatController {
 			players.add(eidan);
 		}
 		
-		if (Arkos != null) {
-			Arkos.setPosX(5);
-			Arkos.setPosY(5);
-			players.add(Arkos);
-		}
-		/*
 		if (darrell != null) {
 			darrell.setPosX(5);
 			darrell.setPosY(5);
 			players.add(darrell);
-		} */
+		} 
+		
+		
+		
+		/*
+		 
+		if (Arkos != null) {
+			Arkos.setPosX(5);
+			Arkos.setPosY(10);
+			players.add(Arkos);
+		}
+		
+		if (vivian != null) {
+			vivian.setPosX(4);
+			vivian.setPosY(6);
+			players.add(vivian);
+		} 
+		
+		*/
 
+		
 		if (Virgilio != null) {
 			Virgilio.setPosX(5);
 			Virgilio.setPosY(6);
 			players.add(Virgilio);
 		}
 
-		if (vivian != null) {
-			vivian.setPosX(4);
-			vivian.setPosY(6);
-			players.add(vivian);
-		}
 
 		/*
 		 * Personagens inutilizados if (Julius != null) { Julius.setPosX(4);
@@ -1181,8 +1189,7 @@ public class CombatController {
 		 * 
 		 * // Segunda leva Leva
 		 * 
-		 * if (Aristóteles != null) { Aristóteles.setPosX(6); Aristóteles.setPosY(5);
-		 * players.add(Aristóteles); }
+		 * if (Aristóteles != null) { Aristóteles.setPosX(6); Aristóteles.setPosY(5); players.add(Aristóteles); }
 		 * 
 		 * /* Personagens inutilizados
 		 * 
@@ -2358,7 +2365,7 @@ public class CombatController {
 			return new PalidaVigilia();
 		if (nomeArma.equals("Rubrum"))
 			return new Rubrum();
-		if (nomeArma.equals("Lâminas do Extermínio"))
+		if (nomeArma.equals("Laminas Do Exterminio"))
 			return new LaminasDoExterminio();
 
 		if (nomeArma.equals("Espada-Serra"))

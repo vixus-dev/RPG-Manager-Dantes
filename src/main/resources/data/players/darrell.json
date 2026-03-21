@@ -4,16 +4,16 @@
   "vidaMaximaBase": 36.0,
   "classe": "Ilusionista",
   "atributosBase": {
-    "INSPIRACAO": 17,
-    "SAGACIDADE": 1,
-    "SORTE": 1,
     "CARISMA": 10,
+    "PERCEPCAO": 5,
     "FORCA": 4,
     "INTELIGENCIA": 9,
-    "PERCEPCAO": 5,
-    "DESTREZA": 10,
+    "SORTE": 1,
+    "ENDURANCE": 1,
     "TOPOR": 1,
-    "ENDURANCE": 1
+    "SAGACIDADE": 1,
+    "INSPIRACAO": 17,
+    "DESTREZA": 10
   },
   "nome": "Darrell",
   "pontosParaDistribuir": 0,
@@ -21,7 +21,7 @@
   "posY": 5,
   "amuleto2": "Pingente do Olhar Desejado",
   "amuleto1": "Seixo da Absolvição",
-  "manaAtual": 13.5,
+  "manaAtual": 14.0,
   "raca": "Anjo-Caido",
   "carteira": {
     "prata": 59,

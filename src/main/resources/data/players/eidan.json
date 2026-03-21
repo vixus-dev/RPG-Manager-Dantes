@@ -1,19 +1,19 @@
 {
   "xpAtual": 1007,
-  "iniciativaBase": -4,
+  "iniciativaBase": -8,
   "vidaMaximaBase": 91.0,
   "classe": "Paladino",
   "atributosBase": {
-    "SAGACIDADE": 5,
-    "INTELIGENCIA": 4,
-    "FORCA": 10,
-    "PERCEPCAO": 5,
-    "SORTE": 3,
-    "TOPOR": 2,
-    "ENDURANCE": 9,
     "CARISMA": 4,
-    "DESTREZA": 7,
-    "INSPIRACAO": 8
+    "PERCEPCAO": 5,
+    "FORCA": 10,
+    "INTELIGENCIA": 4,
+    "SORTE": 3,
+    "ENDURANCE": 9,
+    "TOPOR": 2,
+    "SAGACIDADE": 5,
+    "INSPIRACAO": 8,
+    "DESTREZA": 7
   },
   "nome": "Eidan",
   "pontosParaDistribuir": 0,
@@ -21,7 +21,7 @@
   "posY": 4,
   "amuleto2": "Colar de Tinta Seca",
   "amuleto1": "Cranio de esqueleto shiny",
-  "manaAtual": 10.5,
+  "manaAtual": 8.5,
   "raca": "Half-Angel",
   "carteira": {
     "prata": 280,
@@ -29,7 +29,7 @@
     "bronze": 82585
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 121.61511856617646,
+  "vidaAtual": 151.0,
   "contadorTU": 5,
   "armaduraEquipada": "Armadura do Mestre",
   "nivel": 6,

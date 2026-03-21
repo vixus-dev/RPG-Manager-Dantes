@@ -4,16 +4,16 @@
   "vidaMaximaBase": 50.0,
   "classe": "???",
   "atributosBase": {
-    "INSPIRACAO": 13,
-    "SORTE": 1,
-    "TOPOR": 7,
-    "INTELIGENCIA": 9,
     "DESTREZA": 7,
-    "FORCA": 5,
+    "CARISMA": 3,
+    "SORTE": 1,
     "SAGACIDADE": 2,
+    "FORCA": 5,
     "PERCEPCAO": 11,
+    "INTELIGENCIA": 9,
+    "INSPIRACAO": 13,
     "ENDURANCE": 7,
-    "CARISMA": 3
+    "TOPOR": 7
   },
   "nome": "Aristóteles",
   "pontosParaDistribuir": 0,
@@ -21,7 +21,7 @@
   "posY": 5,
   "amuleto2": "Anel de Rei",
   "amuleto1": "Anel de Rei",
-  "manaAtual": 6.0,
+  "manaAtual": 3.5,
   "raca": "Elfo",
   "carteira": {
     "prata": 85,
@@ -29,8 +29,8 @@
     "bronze": 7819
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 100.0,
-  "contadorTU": 1,
+  "vidaAtual": 125.0,
+  "contadorTU": 98,
   "armaduraEquipada": "Manto do Mestre",
   "nivel": 3,
   "armaEquipada": {

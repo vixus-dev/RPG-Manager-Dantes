@@ -1,0 +1,21 @@
+{
+  "paredes": [],
+  "saidas": [
+    {
+      "x": 10,
+      "y": 11
+    },
+    {
+      "x": 10,
+      "y": 12
+    }
+  ],
+  "objetos": [],
+  "inimigos": [
+    {
+      "x": 24,
+      "y": 12,
+      "idMonstro": "Zeraphon - O Zero"
+    }
+  ]
+}

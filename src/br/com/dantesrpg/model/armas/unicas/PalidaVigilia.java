@@ -28,12 +28,42 @@ public class PalidaVigilia extends ArmaMelee {
 
 	@Override
 	public boolean isDanoHibrido(Personagem ator) {
-		return false; // Ignora redução de armadura física
+		return false;
 	}
 
 	@Override
 	public int getAnguloCone() {
 		return 135;
+	}
+
+	@Override
+	public boolean hasAtaqueAlternativoBasico() {
+		return true;
+	}
+
+	@Override
+	public String getNomeAtaqueAlternativoBasico() {
+		return "Golpe da Vigilia";
+	}
+
+	@Override
+	public String getDescricaoAtaqueAlternativoBasico() {
+		return "1.25x Dano, alcance 3";
+	}
+
+	@Override
+	public double getMultiplicadorAtaqueAlternativoBasico() {
+		return 1.25;
+	}
+
+	@Override
+	public int getAlcanceAtaqueAlternativoBasico() {
+		return 3;
+	}
+
+	@Override
+	public br.com.dantesrpg.model.enums.TipoAlvo getTipoAlvoAtaqueAlternativoBasico() {
+		return br.com.dantesrpg.model.enums.TipoAlvo.INDIVIDUAL;
 	}
 
 	@Override

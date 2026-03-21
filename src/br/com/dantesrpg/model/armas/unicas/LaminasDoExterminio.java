@@ -10,7 +10,7 @@ public class LaminasDoExterminio extends ArmaMelee {
 	public LaminasDoExterminio() {
 		super("Laminas Do Exterminio", "Adagas",
 				"Um par de adagas preso aos antebraços de Arkos por uma maldição de Melchama. Elas não podem ser removidas.",
-				Raridade.UNICO, 0, 12, 1, Atributo.FORCA, 105, 1);
+				Raridade.UNICO, 0, 15, 1, Atributo.FORCA, 105, 1);
 		this.setTipoAlvo(TipoAlvo.CONE);
 		this.setTamanhoArea(1);
 	}
@@ -27,7 +27,7 @@ public class LaminasDoExterminio extends ArmaMelee {
 
 	@Override
 	public String getNomeAtaqueAlternativoBasico() {
-		return "Golpe do Exterm\u00EDnio";
+		return "Golpe do Exterminio";
 	}
 
 	@Override
