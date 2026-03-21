@@ -137,12 +137,11 @@ devido ao alto número de aliados NPC's que podem entrar na party é necessario 
 
 ## 🗒️ Histórico de Versões principais
 
-### v2.43.1 — MK2 *(atual)*
+### v2.44.0 — MK2 *(atual)*
 ``` 
-- Adição da classe **Invocador** com habilidades `InvocarGolem`, `Purificar`, `InvocarGuardião` e `Sacrifício Sangrento`
-- Sistema de **Fantasma Nobre** da Lilith implementado com mecânicas de custo de mana, TU e cooldown
-- Múltiplos refinamentos no sistema de combate e na resolução de dano
-- Primeira versão exposta para fora da minha maquina
+- Adição da classe **Barbaro** com habilidades Brutais de autobuff
+- Sistema de **Fantasma Nobre** de Arkos implementado com mecânicas de custo de mana, TU e cooldown
+- Múltiplos refinamentos no sistema de clones
 ```
 
 ### v2.16.0. — MK2 *Legado*
