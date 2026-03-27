@@ -9,7 +9,7 @@ Um sistema completo de gerenciamento de sessão para RPG de mesa ambientado em u
 
 ## 📖 Sobre o Projeto
 O **RPG Manager Dante's Inferno MK2** nasceu da necessidade de gerenciar uma campanha de RPG original inspirada na Divina Comédia,ultrakill e devil may cry, com regras próprias, sistema de atributos exclusivo e um lore denso construído sessão a sessão. O software centraliza tudo que um Mestre precisa: fichas de personagem, combate tático, bestiário, loja, mapa e log de sessão tudo em tempo real.
-Este é meu maior projeto pessoal até hoje, atualmente na versão **2.43.1**.
+Este é meu maior projeto pessoal até hoje, atualmente na versão **2.44.0**.
 
 ---
 
