@@ -1,36 +1,36 @@
 package br.com.dantesrpg.main;
 
-import br.com.dantesrpg.model.map.TileRegistry;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import br.com.dantesrpg.model.map.TileRegistry;
 
 public class Main extends Application {
 
-	@Override
-	public void start(Stage primaryStage) {
-		try {
-			// Carrega o registro de tiles antes de qualquer coisa
-			TileRegistry.getInstance().load();
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            // Carrega o registro de tiles antes de qualquer coisa
+            TileRegistry.getInstance().load();
 
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/com/dantesrpg/view/CombatView.fxml"));
-			Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/com/dantesrpg/view/CombatView.fxml"));
+            Parent root = loader.load();
 
-			Scene scene = new Scene(root);
+            Scene scene = new Scene(root);
 
-			primaryStage.setTitle("RPG: A Decadencia - Combat Manager");
-			primaryStage.setScene(scene);
-			primaryStage.setMaximized(true);
-			primaryStage.show();
+            primaryStage.setTitle("RPG: A Decadencia - Combat Manager");
+            primaryStage.setScene(scene);
+            primaryStage.setMaximized(true);
+            primaryStage.show();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static void main(String[] args) {
-		launch(args);
-	}
-}	
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
