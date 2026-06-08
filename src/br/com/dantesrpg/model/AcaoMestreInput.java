@@ -1,5 +1,6 @@
 package br.com.dantesrpg.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ public class AcaoMestreInput {
 	private List<Personagem> alvos;
 	private Habilidade habilidade;
 	private FantasmaNobre fantasmaNobre;
+	private List<Arma> armasSelecionadas = new ArrayList<>();
 	private ModoAtaque modoAtaque = ModoAtaque.NORMAL;
 	private int tirosExtras = 0;
 	private String opcaoEscolhida;
@@ -59,6 +61,17 @@ public class AcaoMestreInput {
 
 	public FantasmaNobre getFantasmaNobre() {
 		return fantasmaNobre;
+	}
+
+	public List<Arma> getArmasSelecionadas() {
+		if (armasSelecionadas == null || armasSelecionadas.isEmpty()) {
+			return ator != null ? ator.getArmasEquipadas() : new ArrayList<>();
+		}
+		return armasSelecionadas;
+	}
+
+	public void setArmasSelecionadas(List<Arma> armasSelecionadas) {
+		this.armasSelecionadas = armasSelecionadas != null ? new ArrayList<>(armasSelecionadas) : new ArrayList<>();
 	}
 
 	public int getResultadoDado(String nomeDado) {
