@@ -1,37 +1,45 @@
 {
-  "xpAtual": 18,
   "iniciativaBase": 8,
-  "vidaMaximaBase": 25.0,
-  "classe": "Mestre das Balas",
   "atributosBase": {
     "FORCA": 2,
-    "INTELIGENCIA": 4,
     "DESTREZA": 6,
-    "SAGACIDADE": 8,
-    "PERCEPCAO": 6,
+    "TOPOR": 2,
+    "INSPIRACAO": 4,
     "SORTE": 6,
     "ENDURANCE": 5,
-    "INSPIRACAO": 4,
-    "CARISMA": 4,
-    "TOPOR": 2
+    "INTELIGENCIA": 4,
+    "SAGACIDADE": 8,
+    "PERCEPCAO": 6,
+    "CARISMA": 4
   },
-  "nome": "Trakin",
+  "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
-  "posX": 4,
-  "posY": 6,
-  "amuleto1": "Botas da Velocidade",
-  "manaAtual": 8.0,
-  "raca": "Marionette",
+  "escudoNormalAtual": 0.0,
   "carteira": {
     "prata": 0,
     "ouro": 0,
     "bronze": 100
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 25.0,
+  "vidaAtual": 5.0,
   "contadorTU": 4,
-  "nivel": 2,
+  "fantasmaNobre": "AcertoDeContas",
   "armaEquipada": "Terrore",
   "inventario": {},
-  "escudoAtual": 0.0
+  "xpAtual": 18,
+  "vidaMaximaBase": 25.0,
+  "classe": "Mestre das Balas",
+  "armasEquipadas": [
+    "Terrore"
+  ],
+  "nome": "Trakin",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 4,
+  "posY": 4,
+  "amuleto1": "Botas da Velocidade",
+  "manaAtual": 8.0,
+  "raca": "Marionette",
+  "nivel": 2,
+  "wieldingMaximo": 2
 }

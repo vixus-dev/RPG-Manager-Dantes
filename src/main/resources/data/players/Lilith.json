@@ -1,45 +1,54 @@
 {
-  "xpAtual": 0,
-  "iniciativaBase": 28,
-  "vidaMaximaBase": 50.0,
-  "classe": "Invocador",
+  "iniciativaBase": 30,
   "atributosBase": {
-    "TOPOR": 5,
     "SAGACIDADE": 6,
-    "PERCEPCAO": 6,
-    "SORTE": 2,
-    "INTELIGENCIA": 8,
-    "CARISMA": 7,
-    "INSPIRACAO": 11,
-    "DESTREZA": 8,
+    "TOPOR": 5,
     "FORCA": 6,
-    "ENDURANCE": 8
+    "INSPIRACAO": 13,
+    "INTELIGENCIA": 8,
+    "SORTE": 2,
+    "CARISMA": 7,
+    "DESTREZA": 10,
+    "ENDURANCE": 8,
+    "PERCEPCAO": 6
   },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 5300
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 118.0,
+  "contadorTU": 1,
+  "fantasmaNobre": "InvocacaoSangrenta",
+  "armaduraEquipada": "Colete Militar II",
+  "armaEquipada": "Rubrum",
+  "inventario": {
+    "PocaoDeManaMédia": 2,
+    "PocaoDeCuraPequena": 2,
+    "OssoDeReparo": 2,
+    "Grimório da Carne e do Vento": 1,
+    "TokenDeOverclock": 1,
+    "Canhão de Ácido Biliar": 1
+  },
+  "xpAtual": 800,
+  "vidaMaximaBase": 58.0,
+  "classe": "Invocador",
+  "armasEquipadas": [
+    "Rubrum"
+  ],
   "nome": "Lilith",
-  "pontosParaDistribuir": 2,
   "segmentos": 0,
   "grau": 0,
   "posX": 4,
   "posY": 5,
   "amuleto2": "Pingente de Cruz",
   "amuleto1": "Anel de Rei",
-  "manaAtual": 11.5,
+  "manaAtual": 12.5,
   "raca": "Half-Demon",
-  "carteira": {
-    "prata": 5,
-    "ouro": 0,
-    "bronze": 0
-  },
-  "faccao": "JOGADOR",
-  "vidaAtual": 110.0,
-  "contadorTU": 3,
-  "armaduraEquipada": "Colete Militar II",
-  "nivel": 6,
-  "armaEquipada": "Rubrum",
-  "inventario": {
-    "Colete Militar": 1,
-    "Cajado Eólico da Luxúria": 1,
-    "MoedaDeAjuda": 1
-  },
-  "escudoAtual": 0.0
+  "nivel": 7,
+  "wieldingMaximo": 2
 }

@@ -1,7 +1,7 @@
 {
   "xpAtual": 128,
   "iniciativaBase": 15,
-  "vidaMaximaBase": 30.0,
+  "vidaMaximaBase": 30,
   "classe": "Ladino",
   "atributosBase": {
     "DESTREZA": 10,
@@ -29,7 +29,7 @@
     "bronze": 950
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 65.0,
+  "vidaAtual": 65,
   "contadorTU": 4,
   "armaduraEquipada": "Colete Militar II",
   "nivel": 5,
@@ -39,5 +39,9 @@
     "Colete Militar": 1,
     "PocaoDeCuraGrande": 1
   },
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Thompson da Madame"
+  ]
 }

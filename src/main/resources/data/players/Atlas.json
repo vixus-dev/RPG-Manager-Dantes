@@ -1,7 +1,7 @@
 {
   "xpAtual": 0,
   "iniciativaBase": 11,
-  "vidaMaximaBase": 175.0,
+  "vidaMaximaBase": 175,
   "classe": "???",
   "atributosBase": {
     "INSPIRACAO": 3,
@@ -21,7 +21,7 @@
   "posY": 7,
   "amuleto2": "Anel de Rei",
   "amuleto1": "Anel de Rei",
-  "manaAtual": 8.0,
+  "manaAtual": 8,
   "raca": "Humano",
   "carteira": {
     "prata": 351,
@@ -35,9 +35,13 @@
   "nivel": 10,
   "armaEquipada": "Ataduras de Ferro",
   "inventario": {},
-  "escudoAtual": 0.0,
+  "escudoAtual": 0,
   "racaData": {
-    "vidaNegativaAcumulada": 0.0,
+    "vidaNegativaAcumulada": 0,
     "filaContratos": []
-  }
+  },
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Ataduras de Ferro"
+  ]
 }

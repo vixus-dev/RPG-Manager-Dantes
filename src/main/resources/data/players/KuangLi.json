@@ -1,39 +1,50 @@
 {
-  "xpAtual": 250,
-  "iniciativaBase": 30,
-  "vidaMaximaBase": 76.0,
-  "classe": "Campeão",
+  "iniciativaBase": 34,
   "atributosBase": {
-    "TOPOR": 8,
     "SAGACIDADE": 1,
-    "PERCEPCAO": 5,
-    "SORTE": 3,
-    "INTELIGENCIA": 4,
-    "CARISMA": 1,
-    "INSPIRACAO": 5,
-    "DESTREZA": 5,
+    "TOPOR": 8,
     "FORCA": 14,
-    "ENDURANCE": 9
+    "INSPIRACAO": 5,
+    "INTELIGENCIA": 4,
+    "SORTE": 3,
+    "CARISMA": 1,
+    "DESTREZA": 5,
+    "ENDURANCE": 11,
+    "PERCEPCAO": 5
   },
-  "nome": "KuangLi",
+  "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 1,
+    "bronze": 28160
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 127.0,
+  "contadorTU": 3,
+  "fantasmaNobre": "ProfetaDeBehemoth",
+  "armaduraEquipada": "Colete Militar",
+  "armaEquipada": "Bastão Primordial Behemoth",
+  "inventario": {
+    "PocaoDeCuraMédia": 1
+  },
+  "xpAtual": 1100,
+  "vidaMaximaBase": 82.0,
+  "classe": "Campeão",
+  "armasEquipadas": [
+    "Bastão Primordial Behemoth"
+  ],
+  "nome": "KuangLi",
   "RaçaV2": true,
   "segmentos": 0,
   "grau": 0,
   "posX": 5,
-  "posY": 7,
-  "manaAtual": 4.5,
+  "posY": 5,
+  "amuleto2": "Amuleto de Ferro",
+  "amuleto1": "Nódulo de Carne Viva",
+  "manaAtual": 9.5,
   "raca": "Lobisomem",
-  "carteira": {
-    "prata": 0,
-    "ouro": 0,
-    "bronze": 0
-  },
-  "faccao": "JOGADOR",
-  "vidaAtual": 54.65671441796875,
-  "contadorTU": 4,
-  "nivel": 6,
-  "armaEquipada": "Bastão Primordial Behemoth",
-  "inventario": {},
-  "escudoAtual": 0.0
+  "nivel": 7,
+  "wieldingMaximo": 3
 }

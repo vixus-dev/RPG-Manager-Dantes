@@ -1,0 +1,54 @@
+{
+  "iniciativaBase": 40,
+  "atributosBase": {
+    "SAGACIDADE": 16,
+    "TOPOR": 1,
+    "FORCA": 1,
+    "INSPIRACAO": 1,
+    "INTELIGENCIA": 10,
+    "SORTE": 1,
+    "CARISMA": 1,
+    "DESTREZA": 10,
+    "ENDURANCE": 5,
+    "PERCEPCAO": 14
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 2000
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 46.0,
+  "contadorTU": 0,
+  "fantasmaNobre": "TheMastersCall",
+  "armaduraEquipada": "Couraça de Obsidiana Vulcânica",
+  "armaEquipada": "Colt .45",
+  "inventario": {
+    "Winchester .22": 1,
+    "CaixaMunicaoP": 14,
+    "Escopeta de Maldição": 1,
+    "Amuleto do coração do jure supremo": 1,
+    "Faca Baioneta": 1,
+    "Colt .45": 1
+  },
+  "xpAtual": 0,
+  "vidaMaximaBase": 46.0,
+  "classe": "Pistoleiro",
+  "armasEquipadas": [
+    "Colt .45"
+  ],
+  "nome": "Trinity",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 3,
+  "posY": 4,
+  "amuleto2": "Botas da Velocidade",
+  "amuleto1": "Cranio de Esqueleto",
+  "manaAtual": 6.5,
+  "raca": "Marionette",
+  "nivel": 7,
+  "wieldingMaximo": 2
+}

@@ -1,7 +1,7 @@
 {
   "xpAtual": 0,
   "iniciativaBase": 10,
-  "vidaMaximaBase": 75.0,
+  "vidaMaximaBase": 75,
   "classe": "Pugilista",
   "atributosBase": {
     "INSPIRACAO": 3,
@@ -29,7 +29,7 @@
     "bronze": 319
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 150.0,
+  "vidaAtual": 150,
   "contadorTU": 5,
   "armaduraEquipada": "Couraça de Ossos Reforçados",
   "nivel": 5,
@@ -38,5 +38,9 @@
     "PocaoDeCuraMédia": 1,
     "PocaoDeCuraGrande": 2
   },
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Lança Cesariana"
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "xpAtual": 406,
   "iniciativaBase": 32,
-  "vidaMaximaBase": 36.0,
+  "vidaMaximaBase": 36,
   "classe": "Ilusionista",
   "atributosBase": {
     "TOPOR": 1,
@@ -23,7 +23,7 @@
   "posY": 5,
   "amuleto2": "Pingente do Olhar Desejado",
   "amuleto1": "Seixo da Absolvição",
-  "manaAtual": 11.0,
+  "manaAtual": 11,
   "raca": "Anjo-Caido",
   "carteira": {
     "prata": 5,
@@ -31,7 +31,7 @@
     "bronze": 392
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 96.0,
+  "vidaAtual": 96,
   "contadorTU": 0,
   "armaduraEquipada": "Nano-Armadura MK1",
   "nivel": 6,
@@ -52,5 +52,9 @@
     "Cajado Eólico da Luxúria": 1,
     "PocaoDeCuraGrande": 3
   },
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Thompson"
+  ]
 }

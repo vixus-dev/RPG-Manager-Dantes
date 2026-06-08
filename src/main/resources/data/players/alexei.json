@@ -1,57 +1,65 @@
 {
-  "iniciativaBase": 28,
+  "iniciativaBase": 27,
   "atributosBase": {
-    "TOPOR": 4,
     "SAGACIDADE": 2,
-    "PERCEPCAO": 8,
-    "SORTE": 2,
-    "INTELIGENCIA": 2,
-    "CARISMA": 3,
+    "TOPOR": 5,
+    "FORCA": 20,
     "INSPIRACAO": 2,
-    "DESTREZA": 10,
-    "FORCA": 16,
-    "ENDURANCE": 8
+    "INTELIGENCIA": 3,
+    "SORTE": 3,
+    "CARISMA": 3,
+    "DESTREZA": 11,
+    "ENDURANCE": 8,
+    "PERCEPCAO": 12
   },
+  "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
   "armaOverclock": 1,
   "carteira": {
-    "prata": 12,
+    "prata": 0,
     "ouro": 0,
-    "bronze": 899
+    "bronze": 14808
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 69.08918315789474,
+  "vidaAtual": 124.0,
   "contadorTU": 2,
+  "fantasmaNobre": "RingOfTheUndyingWill",
   "armaduraEquipada": "Peitoral da Guarda de Marfim",
   "armaEquipada": "Punho Infinito",
   "inventario": {
-    "Cranio de esqueleto shiny": 1,
-    "Amuleto de Ferro": 1,
-    "Espada GPC": 1,
-    "Colar de Tinta Seca": 1,
-    "OssoDeReparo": 1,
-    "PocaoDeCuraGrande": 8,
-    "Lança": 1
+    "PocaoDeManaGrande": 2,
+    "PocaoDeCuraMédia": 1,
+    "Espada Atômica": 1,
+    "Pistola de Hemopressão": 1,
+    "Colar de Tinta Seca": 2,
+    "Medalhão da Promessa": 1
   },
-  "escudoAtual": 0.0,
-  "xpAtual": 1651,
-  "vidaMaximaBase": 74.0,
+  "xpAtual": 1071,
+  "vidaMaximaBase": 104.0,
   "classe": "Pugilista",
+  "armasEquipadas": [
+    {
+      "overclock": 1,
+      "nome": "Punho Infinito"
+    }
+  ],
   "nome": "Alexei",
   "segmentos": 0,
   "grau": 0,
-  "posX": 4,
+  "posX": 5,
   "posY": 4,
-  "amuleto2": "Colar de Tinta Seca",
+  "amuleto2": "Anel Esofágico",
   "amuleto1": "Medalhão da Promessa SHINY",
-  "manaAtual": 2.0,
+  "manaAtual": 6.0,
   "raca": "Humano",
-  "nivel": 6,
+  "nivel": 8,
   "racaData": {
     "contratoAtivoDividaRestante": 0.0,
-    "estadoEmprestimo": "RECUPERADO",
-    "vidaNegativaAcumulada": 18.98711184210528,
+    "estadoEmprestimo": "NENHUM",
+    "vidaNegativaAcumulada": 0.0,
     "contratoAtivoValorTotal": 0.0,
     "filaContratos": []
-  }
+  },
+  "wieldingMaximo": 2
 }
