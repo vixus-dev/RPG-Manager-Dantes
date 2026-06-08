@@ -258,5 +258,95 @@
       "armaduraBonus": 0,
       "modificadoresDeAtributo": {},
       "modificadoresStatus": {"DANO_BONUS_PERCENTUAL": 0.25, "HP_MAXIMO" : 50, "REDUCAO_DANO_MODIFICADOR" : 0.15}
-    }
+    },
+	"Medalhão da Virgilio": {
+	      "classeItem": "Amuleto",
+	      "nome": "Medalhão da Virgilio",
+	      "descricao": "Um medalhão feito para o virgilo, trás o melhor dele",
+	      "valorMoedas": 9000,
+	      "tipoMoeda": "BRONZE",
+	      "armaduraBonus": 10,
+	      "modificadoresDeAtributo": {},
+	      "modificadoresStatus": {"TAXA_CRITICA": 0.125, "MP_MAXIMO": 2, "ARMADURA_TOTAL": 50}
+	    },
+  "Coração Parasita": {
+    "classeItem": "Amuleto",
+    "nome": "Coração Parasita",
+    "descricao": "Um pequeno coração preso por veias finas.",
+    "valorMoedas": 7500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 10,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {"HP_MAXIMO": 10.0, "DANO_BONUS_PERCENTUAL": 0.075}
+  },
+  "Dente do Devorador": {
+    "classeItem": "Amuleto",
+    "nome": "Dente do Devorador",
+    "descricao": "Um dente grande, gasto e vivo.",
+    "valorMoedas": 8500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 10,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {"HP_MAXIMO": -10.0, "TAXA_CRITICA": 0.05, "DANO_CRITICO": 0.15}
+  },
+  "Ampulheta de Ácido": {
+    "classeItem": "Amuleto",
+    "nome": "Ampulheta de Ácido",
+    "descricao": "Areia substituída por líquido corrosivo.",
+    "valorMoedas": 9000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 15,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {"RESISTENCIA_DOT": 15.0, "MP_MAXIMO": 1.0}
+  },
+  "Anel Esofágico": {
+    "classeItem": "Amuleto",
+    "nome": "Anel Esofágico",
+    "descricao": "Um anel que pulsa como garganta.",
+    "valorMoedas": 6000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {"HP_MAXIMO": 20.0, "DANO_BONUS_PERCENTUAL": 0.05}
+  },
+  "Pingente Gástrico": {
+    "classeItem": "Amuleto",
+    "nome": "Pingente Gástrico",
+    "descricao": "Miniatura de um estômago funcional.",
+    "valorMoedas": 5500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 5,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {"HP_MAXIMO": 15.0, "MP_MAXIMO": 1.0}
+  },
+  "Colar de Vértebras Fragmentadas": {
+    "classeItem": "Amuleto",
+    "nome": "Colar de Vértebras Fragmentadas",
+    "descricao": "Pequenos ossos ligados por fios metálicos.",
+    "valorMoedas": 6500,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 15,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {"HP_MAXIMO": 5.0, "MOVIMENTO": 1.0}
+  },
+  "Nódulo de Carne Viva": {
+    "classeItem": "Amuleto",
+    "nome": "Nódulo de Carne Viva",
+    "descricao": "Um pedaço de carne pulsante preso ao corpo.",
+    "valorMoedas": 7000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {"HP_MAXIMO": 15.0, "DANO_CRITICO": 0.10, "MP_MAXIMO": 1.0}
+  },
+  "Válvula Cardíaca Artificial": {
+    "classeItem": "Amuleto",
+    "nome": "Válvula Cardíaca Artificial",
+    "descricao": "Peça metálica com partes orgânicas.",
+    "valorMoedas": 7000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 10,
+    "modificadoresDeAtributo": {"SAGACIDADE": 1},
+    "modificadoresStatus": {"HP_MAXIMO": 5.0}
+  }
 }

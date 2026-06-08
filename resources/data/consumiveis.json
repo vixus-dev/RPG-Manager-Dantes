@@ -382,5 +382,15 @@
         "BONUS_DANO": 0.2,
         "DURACAO" : 200
     }
+  },
+  "TokenDeOverclock": {
+    "classeItem": "Consumivel",
+    "nome": "Token de Overclock",
+    "descricao": "Um cristal de energia concentrada. Entregue a um ferreiro especializado para aprimorar equipamentos. Cada token aumenta o grau de overclock em 1 nível (+25% dos atributos base). Máximo: 10 graus.",
+    "valorMoedas": 50000,
+    "tipoMoeda": "OURO",
+    "custoTU": 0,
+    "usavelEmCombate": false,
+    "efeitos": {}
   }
 }

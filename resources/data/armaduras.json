@@ -249,5 +249,71 @@
     "modificadoresStatus": {
       "TAXA_CRITICA" : 0.05
     }
+  },
+  "Exoesqueleto Peristáltico": {
+    "classeItem": "Armadura",
+    "nome": "Exoesqueleto Peristáltico",
+    "descricao": "Uma estrutura metálica viva que se contrai em volta do corpo.",
+    "valorMoedas": 8000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MOVIMENTO": 1.0,
+      "HP_MAXIMO": 10.0
+    }
+  },
+  "Vestes de Veias Costuradas": {
+    "classeItem": "Armadura",
+    "nome": "Vestes de Veias Costuradas",
+    "descricao": "Está sincronizada com você. Talvez demais.",
+    "valorMoedas": 9000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "DANO_CRITICO": 0.10,
+      "RESISTENCIA_DOT": 0.15,
+      "HP_MAXIMO": -10.0
+    }
+  },
+  "Couraça de Ossos Rebitados": {
+    "classeItem": "Armadura",
+    "nome": "Couraça de Ossos Rebitados",
+    "descricao": "Ossos reforçados com placas metálicas e parafusos.",
+    "valorMoedas": 12000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 70,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "DANO_BONUS_PERCENTUAL": 0.15,
+      "HP_MAXIMO": -10.0
+    }
+  },
+  "Pele de Digestão Parcial": {
+    "classeItem": "Armadura",
+    "nome": "Pele de Digestão Parcial",
+    "descricao": "Uma camada semi-transparente que cobre o corpo.",
+    "valorMoedas": 11000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 60,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "RESISTENCIA_DOT": 0.10,
+      "TAXA_CRITICA": 0.05,
+      "MP_MAXIMO": 1.0
+    }
+  },
+  "Armadura de Câmara Gástrica": {
+    "classeItem": "Armadura",
+    "nome": "Armadura de Câmara Gástrica",
+    "descricao": "Uma estrutura com válvulas e tubos conectados ao corpo.",
+    "valorMoedas": 10000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 65,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 30.0
+    }
   }
 }
