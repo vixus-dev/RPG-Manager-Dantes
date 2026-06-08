@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="500.0" prefWidth="320.0"
+            style="-fx-background-color: #1a1a2e;"
+            stylesheets="@style.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="br.com.dantesrpg.controller.EditorWindowController">
+
+    <top>
+        <VBox style="-fx-background-color: #16213e; -fx-padding: 8;">
+            <Label text="🖌️ Editor de Mapa"
+                   style="-fx-text-fill: #e94560; -fx-font-size: 16px; -fx-font-weight: bold;" />
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <padding><Insets top="6" /></padding>
+                <Label text="Selecionado:"
+                       style="-fx-text-fill: #a0a0a0; -fx-font-size: 12px;" />
+                <Label fx:id="labelTileSelecionado"
+                       text="Nenhum"
+                       style="-fx-text-fill: #ffffff; -fx-font-size: 13px; -fx-font-weight: bold;" />
+                <javafx.scene.layout.Pane fx:id="previewTile"
+                       prefWidth="32" prefHeight="32"
+                       style="-fx-border-color: #555; -fx-border-width: 1;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    style="-fx-background-color: #1a1a2e; -fx-background: #1a1a2e;">
+            <Accordion fx:id="accordionCategorias" />
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" spacing="10"
+              style="-fx-background-color: #16213e; -fx-padding: 8;">
+            <Button text="🧹 Borracha (Chão Padrão)"
+                    onAction="#onBorrachaClick"
+                    style="-fx-background-color: #0f3460; -fx-text-fill: white; -fx-cursor: hand;" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
