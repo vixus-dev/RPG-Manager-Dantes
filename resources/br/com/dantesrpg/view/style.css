@@ -139,6 +139,20 @@
     -fx-background-repeat: no-repeat;
 }
 
+.map-floor8 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/Netherrack.png'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
+.map-floor9 {
+    -fx-background-color: #222222; 
+    -fx-background-image: url('../textures/ChaoLab.jpg'); 
+    -fx-background-size: cover; 
+    -fx-background-repeat: no-repeat;
+}
+
 .map-grass1 {
     -fx-background-color: #222222; 
     -fx-background-image: url('../textures/grass.png'); 
@@ -182,6 +196,18 @@
     -fx-background-size: cover;
 }
 
+.map-wall7 {
+    -fx-background-color: #555555;
+    -fx-background-image: url('../textures/ParedeLab.jpg');
+    -fx-background-size: cover;
+}
+
+.map-wall8 {
+	-fx-background-color: #555555;
+    -fx-background-image: url('../textures/fleshwall.png');
+    -fx-background-size: cover;
+}
+
 /* Fog of War */
 .map-fog {
     -fx-background-color: #000000;
@@ -212,7 +238,49 @@
 
 .map-lava {
     -fx-background-color: #cf1020; /* Vermelho sangue/fogo */
-    -fx-background-image: url('../textures/Lava.png'); 
+    -fx-background-image: url('../textures/Lava.png');
+    -fx-background-size: cover;
+}
+
+/* Sangue */
+.map-sangue {
+    -fx-background-color: #8B0000;
+    -fx-background-image: url('../textures/sangue.png');
+    -fx-background-size: cover;
+}
+
+/* Ácido */
+.map-acido {
+    -fx-background-color: #39FF14;
+    -fx-background-image: url('../textures/acido.png');
+    -fx-background-size: cover;
+}
+
+/* Liquid Gold */
+.map-liquidgold {
+    -fx-background-color: #ff4c00;
+    -fx-background-image: url('../textures/LiquidGold.png');
+    -fx-background-size: cover;
+}
+
+/* Areia */
+.map-sand {
+    -fx-background-color: #c2b280;
+    -fx-background-image: url('../textures/sand.png');
+    -fx-background-size: cover;
+}
+
+/* Sand Brick */
+.map-sandbrick {
+    -fx-background-color: #d2b48c;
+    -fx-background-image: url('../textures/SandBrick.png');
+    -fx-background-size: cover;
+}
+
+/* Sand Stone */
+.map-sandstone {
+    -fx-background-color: #a0825a;
+    -fx-background-image: url('../textures/sandStone.png');
     -fx-background-size: cover;
 }
 
@@ -295,12 +363,125 @@
     -fx-effect: innershadow(gaussian, rgba(200, 255, 255, 0.3), 15, 0.5, 0, 0);
 }
 
+.zona-dominio-fusao {
+    -fx-border-color: #1a1a1a;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    /* Aura preta opressiva */
+    -fx-background-color: rgba(0, 0, 0, 0.35);
+    -fx-effect: innershadow(gaussian, rgba(20, 0, 40, 0.6), 20, 0.6, 0, 0);
+}
+
+/* --- DOMÍNIO JIHŌ GEKKYŪDEN (Lillith) — sangue negro --- */
+.zona-dominio-lillith {
+    -fx-border-color: #3D0000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    /* Preenchimento de sangue negro/coagulado */
+    -fx-background-color: rgba(18, 0, 8, 0.62);
+    -fx-effect: innershadow(gaussian, rgba(90, 0, 20, 0.65), 20, 0.6, 0, 0);
+}
+
+/* --- FALSA JUSTIÇA (Justiceiro Cego) --- */
+.zona-dominio-justiceiro {
+    -fx-border-color: #8B0000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    /* Fallback caso o sprite overlay falhe */
+    -fx-background-color: rgba(120, 0, 0, 0.4);
+    -fx-effect: innershadow(gaussian, rgba(200, 0, 0, 0.5), 20, 0.6, 0, 0);
+}
+
 .zona-aura-darrell {
     -fx-border-color: #00FF66;
     -fx-border-width: 2;
     -fx-border-style: dashed;
     /* Brilho verde */
     -fx-effect: innershadow(gaussian, rgba(0, 255, 100, 0.3), 15, 0.5, 0, 0);
+}
+
+/* --- AURA PRESENÇA DO ZERO (Zeraphon) --- */
+.zona-aura-zero {
+    -fx-border-color: #6600CC;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    /* Brilho roxo escuro / vazio */
+    -fx-effect: innershadow(gaussian, rgba(102, 0, 204, 0.35), 15, 0.5, 0, 0);
+}
+
+/* --- AURA BAD OMEN (Vampiro V2) --- */
+.zona-aura-bad-omen {
+    -fx-border-color: #8B0000;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    /* Brilho vermelho sangue */
+    -fx-effect: innershadow(gaussian, rgba(139, 0, 0, 0.35), 15, 0.5, 0, 0);
+}
+
+/* --- AURA DE SANGUE (Lillith — Mergulho) --- */
+.zona-aura-sangue {
+    -fx-border-color: #6B1F8C;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    -fx-background-color: rgba(75, 0, 60, 0.22);
+    -fx-effect: innershadow(gaussian, rgba(140, 20, 60, 0.45), 18, 0.55, 0, 0);
+}
+
+/* --- THE MASTER'S CALL (Pinocchio) --- */
+.zona-aura-master-call-green-10 {
+    -fx-border-color: #1c8f48;
+    -fx-border-width: 1;
+    -fx-border-style: dashed;
+    -fx-background-color: rgba(0, 120, 40, 0.12);
+    -fx-effect: innershadow(gaussian, rgba(0, 255, 100, 0.18), 14, 0.45, 0, 0);
+}
+
+.zona-aura-master-call-green-20 {
+    -fx-border-color: #20a957;
+    -fx-border-width: 1;
+    -fx-border-style: dashed;
+    -fx-background-color: rgba(0, 145, 55, 0.18);
+    -fx-effect: innershadow(gaussian, rgba(0, 255, 110, 0.24), 15, 0.48, 0, 0);
+}
+
+.zona-aura-master-call-green-35 {
+    -fx-border-color: #24c768;
+    -fx-border-width: 1;
+    -fx-border-style: dashed;
+    -fx-background-color: rgba(0, 170, 70, 0.24);
+    -fx-effect: innershadow(gaussian, rgba(0, 255, 120, 0.30), 16, 0.50, 0, 0);
+}
+
+.zona-aura-master-call-green-50 {
+    -fx-border-color: #35df78;
+    -fx-border-width: 1;
+    -fx-border-style: dashed;
+    -fx-background-color: rgba(0, 195, 85, 0.30);
+    -fx-effect: innershadow(gaussian, rgba(40, 255, 135, 0.36), 18, 0.52, 0, 0);
+}
+
+.zona-aura-master-call-green-60 {
+    -fx-border-color: #61f28f;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    -fx-background-color: rgba(30, 220, 105, 0.36);
+    -fx-effect: innershadow(gaussian, rgba(90, 255, 155, 0.44), 20, 0.55, 0, 0);
+}
+
+.zona-aura-master-call-green-75 {
+    -fx-border-color: #a3ffbd;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-background-color: rgba(70, 245, 135, 0.44);
+    -fx-effect: innershadow(gaussian, rgba(145, 255, 185, 0.58), 22, 0.58, 0, 0);
+}
+
+.zona-aura-master-call-crash {
+    -fx-border-color: #8B0000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-background-color: rgba(120, 0, 0, 0.34);
+    -fx-effect: innershadow(gaussian, rgba(220, 0, 0, 0.52), 20, 0.6, 0, 0);
 }
 
 
@@ -312,6 +493,24 @@
     -fx-border-style: solid;
     /* Brilho Dourado Forte */
     -fx-effect: innershadow(gaussian, rgba(255, 215, 0, 0.5), 25, 0.5, 0, 0);
+}
+
+/* --- PÁLIDA VIGÍLIA (Hover - Alcance de Cura) --- */
+.alcance-vigilia {
+    -fx-border-color: #C0C0C0;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
+    /* Brilho prateado / angelical */
+    -fx-effect: innershadow(gaussian, rgba(192, 192, 192, 0.45), 25, 0.5, 0, 0);
+}
+
+/* --- ANJO CAÍDO V2 - HARMONIA PERFEITA (Hover - Alcance 360°) --- */
+.alcance-harmonia {
+    -fx-border-color: #FFD700;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
+    /* Brilho dourado celestial */
+    -fx-effect: innershadow(gaussian, rgba(255, 215, 0, 0.4), 25, 0.5, 0, 0);
 }
 
 /* --- OUTROS --- */
@@ -331,4 +530,951 @@
 #mapToolbar .toggle-button:selected {
     -fx-background-color: cyan;
     -fx-text-fill: black;
+}
+
+/* ============================================= */
+/* ===  EDITOR DE PERSONAGEM - ESTILOS      === */
+/* ============================================= */
+
+.editor-background {
+    -fx-background-color: #0b0914; /* Tom gótico ultra-escuro */
+}
+
+/* Coluna lateral (lista de jogadores) */
+.editor-sidebar {
+    -fx-background-color: #100f1d;
+    -fx-border-color: #1f1d36;
+    -fx-border-width: 0 2 0 0;
+    -fx-padding: 12;
+}
+
+/* Bento Card / Glassmorphism */
+.bento-card {
+    -fx-background-color: rgba(22, 22, 38, 0.65);
+    -fx-border-color: rgba(233, 69, 96, 0.15);
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 0);
+}
+
+.bento-card:hover {
+    -fx-border-color: rgba(233, 69, 96, 0.35);
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.15), 15, 0.0, 0, 0);
+}
+
+/* Colunas centrais (compatibilidade de classe legada) */
+.editor-column {
+    -fx-background-color: rgba(22, 22, 38, 0.65);
+    -fx-border-color: rgba(233, 69, 96, 0.15);
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 16;
+}
+
+/* Header de seção */
+.header-label {
+    -fx-text-fill: #e6e6e6;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent rgba(233, 69, 96, 0.3) transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 8 0;
+}
+
+/* Moldura do Retrato */
+.portrait-container {
+    -fx-border-color: linear-gradient(to bottom, #e94560, #00f0ff);
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-background-color: #0d0c15;
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.35), 8, 0.5, 0, 0);
+}
+
+/* --- HEADER DO PERSONAGEM (GLASS GRADIENT) --- */
+.character-header {
+    -fx-background-color: linear-gradient(to right, #100f1c, #1d0f28, #100f1c);
+    -fx-border-color: rgba(233, 69, 96, 0.4);
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 16 24;
+}
+
+.character-header .label-name {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.6), 12, 0.4, 0, 0);
+}
+
+.character-header .label-class {
+    -fx-font-size: 15px;
+    -fx-text-fill: #e94560;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.3), 4, 0, 0, 0);
+}
+
+.character-header .label-race {
+    -fx-font-size: 14px;
+    -fx-text-fill: #00f0ff;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 240, 255, 0.3), 4, 0, 0, 0);
+}
+
+.character-header .label-level {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ffd700;
+    -fx-font-weight: bold;
+}
+
+/* --- ESTILIZAÇÃO DO TABPANE MODERNIZADO --- */
+.editor-tab-pane {
+    -fx-tab-max-height: 38;
+}
+
+.editor-tab-pane .tab-header-area {
+    -fx-background-color: #0b0914;
+    -fx-padding: 8 8 0 8;
+}
+
+.editor-tab-pane .tab-header-background {
+    -fx-background-color: #100f1d;
+    -fx-border-color: rgba(233, 69, 96, 0.2);
+    -fx-border-width: 0 0 1 0;
+}
+
+.editor-tab-pane .tab {
+    -fx-background-color: #1a192e;
+    -fx-background-insets: 0 2 0 2;
+    -fx-background-radius: 6 6 0 0;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(233, 69, 96, 0.1) rgba(233, 69, 96, 0.1) transparent rgba(233, 69, 96, 0.1);
+    -fx-border-width: 1 1 0 1;
+    -fx-border-radius: 6 6 0 0;
+}
+
+.editor-tab-pane .tab:hover {
+    -fx-background-color: #24223d;
+}
+
+.editor-tab-pane .tab:selected {
+    -fx-background-color: #e94560;
+    -fx-border-color: #e94560;
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.4), 8, 0, 0, 0);
+}
+
+.editor-tab-pane .tab .tab-label {
+    -fx-text-fill: #8c8ba5;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.editor-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+
+/* --- ELEMENTOS ADICIONAIS --- */
+.editor-search-field {
+    -fx-background-color: #0a0910;
+    -fx-border-color: rgba(233, 69, 96, 0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: white;
+    -fx-padding: 4 8;
+    -fx-font-size: 12px;
+}
+
+.editor-search-field:focused {
+    -fx-border-color: #00f0ff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 240, 255, 0.35), 6, 0, 0, 0);
+}
+
+.editor-ranks-label {
+    -fx-text-fill: #9a9ab0;
+    -fx-font-size: 12px;
+    -fx-font-family: "Oxanium";
+    -fx-font-weight: bold;
+    -fx-line-spacing: 4;
+}
+
+/* --- BOTÕES DA SIDEBAR (JOGADORES) --- */
+.player-select-button {
+    -fx-background-color: #222233;
+    -fx-text-fill: #c0c0c0;
+    -fx-font-size: 12px;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #333344;
+    -fx-border-width: 1;
+    -fx-padding: 8 10;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.player-select-button:hover {
+    -fx-background-color: #2a2a44;
+    -fx-border-color: #e94560;
+    -fx-text-fill: white;
+}
+
+.player-select-button-selected {
+    -fx-background-color: linear-gradient(to right, #1a1a3e, #2a1a3e);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-color: #e94560;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.4), 10, 0, 0, 0);
+}
+
+/* --- CARDS DE EQUIPAMENTO --- */
+.equipment-card {
+    -fx-background-color: #1e1e2e;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8;
+    -fx-border-width: 2;
+    -fx-border-color: #3a3a4a;
+}
+
+.equipment-card-empty {
+    -fx-background-color: #141420;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    -fx-border-color: #2a2a3a;
+}
+
+/* Bordas por raridade */
+.rarity-comum { -fx-border-color: #888888; }
+.rarity-incomum { -fx-border-color: #2ecc71; }
+.rarity-raro { -fx-border-color: #3498db; -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 6, 0, 0, 0); }
+.rarity-epico { -fx-border-color: #9b59b6; -fx-effect: dropshadow(gaussian, rgba(155, 89, 182, 0.3), 6, 0, 0, 0); }
+.rarity-lendario { -fx-border-color: #f39c12; -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.4), 8, 0, 0, 0); }
+.rarity-unico { -fx-border-color: #e74c3c; -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.4), 8, 0, 0, 0); }
+.rarity-mitico { -fx-border-color: #ff00ff; -fx-effect: dropshadow(gaussian, rgba(255, 0, 255, 0.5), 10, 0, 0, 0); }
+
+.equipment-slot-label {
+    -fx-text-fill: #808090;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 2 0;
+}
+
+.equipment-item-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* Nomes por raridade */
+.name-comum { -fx-text-fill: #c0c0c0; }
+.name-incomum { -fx-text-fill: #2ecc71; }
+.name-raro { -fx-text-fill: #3498db; }
+.name-epico { -fx-text-fill: #9b59b6; }
+.name-lendario { -fx-text-fill: #f39c12; }
+.name-unico { -fx-text-fill: #e74c3c; }
+.name-mitico { -fx-text-fill: #ff00ff; }
+
+.btn-unequip {
+    -fx-background-color: #3a1a1a;
+    -fx-text-fill: #ff6b6b;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #551a1a;
+    -fx-border-width: 1;
+    -fx-padding: 2 8;
+    -fx-cursor: hand;
+}
+
+.btn-unequip:hover {
+    -fx-background-color: #551a1a;
+    -fx-border-color: #ff4444;
+}
+
+/* --- RANK BADGES --- */
+.rank-badge {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 6;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-alignment: center;
+    -fx-min-width: 38;
+}
+
+.rank-P { -fx-background-color: #332200; -fx-text-fill: gold; -fx-border-color: gold; -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.5), 6, 0, 0, 0); }
+.rank-SSS { -fx-background-color: #330000; -fx-text-fill: #FF2B00; -fx-border-color: #FF2B00; }
+.rank-SS { -fx-background-color: #2a0000; -fx-text-fill: #D12300; -fx-border-color: #D12300; }
+.rank-S { -fx-background-color: #200000; -fx-text-fill: #A31B00; -fx-border-color: #A31B00; }
+.rank-A { -fx-background-color: #2a1800; -fx-text-fill: #FF9000; -fx-border-color: #FF9000; }
+.rank-B { -fx-background-color: #2a2500; -fx-text-fill: #FFDD00; -fx-border-color: #FFDD00; }
+.rank-C { -fx-background-color: #0a2200; -fx-text-fill: #44FF00; -fx-border-color: #44FF00; }
+.rank-D { -fx-background-color: #000a2a; -fx-text-fill: #0033FF; -fx-border-color: #0033FF; }
+.rank-E { -fx-background-color: #1a1a1a; -fx-text-fill: #888888; -fx-border-color: #555555; }
+
+/* --- BARRAS DE STAT (HP/MP) --- */
+.stat-bar-track {
+    -fx-background-color: #0a0a0a;
+    -fx-background-radius: 4;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-pref-height: 20;
+}
+
+.stat-bar-hp {
+    -fx-background-color: linear-gradient(to right, #1a6b1a, #2ecc71);
+    -fx-background-radius: 3;
+}
+
+.stat-bar-mp {
+    -fx-background-color: linear-gradient(to right, #0a3a6b, #3498db);
+    -fx-background-radius: 3;
+}
+
+.stat-bar-text {
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, black, 2, 0.8, 0, 0);
+}
+
+/* --- ATRIBUTOS DETALHADOS --- */
+.editor-stat-row {
+    -fx-background-color: #1a1a24;
+    -fx-background-radius: 3;
+    -fx-padding: 4 8;
+}
+
+.editor-stat-row:hover {
+    -fx-background-color: #222233;
+}
+
+.editor-stat-label {
+    -fx-text-fill: #808090;
+    -fx-font-size: 12px;
+}
+
+.editor-stat-value {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.editor-stat-value-green { -fx-text-fill: #2ecc71; }
+.editor-stat-value-red { -fx-text-fill: #e74c3c; }
+.editor-stat-value-yellow { -fx-text-fill: #f1c40f; }
+
+/* --- INVENTÁRIO --- */
+.editor-list-view {
+    -fx-background-color: #141420;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.editor-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 4 8;
+    -fx-border-color: transparent transparent #1a1a24 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.editor-list-view .list-cell:filled:hover {
+    -fx-background-color: #222233;
+}
+
+.editor-list-view .list-cell:filled:selected {
+    -fx-background-color: #2a2a44;
+    -fx-border-color: transparent transparent #e94560 transparent;
+}
+
+/* --- BOTÕES DO EDITOR --- */
+.editor-btn-save {
+    -fx-background-color: #1a3a1a;
+    -fx-text-fill: #2ecc71;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #2ecc71;
+    -fx-border-width: 1;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.editor-btn-save:hover {
+    -fx-background-color: #2a5a2a;
+    -fx-effect: dropshadow(gaussian, rgba(46, 204, 113, 0.4), 8, 0, 0, 0);
+}
+
+.editor-btn-reset {
+    -fx-background-color: #3a1a1a;
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #e74c3c;
+    -fx-border-width: 1;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.editor-btn-reset:hover {
+    -fx-background-color: #5a1a1a;
+    -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.4), 8, 0, 0, 0);
+}
+
+.editor-btn-plus {
+    -fx-background-color: #1a2a3a;
+    -fx-text-fill: cyan;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #2a4a5a;
+    -fx-border-width: 1;
+    -fx-padding: 1 8;
+    -fx-cursor: hand;
+    -fx-min-width: 28;
+    -fx-min-height: 22;
+}
+
+.editor-btn-plus:hover {
+    -fx-background-color: #2a3a5a;
+    -fx-border-color: cyan;
+}
+
+.editor-btn-plus:disabled {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #444444;
+    -fx-border-color: #2a2a2a;
+}
+
+/* --- GRÁFICO RADAR --- */
+.radar-chart-pane {
+    -fx-background-color: #0a0a12;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* --- TOOLTIP DARK --- */
+.tooltip {
+    -fx-background-color: #1a1a2e;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #3a3a5a;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8;
+    -fx-font-size: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 2);
+}
+
+/* --- SEPARADOR --- */
+.editor-separator {
+    -fx-background-color: #2a2a3a;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+}
+
+/* --- PONTOS PARA DISTRIBUIR --- */
+.points-available {
+    -fx-text-fill: #2ecc71;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.points-none {
+    -fx-text-fill: #808090;
+    -fx-font-size: 12px;
+}
+
+/* --- ATRIBUTO ROW --- */
+.attr-name-label {
+    -fx-text-fill: #a0a0b0;
+    -fx-font-size: 12px;
+    -fx-min-width: 40;
+}
+
+.attr-value-normal { -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; }
+.attr-value-buffed { -fx-text-fill: #2ecc71; -fx-font-weight: bold; -fx-font-size: 13px; }
+.attr-value-debuffed { -fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-font-size: 13px; }
+
+.attr-diff-buff { -fx-text-fill: #2ecc71; -fx-font-size: 11px; }
+.attr-diff-debuff { -fx-text-fill: #e74c3c; -fx-font-size: 11px; }
+
+/* --- PROGRESS BAR DE RANK --- */
+.rank-progress-track {
+    -fx-background-color: #0a0a12;
+    -fx-background-radius: 2;
+    -fx-pref-height: 4;
+    -fx-border-radius: 2;
+}
+
+.rank-progress-fill {
+    -fx-background-radius: 2;
+    -fx-pref-height: 4;
+}
+
+/* ============================================= */
+/* ===  LOJA - ESTILOS                       === */
+/* ============================================= */
+
+.loja-background {
+    -fx-background-color: #121218;
+}
+
+/* --- HEADER DA LOJA --- */
+.loja-header {
+    -fx-background-color: linear-gradient(to right, #1a1a2e, #1e2a1e, #1a1a2e);
+    -fx-border-color: #f39c12;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 12 20;
+}
+
+.loja-header .loja-titulo {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f39c12;
+    -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.5), 8, 0, 0, 0);
+}
+
+.loja-header .loja-nome-loja {
+    -fx-font-size: 14px;
+    -fx-text-fill: #a0c0a0;
+    -fx-font-weight: bold;
+}
+
+/* --- BADGE TIPO LOJA --- */
+.loja-badge-normal {
+    -fx-background-color: #1a3a1a;
+    -fx-text-fill: #2ecc71;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 8;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #2ecc71;
+    -fx-border-width: 1;
+}
+
+.loja-badge-overclock {
+    -fx-background-color: #0a2a3a;
+    -fx-text-fill: cyan;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 8;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: cyan;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 255, 0.3), 6, 0, 0, 0);
+}
+
+/* --- MOEDAS --- */
+.moeda-container {
+    -fx-background-color: #16161e;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-padding: 6 12;
+}
+
+.moeda-ouro { -fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 13px; }
+.moeda-prata { -fx-text-fill: #c0c0c0; -fx-font-weight: bold; -fx-font-size: 13px; }
+.moeda-bronze { -fx-text-fill: #cd7f32; -fx-font-weight: bold; -fx-font-size: 13px; }
+.moeda-icone { -fx-font-size: 14px; }
+
+/* --- COMBOBOX DARK --- */
+.loja-combo {
+    -fx-background-color: #222233;
+    -fx-border-color: #3a3a4a;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.loja-combo:hover {
+    -fx-border-color: #f39c12;
+}
+
+.loja-combo .list-cell {
+    -fx-background-color: #222233;
+    -fx-text-fill: white;
+}
+
+/* --- CARD DE OFERTA --- */
+.loja-card-oferta {
+    -fx-background-color: #1a1a24;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+    -fx-cursor: hand;
+}
+
+.loja-card-oferta:hover {
+    -fx-background-color: #222233;
+    -fx-border-color: #4a4a5a;
+}
+
+.loja-card-oferta-selected {
+    -fx-background-color: #1a2a1a;
+    -fx-border-color: #f39c12;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.3), 6, 0, 0, 0);
+}
+
+/* --- CARD DE INVENTÁRIO (Jogador) --- */
+.loja-card-inventario {
+    -fx-background-color: #1a1a24;
+    -fx-border-color: #2a3a4a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+    -fx-cursor: hand;
+}
+
+.loja-card-inventario:hover {
+    -fx-background-color: #222233;
+    -fx-border-color: #3498db;
+}
+
+/* --- CARD DE OVERCLOCK --- */
+.loja-card-overclock {
+    -fx-background-color: rgba(0, 255, 255, 0.03);
+    -fx-border-color: #0a4a5a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+    -fx-cursor: hand;
+}
+
+.loja-card-overclock:hover {
+    -fx-background-color: rgba(0, 255, 255, 0.06);
+    -fx-border-color: cyan;
+}
+
+/* --- BADGE DE DESCONTO --- */
+.loja-badge-desconto {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 6;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}
+
+.loja-badge-desconto-baixo { -fx-background-color: #0a2a0a; -fx-text-fill: #2ecc71; -fx-border-color: #2ecc71; }
+.loja-badge-desconto-medio { -fx-background-color: #2a2a0a; -fx-text-fill: #f1c40f; -fx-border-color: #f1c40f; }
+.loja-badge-desconto-alto { -fx-background-color: #2a1a0a; -fx-text-fill: #e67e22; -fx-border-color: #e67e22; }
+.loja-badge-desconto-extremo { -fx-background-color: #2a0a0a; -fx-text-fill: #e74c3c; -fx-border-color: #e74c3c; -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.3), 4, 0, 0, 0); }
+.loja-badge-desconto-aumento { -fx-background-color: #2a0a0a; -fx-text-fill: #e74c3c; -fx-border-color: #e74c3c; }
+
+/* --- PREÇO --- */
+.loja-preco-ouro { -fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 12px; }
+.loja-preco-prata { -fx-text-fill: #c0c0c0; -fx-font-weight: bold; -fx-font-size: 12px; }
+.loja-preco-bronze { -fx-text-fill: #cd7f32; -fx-font-weight: bold; -fx-font-size: 12px; }
+
+/* --- BOTÃO COMPRAR --- */
+.loja-btn-comprar {
+    -fx-background-color: #1a3a1a;
+    -fx-text-fill: #2ecc71;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #2ecc71;
+    -fx-border-width: 1;
+    -fx-padding: 4 14;
+    -fx-cursor: hand;
+}
+
+.loja-btn-comprar:hover {
+    -fx-background-color: #2a5a2a;
+    -fx-effect: dropshadow(gaussian, rgba(46, 204, 113, 0.4), 6, 0, 0, 0);
+}
+
+.loja-btn-comprar:disabled {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #444444;
+    -fx-border-color: #2a2a2a;
+    -fx-cursor: default;
+}
+
+/* --- BOTÃO VENDER --- */
+.loja-btn-vender {
+    -fx-background-color: #2a1a1a;
+    -fx-text-fill: #e67e22;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #e67e22;
+    -fx-border-width: 1;
+    -fx-padding: 4 14;
+    -fx-cursor: hand;
+}
+
+.loja-btn-vender:hover {
+    -fx-background-color: #3a2a1a;
+    -fx-effect: dropshadow(gaussian, rgba(230, 126, 34, 0.4), 6, 0, 0, 0);
+}
+
+/* --- BOTÃO OVERCLOCK --- */
+.loja-btn-overclock {
+    -fx-background-color: #0a2a3a;
+    -fx-text-fill: cyan;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: cyan;
+    -fx-border-width: 1;
+    -fx-padding: 4 14;
+    -fx-cursor: hand;
+}
+
+.loja-btn-overclock:hover {
+    -fx-background-color: #1a3a5a;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 255, 0.4), 6, 0, 0, 0);
+}
+
+.loja-btn-overclock:disabled {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #444444;
+    -fx-border-color: #2a2a2a;
+    -fx-cursor: default;
+}
+
+.loja-btn-overclock-max {
+    -fx-background-color: #2a2200;
+    -fx-text-fill: gold;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: gold;
+    -fx-border-width: 1;
+    -fx-padding: 4 14;
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.3), 6, 0, 0, 0);
+}
+
+/* --- PREVIEW DE ITEM --- */
+.loja-preview-panel {
+    -fx-background-color: #16161e;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 14;
+}
+
+.loja-preview-nome {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #3a3a4a transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 8 0;
+}
+
+.loja-preview-descricao {
+    -fx-text-fill: #909090;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 4 0;
+}
+
+.loja-preview-stat {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 2 0;
+}
+
+.loja-preview-separator {
+    -fx-background-color: #2a2a3a;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+    -fx-padding: 4 0;
+}
+
+/* --- BARRA DE OVERCLOCK --- */
+.overclock-bar-track {
+    -fx-background-color: #0a0a12;
+    -fx-background-radius: 3;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-pref-height: 12;
+}
+
+.overclock-bar-fill {
+    -fx-background-color: linear-gradient(to right, #0a3a5a, #00ffff);
+    -fx-background-radius: 2;
+}
+
+.overclock-bar-fill-max {
+    -fx-background-color: linear-gradient(to right, #5a4a00, #ffd700);
+    -fx-background-radius: 2;
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.4), 4, 0, 0, 0);
+}
+
+/* --- SEPARADOR DE CATEGORIA --- */
+.loja-categoria-header {
+    -fx-text-fill: #707080;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #2a2a3a transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 0 4 0;
+}
+
+/* --- SEÇÃO DE COLUNA --- */
+.loja-section {
+    -fx-background-color: #16161e;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 12;
+}
+
+.loja-section-title {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #3a3a4a transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 6 0;
+}
+
+/* --- OVERCLOCK TOKEN COUNT --- */
+.loja-token-count {
+    -fx-background-color: #0a2a3a;
+    -fx-text-fill: cyan;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 6 12;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #0a4a5a;
+    -fx-border-width: 1;
+}
+
+/* --- ÍCONE DE TIPO --- */
+.loja-tipo-icone {
+    -fx-font-size: 16px;
+    -fx-min-width: 24;
+    -fx-alignment: center;
+}
+
+/* ============================================= */
+/* ===  BOTÃO INFO DOSSIÊ E POPUP             === */
+/* ============================================= */
+
+.editor-btn-info {
+    -fx-background-color: rgba(0, 240, 255, 0.08);
+    -fx-text-fill: #00f0ff;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: rgba(0, 240, 255, 0.3);
+    -fx-border-width: 1;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+.editor-btn-info:hover {
+    -fx-background-color: rgba(0, 240, 255, 0.18);
+    -fx-border-color: #00f0ff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 240, 255, 0.45), 8, 0, 0, 0);
+}
+
+.popup-dialog {
+    -fx-background-color: #0c0b15;
+    -fx-border-color: #e94560;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-padding: 16;
+}
+
+.popup-dialog .label {
+    -fx-text-fill: white;
+}
+
+.popup-dialog .dialog-pane {
+    -fx-background-color: #0c0b15;
+}
+
+.popup-dialog .button {
+    -fx-background-color: #1a1a2e;
+    -fx-text-fill: white;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.popup-dialog .button:hover {
+    -fx-background-color: #e94560;
+    -fx-text-fill: white;
+    -fx-border-color: #e94560;
+}
+
+/* --- BOTÕES DE FILTRO DO INVENTÁRIO --- */
+.editor-btn-filter {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-text-fill: #a0a0b0;
+    -fx-font-weight: bold;
+    -fx-font-size: 10px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1;
+    -fx-padding: 4 10;
+    -fx-cursor: hand;
+}
+
+.editor-btn-filter:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.25);
+}
+
+.editor-btn-filter-active {
+    -fx-background-color: rgba(233, 69, 96, 0.15);
+    -fx-text-fill: #e94560;
+    -fx-font-weight: bold;
+    -fx-font-size: 10px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: rgba(233, 69, 96, 0.5);
+    -fx-border-width: 1;
+    -fx-padding: 4 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.25), 4, 0, 0, 0);
+}
+
+.editor-btn-filter-active:hover {
+    -fx-background-color: rgba(233, 69, 96, 0.25);
+    -fx-border-color: #e94560;
 }
