@@ -3,6 +3,8 @@
     "classeItem": "Armadura",
     "nome": "Peitoral de Couro",
     "descricao": "Leve e flexível.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 2000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 15,
@@ -15,6 +17,8 @@
     "classeItem": "Armadura",
     "nome": "Peitoral de Ferro",
     "descricao": "não tão leve e nem tão flexível.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 8000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 30,
@@ -27,6 +31,8 @@
     "classeItem": "Armadura",
     "nome": "Toga do Magistrado Esquecido",
     "descricao": "Para aqueles que julgam sem sujar as mãos.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 8000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 40,
@@ -39,6 +45,8 @@
     "classeItem": "Armadura",
     "nome": "Peitoral da Guarda de Marfim",
     "descricao": "Uma couraça feita de um material que parece mármore polido, mas é resistente como aço. Possui relevos de leis escritas em grego antigo.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 1000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 70,
@@ -51,6 +59,8 @@
     "classeItem": "Armadura",
     "nome": "Venda da Imparcialidade",
     "descricao": "Uma faixa de seda bege que cobre os olhos, mas permite ao usuário enxergar a 'essência' das coisas.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 1200,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 15,
@@ -64,6 +74,8 @@
     "classeItem": "Armadura",
     "nome": "Manto do Mestre",
     "descricao": "Leve e flexível.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 3500,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 1,
@@ -73,23 +85,27 @@
     }
   },
   "Armadura do Mestre": {
-      "classeItem": "Armadura",
-      "nome": "Armadura do Mestre",
-      "descricao": "Leve e flexível.",
-      "valorMoedas": 10000,
-      "tipoMoeda": "BRONZE",
-      "armaduraBase": 50,
-      "modificadoresDeAtributo": {
-		"FORCA" : 1, "PERCEPCAO" : 1, "ENDURANCE" : 1, "CARISMA" : 1, "INTELIGENCIA" : 1, "DESTREZA" : 1, "SORTE" : 1, "INSPIRACAO" : 1, "SAGACIDADE" : 1, "TOPOR" : 1
-	  },
-      "modificadoresStatus": {
-        "HP_MAXIMO": 50.0
-      }
+    "classeItem": "Armadura",
+    "nome": "Armadura do Mestre",
+    "descricao": "Leve e flexível.",
+    "raridade": "",
+    "andar": "",
+    "valorMoedas": 10000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {
+      "FORCA" : 1, "PERCEPCAO" : 1, "ENDURANCE" : 1, "CARISMA" : 1, "INTELIGENCIA" : 1, "DESTREZA" : 1, "SORTE" : 1, "INSPIRACAO" : 1, "SAGACIDADE" : 1, "TOPOR" : 1
     },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 50.0
+    }
+  },
   "Peitoral de Malha": {
     "classeItem": "Armadura",
     "nome": "Peitoral de Malha",
     "descricao": "Flexível e resistente.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 5000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 30,
@@ -102,6 +118,8 @@
     "classeItem": "Armadura",
     "nome": "Armadura de Ferro",
     "descricao": "Duro e pesado",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 1200,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 50,
@@ -114,12 +132,14 @@
     "classeItem": "Armadura",
     "nome": "Manto De Invocador",
     "descricao": "Leve e flexível, ótimo para magos.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 3000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 10,
     "modificadoresDeAtributo": {
-		"INSPIRACAO" : 1
-	},
+      "INSPIRACAO" : 1
+    },
     "modificadoresStatus": {
       "MP_MAXIMO": 1.0
     }
@@ -128,6 +148,8 @@
     "classeItem": "Armadura",
     "nome": "Colete Militar",
     "descricao": "Leve e flexível, ótimo para soldados.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 5000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 20,
@@ -140,6 +162,8 @@
     "classeItem": "Armadura",
     "nome": "Colete Militar II",
     "descricao": "Leve e ótimo para soldados. um modelo melhorado com tecnologia para cauterizar plasma",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 12000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 50,
@@ -153,6 +177,8 @@
     "classeItem": "Armadura",
     "nome": "Armadura do caçador",
     "descricao": "Leve e com bastante odor de suor, por que será?",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 3000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 20,
@@ -165,6 +191,8 @@
     "classeItem": "Armadura",
     "nome": "Couraça do Vento Proibido",
     "descricao": "uma couraça que possui símbolos de vento espalhados em seu corpo",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 11000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 40,
@@ -174,6 +202,8 @@
     "classeItem": "Armadura",
     "nome": "Couraça do Vento Proibido SHINY",
     "descricao": "uma couraça dourada e branca que possui símbolos de vento espalhados em seu corpo",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 15000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 50,
@@ -183,11 +213,12 @@
     "classeItem": "Armadura",
     "nome": "Pele Sintética da Tentação",
     "descricao": "uma espécie de roupa de látex semitransparente rosa neon",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 10000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 10,
-    "modificadoresDeAtributo": {
-    },
+    "modificadoresDeAtributo": {},
     "modificadoresStatus": {
       "DANO_CRITICO": 0.20,
       "TAXA_CRITICA": 0.05,
@@ -199,6 +230,8 @@
     "classeItem": "Armadura",
     "nome": "Nano-Armadura MK1",
     "descricao": "uma",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 50000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 50,
@@ -214,11 +247,12 @@
     "classeItem": "Armadura",
     "nome": "Exoesqueleto do Êxtase Controlado",
     "descricao": "uma armadura de metal pesado. pique homem de ferro tlg?",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 16000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 100,
-    "modificadoresDeAtributo": {
-    },
+    "modificadoresDeAtributo": {},
     "modificadoresStatus": {
       "MOVIMENTO" : -2
     }
@@ -227,11 +261,12 @@
     "classeItem": "Armadura",
     "nome": "Couraça de Ossos Reforçados",
     "descricao": "uma armadura de Ossos presos por parafusos e rebites. cobre o torax inteiro, NÃO FAÇA MOVIMENTOS BRUSCOS",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 20000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 75,
-    "modificadoresDeAtributo": {
-    },
+    "modificadoresDeAtributo": {},
     "modificadoresStatus": {
       "MOVIMENTO" : 1, "HP_MAXIMO" : 25
     }
@@ -240,6 +275,8 @@
     "classeItem": "Armadura",
     "nome": "Vestes da Luxúria Silenciosa",
     "descricao": "uma espécie de túnica de mago com cordas no interior, demarcando as partes intimas de quem usa",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 13000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 30,
@@ -254,6 +291,8 @@
     "classeItem": "Armadura",
     "nome": "Exoesqueleto Peristáltico",
     "descricao": "Uma estrutura metálica viva que se contrai em volta do corpo.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 8000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 50,
@@ -267,6 +306,8 @@
     "classeItem": "Armadura",
     "nome": "Vestes de Veias Costuradas",
     "descricao": "Está sincronizada com você. Talvez demais.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 9000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 50,
@@ -281,6 +322,8 @@
     "classeItem": "Armadura",
     "nome": "Couraça de Ossos Rebitados",
     "descricao": "Ossos reforçados com placas metálicas e parafusos.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 12000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 70,
@@ -294,6 +337,8 @@
     "classeItem": "Armadura",
     "nome": "Pele de Digestão Parcial",
     "descricao": "Uma camada semi-transparente que cobre o corpo.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 11000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 60,
@@ -308,12 +353,134 @@
     "classeItem": "Armadura",
     "nome": "Armadura de Câmara Gástrica",
     "descricao": "Uma estrutura com válvulas e tubos conectados ao corpo.",
+    "raridade": "",
+    "andar": "",
     "valorMoedas": 10000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 65,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {
       "HP_MAXIMO": 30.0
+    }
+  },
+  "Manto de Ouro": {
+    "classeItem": "Armadura",
+    "nome": "Manto de Ouro",
+    "descricao": "Uma túnica pesada que parece ter sido banhada em ouro líquido. Ela brilha ofuscantemente sob o sol do deserto.",
+    "raridade": "Raro",
+    "andar": "4",
+    "valorMoedas": 22000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 25,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 25.0,
+      "DANO_BONUS_PERCENTUAL": 0.075
+    }
+  },
+  "Carapaça de Escaravelho do Deserto": {
+    "classeItem": "Armadura",
+    "nome": "Carapaça de Escaravelho do Deserto",
+    "descricao": "Uma armadura leve e quitinosa, feita com os restos de besouros gigantes das dunas.",
+    "raridade": "Epica",
+    "andar": "4",
+    "valorMoedas": 22000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {
+      "SAGACIDADE": 1,
+      "TOPOR": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 50.0,
+      "MP_MAXIMO": -2.0
+    }
+  },
+  "Veste do Peregrino Solar": {
+    "classeItem": "Armadura",
+    "nome": "Veste do Peregrino Solar",
+    "descricao": "Um traje de linho incrivelmente branco e limpo, que não suja mesmo com a areia. Tem detalhes discretos em prata.",
+    "raridade": "Epica",
+    "andar": "4",
+    "valorMoedas": 22000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 0,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": -50.0,
+      "DANO_CRITICO": 0.35,
+      "TAXA_CRITICA": 0.10
+    }
+  },
+  "Peitoral do Faraó Guerreiro": {
+    "classeItem": "Armadura",
+    "nome": "Peitoral do Faraó Guerreiro",
+    "descricao": "Uma pesada armadura adornada com ouro e lápis-lazúli, outrora usada por grandes governantes das dunas que lideravam as tropas na linha de frente.",
+    "raridade": "Epica",
+    "andar": "4",
+    "valorMoedas": 45000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 70,
+    "modificadoresDeAtributo": {
+      "FORCA": 2,
+      "ENDURANCE": 2,
+      "DESTREZA": -1
+    },
+    "modificadoresStatus": {
+      "RESISTENCIA_DOT": 15.0
+    }
+  },
+  "Manto de Areia Estagnada": {
+    "classeItem": "Armadura",
+    "nome": "Manto de Areia Estagnada",
+    "descricao": "O tecido parece fluir lentamente como dunas ao vento. Confere ao usuário a capacidade de se camuflar no calor distorcido do deserto.",
+    "raridade": "Incomum",
+    "andar": "4",
+    "valorMoedas": 12000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 15,
+    "modificadoresDeAtributo": {
+      "DESTREZA": 2
+    },
+    "modificadoresStatus": {
+      "DANO_BONUS_PERCENTUAL": 0.10,
+      "RESISTENCIA_DOT": 10.0
+    }
+  },
+  "Couraça de Obsidiana": {
+    "classeItem": "Armadura",
+    "nome": "Couraça de Obsidiana",
+    "descricao": "Uma armadura peitoral entalhada em vidro vulcânico escuro do deserto, extremamente resistente a cortes, mas frágil contra impactos brutos.",
+    "raridade": "Raro",
+    "andar": "4",
+    "valorMoedas": 28000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 60,
+    "modificadoresDeAtributo": {
+      "DESTREZA": -2
+    },
+    "modificadoresStatus": {
+      "RESISTENCIA_DOT": -5.0,
+      "DANO_BONUS_PERCENTUAL": 0.05
+    }
+  },
+  "Couraça de Obsidiana Vulcânica": {
+    "classeItem": "Armadura",
+    "nome": "Couraça de Obsidiana Vulcânica",
+    "descricao": "Variação aquecida da couraça de obsidiana, irradiando um calor constante que repele magias glaciais e queima quem toca.",
+    "raridade": "Epica",
+    "andar": "4",
+    "valorMoedas": 36000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 65,
+    "modificadoresDeAtributo": {
+      "DESTREZA": -1
+    },
+    "modificadoresStatus": {
+      "RESISTENCIA_DOT": 15.0,
+      "DANO_BONUS_PERCENTUAL": 0.15,
+      "TAXA_CRITICA": 0.05,
+      "DANO_CRITICO": 0.15
     }
   }
 }

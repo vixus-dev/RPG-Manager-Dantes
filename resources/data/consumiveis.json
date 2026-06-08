@@ -142,8 +142,8 @@
   "CambioBronzeParaPrata": {
     "classeItem": "Consumivel",
     "nome": "Comprar 1 Moeda de Prata",
-    "descricao": "Troca Moedas de Bronze por 1 Moeda de Prata.",
-    "valorMoedas": 100,
+    "descricao": "Troca 1000 Moedas de Bronze por 1 Moeda de Prata.",
+    "valorMoedas": 1000,
     "custoTU": 0,
     "usavelEmCombate": false,
     "efeitos": { "RECEBE_PRATA": 1 }
@@ -151,11 +151,32 @@
   "CambioPrataParaOuro": {
     "classeItem": "Consumivel",
     "nome": "Comprar 1 Moeda de Ouro",
-    "descricao": "Troca Moedas de Prata por 1 Moeda de Ouro.",
-    "valorMoedas": 10000,
+    "descricao": "Troca 1000 Moedas de Prata por 1 Moeda de Ouro.",
+    "valorMoedas": 1000,
+    "tipoMoeda": "PRATA",
     "custoTU": 0,
     "usavelEmCombate": false,
     "efeitos": { "RECEBE_OURO": 1 }
+  },
+  "CambioPrataParaBronze": {
+    "classeItem": "Consumivel",
+    "nome": "Trocar 1 Prata por Bronze",
+    "descricao": "Troca 1 Moeda de Prata por 800 Moedas de Bronze.",
+    "valorMoedas": 1,
+    "tipoMoeda": "PRATA",
+    "custoTU": 0,
+    "usavelEmCombate": false,
+    "efeitos": { "RECEBE_BRONZE": 800 }
+  },
+  "CambioOuroParaPrata": {
+    "classeItem": "Consumivel",
+    "nome": "Trocar 1 Ouro por Prata",
+    "descricao": "Troca 1 Moeda de Ouro por 800 Moedas de Prata.",
+    "valorMoedas": 1,
+    "tipoMoeda": "OURO",
+    "custoTU": 0,
+    "usavelEmCombate": false,
+    "efeitos": { "RECEBE_PRATA": 800 }
   },
   "Agua Benta": {
     "classeItem": "Consumivel",
@@ -390,6 +411,132 @@
     "valorMoedas": 50000,
     "tipoMoeda": "OURO",
     "custoTU": 0,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "Bálsamo de Oásis Falso": {
+    "classeItem": "Consumivel",
+    "nome": "Bálsamo de Oásis Falso",
+    "descricao": "Um líquido azul e doce que refresca instantaneamente, mas deixa um gosto residual de areia na boca que confunde os sentidos.",
+    "valorMoedas": 15000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 60,
+    "usavelEmCombate": true,
+    "efeitos": {
+      "CURA_HP": 30
+    }
+  },
+  "Pó de Miragem": {
+    "classeItem": "Consumivel",
+    "nome": "Pó de Miragem",
+    "descricao": "Uma poeira cintilante e fina que, ao ser soprada no ar, distorce a luz ao redor e cria cópias ilusórias.",
+    "valorMoedas": 30000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50,
+    "usavelEmCombate": true,
+    "efeitos": {
+      "STEALTH": 1
+    }
+  },
+  "Essência de Ouro Líquido": {
+    "classeItem": "Consumivel",
+    "nome": "Essência de Ouro Líquido",
+    "descricao": "Um frasco pesado e morno. Beber isso parece um péssimo instinto, mas os efeitos da alquimia antiga são inegáveis.",
+    "valorMoedas": 50000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50,
+    "usavelEmCombate": true,
+    "efeitos": {
+      "ESCUDO": 100
+    }
+  },
+  "Kit de Arqueologia": {
+    "classeItem": "Consumivel",
+    "nome": "Kit de Arqueologia",
+    "descricao": "Pincéis delicados, cinzéis de precisão e lentes de aumento, essenciais para lidar com relíquias sem ativá-las de forma errada.",
+    "valorMoedas": 8000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "Incenso de Alabastro": {
+    "classeItem": "Consumivel",
+    "nome": "Incenso de Alabastro",
+    "descricao": "Uma resina perfumada, armazenada em um bloco mineral que afasta maldições psíquicas dos túmulos.",
+    "valorMoedas": 20000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "Escaravelho de Ouro Maciço": {
+    "classeItem": "Consumivel",
+    "nome": "Escaravelho de Ouro Maciço",
+    "descricao": "Um pequeno mecanismo dourado na forma de um inseto que parece vivo. Ao ser apertado no peito, ele perfura a pele e bombeia magia.",
+    "valorMoedas": 70000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50,
+    "usavelEmCombate": true,
+    "efeitos": {}
+  },
+  "Papiro de Navegação": {
+    "classeItem": "Consumivel",
+    "nome": "Papiro de Navegação",
+    "descricao": "Um pergaminho rústico onde as linhas se desenham e apagam sozinhas de acordo com o movimento estelar, revelando corredores secretos.",
+    "valorMoedas": 25000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "Óleo": {
+    "classeItem": "Consumivel",
+    "nome": "Óleo.",
+    "descricao": "Um óleo grosso, escuro e extremamente escorregadio, frequentemente usado nas engrenagens das antigas armadilhas egípcias.",
+    "valorMoedas": 4000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "CaixaMunicaoP": {
+    "classeItem": "Consumivel",
+    "nome": "Caixa de Munição (P)",
+    "descricao": "Pacote pequeno de munição. Concede 5 balas ao recarregar uma arma de fogo.",
+    "valorMoedas": 500,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 40,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "CaixaMunicaoM": {
+    "classeItem": "Consumivel",
+    "nome": "Caixa de Munição (M)",
+    "descricao": "Pacote médio de munição. Concede 10 balas ao recarregar uma arma de fogo.",
+    "valorMoedas": 900,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 60,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "CaixaMunicaoG": {
+    "classeItem": "Consumivel",
+    "nome": "Caixa de Munição (G)",
+    "descricao": "Pacote grande de munição. Concede 20 balas ao recarregar uma arma de fogo.",
+    "valorMoedas": 1600,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 100,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "CaixaMunicaoGG": {
+    "classeItem": "Consumivel",
+    "nome": "Caixa de Munição (GG)",
+    "descricao": "Pacote completo de munição. Recarrega uma arma de fogo até a munição máxima.",
+    "valorMoedas": 3000,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 160,
     "usavelEmCombate": false,
     "efeitos": {}
   }
