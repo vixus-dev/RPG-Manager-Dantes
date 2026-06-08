@@ -1,0 +1,194 @@
+package br.com.dantesrpg.controller.hud;
+
+import br.com.dantesrpg.model.*;
+import br.com.dantesrpg.model.enums.Atributo;
+import br.com.dantesrpg.model.enums.TipoEfeito;
+import br.com.dantesrpg.model.util.DiceRoller;
+import br.com.dantesrpg.model.util.EffectTooltipBuilder;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+
+import java.util.ArrayList;
+
+/**
+ * Renderiza o painel de informações do personagem no HUD de turno detalhado.
+ * Extraído de DetailedTurnHUDController para isolamento de responsabilidade.
+ * Cobre: info básica (nome/HP/MP/TU), efeitos ativos e atributos detalhados.
+ */
+public class CharacterInfoRenderer {
+
+	private final Label labelNome;
+	private final Label labelClasseRaca;
+	private final Label labelHP;
+	private final Label labelMP;
+	private final Label labelTU;
+	private final VBox effectsContainer;
+	private final ScrollPane detailedScrollPane;
+	private final VBox detailedPane;
+	private GridPane attributesGrid;
+
+	public CharacterInfoRenderer(Label labelNome, Label labelClasseRaca,
+			Label labelHP, Label labelMP, Label labelTU,
+			VBox effectsContainer, ScrollPane detailedScrollPane,
+			VBox detailedPane, GridPane attributesGrid) {
+		this.labelNome = labelNome;
+		this.labelClasseRaca = labelClasseRaca;
+		this.labelHP = labelHP;
+		this.labelMP = labelMP;
+		this.labelTU = labelTU;
+		this.effectsContainer = effectsContainer;
+		this.detailedScrollPane = detailedScrollPane;
+		this.detailedPane = detailedPane;
+		this.attributesGrid = attributesGrid;
+	}
+
+	// ========== API PÚBLICA ==========
+
+	/** Atualiza nome, classe/raça, HP, MP, TU e efeitos ativos. */
+	public void renderInfo(Personagem ator) {
+		labelNome.setText(ator.getNome());
+
+		String raca = "N/A";
+		boolean racaV2 = false;
+		if (ator.getRaca() != null) {
+			racaV2 = ator.getRaca().isV2();
+			raca = (racaV2 && ator.getRaca().getNomeV2() != null)
+					? ator.getRaca().getNomeV2() : ator.getRaca().getNome();
+		}
+		String classe = (ator.getClasse() != null) ? ator.getClasse().getNome() : "N/A";
+		labelClasseRaca.setText(raca + " / " + classe);
+		labelClasseRaca.setStyle(racaV2 ? "-fx-text-fill: #FFD700;" : "-fx-text-fill: gray;");
+
+		labelHP.setText(formatarNumero(ator.getVidaAtual()) + "/" + formatarNumero(ator.getVidaMaxima()));
+		labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
+		labelTU.setText("TU: " + ator.getContadorTU());
+
+		renderEffects(ator);
+	}
+
+	/** Atualiza apenas os badges de efeitos ativos. */
+	public void renderEffects(Personagem ator) {
+		if (effectsContainer == null) return;
+		effectsContainer.getChildren().clear();
+		if (ator.getEfeitosAtivos() == null) return;
+
+		for (Efeito efeito : new ArrayList<>(ator.getEfeitosAtivos().values())) {
+			String texto = efeito.getNome();
+			if (efeito.getStacks() > 0) texto += " (" + efeito.getStacks() + ")";
+
+			Label lbl = new Label(texto + " [" + efeito.getDuracaoTURestante() + "]");
+			lbl.setMaxWidth(Double.MAX_VALUE);
+			lbl.setStyle(resolverEstiloEfeito(efeito.getTipo()));
+
+			Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(efeito));
+			tip.setStyle("-fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; "
+					+ "-fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 8;");
+			tip.setShowDelay(javafx.util.Duration.millis(200));
+			tip.setMaxWidth(350);
+			tip.setWrapText(true);
+			Tooltip.install(lbl, tip);
+
+			effectsContainer.getChildren().add(lbl);
+		}
+	}
+
+	/** Popula o painel de atributos detalhados (grid S.P.E.C.I.A.L.I.S.T + stats derivados). */
+	public void renderDetailedAttributes(Personagem ator) {
+		if (detailedPane == null) return;
+		garantirAttributesGrid();
+
+		attributesGrid.getChildren().clear();
+		attributesGrid.getRowConstraints().clear();
+
+		// Remove labels antigos mas preserva grid, título e separadores
+		detailedPane.getChildren().removeIf(node ->
+				node != attributesGrid
+				&& !(node instanceof Label && ((Label) node).getText().startsWith("Atributos"))
+				&& !(node instanceof Separator));
+
+		// Popula atributos base
+		Atributo[] ordem = {
+			Atributo.FORCA, Atributo.PERCEPCAO, Atributo.ENDURANCE, Atributo.CARISMA,
+			Atributo.INTELIGENCIA, Atributo.DESTREZA, Atributo.SORTE, Atributo.INSPIRACAO,
+			Atributo.SAGACIDADE, Atributo.TOPOR
+		};
+
+		int row = 0;
+		for (Atributo atr : ordem) {
+			RowConstraints rc = new RowConstraints();
+			rc.setMinHeight(25);
+			rc.setPrefHeight(25);
+			attributesGrid.getRowConstraints().add(rc);
+
+			int valor = ator.getAtributosFinais().getOrDefault(atr, 1);
+			int dado = DiceRoller.getTipoDado(valor);
+
+			Label lblNome = new Label(atr.name().substring(0, 3));
+			lblNome.setStyle("-fx-text-fill: #aaaaaa; -fx-font-weight: bold; -fx-font-size: 12px;");
+
+			Label lblValor = new Label(valor + " (d" + dado + ")");
+			lblValor.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px;");
+
+			attributesGrid.add(lblNome, 0, row);
+			attributesGrid.add(lblValor, 1, row);
+			row++;
+		}
+
+		// Separador antes dos stats derivados
+		boolean temSeparador = detailedPane.getChildren().stream().anyMatch(n -> n instanceof Separator);
+		if (!temSeparador) detailedPane.getChildren().add(new Separator());
+
+		// Stats derivados
+		addStatLabel("Movimento:",    ator.getMovimento() + " células");
+		addStatLabel("Armadura:",     String.valueOf(ator.getArmaduraTotal()));
+		addStatLabel("Red. Dano:",    String.format("%.1f%%", ator.getReducaoDanoArmadura() * 100));
+		addStatLabel("Taxa Crítica:", String.format("%.1f%%", ator.getTaxaCritica() * 100));
+		addStatLabel("Dano Crítico:", String.format("+%.1f%%", ator.getDanoCritico() * 100));
+		addStatLabel("Bônus Dano:",   String.format("+%.1f%%", ator.getBonusDanoPercentual() * 100));
+
+		detailedPane.requestLayout();
+	}
+
+	// ========== PRIVADOS ==========
+
+	private void garantirAttributesGrid() {
+		if (attributesGrid == null) {
+			System.out.println("AVISO: attributesGrid era null. Recriando manualmente.");
+			attributesGrid = new GridPane();
+			attributesGrid.setHgap(10);
+			attributesGrid.setVgap(5);
+			ColumnConstraints c1 = new ColumnConstraints();
+			c1.setPercentWidth(40);
+			ColumnConstraints c2 = new ColumnConstraints();
+			c2.setPercentWidth(60);
+			attributesGrid.getColumnConstraints().addAll(c1, c2);
+			detailedPane.getChildren().add(1, attributesGrid);
+		}
+	}
+
+	private void addStatLabel(String titulo, String valor) {
+		HBox row = new HBox(10);
+		Label t = new Label(titulo);
+		t.setStyle("-fx-text-fill: cyan;");
+		Label v = new Label(valor);
+		v.setStyle("-fx-text-fill: white;");
+		row.getChildren().addAll(t, v);
+		detailedPane.getChildren().add(row);
+	}
+
+	private String resolverEstiloEfeito(TipoEfeito tipo) {
+		switch (tipo) {
+			case BUFF:
+				return "-fx-background-color: #004466; -fx-text-fill: cyan; -fx-padding: 3; -fx-background-radius: 3;";
+			case DEBUFF:
+				return "-fx-background-color: #660000; -fx-text-fill: #ffaaaa; -fx-padding: 3; -fx-background-radius: 3;";
+			default:
+				return "-fx-background-color: #440044; -fx-text-fill: violet; -fx-padding: 3; -fx-background-radius: 3;";
+		}
+	}
+
+	private String formatarNumero(double valor) {
+		if (valor >= 1000) return String.format("%.1fk", valor / 1000.0).replace(",", ".");
+		return String.format("%.0f", valor);
+	}
+}
