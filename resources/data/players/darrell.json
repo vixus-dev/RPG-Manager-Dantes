@@ -1,7 +1,7 @@
 {
   "xpAtual": 0,
   "iniciativaBase": 16,
-  "vidaMaximaBase": 11.0,
+  "vidaMaximaBase": 11,
   "classe": "Ilusionista",
   "atributosBase": {
     "SORTE": 1,
@@ -27,7 +27,7 @@
     "bronze": 400
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 11.0,
+  "vidaAtual": 11,
   "contadorTU": 0,
   "nivel": 1,
   "armaEquipada": "Pistola de Duelo",
@@ -35,5 +35,9 @@
     "PocaoDeCuraPequena": 1,
     "PocaoDeManaPequena": 1
   },
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Pistola de Duelo"
+  ]
 }

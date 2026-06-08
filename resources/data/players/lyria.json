@@ -1,7 +1,7 @@
 {
   "xpAtual": 0,
   "iniciativaBase": 16,
-  "vidaMaximaBase": 26.0,
+  "vidaMaximaBase": 26,
   "classe": "Feiticeiro",
   "atributosBase": {
     "SORTE": 10,
@@ -27,10 +27,14 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 26.0,
+  "vidaAtual": 26,
   "contadorTU": 3,
   "nivel": 1,
   "armaEquipada": "Catalisador Básico",
   "inventario": {},
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Catalisador Básico"
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "xpAtual": 0,
   "iniciativaBase": 9,
-  "vidaMaximaBase": 16.0,
+  "vidaMaximaBase": 16,
   "classe": "Paladino",
   "atributosBase": {
     "SORTE": 3,
@@ -27,10 +27,14 @@
     "bronze": 32
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 16.0,
+  "vidaAtual": 16,
   "contadorTU": 5,
   "nivel": 1,
   "armaEquipada": "Pálida Vigília",
   "inventario": {},
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Pálida Vigília"
+  ]
 }

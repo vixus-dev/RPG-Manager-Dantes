@@ -1,7 +1,7 @@
 {
   "xpAtual": 0,
   "iniciativaBase": 8,
-  "vidaMaximaBase": 25.0,
+  "vidaMaximaBase": 25,
   "classe": "Mestre das Balas",
   "atributosBase": {
     "SORTE": 6,
@@ -19,7 +19,7 @@
   "pontosParaDistribuir": 0,
   "posX": 4,
   "posY": 6,
-  "manaAtual": 8.0,
+  "manaAtual": 8,
   "raca": "Marionette",
   "carteira": {
     "prata": 0,
@@ -27,10 +27,14 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 25.0,
+  "vidaAtual": 25,
   "contadorTU": 4,
   "nivel": 1,
   "armaEquipada": "Terrore",
   "inventario": {},
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Terrore"
+  ]
 }

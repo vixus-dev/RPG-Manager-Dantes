@@ -1,7 +1,7 @@
 {
   "xpAtual": 0,
   "iniciativaBase": 15,
-  "vidaMaximaBase": 17.0,
+  "vidaMaximaBase": 17,
   "classe": "Ladino",
   "atributosBase": {
     "SORTE": 4,
@@ -27,12 +27,16 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 17.0,
+  "vidaAtual": 17,
   "contadorTU": 1,
   "nivel": 1,
   "armaEquipada": "Murasame",
   "inventario": {
     "OssoDeReparo": 1
   },
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Murasame"
+  ]
 }

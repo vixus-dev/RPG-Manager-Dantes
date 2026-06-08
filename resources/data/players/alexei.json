@@ -1,7 +1,7 @@
 {
   "xpAtual": 0,
   "iniciativaBase": 9,
-  "vidaMaximaBase": 22.0,
+  "vidaMaximaBase": 22,
   "classe": "Pugilista",
   "atributosBase": {
     "SORTE": 2,
@@ -19,7 +19,7 @@
   "pontosParaDistribuir": 0,
   "posX": 5,
   "posY": 5,
-  "manaAtual": 7.0,
+  "manaAtual": 7,
   "raca": "Humano",
   "carteira": {
     "prata": 0,
@@ -27,10 +27,14 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 22.0,
+  "vidaAtual": 22,
   "contadorTU": 2,
   "nivel": 1,
   "armaEquipada": "Punho Infinito",
   "inventario": {},
-  "escudoAtual": 0.0
+  "escudoAtual": 0,
+  "wieldingMaximo": 2,
+  "armasEquipadas": [
+    "Punho Infinito"
+  ]
 }
