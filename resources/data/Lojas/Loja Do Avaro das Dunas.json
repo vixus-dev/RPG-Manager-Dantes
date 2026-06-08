@@ -1,0 +1,116 @@
+{
+  "itensOfertados": [
+    {
+      "id": "CaixaMunicaoP",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoM",
+      "desconto": 0.0
+    },
+    {
+      "id": "Scimitar de Bronze Oxidado",
+      "desconto": -10.0
+    },
+    {
+      "id": "Pistola de Pederneira da Areia",
+      "desconto": -10.0
+    },
+    {
+      "id": "Machado de Escavação",
+      "desconto": -10.0
+    },
+    {
+      "id": "Lança de Bambu do Oásis",
+      "desconto": -10.0
+    },
+    {
+      "id": "Adaga de Ritual Complexo",
+      "desconto": -10.0
+    },
+    {
+      "id": "Arco de Madeira de Acácia",
+      "desconto": -10.0
+    },
+    {
+      "id": "Lâmina da Miragem",
+      "desconto": -10.0
+    },
+    {
+      "id": "Chicote de Escorpião do Deserto",
+      "desconto": -10.0
+    },
+    {
+      "id": "Manto de Ouro",
+      "desconto": -10.0
+    },
+    {
+      "id": "Carapaça de Escaravelho do Deserto",
+      "desconto": -10.0
+    },
+    {
+      "id": "Peitoral do Faraó Guerreiro",
+      "desconto": -10.0
+    },
+    {
+      "id": "Manto de Areia Estagnada",
+      "desconto": -10.0
+    },
+    {
+      "id": "Anel do Avaro Sanguinário",
+      "desconto": -10.0
+    },
+    {
+      "id": "Ombreiras do Chacal",
+      "desconto": -10.0
+    },
+    {
+      "id": "Pingente do Coração do Deus do SOL",
+      "desconto": -10.0
+    },
+    {
+      "id": "Colar de Canopos",
+      "desconto": -10.0
+    },
+    {
+      "id": "Bálsamo de Oásis Falso",
+      "desconto": -10.0
+    },
+    {
+      "id": "Pó de Miragem",
+      "desconto": -10.0
+    },
+    {
+      "id": "Essência de Ouro Líquido",
+      "desconto": -10.0
+    },
+    {
+      "id": "Lâmina Neon",
+      "desconto": -10.0
+    },
+    {
+      "id": "Pistola Ventus-9",
+      "desconto": -10.0
+    },
+    {
+      "id": "Arco de Fios de Luz",
+      "desconto": -10.0
+    },
+    {
+      "id": "Faca de Vibração Íntima",
+      "desconto": -10.0
+    },
+    {
+      "id": "Lança",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeCuraGrande",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeManaGrande",
+      "desconto": -10.0
+    }
+  ]
+}

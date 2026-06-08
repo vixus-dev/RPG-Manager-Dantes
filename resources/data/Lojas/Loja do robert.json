@@ -1,0 +1,72 @@
+{
+  "itensOfertados": [
+    {
+      "id": "CaixaMunicaoP",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoM",
+      "desconto": 0.0
+    },
+    {
+      "id": "Espada de Carne",
+      "desconto": 0.0
+    },
+    {
+      "id": "Espada de QuimioPlasma",
+      "desconto": 0.0
+    },
+    {
+      "id": "Faca de Vértebra Serrilhada",
+      "desconto": 0.0
+    },
+    {
+      "id": "Bastão de Tendão Enrijecido",
+      "desconto": 0.0
+    },
+    {
+      "id": "Serra Esofágica a Vapor",
+      "desconto": 0.0
+    },
+    {
+      "id": "Arco Pulmonar de Compressão",
+      "desconto": 0.0
+    },
+    {
+      "id": "Chicote de Intestino Trançado",
+      "desconto": 0.0
+    },
+    {
+      "id": "Machado de Mandíbula Hidráulica",
+      "desconto": 0.0
+    },
+    {
+      "id": "Rifle de Vasos Rompidos",
+      "desconto": 0.0
+    },
+    {
+      "id": "Martelo Cardíaco de Pressão",
+      "desconto": 0.0
+    },
+    {
+      "id": "Pulmão de Deus-Máquina",
+      "desconto": 0.0
+    },
+    {
+      "id": "Devoradora Primordial",
+      "desconto": -1.2
+    },
+    {
+      "id": "PocaoDeCuraMédia",
+      "desconto": -2.0
+    },
+    {
+      "id": "PocaoDeManaMédia",
+      "desconto": -5.0
+    },
+    {
+      "id": "PocaoDeCuraGrande",
+      "desconto": -1.5
+    }
+  ]
+}

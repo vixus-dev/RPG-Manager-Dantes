@@ -1,25 +1,80 @@
 {
   "itensOfertados": [
-    {"id": "PocaoDeCuraMédia", "desconto": 0.0},
-	{"id": "PocaoDeManaMédia", "desconto": 0.0},
-	{"id": "PocaoDeCuraGrande", "desconto": -0.5},
-	{"id": "MoedaDeAjuda", "desconto": 0.30},
-    
-	{"id": "Pistola de Hemopressão", "desconto": 0.0},
-	{"id": "Foice do Metabolismo Voraz", "desconto": 0.0},
-	{"id": "Canhão de Ácido Biliar", "desconto": 0.0},
-	{"id": "Grimório das Confissões Proibidas", "desconto": 0.0},
-	{"id": "Cajado Basico", "desconto": 0.25},
-    
-	{"id": "Armadura de Câmara Gástrica", "desconto": -0.5},
-	{"id": "Pele de Digestão Parcial", "desconto": 0.0},
-	{"id": "Couraça de Ossos Reforçados", "desconto": 0.0},
-	
-	{"id": "Nódulo de Carne Viva", "desconto": 0.0},
-	{"id": "Colar de Vértebras Fragmentadas", "desconto": 0.0},
-	{"id": "Devoradora Primordial", "desconto": 0.2},
-	
-	{"id": "CambioBronzeParaPrata", "desconto": 0.0},
-	{"id": "CambioPrataParaOuro", "desconto": 0.2}
+    {
+      "id": "CaixaMunicaoP",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoM",
+      "desconto": 0.0
+    },
+    {
+      "id": "Agua Benta",
+      "desconto": 0.0
+    },
+    {
+      "id": "SeringaAzulM",
+      "desconto": 0.0
+    },
+    {
+      "id": "Antidoto",
+      "desconto": -0.2
+    },
+    {
+      "id": "MoedaDeAjuda",
+      "desconto": 0.3
+    },
+    {
+      "id": "Faca de Vértebra Serrilhada",
+      "desconto": 0.0
+    },
+    {
+      "id": "Lâmina da Miragem",
+      "desconto": 0.0
+    },
+    {
+      "id": "Serra Esofágica a Vapor",
+      "desconto": 0.1
+    },
+    {
+      "id": "Pistola Ventus-9",
+      "desconto": 0.0
+    },
+    {
+      "id": "Lâmina Neon",
+      "desconto": 0.25
+    },
+    {
+      "id": "Couraça de Ossos Rebitados",
+      "desconto": -0.3
+    },
+    {
+      "id": "Vestes de Veias Costuradas",
+      "desconto": 0.0
+    },
+    {
+      "id": "Peitoral do Faraó Guerreiro",
+      "desconto": 0.0
+    },
+    {
+      "id": "Cinto do Saqueador de Tumbas",
+      "desconto": 0.0
+    },
+    {
+      "id": "Colar dos Ventos Incansáveis",
+      "desconto": 0.0
+    },
+    {
+      "id": "Coração Parasita",
+      "desconto": 0.2
+    },
+    {
+      "id": "CambioBronzeParaPrata",
+      "desconto": 0.0
+    },
+    {
+      "id": "CambioPrataParaOuro",
+      "desconto": 0.2
+    }
   ]
 }

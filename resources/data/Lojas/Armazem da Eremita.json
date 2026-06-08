@@ -1,0 +1,168 @@
+{
+  "itensOfertados": [
+    {
+      "id": "CaixaMunicaoP",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoM",
+      "desconto": 0.0
+    },
+    {
+      "id": "PocaoDeCuraPequena",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeCuraMédia",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeCuraGrande",
+      "desconto": -5.0
+    },
+    {
+      "id": "PocaoDeCuraMuitoGrande",
+      "desconto": -2.0
+    },
+    {
+      "id": "PocaoDeManaMédia",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeManaGrande",
+      "desconto": -5.0
+    },
+    {
+      "id": "Bálsamo de Oásis Falso",
+      "desconto": 0.0
+    },
+    {
+      "id": "Antidoto",
+      "desconto": 0.0
+    },
+    {
+      "id": "Scimitar de Bronze Oxidado",
+      "desconto": 0.0
+    },
+    {
+      "id": "Machado de Escavação",
+      "desconto": 0.0
+    },
+    {
+      "id": "Clava de Arenito",
+      "desconto": 0.0
+    },
+    {
+      "id": "Adaga de Ritual Simples",
+      "desconto": 0.0
+    },
+    {
+      "id": "Adaga de Ritual Complexo",
+      "desconto": 0.0
+    },
+    {
+      "id": "Adaga Serrilhada de Chacal",
+      "desconto": 0.0
+    },
+    {
+      "id": "Lança de Bambu do Oásis",
+      "desconto": 0.0
+    },
+    {
+      "id": "Lança Solar Estilhaçada",
+      "desconto": 0.0
+    },
+    {
+      "id": "Alabarda da Sentinela",
+      "desconto": 0.0
+    },
+    {
+      "id": "Chicote de Escorpião do Deserto",
+      "desconto": 0.0
+    },
+    {
+      "id": "Foice da Colheita Dessecada",
+      "desconto": 0.0
+    },
+    {
+      "id": "Sabre de Alabastro Sagrado",
+      "desconto": 0.0
+    },
+    {
+      "id": "Cimitarra dos Guardiões",
+      "desconto": 0.0
+    },
+    {
+      "id": "Martelo das Pirâmides",
+      "desconto": 0.0
+    },
+    {
+      "id": "Manto de Areia Estagnada",
+      "desconto": 0.0
+    },
+    {
+      "id": "Manto de Ouro",
+      "desconto": 0.0
+    },
+    {
+      "id": "Carapaça de Escaravelho do Deserto",
+      "desconto": 0.0
+    },
+    {
+      "id": "Couraça de Obsidiana",
+      "desconto": 0.0
+    },
+    {
+      "id": "Peitoral do Faraó Guerreiro",
+      "desconto": 0.0
+    },
+    {
+      "id": "Veste do Peregrino Solar",
+      "desconto": 0.0
+    },
+    {
+      "id": "Colar de Canopos Quebrados",
+      "desconto": 0.0
+    },
+    {
+      "id": "Anel do Avaro Sanguinário",
+      "desconto": 0.0
+    },
+    {
+      "id": "Cinto do Saqueador de Tumbas",
+      "desconto": 0.0
+    },
+    {
+      "id": "Ombreiras do Chacal",
+      "desconto": 0.0
+    },
+    {
+      "id": "Colar de Canopos",
+      "desconto": 0.0
+    },
+    {
+      "id": "A Thousand Blazing Suns",
+      "desconto": 0.0
+    },
+    {
+      "id": "CambioBronzeParaPrata",
+      "desconto": 0.0
+    },
+    {
+      "id": "CambioPrataParaBronze",
+      "desconto": 0.0
+    },
+    {
+      "id": "CambioBronzeParaPrata",
+      "desconto": 0.0
+    },
+    {
+      "id": "CambioOuroParaPrata",
+      "desconto": 0.0
+    },
+    {
+      "id": "CambioPrataParaOuro",
+      "desconto": 0.0
+    }
+  ]
+}

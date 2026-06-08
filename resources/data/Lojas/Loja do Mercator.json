@@ -1,0 +1,23 @@
+{
+  "tipo": "normal",
+  "itensOfertados": [
+    { "id": "CaixaMunicaoP", "desconto": 0.0 },
+    { "id": "CaixaMunicaoM", "desconto": 0.0 },
+    { "id": "CaixaMunicaoG", "desconto": 0.0 },
+    { "id": "Colt .45", "desconto": 0.0 },
+    { "id": "Winchester .22", "desconto": 0.0 },
+    { "id": "Pistola Ventus-9", "desconto": 0.0 },
+    { "id": "Pistola Carmesim do Vício", "desconto": 0.1 },
+    { "id": "Pistola Sede de Sangue", "desconto": 0.05 },
+    { "id": "Thompson", "desconto": 0.0 },
+    { "id": "Escopeta de Maldição", "desconto": 0.0 },
+    {
+      "id": "PocaoDeCuraPequena",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeCuraMédia",
+      "desconto": -10.0
+    }
+  ]
+}

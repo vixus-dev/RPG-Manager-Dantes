@@ -1,0 +1,19 @@
+{
+  "tipo": "normal",
+  "itensOfertados": [
+    { "id": "CaixaMunicaoP", "desconto": 0.0 },
+    { "id": "CaixaMunicaoM", "desconto": 0.0 },
+    { "id": "PocaoDeCuraPequena", "desconto": 0.0 },
+    { "id": "PocaoDeCuraMédia", "desconto": 0.0 },
+    { "id": "Adaga de Ritual Complexo", "desconto": 0.0 },
+    { "id": "Arco de Madeira de Acácia", "desconto": 0.0 },
+    { "id": "Lâmina da Miragem Etérea", "desconto": 0.0 },
+    { "id": "Chicote de Escorpião do Deserto", "desconto": 0.05 },
+    { "id": "Foice da Colheita Dessecada", "desconto": 0.0 },
+    { "id": "Manto de Ouro", "desconto": 0.0 },
+    { "id": "Carapaça de Escaravelho do Deserto", "desconto": 0.1 },
+    { "id": "Couraça de Obsidiana", "desconto": 0.0 },
+    { "id": "Manto de Areia Estagnada", "desconto": 0.15 },
+    { "id": "Veste do Peregrino Solar", "desconto": 0.0 }
+  ]
+}

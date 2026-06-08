@@ -1,0 +1,140 @@
+{
+  "itensOfertados": [
+    {
+      "id": "CaixaMunicaoP",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoM",
+      "desconto": 0.0
+    },
+    {
+      "id": "PocaoDeCuraPequena",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeCuraMédia",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeCuraGrande",
+      "desconto": -5.0
+    },
+    {
+      "id": "PocaoDeCuraMuitoGrande",
+      "desconto": -2.0
+    },
+    {
+      "id": "PocaoDeManaMédia",
+      "desconto": -10.0
+    },
+    {
+      "id": "PocaoDeManaGrande",
+      "desconto": -5.0
+    },
+    {
+      "id": "Essência de Ouro Líquido",
+      "desconto": -5.0
+    },
+    {
+      "id": "Pó de Miragem",
+      "desconto": -10.0
+    },
+    {
+      "id": "Kit de Arqueologia",
+      "desconto": -10.0
+    },
+    {
+      "id": "Antidoto",
+      "desconto": -10.0
+    },
+    {
+      "id": "Pistola de Pederneira da Areia",
+      "desconto": -10.0
+    },
+    {
+      "id": "Funda de Pedras de Obsidiana",
+      "desconto": -10.0
+    },
+    {
+      "id": "Arco de Madeira de Acácia",
+      "desconto": -10.0
+    },
+    {
+      "id": "Mosquete de Vigilante",
+      "desconto": -10.0
+    },
+    {
+      "id": "Carabina de Precisão das Dunas",
+      "desconto": -10.0
+    },
+    {
+      "id": "Pistola Sede de Sangue",
+      "desconto": -10.0
+    },
+    {
+      "id": "Lâmina da Miragem",
+      "desconto": -10.0
+    },
+    {
+      "id": "Lâmina da Miragem Etérea",
+      "desconto": -10.0
+    },
+    {
+      "id": "Arco Suspiro do Vento Quente",
+      "desconto": -10.0
+    },
+    {
+      "id": "khopesh Eclipse de Rô",
+      "desconto": -10.0
+    },
+    {
+      "id": "Escopeta de Maldição",
+      "desconto": -10.0
+    },
+    {
+      "id": "Veste do Peregrino Solar",
+      "desconto": -10.0
+    },
+    {
+      "id": "Manto de Areia Estagnada",
+      "desconto": -10.0
+    },
+    {
+      "id": "Couraça de Obsidiana Vulcânica",
+      "desconto": -10.0
+    },
+    {
+      "id": "Pingente da Balança",
+      "desconto": -10.0
+    },
+    {
+      "id": "Ombreiras do Chacal",
+      "desconto": -10.0
+    },
+    {
+      "id": "Cinto do Saqueador de Tumbas",
+      "desconto": -10.0
+    },
+    {
+      "id": "Colar de Canopos Quebrados",
+      "desconto": -10.0
+    },
+    {
+      "id": "Morte Solar",
+      "desconto": -1.0
+    },
+    {
+      "id": "CambioBronzeParaPrata",
+      "desconto": 0.0
+    },
+    {
+      "id": "CambioPrataParaBronze",
+      "desconto": 0.0
+    },
+    {
+      "id": "CambioPrataParaOuro",
+      "desconto": 0.0
+    }
+  ]
+}
