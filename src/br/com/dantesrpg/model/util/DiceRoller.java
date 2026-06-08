@@ -39,4 +39,20 @@ public class DiceRoller {
 	public static int rolarDado(int tipoDado) {
 		return random.nextInt(tipoDado) + 1;
 	}
+
+	public static double getBonusRankPercentual(int valorAtributo) {
+		if (valorAtributo >= 20) return 0.25; // Rank P
+		if (valorAtributo >= 16) return 0.20; // Rank S
+		if (valorAtributo >= 14) return 0.15; // Rank A
+		if (valorAtributo >= 10) return 0.10; // Rank B
+		return 0.0;
+	}
+
+	public static int aplicarBonusDeRank(int rolagemBruta, int valorAtributo) {
+		int tipoDado = getTipoDado(valorAtributo);
+		double bonusPercent = getBonusRankPercentual(valorAtributo);
+		int bonus = (int) (tipoDado * bonusPercent);
+		int resultadoFinal = rolagemBruta + bonus;
+		return Math.min(resultadoFinal, tipoDado);
+	}
 }
