@@ -3,6 +3,9 @@ package br.com.dantesrpg.model;
 import br.com.dantesrpg.model.classes.Feiticeiro;
 import br.com.dantesrpg.model.classes.Invocador;
 import br.com.dantesrpg.model.enums.Atributo;
+import br.com.dantesrpg.model.enums.PesoEntidade;
+import br.com.dantesrpg.model.personagem.PersonagemEffects;
+import br.com.dantesrpg.model.personagem.PersonagemHealth;
 import br.com.dantesrpg.model.racas.HalfAngel;
 import br.com.dantesrpg.model.racas.HalfDemon;
 import br.com.dantesrpg.model.racas.Humano;
@@ -30,8 +33,8 @@ public class Personagem {
 	private double vidaMaximaBase;
 	private int pontosParaDistribuir;
 
-	private int xpReward = 0; // Quanto XP esse personagem dá ao morrer (para inimigos)
-	private int xpAtual = 0; // xp acumulado pel
+	private int xpReward = 0;
+	private int xpAtual = 0;
 	private int grau = 0;
 
 	// === ATRIBUTOS S.P.E.C.I.A.L.I.S.T. ===
@@ -44,7 +47,10 @@ public class Personagem {
 	private double manaAtual;
 	private double manaMaxima;
 	private int contadorTU;
-	private double escudoAtual;
+	private double escudoNormalAtual;
+	private double escudoNormalMaximo;
+	private double escudoSangueAtual;
+	private double escudoSangueMaximo;
 	private int armaduraTotal;
 	private double reducaoDanoArmadura;
 
@@ -61,6 +67,8 @@ public class Personagem {
 
 	// === EQUIPAMENTO ===
 	private Arma armaEquipada;
+	private List<Arma> armasEquipadas = new ArrayList<>();
+	private int wieldingMaximo = 2;
 	private Armadura armaduraEquipada;
 	private Amuleto amuleto1;
 	private Amuleto amuleto2;
@@ -70,7 +78,6 @@ public class Personagem {
 	private List<Habilidade> habilidadesExtras = new ArrayList<>();
 	private Queue<DanoSofrido> historicoDano = new LinkedList<>();
 	private FantasmaNobre fantasmaNobre;
-	// private List<Magia> magiasDeGrimorio;
 
 	// === INVENTÁRIO E RECURSOS ===
 	private Inventario inventario;
@@ -85,24 +92,43 @@ public class Personagem {
 	private boolean fugiu = false;
 	private String faccao;
 	private String jsonFileName;
-	private boolean temEscudoDeSangue = false;
 	private int segmentosVida = 0;
-	private int tamanhoX = 1; // Largura
-	private int tamanhoY = 1; // Altura
+	private int tamanhoX = 1;
+	private int tamanhoY = 1;
 
-	// blah blah coisas extas das sombras
-	private Personagem mestreInvocador; // Se este char for um clone, quem o criou?
+	// === CLONES/INVOCAÇÕES ===
+	private Personagem mestreInvocador;
 	private List<Personagem> clonesAtivos = new ArrayList<>();
 	private boolean isClone = false;
 	private Personagem criador = null;
-	private Habilidade ultimaHabilidadeUsada = null; // null = Ataque Básico
+	private Habilidade ultimaHabilidadeUsada = null;
 
-	// gerenciador de combate momento
+	// === FLAGS DE COMBATE ===
 	private boolean isProtagonista = false;
 	private boolean isAusente = false;
 	private List<String> propriedades = new ArrayList<>();
 
-	// --- Construtor ---
+	// === EMPUXO (KNOCKBACK) ===
+	/** Peso da entidade, usado para resistir ao empuxo. Padrão: MEDIO_PADRAO. */
+	private PesoEntidade pesoEntidade = PesoEntidade.MEDIO_PADRAO;
+
+	// === CONTRATOS DE VIDA ===
+	/** Lista FIFO de contratos de vida de qualquer fonte (racial, skill, boss). */
+	private List<br.com.dantesrpg.model.util.ContratoDeVida> contratosDeVida = new ArrayList<>();
+
+	// === SUBSISTEMAS (transient — não serializados pelo Gson) ===
+	private transient PersonagemEffects effectsManager;
+	private transient PersonagemHealth healthManager;
+
+	public List<br.com.dantesrpg.model.util.ContratoDeVida> getContratosDeVida() {
+		if (contratosDeVida == null) {
+			contratosDeVida = new ArrayList<>();
+		}
+		return contratosDeVida;
+	}
+
+	// ========== CONSTRUTOR ==========
+
 	public Personagem(String nome, Raça raca, Classe classe, int nivel, Map<Atributo, Integer> atributosBase,
 			double vidaMaximaBase, int iniciativaBase) {
 		this.nome = nome;
@@ -115,7 +141,10 @@ public class Personagem {
 		this.habilidadesDeClasse = new ArrayList<>();
 		this.inventario = new Inventario();
 		this.fantasmaNobre = null;
-		this.escudoAtual = 0.0;
+		this.escudoNormalAtual = 0.0;
+		this.escudoNormalMaximo = 0.0;
+		this.escudoSangueAtual = 0.0;
+		this.escudoSangueMaximo = 0.0;
 		this.vidaMaximaBase = vidaMaximaBase;
 
 		if (this.classe != null && this.classe.getHabilidades(this) != null) {
@@ -134,29 +163,66 @@ public class Personagem {
 		this.manaMaxima = 6 + (this.atributosFinais.getOrDefault(Atributo.INSPIRACAO, 1) / 2);
 		this.manaAtual = this.manaMaxima;
 		this.contadorTU = 0;
-
 	}
 
-	public void registrarDanoSofrido(double valor, int tempoGlobalTU) {
-		if (valor > 0) {
-			this.historicoDano.add(new DanoSofrido(valor, tempoGlobalTU));
+	// ========== GETTERS DOS SUBSISTEMAS (lazy init para compatibilidade Gson) ==========
+
+	public PersonagemEffects getEffectsManager() {
+		if (effectsManager == null) {
+			effectsManager = new PersonagemEffects(this);
 		}
+		return effectsManager;
 	}
 
-	private void calcularEstatisticasDerivadas() {
-		int sag = this.atributosFinais.getOrDefault(Atributo.SAGACIDADE, 1);
-		int des = this.atributosFinais.getOrDefault(Atributo.DESTREZA, 1);
-		int top = this.atributosFinais.getOrDefault(Atributo.TOPOR, 1);
-
-		this.taxaCritica = 0.05 + (sag * 0.01);
-		this.danoCritico = 0.50 + (sag * 0.025);
-		this.movimento = 3 + (des / 2);
-		this.reducaoDanoTopor = top * 0.01;
-		this.reducaoDoTTopor = top * 0.025;
+	public PersonagemHealth getHealthManager() {
+		if (healthManager == null) {
+			healthManager = new PersonagemHealth(this);
+		}
+		return healthManager;
 	}
+
+	// ========== MÉTODOS DE ACESSO INTERNO (usados pelos subsistemas) ==========
+
+	/** Retorna o mapa mutável de efeitos — uso interno dos subsistemas. */
+	public Map<String, Efeito> getEfeitosAtivosMutavel() {
+		if (efeitosAtivos == null) {
+			efeitosAtivos = new HashMap<>();
+		}
+		return efeitosAtivos;
+	}
+
+	/** Seta vidaAtual diretamente sem hooks — uso interno do PersonagemHealth. */
+	public void setVidaAtualInterno(double valor) {
+		this.vidaAtual = valor;
+	}
+
+	/** Getter para fugiu — uso do PersonagemHealth. */
+	public boolean isFugiu() {
+		return fugiu;
+	}
+
+	/** Retorna a fila de histórico de dano — uso do PersonagemHealth. */
+	public Queue<DanoSofrido> getHistoricoDano() {
+		if (historicoDano == null) {
+			historicoDano = new LinkedList<>();
+		}
+		return historicoDano;
+	}
+
+	// ========== RECÁLCULO DE ATRIBUTOS (decomposto) ==========
 
 	public void recalcularAtributosEstatisticas() {
-		// RESET GERAL
+		resetarStats();
+		aplicarModificadoresDeAtributo();
+		calcularEstatisticasDerivadas();
+		recalcularManaBase();
+		aplicarModificadoresDeEquipamento();
+		aplicarModificadoresDeEfeitos();
+		aplicarBonusEspecificos();
+		clampValoresFinais();
+	}
+
+	private void resetarStats() {
 		this.bonusDanoPercentual = 0.0;
 		this.armaduraTotal = 0;
 		this.movimento = 0;
@@ -164,12 +230,10 @@ public class Personagem {
 		this.reducaoDoTTopor = 0.0;
 		this.reducaoCuraPercentual = 0.0;
 		this.vidaMaxima = (double) this.vidaMaximaBase;
-
-		// RESET ATRIBUTOS
 		this.atributosFinais = new HashMap<>(this.atributosBase != null ? this.atributosBase : Collections.emptyMap());
+	}
 
-		// SOMA TODOS OS MODIFICADORES DE ATRIBUTO
-
+	private void aplicarModificadoresDeAtributo() {
 		// Classe
 		if (this.classe != null && this.classe.getModificadoresDeAtributo() != null) {
 			this.classe.getModificadoresDeAtributo()
@@ -182,7 +246,6 @@ public class Personagem {
 			if (modificadoresRacaPerm != null) {
 				modificadoresRacaPerm.forEach((atr, mod) -> this.atributosFinais.merge(atr, mod, Integer::sum));
 			}
-			// Bônus de dano da raça (ex: Humano Empréstimo)
 			this.bonusDanoPercentual += this.raca.getBonusDanoPercentual(this);
 		}
 
@@ -196,7 +259,7 @@ public class Personagem {
 							int valorMod = modEntry.getValue().intValue();
 							this.atributosFinais.merge(atr, valorMod, Integer::sum);
 						} catch (IllegalArgumentException e) {
-							// Ignora se não for atributo (será tratado depois)
+							// Não é atributo — será tratado em aplicarModificadoresStatus
 						}
 					}
 				}
@@ -212,9 +275,11 @@ public class Personagem {
 		}
 
 		// Equipamentos (Atributos: FOR, DES, etc.)
-		if (this.armaEquipada != null && this.armaEquipada.getModificadoresDeAtributo() != null) {
-			this.armaEquipada.getModificadoresDeAtributo()
-					.forEach((atr, mod) -> this.atributosFinais.merge(atr, mod, Integer::sum));
+		for (Arma arma : getArmasEquipadas()) {
+			if (arma.getModificadoresDeAtributo() != null) {
+				arma.getModificadoresDeAtributo()
+						.forEach((atr, mod) -> this.atributosFinais.merge(atr, mod, Integer::sum));
+			}
 		}
 		if (this.armaduraEquipada != null && this.armaduraEquipada.getModificadoresDeAtributo() != null) {
 			this.armaduraEquipada.getModificadoresDeAtributo()
@@ -231,19 +296,28 @@ public class Personagem {
 
 		// CLAMP (Mínimo 1)
 		this.atributosFinais.replaceAll((atr, valor) -> Math.max(1, valor));
+	}
 
-		// CALCULA DERIVADOS (Usa os atributos finais corretos)
-		calcularEstatisticasDerivadas();
+	private void calcularEstatisticasDerivadas() {
+		int sag = this.atributosFinais.getOrDefault(Atributo.SAGACIDADE, 1);
+		int des = this.atributosFinais.getOrDefault(Atributo.DESTREZA, 1);
+		int top = this.atributosFinais.getOrDefault(Atributo.TOPOR, 1);
 
-		// Recalcula Mana Base (pois calcularEstatisticasDerivadas pode não fazer isso ou usar lógica antiga)
+		this.taxaCritica = 0.05 + (sag * 0.01);
+		this.danoCritico = 0.50 + (sag * 0.025);
+		this.movimento = 3 + (des / 2);
+		this.reducaoDanoTopor = top * 0.01;
+		this.reducaoDoTTopor = top * 0.025;
+	}
+
+	private void recalcularManaBase() {
 		this.manaMaxima = this.manaMaximaBase + (this.atributosFinais.getOrDefault(Atributo.INSPIRACAO, 1) / 2.0);
+	}
 
-		// APLICA MODIFICADORES DE STATUS (Map<String, Double>)
-		if (this.armaEquipada != null) {
-			aplicarModificadoresStatus(this.armaEquipada.getModificadoresStatus());
+	private void aplicarModificadoresDeEquipamento() {
+		for (Arma arma : getArmasEquipadas()) {
+			aplicarModificadoresStatus(arma.getModificadoresStatus());
 		}
-
-		// Equipamentos (Status: HP, Move, etc.)
 		if (this.armaduraEquipada != null) {
 			aplicarModificadoresStatus(this.armaduraEquipada.getModificadoresStatus());
 			this.armaduraTotal += this.armaduraEquipada.getArmaduraBase();
@@ -256,29 +330,34 @@ public class Personagem {
 			aplicarModificadoresStatus(this.amuleto2.getModificadoresStatus());
 			this.armaduraTotal += this.amuleto2.getArmaduraBonus();
 		}
+	}
 
-		// Efeitos Ativos (Status Especiais)
+	private void aplicarModificadoresDeEfeitos() {
 		if (this.efeitosAtivos != null) {
 			for (Efeito efeito : this.efeitosAtivos.values()) {
 				if (efeito != null && efeito.getModificadores() != null) {
-					// Reutiliza o método auxiliar para não duplicar switch-case
 					aplicarModificadoresStatus(efeito.getModificadores());
 				}
 			}
 		}
+	}
 
-		// Bônus de Classe/Raça Específicos
+	private void aplicarBonusEspecificos() {
+		// Bônus de Classe
 		if (this.classe instanceof Feiticeiro)
 			this.taxaCritica += 0.25;
 		if (this.classe instanceof Invocador)
 			this.manaMaxima -= 2;
-		if (this.raca instanceof Marionette)
+
+		// Bônus de Raça
+		if (this.raca instanceof Marionette || (this.raca != null && "Marionette".equalsIgnoreCase(this.raca.getNome())))
 			this.taxaCritica += 0.25;
-		if (this.raca instanceof HalfAngel)
+		if (this.raca instanceof HalfAngel || (this.raca != null && "Half-Angel".equalsIgnoreCase(this.raca.getNome())))
 			this.taxaCritica += 0.25;
-		if (this.raca instanceof HalfDemon)
+		if (this.raca instanceof HalfDemon || (this.raca != null && "Half-Demon".equalsIgnoreCase(this.raca.getNome())))
 			this.taxaCritica += 0.25;
 
+		// Ilusionista: bônus por clone ativo
 		if (this.classe instanceof br.com.dantesrpg.model.classes.Ilusionista) {
 			int numClones = this.clonesAtivos.size();
 			if (numClones > 0) {
@@ -286,16 +365,20 @@ public class Personagem {
 			}
 		}
 
+		// Raça: reduções e bônus de armadura
 		if (this.raca != null) {
 			this.vidaMaxima -= this.raca.getReducaoHpMaximo(this);
-			// Bônus de armadura percentual (Raça V2 - Anjo Caído Harmonia)
 			double bonusArmPct = this.raca.getBonusArmaduraPercentual(this);
 			if (bonusArmPct > 0) {
 				this.armaduraTotal += (int) (this.armaduraTotal * bonusArmPct);
 			}
 		}
 
-		// CLAMPS FINAIS
+		// Contratos de Vida: reduzem teto de HP máximo
+		this.vidaMaxima -= br.com.dantesrpg.model.util.ContratoDeVidaUtils.getReducaoHpMaximoTotal(this);
+	}
+
+	private void clampValoresFinais() {
 		this.taxaCritica = Math.max(0, Math.min(this.taxaCritica, 1.0));
 		this.vidaMaxima = Math.max(1.0, this.vidaMaxima);
 		this.vidaAtual = Math.min(this.vidaAtual, this.vidaMaxima);
@@ -313,519 +396,111 @@ public class Personagem {
 					+ " convertido em bônus de dano para " + this.nome);
 		}
 
-		// Importante: Não resetar movimentoRestanteTurno se estivermos no meio de um turno!
 		if (this.movimentoRestanteTurno > this.movimento) {
 			this.movimentoRestanteTurno = this.movimento;
 		}
-		// Se estiver fora de combate (ou turno novo), o CombatManager chama setMovimentoRestanteTurno(movimento).
 	}
 
-	public double getVidaAtual() {
-		return vidaAtual;
-	}
-
-	public double getVidaMaxima() {
-		return vidaMaxima;
-	}
-
-	public double getManaAtual() {
-		return manaAtual;
-	}
-
-	public double getManaMaxima() {
-		return manaMaxima;
-	}
-
-	public double getEscudoAtual() {
-		return escudoAtual;
-	}
-
-	public void setEscudoAtual(double escudoAtual) {
-		this.escudoAtual = Math.max(0.0, escudoAtual);
-		if (this.escudoAtual == 0) {
-			this.temEscudoDeSangue = false;
-		}
-	}
-
-	public List<String> getPropriedades() {
-		if (propriedades == null) {
-			propriedades = new ArrayList<>();
-		}
-		return propriedades;
-	}
-
-	public void setPropriedades(List<String> novasPropriedades) {
-		this.propriedades = new ArrayList<>();
-		if (novasPropriedades != null) {
-			this.propriedades.addAll(novasPropriedades);
-		}
-	}
-
-	public void adicionarPropriedade(String prop) {
-		if (this.propriedades == null)
-			this.propriedades = new ArrayList<>();
-		if (!this.propriedades.contains(prop)) {
-			this.propriedades.add(prop);
-		}
-	}
-
-	public boolean temPropriedade(String prop) {
-		return getPropriedades().contains(prop);
-	}
-
-	public boolean isProtagonista() {
-		return isProtagonista;
-	}
-
-	public void setProtagonista(boolean protagonista) {
-		this.isProtagonista = protagonista;
-	}
-
-	public boolean isAusente() {
-		return isAusente;
-	}
-
-	public void setAusente(boolean ausente) {
-		this.isAusente = ausente;
-	}
-
-	public void setVidaMaxima(double vidaMaxima) {
-		this.vidaMaxima = vidaMaxima;
-	}
-
-	public void setManaAtual(double manaAtual) {
-		this.manaAtual = Math.max(0.0, Math.min(manaAtual, this.manaMaxima));
-	}
-
-	public void setVidaAtual(double novaVida, EstadoCombate estado,
-			br.com.dantesrpg.controller.CombatController controller) {
-
-		if (this.isProtagonista && novaVida < this.vidaAtual) {
-			System.out.println(">>> " + this.nome + " é PROTAGONISTA e ignorou o dano.");
-			return;
-		}
-
-		double vidaAntiga = this.vidaAtual;
-
-		if (Math.abs(novaVida - vidaAntiga) < 0.01)
+	private void aplicarModificadoresStatus(Map<String, Double> mods) {
+		if (mods == null)
 			return;
 
-		double curaRecebida = novaVida - vidaAntiga;
+		for (Map.Entry<String, Double> entry : mods.entrySet()) {
+			String chave = entry.getKey().toUpperCase();
+			double valor = entry.getValue();
 
-		if (curaRecebida > 0) {
-			// Redução de cura unificada (calculada via modificadores em recalcularAtributosEstatisticas)
-			if (this.reducaoCuraPercentual > 0) {
-				double fatorCura = Math.max(0.0, 1.0 - this.reducaoCuraPercentual);
-				System.out.println(">>> " + this.nome + " teve a cura reduzida em "
-						+ String.format("%.0f", this.reducaoCuraPercentual * 100) + "%.");
-				curaRecebida = curaRecebida * fatorCura;
-			}
-
-			if (this.raca != null) {
-				// Raça pode modificar a cura (Humano pagando dívida, Marionette bloqueia)
-				curaRecebida = this.raca.onCuraAttempt(this, curaRecebida);
-				novaVida = vidaAntiga + curaRecebida;
-			}
-
-			if (curaRecebida <= 0) {
-				return;
-			}
-		}
-
-		boolean racaLidouComMudanca = false;
-		if (this.raca != null) {
-			racaLidouComMudanca = this.raca.onHpChangeAttempt(this, vidaAntiga, novaVida, estado, controller);
-		}
-
-		if (racaLidouComMudanca) {
-			this.vidaAtual = novaVida; // Permite negativo (Humano)
-		} else {
-			this.vidaAtual = Math.max(0.0, Math.min(novaVida, this.vidaMaxima)); // Clamp padrão
-		}
-
-		if (this.raca != null && Math.abs(this.vidaAtual - vidaAntiga) > 0.01) {
-			this.raca.onHpChanged(this, vidaAntiga, this.vidaAtual, estado, controller);
-		}
-
-		if (curaRecebida > 0 && BarbaroUtils.temContratoAtivo(this) && this.vidaAtual >= (this.vidaMaxima - 0.01)) {
-			System.out.println(">>> " + this.nome + " curou completamente e encerrou o Contrato Bárbaro.");
-			BarbaroUtils.encerrarContrato(this);
-		}
-	}
-
-	public void forcarCura(double valor) {
-		this.vidaAtual = Math.min(this.vidaMaxima, this.vidaAtual + valor);
-	}
-
-	public void regenerarVidaFracionada(double quantidade, EstadoCombate estado,
-			br.com.dantesrpg.controller.CombatController controller) {
-		if (this.getVidaAtual() < this.getVidaMaxima()) {
-			// Repassa o controller
-			this.setVidaAtual(this.getVidaAtual() + quantidade, estado, controller);
-			System.out.println(">>> Regeneração: +" + String.format("%.1f", quantidade) + " HP.");
-		}
-	}
-
-	public double getDanoSofridoRecentemente(int duracaoTU, int tempoGlobalAtual) {
-		int tempoLimite = tempoGlobalAtual - duracaoTU;
-		double danoTotalRecente = 0.0;
-
-		while (historicoDano.peek() != null && historicoDano.peek().tempoGlobalTU < tempoLimite) {
-			historicoDano.poll();
-		}
-
-		for (DanoSofrido evento : historicoDano) {
-			danoTotalRecente += evento.valor;
-		}
-		return danoTotalRecente;
-	}
-
-	public void adicionarEfeito(Efeito efeito) {
-		if (efeito == null || this.efeitosAtivos == null)
-			return;
-
-		// Imunidade DoT
-		if (efeito.getTipo() == br.com.dantesrpg.model.enums.TipoEfeito.DOT) {
-			if (this.efeitosAtivos.containsKey("Bênção da Vigília") || this.efeitosAtivos.containsKey("JACKPOT!")) {
-				System.out.println(">>> IMUNIDADE! " + this.nome + " resistiu ao efeito [" + efeito.getNome() + "].");
-				return;
-			}
-		}
-
-		if (efeito.getNome().equalsIgnoreCase("Sono")) {
-			// Se já está dormindo, não acumula mais sono
-			if (this.efeitosAtivos.containsKey("Dormindo"))
-				return;
-
-			// Busca pelo efeito existente usando chave fixa "Sono"
-			Efeito sonoAtual = this.efeitosAtivos.get("Sono");
-			int stacksAtuais = (sonoAtual != null) ? sonoAtual.getStacks() : 0;
-
-			// Incremento forçado: Sempre soma +1 hit
-			int novosStacks = stacksAtuais + 1;
-
-			if (novosStacks >= 5) {
-				// ESTOUROU: Vira "Dormindo" (300 TU, acorda com 2 ticks de dano)
-				this.removerEfeito("Sono");
-
-				// Stacks começa em 0 — será incrementado a cada hit de dano recebido (2 hits = acorda)
-				Efeito dormindo = new Efeito("Dormindo", br.com.dantesrpg.model.enums.TipoEfeito.DEBUFF, 300, null, 0,
-						0);
-				dormindo.setStacks(0);
-
-				this.efeitosAtivos.put("Dormindo", dormindo);
-				System.out.println(">>> " + this.getNome() + " caiu no sono profundo! (300 TU ou 2 hits de dano)");
-
-			} else {
-				// Apenas acumula (sem tempo limite — não expira por duração)
-				if (sonoAtual != null) {
-					sonoAtual.setStacks(novosStacks);
-				} else {
-					// Primeiro stack: duração infinita (acúmulos não expiram por tempo)
-					Efeito novoSono = new Efeito("Sono", br.com.dantesrpg.model.enums.TipoEfeito.DEBUFF, 99999, null, 0,
-							0);
-					novoSono.setStacks(novosStacks);
-					this.efeitosAtivos.put("Sono", novoSono);
-				}
-				System.out.println(">>> " + this.getNome() + " está sonolento (" + novosStacks + "/5).");
-			}
-
-			recalcularAtributosEstatisticas();
-			return; // Sai, pois já tratamos o sono
-		}
-
-		// Lógica Genérica de Atualização/Acúmulo
-		if (efeitosAtivos.containsKey(efeito.getNome())) {
-			Efeito existente = efeitosAtivos.get(efeito.getNome());
-
-			// Renova duração (pega a maior)
-			existente.setDuracaoTURestante(Math.max(existente.getDuracaoTURestante(), efeito.getDuracaoTURestante()));
-
-			// Soma stacks (Crucial para Charm e Half-Demon)
-			if (efeito.getStacks() > 0) {
-				existente.setStacks(existente.getStacks() + efeito.getStacks());
-			}
-		} else {
-			// Adiciona novo
-			efeitosAtivos.put(efeito.getNome(), efeito);
-		}
-
-		System.out.println("DEBUG [" + nome + "]: Efeito aplicado: " + efeito.getNome());
-
-		// Hook: notifica a raça sobre novo efeito
-		if (this.raca != null) {
-			this.raca.onEffectUpdate(this, efeito, true);
-		}
-
-		recalcularAtributosEstatisticas();
-	}
-
-	public Efeito removerEfeito(String nomeEfeito) {
-		if (efeitosAtivos.containsKey(nomeEfeito)) {
-			Efeito removido = efeitosAtivos.remove(nomeEfeito);
-
-			if ("Controle Mental".equals(nomeEfeito)) {
-				reverterControleMental();
-			}
-
-			recalcularAtributosEstatisticas();
-			return removido;
-		}
-		return null;
-	}
-
-	private void reverterControleMental() {
-		// Procura a propriedade que guardou a facção original
-		String faccaoOriginal = null;
-		String propParaRemover = null;
-
-		for (String prop : this.propriedades) {
-			if (prop.startsWith("ORIGINAL_FACTION:")) {
-				faccaoOriginal = prop.split(":")[1];
-				propParaRemover = prop;
+			switch (chave) {
+			case "HP_MAXIMO":
+				this.vidaMaxima += valor;
+				break;
+			case "MP_MAXIMO":
+				this.manaMaxima += valor;
+				break;
+			case "DANO_BONUS_PERCENTUAL":
+				this.bonusDanoPercentual += valor;
+				break;
+			case "TAXA_CRITICA":
+				this.taxaCritica += valor;
+				break;
+			case "DANO_CRITICO":
+				this.danoCritico += valor;
+				break;
+			case "MOVIMENTO":
+				this.movimento += (int) valor;
+				break;
+			case "REDUCAO_DANO_MODIFICADOR":
+				this.reducaoDanoTopor += valor;
+				break;
+			case "ARMADURA_TOTAL":
+				this.armaduraTotal += (int) valor;
+				break;
+			case "RESISTENCIA_DOT":
+				this.reducaoDoTTopor += valor;
+				break;
+			case "REDUCAO_CURA":
+				this.reducaoCuraPercentual += valor;
+				break;
+			default:
 				break;
 			}
 		}
-
-		if (faccaoOriginal != null) {
-			this.setFaccao(faccaoOriginal);
-			this.propriedades.remove(propParaRemover);
-			System.out.println(">>> " + this.getNome() + " recobrou a consciência! Voltou para: " + faccaoOriginal);
-		}
 	}
 
-	// Método que deve ser chamado no início do turno do personagem (no CombatManager)
+	// ========== DELEGAÇÃO: EFEITOS (wrappers de compatibilidade) ==========
+
+	public void adicionarEfeito(Efeito efeito) {
+		getEffectsManager().adicionarEfeito(efeito);
+	}
+
+	public Efeito removerEfeito(String nomeEfeito) {
+		return getEffectsManager().removerEfeito(nomeEfeito);
+	}
+
 	public void reduzirDuracaoEfeitos(int tempoDecorrido) {
-		// Cria uma lista de cópia para evitar ConcurrentModificationException
-		java.util.List<String> paraRemover = new java.util.ArrayList<>();
-
-		for (Efeito e : efeitosAtivos.values()) {
-			if (!e.getNome().equals("Charm")) { // Charm não expira por tempo, só por estouro ou cura
-				e.reduzirDuracao(tempoDecorrido);
-				if (e.expirou()) {
-					paraRemover.add(e.getNome());
-				}
-			}
-		}
-
-		for (String nome : paraRemover) {
-			System.out.println(">>> Efeito expirou: " + nome);
-			removerEfeito(nome); // Chama o método que tem o Hook de reversão
-		}
-	}
-
-	// Getters
-	public String getNome() {
-		return nome;
-	}
-
-	public Raça getRaca() {
-		return raca;
-	}
-
-	public Classe getClasse() {
-		return classe;
-	}
-
-	public int getNivel() {
-		return nivel;
-	}
-
-	public int getExperiencia() {
-		return experiencia;
-	}
-
-	public int getPlacarIniciativa() {
-		return placarIniciativa;
-	}
-
-	public Map<Atributo, Integer> getAtributosFinais() {
-		return atributosFinais != null ? new HashMap<>(atributosFinais) : new HashMap<>();
-	} // Retorna cópia
-
-	public int getContadorTU() {
-		return contadorTU;
-	}
-
-	public int getMovimento() {
-		return movimento;
-	}
-
-	public double getTaxaCritica() {
-		return taxaCritica;
-	}
-
-	public double getDanoCritico() {
-		return danoCritico;
-	}
-
-	public double getReducaoDanoTopor() {
-		return reducaoDanoTopor;
-	}
-
-	public int getArmaduraTotal() {
-		return armaduraTotal;
-	}
-
-	public double getReducaoDanoArmadura() {
-		return reducaoDanoArmadura;
-	}
-
-	public double getReducaoDoTTopor() {
-		return reducaoDoTTopor;
-	}
-
-	public Arma getArmaEquipada() {
-		return armaEquipada;
-	}
-
-	public Armadura getArmaduraEquipada() {
-		return armaduraEquipada;
-	}
-
-	public Amuleto getAmuleto1() {
-		return amuleto1;
-	}
-
-	public Amuleto getAmuleto2() {
-		return amuleto2;
-	}
-
-	public FantasmaNobre getFantasmaNobre() {
-		return fantasmaNobre;
-	}
-
-	public Inventario getInventario() {
-		return inventario;
+		getEffectsManager().reduzirDuracaoEfeitos(tempoDecorrido);
 	}
 
 	public Map<String, Efeito> getEfeitosAtivos() {
-		return efeitosAtivos != null ? Collections.unmodifiableMap(efeitosAtivos) : Collections.emptyMap(); // Retorna
-																											// Visão
-																											// Segura
+		return getEffectsManager().getEfeitosAtivos();
 	}
 
-	public int getPosX() {
-		return posX;
+	// ========== DELEGAÇÃO: SAÚDE (wrappers de compatibilidade) ==========
+
+	public void setVidaAtual(double novaVida, EstadoCombate estado,
+			br.com.dantesrpg.controller.CombatController controller) {
+		getHealthManager().setVidaAtual(novaVida, estado, controller);
 	}
 
-	public void setPosX(int posX) {
-		this.posX = posX;
-	}
-
-	public int getPosY() {
-		return posY;
-	}
-
-	public void setPosY(int posY) {
-		this.posY = posY;
-	}
-
-	public int getMovimentoRestanteTurno() {
-		return movimentoRestanteTurno;
-	}
-
-	// Setters
-	public void setMovimentoRestanteTurno(int movimento) {
-		this.movimentoRestanteTurno = Math.max(0, movimento);
-	}
-
-	public void setNivel(int nivel) {
-		this.nivel = nivel;
-	}
-
-	public void setExperiencia(int experiencia) {
-		this.experiencia = experiencia;
-	}
-
-	public void setArmaduraEquipada(Armadura armadura) {
-		this.armaduraEquipada = armadura;
-	}
-
-	public void setAmuleto1(Amuleto amuleto) {
-		this.amuleto1 = amuleto;
-	}
-
-	public void setAmuleto2(Amuleto amuleto) {
-		this.amuleto2 = amuleto;
-	}
-
-	public double getSortePercentual() {
-		int sorte = this.atributosFinais.getOrDefault(Atributo.SORTE, 1);
-		return sorte * 0.01; // 20 Sorte = 0.20 (+20%)
-	}
-
-	// --- SOBRECARGA (Overload) ---
 	public void setVidaAtual(double novaVida) {
 		setVidaAtual(novaVida, null, null);
 	}
 
-	public void setManaAtual(int manaAtual) {
-		this.manaAtual = Math.max(0, Math.min(manaAtual, this.manaMaxima));
+	public void forcarCura(double valor) {
+		getHealthManager().forcarCura(valor);
 	}
 
-	public void setContadorTU(int contadorTU) {
-		this.contadorTU = contadorTU;
+	public void regenerarVidaFracionada(double quantidade, EstadoCombate estado,
+			br.com.dantesrpg.controller.CombatController controller) {
+		getHealthManager().regenerarVidaFracionada(quantidade, estado, controller);
 	}
 
-	public void setArmaEquipada(Arma armaEquipada) {
-		this.armaEquipada = armaEquipada;
+	public void registrarDanoSofrido(double valor, int tempoGlobalTU) {
+		getHealthManager().registrarDanoSofrido(valor, tempoGlobalTU);
 	}
 
-	public void setFantasmaNobre(FantasmaNobre fantasmaNobre) {
-		this.fantasmaNobre = fantasmaNobre;
+	public double getDanoSofridoRecentemente(int duracaoTU, int tempoGlobalAtual) {
+		return getHealthManager().getDanoSofridoRecentemente(duracaoTU, tempoGlobalAtual);
 	}
 
-	public double getBonusDanoPercentual() {
-		return bonusDanoPercentual;
+	public boolean isAtivoNoCombate() {
+		return getHealthManager().isAtivoNoCombate();
 	}
 
-	public void setBonusDanoPercentual(double bonusdeDano) {
-		this.bonusDanoPercentual = bonusdeDano;
+	public boolean isVivo() {
+		return getHealthManager().isVivo();
 	}
 
-	public int getPontosParaDistribuir() {
-		return pontosParaDistribuir;
-	}
-
-	public void setPontosParaDistribuir(int pontos) {
-		this.pontosParaDistribuir = pontos;
-	}
-
-	public boolean aumentarAtributoBase(Atributo atr) {
-		if (this.pontosParaDistribuir > 0) {
-			this.pontosParaDistribuir--; // Gasta o ponto
-
-			// Pega o valor atual, soma 1, e coloca de volta
-			int valorAtual = this.atributosBase.getOrDefault(atr, 1);
-			this.atributosBase.put(atr, valorAtual + 1);
-
-			// Recalcula todos os stats (HP, Dano, etc.)
-			recalcularAtributosEstatisticas();
-			return true;
-		}
-		return false; // Sem pontos
-	}
-
-	public void setFugiu(boolean fugiu) {
-		this.fugiu = fugiu;
-	}
-
-	public int getXpReward() {
-		return xpReward;
-	}
-
-	public void setXpReward(int xp) {
-		this.xpReward = xp;
-	}
-
-	public int getXpAtual() {
-		return xpAtual;
-	}
-
-	public void setXpAtual(int xp) {
-		this.xpAtual = xp;
-	}
+	// ========== XP / LEVEL ==========
 
 	public int getXpParaProximoNivel() {
 		return 50 * (this.nivel * this.nivel);
@@ -835,7 +510,6 @@ public class Personagem {
 		this.xpAtual += quantidade;
 		System.out.println(">>> " + this.nome + " ganhou " + quantidade + " XP. Total: " + this.xpAtual);
 
-		// Loop para permitir subir múltiplos níveis de uma vez
 		while (this.xpAtual >= getXpParaProximoNivel()) {
 			subirDeNivel();
 		}
@@ -853,48 +527,60 @@ public class Personagem {
 		recalcularAtributosEstatisticas();
 	}
 
-	public boolean isAtivoNoCombate() {
-		if (this.isAusente)
-			return false;
-		if (this.fugiu)
-			return false;
+	public boolean aumentarAtributoBase(Atributo atr) {
+		if (this.pontosParaDistribuir > 0) {
+			this.pontosParaDistribuir--;
+			int valorAtual = this.atributosBase.getOrDefault(atr, 1);
+			this.atributosBase.put(atr, valorAtual + 1);
+			recalcularAtributosEstatisticas();
+			return true;
+		}
+		return false;
+	}
 
-		if (this.raca instanceof Humano) {
-			Humano h = (Humano) this.raca;
-			if (h.getEstadoAtual() == Humano.EstadoEmprestimo.ATIVO) {
-				return true;
+	// ========== HABILIDADES ==========
+
+	public List<Habilidade> getHabilidadesDeClasse() {
+		List<Habilidade> combinadas = new ArrayList<>();
+		if (habilidadesDeClasse != null)
+			combinadas.addAll(habilidadesDeClasse);
+		if (habilidadesExtras != null)
+			combinadas.addAll(habilidadesExtras);
+
+		for (Arma arma : getArmasEquipadas()) {
+			if (arma instanceof br.com.dantesrpg.model.Grimorio) {
+				br.com.dantesrpg.model.Grimorio grimorio = (br.com.dantesrpg.model.Grimorio) arma;
+				combinadas.addAll(grimorio.getMagiasArmazenadas());
+			} else {
+				for (String nomeHab : arma.getHabilidadesConcedidasNomes()) {
+					Habilidade h = br.com.dantesrpg.model.util.HabilidadeFactory.criarHabilidadePorNome(nomeHab);
+					if (h != null) {
+						combinadas.add(h);
+					}
+				}
 			}
 		}
 
-		return this.vidaAtual > 0;
+		return combinadas;
 	}
 
-	public boolean isVivo() {
-		if (this.raca instanceof Humano) {
-			Humano h = (Humano) this.raca;
-			if (h.getEstadoAtual() == Humano.EstadoEmprestimo.ATIVO
-					|| h.getEstadoAtual() == Humano.EstadoEmprestimo.PENDENTE_RESOLUCAO) {
-				return true;
-			}
-		}
-		return this.vidaAtual > 0;
+	public void adicionarHabilidadeExtra(Habilidade h) {
+		this.habilidadesExtras.add(h);
 	}
 
-	public String getFaccao() {
-		return faccao;
+	public void limparHabilidadesExtras() {
+		this.habilidadesExtras.clear();
 	}
 
-	public void setFaccao(String faccao) {
-		this.faccao = faccao;
+	public Habilidade getUltimaHabilidadeUsada() {
+		return ultimaHabilidadeUsada;
 	}
 
-	public Map<Atributo, Integer> getAtributosBase() {
-		return atributosBase;
+	public void setUltimaHabilidadeUsada(Habilidade h) {
+		this.ultimaHabilidadeUsada = h;
 	}
 
-	public double getVidaMaximaBase() {
-		return vidaMaximaBase;
-	}
+	// ========== CLONES / INVOCAÇÕES ==========
 
 	public List<Personagem> getClonesAtivos() {
 		return clonesAtivos;
@@ -945,120 +631,47 @@ public class Personagem {
 		this.clonesAtivos.clear();
 	}
 
-	public Habilidade getUltimaHabilidadeUsada() {
-		return ultimaHabilidadeUsada;
-	}
+	// ========== PROPRIEDADES / FLAGS ==========
 
-	public void setUltimaHabilidadeUsada(Habilidade h) {
-		this.ultimaHabilidadeUsada = h;
-	}
-
-	public void adicionarHabilidadeExtra(Habilidade h) {
-		this.habilidadesExtras.add(h);
-	}
-
-	public void limparHabilidadesExtras() {
-		this.habilidadesExtras.clear();
-	}
-
-	public double getReducaoCuraPercentual() {
-		return reducaoCuraPercentual;
-	}
-
-	public boolean isEscudoDeSangue() {
-		return temEscudoDeSangue;
-	}
-
-	public void setTemEscudoDeSangue(boolean b) {
-		this.temEscudoDeSangue = b;
-	}
-
-	public String getJsonFileName() {
-		return jsonFileName;
-	}
-
-	public void setJsonFileName(String jsonFileName) {
-		this.jsonFileName = jsonFileName;
-	}
-
-	public List<Habilidade> getHabilidadesDeClasse() {
-		List<Habilidade> combinadas = new ArrayList<>();
-		if (habilidadesDeClasse != null)
-			combinadas.addAll(habilidadesDeClasse);
-		if (habilidadesExtras != null)
-			combinadas.addAll(habilidadesExtras);
-
-		if (armaEquipada instanceof br.com.dantesrpg.model.Grimorio) {
-			br.com.dantesrpg.model.Grimorio grimorio = (br.com.dantesrpg.model.Grimorio) armaEquipada;
-			combinadas.addAll(grimorio.getMagiasArmazenadas());
+	public List<String> getPropriedades() {
+		if (propriedades == null) {
+			propriedades = new ArrayList<>();
 		}
-
-		else if (armaEquipada != null) {
-			for (String nomeHab : armaEquipada.getHabilidadesConcedidasNomes()) {
-				Habilidade h = br.com.dantesrpg.model.util.HabilidadeFactory.criarHabilidadePorNome(nomeHab);
-				if (h != null) {
-					combinadas.add(h);
-				}
-			}
-		}
-
-		return combinadas;
+		return propriedades;
 	}
 
-	private void aplicarModificadoresStatus(Map<String, Double> mods) {
-		if (mods == null)
-			return;
-
-		for (Map.Entry<String, Double> entry : mods.entrySet()) {
-			String chave = entry.getKey().toUpperCase();
-			double valor = entry.getValue();
-
-			switch (chave) {
-			case "HP_MAXIMO": // Adiciona Vida Plana
-				this.vidaMaxima += valor;
-				break;
-			case "MP_MAXIMO":
-				this.manaMaxima += valor;
-				break;
-			case "DANO_BONUS_PERCENTUAL":
-				this.bonusDanoPercentual += valor; // Ex: 0.10 para +10%
-				break;
-			case "TAXA_CRITICA":
-				this.taxaCritica += valor;
-				break;
-			case "DANO_CRITICO":
-				this.danoCritico += valor;
-				break;
-			case "MOVIMENTO":
-				this.movimento += (int) valor;
-				break;
-			case "REDUCAO_DANO_MODIFICADOR":
-				this.reducaoDanoTopor += valor; // Soma na redução percentual
-				break;
-			case "ARMADURA_TOTAL":
-				this.armaduraTotal += (int) valor;
-				break;
-			case "RESISTENCIA_DOT":
-				this.reducaoDoTTopor += valor;
-				break;
-			case "REDUCAO_CURA":
-				this.reducaoCuraPercentual += valor;
-				break;
-			default:
-				// Se não for um status direto, pode ser ignorado ou logado
-				break;
-			}
+	public void setPropriedades(List<String> novasPropriedades) {
+		this.propriedades = new ArrayList<>();
+		if (novasPropriedades != null) {
+			this.propriedades.addAll(novasPropriedades);
 		}
 	}
 
-	public void setManaMaxima(double manaMaxima) {
-		this.manaMaximaBase = manaMaxima;
-		this.manaMaxima = this.manaMaximaBase + (this.atributosFinais.getOrDefault(Atributo.INSPIRACAO, 1) / 2.0);
+	public void adicionarPropriedade(String prop) {
+		if (this.propriedades == null)
+			this.propriedades = new ArrayList<>();
+		if (!this.propriedades.contains(prop)) {
+			this.propriedades.add(prop);
+		}
+	}
+
+	// === EMPUXO (KNOCKBACK) ===
+
+	public PesoEntidade getPesoEntidade() {
+		if (pesoEntidade == null) pesoEntidade = PesoEntidade.MEDIO_PADRAO;
+		return pesoEntidade;
+	}
+
+	public void setPesoEntidade(PesoEntidade pesoEntidade) {
+		this.pesoEntidade = pesoEntidade;
+	}
+
+	public boolean temPropriedade(String prop) {
+		return getPropriedades().contains(prop);
 	}
 
 	public int getValorPropriedade(String chave) {
 		for (String prop : getPropriedades()) {
-			// Caso 1: Formato "CHAVE:VALOR"
 			if (prop.startsWith(chave + ":")) {
 				try {
 					return Integer.parseInt(prop.split(":")[1]);
@@ -1066,15 +679,36 @@ public class Personagem {
 					return 0;
 				}
 			}
-			// Caso 2: Formato "CHAVE" (Booleano, conta como 1)
 			if (prop.equals(chave))
 				return 1;
 		}
 		return 0;
 	}
 
-	public void setVidaMaximaBase(double vidaBase) {
-		this.vidaMaximaBase = vidaBase;
+	// ========== POSIÇÃO / MOVIMENTO ==========
+
+	public int getPosX() {
+		return posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+
+	public int getMovimentoRestanteTurno() {
+		return movimentoRestanteTurno;
+	}
+
+	public void setMovimentoRestanteTurno(int movimento) {
+		this.movimentoRestanteTurno = Math.max(0, movimento);
 	}
 
 	public int getTamanhoX() {
@@ -1097,6 +731,497 @@ public class Personagem {
 		return x >= this.posX && x < (this.posX + tamanhoX) && y >= this.posY && y < (this.posY + tamanhoY);
 	}
 
+	// ========== GETTERS SIMPLES ==========
+
+	public String getNome() {
+		return nome;
+	}
+
+	public Raça getRaca() {
+		return raca;
+	}
+
+	public void setRaca(Raça raca) {
+		this.raca = raca;
+	}
+
+	public Classe getClasse() {
+		return classe;
+	}
+
+	public int getNivel() {
+		return nivel;
+	}
+
+	public int getExperiencia() {
+		return experiencia;
+	}
+
+	public int getPlacarIniciativa() {
+		return placarIniciativa;
+	}
+
+	public Map<Atributo, Integer> getAtributosFinais() {
+		return atributosFinais != null ? new HashMap<>(atributosFinais) : new HashMap<>();
+	}
+
+	public Map<Atributo, Integer> getAtributosBase() {
+		return atributosBase;
+	}
+
+	public int getContadorTU() {
+		return contadorTU;
+	}
+
+	public int getMovimento() {
+		return movimento;
+	}
+
+	public double getVidaAtual() {
+		return vidaAtual;
+	}
+
+	public double getVidaMaxima() {
+		return vidaMaxima;
+	}
+
+	public double getManaAtual() {
+		return manaAtual;
+	}
+
+	public double getManaMaxima() {
+		return manaMaxima;
+	}
+
+	/**
+	 * Soma dos dois tipos de escudo (sangue + normal).
+	 * Usado para exibição agregada e compatibilidade com chamadas legadas.
+	 */
+	public double getEscudoAtual() {
+		return escudoNormalAtual + escudoSangueAtual;
+	}
+
+	public double getEscudoNormalAtual() {
+		return escudoNormalAtual;
+	}
+
+	public double getEscudoNormalMaximo() {
+		return escudoNormalMaximo;
+	}
+
+	public double getEscudoSangueAtual() {
+		return escudoSangueAtual;
+	}
+
+	public double getEscudoSangueMaximo() {
+		return escudoSangueMaximo;
+	}
+
+	public double getTaxaCritica() {
+		return taxaCritica;
+	}
+
+	public double getDanoCritico() {
+		return danoCritico;
+	}
+
+	public double getReducaoDanoTopor() {
+		return reducaoDanoTopor;
+	}
+
+	public double getReducaoDoTTopor() {
+		return reducaoDoTTopor;
+	}
+
+	public int getArmaduraTotal() {
+		return armaduraTotal;
+	}
+
+	public double getReducaoDanoArmadura() {
+		return reducaoDanoArmadura;
+	}
+
+	public double getBonusDanoPercentual() {
+		return bonusDanoPercentual;
+	}
+
+	public double getReducaoCuraPercentual() {
+		return reducaoCuraPercentual;
+	}
+
+	public double getSortePercentual() {
+		int sorte = this.atributosFinais.getOrDefault(Atributo.SORTE, 1);
+		return sorte * 0.01;
+	}
+
+	public double getVidaMaximaBase() {
+		return vidaMaximaBase;
+	}
+
+	public Arma getArmaEquipada() {
+		List<Arma> armas = getArmasEquipadas();
+		return armas.isEmpty() ? null : armas.get(0);
+	}
+
+	public List<Arma> getArmasEquipadas() {
+		if (armasEquipadas == null) {
+			armasEquipadas = new ArrayList<>();
+		}
+		armasEquipadas.removeIf(arma -> arma == null);
+		if (armasEquipadas.isEmpty() && armaEquipada != null) {
+			armasEquipadas.add(armaEquipada);
+		}
+		armaEquipada = armasEquipadas.isEmpty() ? null : armasEquipadas.get(0);
+		return armasEquipadas;
+	}
+
+	public int getWieldingMaximo() {
+		return wieldingMaximo > 0 ? wieldingMaximo : 2;
+	}
+
+	public int getWieldingOcupado() {
+		return getArmasEquipadas().stream()
+				.mapToInt(Arma::getWielding)
+				.sum();
+	}
+
+	public int getWieldingDisponivel() {
+		return Math.max(0, getWieldingMaximo() - getWieldingOcupado());
+	}
+
+	public boolean podeEquiparArma(Arma arma) {
+		if (arma == null || arma.getWielding() > getWieldingDisponivel()) {
+			return false;
+		}
+		return getArmasEquipadas().stream()
+				.noneMatch(equipada -> equipada == arma);
+	}
+
+	public boolean equiparArma(Arma arma) {
+		if (!podeEquiparArma(arma)) {
+			return false;
+		}
+		getArmasEquipadas().add(arma);
+		sincronizarArmaPrincipal();
+		recalcularAtributosEstatisticas();
+		return true;
+	}
+
+	public boolean desequiparArma(Arma arma) {
+		if (arma == null) {
+			return false;
+		}
+		boolean removeu = getArmasEquipadas().remove(arma);
+		sincronizarArmaPrincipal();
+		recalcularAtributosEstatisticas();
+		return removeu;
+	}
+
+	public boolean possuiArmaEquipada(String nomeArma) {
+		if (nomeArma == null) {
+			return false;
+		}
+		return getArmasEquipadas().stream()
+				.anyMatch(arma -> nomeArma.equals(arma.getNome()));
+	}
+
+	public Armadura getArmaduraEquipada() {
+		return armaduraEquipada;
+	}
+
+	public Amuleto getAmuleto1() {
+		return amuleto1;
+	}
+
+	public Amuleto getAmuleto2() {
+		return amuleto2;
+	}
+
+	public FantasmaNobre getFantasmaNobre() {
+		return fantasmaNobre;
+	}
+
+	public Inventario getInventario() {
+		return inventario;
+	}
+
+	public String getFaccao() {
+		return faccao;
+	}
+
+	public boolean isProtagonista() {
+		return isProtagonista;
+	}
+
+	public boolean isAusente() {
+		return isAusente;
+	}
+
+	public boolean isEscudoDeSangue() {
+		return escudoSangueAtual > 0;
+	}
+
+	public String getJsonFileName() {
+		return jsonFileName;
+	}
+
+	public int getXpReward() {
+		return xpReward;
+	}
+
+	public int getXpAtual() {
+		return xpAtual;
+	}
+
+	public int getPontosParaDistribuir() {
+		return pontosParaDistribuir;
+	}
+
+	public int getGrau() {
+		return grau;
+	}
+
+	public int getSegmentosVida() {
+		return segmentosVida;
+	}
+
+	// ========== SETTERS SIMPLES ==========
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public void setNivel(int nivel) {
+		this.nivel = nivel;
+	}
+
+	public void setExperiencia(int experiencia) {
+		this.experiencia = experiencia;
+	}
+
+	public void setContadorTU(int contadorTU) {
+		this.contadorTU = contadorTU;
+	}
+
+	public void setVidaMaxima(double vidaMaxima) {
+		this.vidaMaxima = vidaMaxima;
+	}
+
+	public void setVidaMaximaBase(double vidaBase) {
+		this.vidaMaximaBase = vidaBase;
+	}
+
+	public void setManaAtual(double manaAtual) {
+		this.manaAtual = Math.max(0.0, Math.min(manaAtual, this.manaMaxima));
+	}
+
+	public void setManaAtual(int manaAtual) {
+		this.manaAtual = Math.max(0, Math.min(manaAtual, this.manaMaxima));
+	}
+
+	public void setManaMaxima(double manaMaxima) {
+		this.manaMaximaBase = manaMaxima;
+		this.manaMaxima = this.manaMaximaBase + (this.atributosFinais.getOrDefault(Atributo.INSPIRACAO, 1) / 2.0);
+	}
+
+	/**
+	 * LEGADO — rota para o escudo NORMAL. Mantido para compatibilidade com
+	 * GM tool (editor de combate) e carregamento de saves antigos.
+	 * Código novo deve usar {@link #setEscudoNormalAtual}, {@link #setEscudoSangueAtual},
+	 * {@link #adicionarEscudoNormal} ou {@link #adicionarEscudoSangue}.
+	 */
+	public void setEscudoAtual(double escudoAtual) {
+		setEscudoNormalAtual(escudoAtual);
+		if (this.escudoNormalAtual > this.escudoNormalMaximo) {
+			this.escudoNormalMaximo = this.escudoNormalAtual;
+		}
+	}
+
+	public void setEscudoNormalAtual(double v) {
+		this.escudoNormalAtual = Math.max(0.0, v);
+		if (this.escudoNormalAtual == 0.0) {
+			this.escudoNormalMaximo = 0.0;
+		}
+	}
+
+	public void setEscudoSangueAtual(double v) {
+		this.escudoSangueAtual = Math.max(0.0, v);
+		if (this.escudoSangueAtual == 0.0) {
+			this.escudoSangueMaximo = 0.0;
+		}
+		recalcularSeBonusOvertimeDependeDoEscudo();
+	}
+
+	/**
+	 * Adiciona escudo normal, elevando o "cap flexível" (máximo) se ultrapassado.
+	 * O cap representa o pico já atingido e é usado apenas para renderização da barra.
+	 */
+	public void adicionarEscudoNormal(double v) {
+		if (v <= 0) return;
+		this.escudoNormalAtual += v;
+		if (this.escudoNormalAtual > this.escudoNormalMaximo) {
+			this.escudoNormalMaximo = this.escudoNormalAtual;
+		}
+	}
+
+	/**
+	 * Adiciona escudo de sangue (esponja de dano, ignora reduções).
+	 * Eleva o "cap flexível" próprio, independente do escudo normal.
+	 */
+	public void adicionarEscudoSangue(double v) {
+		if (v <= 0) return;
+		this.escudoSangueAtual += v;
+		if (this.escudoSangueAtual > this.escudoSangueMaximo) {
+			this.escudoSangueMaximo = this.escudoSangueAtual;
+		}
+		recalcularSeBonusOvertimeDependeDoEscudo();
+	}
+
+	private void recalcularSeBonusOvertimeDependeDoEscudo() {
+		if (this.raca instanceof Humano && this.raca.isV2()) {
+			recalcularAtributosEstatisticas();
+		}
+	}
+
+	public void setArmaEquipada(Arma armaEquipada) {
+		this.armaEquipada = armaEquipada;
+		if (this.armasEquipadas == null) {
+			this.armasEquipadas = new ArrayList<>();
+		} else {
+			this.armasEquipadas.clear();
+		}
+		if (armaEquipada != null) {
+			this.armasEquipadas.add(armaEquipada);
+		}
+		recalcularAtributosEstatisticas();
+	}
+
+	public void setArmasEquipadas(List<Arma> armasEquipadas) {
+		this.armasEquipadas = new ArrayList<>();
+		if (armasEquipadas != null) {
+			for (Arma arma : armasEquipadas) {
+				if (arma != null && arma.getWielding() <= getWieldingMaximo() - getWieldingOcupado()
+						&& this.armasEquipadas.stream().noneMatch(equipada -> equipada == arma)) {
+					this.armasEquipadas.add(arma);
+				}
+			}
+		}
+		sincronizarArmaPrincipal();
+		recalcularAtributosEstatisticas();
+	}
+
+	public void setWieldingMaximo(int wieldingMaximo) {
+		this.wieldingMaximo = Math.max(1, wieldingMaximo);
+		boolean removeu = false;
+		while (getWieldingOcupado() > getWieldingMaximo() && !getArmasEquipadas().isEmpty()) {
+			getArmasEquipadas().remove(getArmasEquipadas().size() - 1);
+			removeu = true;
+		}
+		sincronizarArmaPrincipal();
+		if (removeu) {
+			recalcularAtributosEstatisticas();
+		}
+	}
+
+	private void sincronizarArmaPrincipal() {
+		if (this.armasEquipadas == null || this.armasEquipadas.isEmpty()) {
+			this.armaEquipada = null;
+		} else {
+			this.armaEquipada = this.armasEquipadas.get(0);
+		}
+	}
+
+	public void setArmaduraEquipada(Armadura armadura) {
+		this.armaduraEquipada = armadura;
+	}
+
+	public void setAmuleto1(Amuleto amuleto) {
+		this.amuleto1 = amuleto;
+	}
+
+	public void setAmuleto2(Amuleto amuleto) {
+		this.amuleto2 = amuleto;
+	}
+
+	public void setFantasmaNobre(FantasmaNobre fantasmaNobre) {
+		this.fantasmaNobre = fantasmaNobre;
+	}
+
+	public void setFaccao(String faccao) {
+		this.faccao = faccao;
+	}
+
+	public void setProtagonista(boolean protagonista) {
+		this.isProtagonista = protagonista;
+	}
+
+	public void setAusente(boolean ausente) {
+		this.isAusente = ausente;
+	}
+
+	public void setFugiu(boolean fugiu) {
+		this.fugiu = fugiu;
+	}
+
+	public void setBonusDanoPercentual(double bonusdeDano) {
+		this.bonusDanoPercentual = bonusdeDano;
+	}
+
+	public void setPontosParaDistribuir(int pontos) {
+		this.pontosParaDistribuir = pontos;
+	}
+
+	/**
+	 * LEGADO — converte o escudo normal atual em escudo de sangue (se b=true),
+	 * ou o escudo de sangue atual em normal (se b=false). Mantido apenas para o
+	 * GM tool (checkbox do editor). Código novo deve adicionar direto ao tipo correto.
+	 */
+	public void setTemEscudoDeSangue(boolean b) {
+		if (b) {
+			if (this.escudoNormalAtual > 0) {
+				this.escudoSangueAtual += this.escudoNormalAtual;
+				if (this.escudoSangueAtual > this.escudoSangueMaximo) {
+					this.escudoSangueMaximo = this.escudoSangueAtual;
+				}
+				this.escudoNormalAtual = 0;
+				this.escudoNormalMaximo = 0;
+			}
+		} else {
+			if (this.escudoSangueAtual > 0) {
+				this.escudoNormalAtual += this.escudoSangueAtual;
+				if (this.escudoNormalAtual > this.escudoNormalMaximo) {
+					this.escudoNormalMaximo = this.escudoNormalAtual;
+				}
+				this.escudoSangueAtual = 0;
+				this.escudoSangueMaximo = 0;
+			}
+		}
+	}
+
+	public void setJsonFileName(String jsonFileName) {
+		this.jsonFileName = jsonFileName;
+	}
+
+	public void setXpReward(int xp) {
+		this.xpReward = xp;
+	}
+
+	public void setXpAtual(int xp) {
+		this.xpAtual = xp;
+	}
+
+	public void setGrau(int grau) {
+		this.grau = grau;
+	}
+
+	public void setSegmentosVida(int segmentos) {
+		this.segmentosVida = segmentos;
+	}
+
+	public void setIniciativaBase(int valor) {
+		this.placarIniciativa = valor;
+	}
+
 	public void setAtributoBase(Atributo atributo, int valor) {
 		if (this.atributosBase == null) {
 			this.atributosBase = new HashMap<>();
@@ -1104,52 +1229,36 @@ public class Personagem {
 		this.atributosBase.put(atributo, valor);
 	}
 
-	public void setIniciativaBase(int valor) {
-		this.placarIniciativa = valor;
-	}
-
-	public int getGrau() {
-		return grau;
-	}
-
-	public void setGrau(int grau) {
-		this.grau = grau;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public int getSegmentosVida() {
-		return segmentosVida;
-	}
-
-	public void setSegmentosVida(int segmentos) {
-		this.segmentosVida = segmentos;
-	}
+	// ========== UTILIDADES ==========
 
 	public double getMultiplicadorCustoTU() {
 		double mult = 1.0;
 
 		if (efeitosAtivos.containsKey("Lento")) {
-			mult += 0.30; // +30%
+			Efeito lento = efeitosAtivos.get("Lento");
+			double pct = 0.30;
+			if (lento != null && lento.getModificadores() != null && lento.getModificadores().containsKey("CUSTO_TU_PERCENTUAL")) {
+				pct = lento.getModificadores().get("CUSTO_TU_PERCENTUAL");
+			}
+			mult += pct;
 		}
 
 		if (efeitosAtivos.containsKey("Muito Lento")) {
-			mult += 0.50; // +50%
+			mult += 0.50;
 		}
 
-		// Se tiver os dois, soma: 1.0 + 0.3 + 0.5 = 1.8x custo
 		return mult;
 	}
-}
 
-class DanoSofrido {
-	double valor;
-	int tempoGlobalTU; // O "relógio" do combate quando o dano ocorreu
+	// ========== CLASSE INTERNA ==========
 
-	public DanoSofrido(double valor, int tempoGlobalTU) {
-		this.valor = valor;
-		this.tempoGlobalTU = tempoGlobalTU;
+	public static class DanoSofrido {
+		public double valor;
+		public int tempoGlobalTU;
+
+		public DanoSofrido(double valor, int tempoGlobalTU) {
+			this.valor = valor;
+			this.tempoGlobalTU = tempoGlobalTU;
+		}
 	}
 }

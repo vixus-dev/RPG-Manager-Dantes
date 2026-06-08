@@ -20,6 +20,8 @@ public class Dominio {
 	private final int centroY;
 	private final int raio; // Para 7x7 = raio 3
 	private final String cssClass; // Classe CSS para estilização visual
+	private String texturePath;   // Caminho do sprite overlay (ex: "/effects/sangue_negro.png"), null = sem overlay
+	private double overlayOpacity = 0.7; // Opacidade do sprite overlay (0.0 = transparente, 1.0 = opaco)
 
 	// Coordenadas das células do domínio (para checagem rápida O(1))
 	private final Set<Long> coordenadas = new HashSet<>();
@@ -184,6 +186,22 @@ public class Dominio {
 
 	public Set<Long> getCoordenadas() {
 		return coordenadas;
+	}
+
+	public String getTexturePath() {
+		return texturePath;
+	}
+
+	public void setTexturePath(String texturePath) {
+		this.texturePath = texturePath;
+	}
+
+	public double getOverlayOpacity() {
+		return overlayOpacity;
+	}
+
+	public void setOverlayOpacity(double overlayOpacity) {
+		this.overlayOpacity = Math.max(0.0, Math.min(1.0, overlayOpacity));
 	}
 
 	public boolean isFusao() {
