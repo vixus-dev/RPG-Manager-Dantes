@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.MapController">
+
+    <center>
+        <ScrollPane fx:id="mapScrollPane" pannable="true" style="-fx-background-color: #222222;">
+            <content>
+                <StackPane alignment="TOP_LEFT">
+                    <GridPane fx:id="mapGrid" style="-fx-background-color: #222222; -fx-grid-lines-visible: true;">
+                    </GridPane>
+                    <Canvas fx:id="aoeCanvas" mouseTransparent="true" />
+                </StackPane>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

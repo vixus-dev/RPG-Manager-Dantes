@@ -27,6 +27,7 @@
       <Polygon fx:id="passiveBarPolygon" styleClass="passive-bar-fill"/>
 
       <Polygon fx:id="shieldTrack" points="95,25, 250,25, 260,43, 95,43" styleClass="shield-track"/>
+      <Polygon fx:id="bloodShieldBarPolygon" styleClass="blood-shield-bar-fill"/>
       <Polygon fx:id="shieldBarPolygon" styleClass="shield-bar-fill"/>
       <Pane fx:id="hpBarContainer" layoutX="95.0" layoutY="25.0" prefHeight="18.0" prefWidth="160.0" mouseTransparent="true" />
       <Polygon fx:id="diamondShape" points="60,0, 120.5,45, 60,90, 0,45" styleClass="diamond-shape"/>
