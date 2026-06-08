@@ -1,0 +1,22 @@
+{
+  "itensOfertados": [
+    {"id": "PocaoDeCuraMédia", "desconto": 0.0},
+    {"id": "PocaoDeManaMédia", "desconto": 0.0},
+
+    {"id": "Pistola de Hemopressão", "desconto": 0.0},
+    {"id": "Arco Pulmonar de Compressão", "desconto": 0.0},
+    {"id": "Rifle de Vasos Rompidos", "desconto": 0.0},
+    {"id": "Canhão de Ácido Biliar", "desconto": 0.0},
+    {"id": "Foice do Metabolismo Voraz", "desconto": 0.0},
+
+    {"id": "Vestes de Veias Costuradas", "desconto": 0.0},
+    {"id": "Pele de Digestão Parcial", "desconto": 0.0},
+
+    {"id": "Ampulheta de Ácido", "desconto": 0.0},
+    {"id": "Anel Esofágico", "desconto": 0.0},
+    {"id": "Pingente Gástrico", "desconto": 0.0},
+    {"id": "Nódulo de Carne Viva", "desconto": 0.0},
+
+    {"id": "CambioBronzeParaPrata", "desconto": 0.0}
+  ]
+}

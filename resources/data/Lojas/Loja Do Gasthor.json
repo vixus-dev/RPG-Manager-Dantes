@@ -1,0 +1,25 @@
+{
+  "itensOfertados": [
+    {"id": "PocaoDeCuraMédia", "desconto": 0.0},
+    {"id": "PocaoDeManaMédia", "desconto": 0.0},
+
+    {"id": "Faca de Vértebra Serrilhada", "desconto": 0.0},
+    {"id": "Bastão de Tendão Enrijecido", "desconto": 0.0},
+    {"id": "Serra Esofágica a Vapor", "desconto": 0.0},
+    {"id": "Chicote de Intestino Trançado", "desconto": 0.0},
+    {"id": "Machado de Mandíbula Hidráulica", "desconto": 0.0},
+    {"id": "Lança Esofágica de Deglutição", "desconto": 0.0},
+    {"id": "Martelo Cardíaco de Pressão", "desconto": 0.0},
+
+    {"id": "Couraça de Ossos Rebitados", "desconto": 0.0},
+    {"id": "Armadura de Câmara Gástrica", "desconto": 0.0},
+    {"id": "Exoesqueleto Peristáltico", "desconto": 0.0},
+
+    {"id": "Coração Parasita", "desconto": 0.0},
+    {"id": "Dente do Devorador", "desconto": 0.0},
+    {"id": "Colar de Vértebras Fragmentadas", "desconto": 0.0},
+    {"id": "Válvula Cardíaca Artificial", "desconto": 0.0},
+
+    {"id": "CambioBronzeParaPrata", "desconto": 0.0}
+  ]
+}

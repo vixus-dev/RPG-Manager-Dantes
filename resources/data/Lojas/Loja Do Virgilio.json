@@ -5,18 +5,18 @@
 	{"id": "PocaoDeCuraGrande", "desconto": -0.5},
 	{"id": "MoedaDeAjuda", "desconto": 0.30},
     
-	{"id": "Cajado Basico", "desconto": 0.0},
-	{"id": "Espada-Livro", "desconto": 0.0},
-	{"id": "Grimório da Carne e do Vento", "desconto": 0.0},
+	{"id": "Pistola de Hemopressão", "desconto": 0.0},
+	{"id": "Foice do Metabolismo Voraz", "desconto": 0.0},
+	{"id": "Canhão de Ácido Biliar", "desconto": 0.0},
 	{"id": "Grimório das Confissões Proibidas", "desconto": 0.0},
-	{"id": "Cajado Basico (Overclock : 10x)", "desconto": 0.25},
+	{"id": "Cajado Basico", "desconto": 0.25},
     
-	{"id": "Colete Militar", "desconto": -0.5},
-	{"id": "Colete Militar II", "desconto": 0.0},
+	{"id": "Armadura de Câmara Gástrica", "desconto": -0.5},
+	{"id": "Pele de Digestão Parcial", "desconto": 0.0},
 	{"id": "Couraça de Ossos Reforçados", "desconto": 0.0},
 	
-	{"id": "Botas de Berseker", "desconto": 0.0},
-	{"id": "Pingente de Coração", "desconto": 0.0},
+	{"id": "Nódulo de Carne Viva", "desconto": 0.0},
+	{"id": "Colar de Vértebras Fragmentadas", "desconto": 0.0},
 	{"id": "Devoradora Primordial", "desconto": 0.2},
 	
 	{"id": "CambioBronzeParaPrata", "desconto": 0.0},
