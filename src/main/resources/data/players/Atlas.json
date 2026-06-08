@@ -24,9 +24,9 @@
   "manaAtual": 8.0,
   "raca": "Humano",
   "carteira": {
-    "prata": 12,
-    "ouro": 35,
-    "bronze": 654
+    "prata": 351,
+    "ouro": 0,
+    "bronze": 854
   },
   "faccao": "JOGADOR",
   "vidaAtual": 136.5,

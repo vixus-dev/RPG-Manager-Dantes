@@ -24,9 +24,9 @@
   "manaAtual": 3.5,
   "raca": "Half-Angel",
   "carteira": {
-    "prata": 85,
-    "ouro": 100,
-    "bronze": 7819
+    "prata": 16,
+    "ouro": 1,
+    "bronze": 319
   },
   "faccao": "JOGADOR",
   "vidaAtual": 150.0,

@@ -23,9 +23,9 @@
   "manaAtual": 8.0,
   "raca": "Marionette",
   "carteira": {
-    "prata": 1,
+    "prata": 0,
     "ouro": 0,
-    "bronze": 0
+    "bronze": 100
   },
   "faccao": "JOGADOR",
   "vidaAtual": 25.0,

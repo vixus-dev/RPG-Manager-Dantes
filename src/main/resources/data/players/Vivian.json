@@ -4,16 +4,16 @@
   "vidaMaximaBase": 30.0,
   "classe": "Ladino",
   "atributosBase": {
-    "TOPOR": 10,
     "DESTREZA": 10,
-    "FORCA": 4,
-    "INSPIRACAO": 1,
-    "SORTE": 1,
     "CARISMA": 10,
-    "SAGACIDADE": 1,
-    "ENDURANCE": 4,
+    "INSPIRACAO": 1,
     "PERCEPCAO": 6,
-    "INTELIGENCIA": 5
+    "FORCA": 4,
+    "INTELIGENCIA": 5,
+    "ENDURANCE": 4,
+    "TOPOR": 10,
+    "SORTE": 1,
+    "SAGACIDADE": 1
   },
   "nome": "Vivian",
   "pontosParaDistribuir": 0,
@@ -24,9 +24,9 @@
   "manaAtual": 6.5,
   "raca": "Half-Demon",
   "carteira": {
-    "prata": 748,
-    "ouro": 12,
-    "bronze": 150
+    "prata": 194,
+    "ouro": 0,
+    "bronze": 950
   },
   "faccao": "JOGADOR",
   "vidaAtual": 65.0,
@@ -35,7 +35,7 @@
   "nivel": 5,
   "armaEquipada": "Thompson da Madame",
   "inventario": {
-    "Espingarda (Overclock : 2x)": 1,
+    "Espingarda": 1,
     "Colete Militar": 1,
     "PocaoDeCuraGrande": 1
   },

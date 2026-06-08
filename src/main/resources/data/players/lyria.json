@@ -24,9 +24,9 @@
   "manaAtual": 13.0,
   "raca": "Elfo",
   "carteira": {
-    "prata": 70,
+    "prata": 20,
     "ouro": 0,
-    "bronze": 13105
+    "bronze": 105
   },
   "faccao": "JOGADOR",
   "vidaAtual": 83.0,

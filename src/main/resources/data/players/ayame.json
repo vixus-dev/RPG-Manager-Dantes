@@ -23,6 +23,7 @@
   "amuleto1": "Colar de Tinta Seca",
   "manaAtual": 4.5,
   "raca": "Vampiro",
+  "RaçaV2": true,
   "carteira": {
     "prata": 1,
     "ouro": 0,

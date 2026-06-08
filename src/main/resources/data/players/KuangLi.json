@@ -1,0 +1,39 @@
+{
+  "xpAtual": 250,
+  "iniciativaBase": 30,
+  "vidaMaximaBase": 76.0,
+  "classe": "Campeão",
+  "atributosBase": {
+    "TOPOR": 8,
+    "SAGACIDADE": 1,
+    "PERCEPCAO": 5,
+    "SORTE": 3,
+    "INTELIGENCIA": 4,
+    "CARISMA": 1,
+    "INSPIRACAO": 5,
+    "DESTREZA": 5,
+    "FORCA": 14,
+    "ENDURANCE": 9
+  },
+  "nome": "KuangLi",
+  "pontosParaDistribuir": 0,
+  "RaçaV2": true,
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 5,
+  "posY": 7,
+  "manaAtual": 4.5,
+  "raca": "Lobisomem",
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 54.65671441796875,
+  "contadorTU": 4,
+  "nivel": 6,
+  "armaEquipada": "Bastão Primordial Behemoth",
+  "inventario": {},
+  "escudoAtual": 0.0
+}

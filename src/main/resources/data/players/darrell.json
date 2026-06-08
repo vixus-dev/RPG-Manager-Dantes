@@ -1,32 +1,34 @@
 {
-  "xpAtual": 356,
+  "xpAtual": 406,
   "iniciativaBase": 32,
   "vidaMaximaBase": 36.0,
   "classe": "Ilusionista",
   "atributosBase": {
-    "CARISMA": 10,
-    "PERCEPCAO": 5,
-    "FORCA": 4,
-    "INTELIGENCIA": 9,
-    "SORTE": 1,
-    "ENDURANCE": 1,
     "TOPOR": 1,
     "SAGACIDADE": 1,
+    "PERCEPCAO": 5,
+    "SORTE": 1,
+    "INTELIGENCIA": 9,
+    "CARISMA": 10,
     "INSPIRACAO": 17,
-    "DESTREZA": 10
+    "DESTREZA": 10,
+    "FORCA": 4,
+    "ENDURANCE": 1
   },
   "nome": "Darrell",
   "pontosParaDistribuir": 0,
+  "segmentos": 0,
+  "grau": 0,
   "posX": 5,
   "posY": 5,
   "amuleto2": "Pingente do Olhar Desejado",
   "amuleto1": "Seixo da Absolvição",
-  "manaAtual": 14.0,
+  "manaAtual": 11.0,
   "raca": "Anjo-Caido",
   "carteira": {
-    "prata": 59,
+    "prata": 5,
     "ouro": 0,
-    "bronze": 492
+    "bronze": 392
   },
   "faccao": "JOGADOR",
   "vidaAtual": 96.0,
@@ -50,5 +52,5 @@
     "Cajado Eólico da Luxúria": 1,
     "PocaoDeCuraGrande": 3
   },
-  "escudoAtual": 96.0
+  "escudoAtual": 0.0
 }

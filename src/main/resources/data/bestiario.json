@@ -35,6 +35,18 @@
 	    "xpReward": 15,
 	    "propriedades": []
 	  },
+	  "nupperiboAlpha": {
+	  	    "nome": "Nupperibo Alfa",
+	  	    "raca": "Demônio-Menor",
+	  	    "grau": 1,
+	  	    "vida": 450,
+	  	    "mana": 5,
+	  	    "agilidade": 5,
+	  	    "defesa": 10,
+	  	    "arma": "Machado Abominação2",
+	  	    "xpReward": 50,
+	  	    "propriedades": []
+	  	  },
 	  "Larvas Infernais": {
 	    "nome": "Larvas Infernais",
 	    "raca": "Demônio-Menor",
@@ -84,6 +96,43 @@
 	    "xpReward": 100,
 	    "propriedades": ["IMUNIDADE_CONTROLE","IMUNIDADE_DOT"]
 	  },
+	  "Verme_de_carne": {
+	  	    "nome": "Verme de Carne",
+	  	    "raca": "Demônio",
+	  	    "grau": 0,
+	  	    "vida": 15,
+	  	    "mana": 2,
+	  	    "agilidade": 5,
+	  	    "defesa": 5,
+	  	    "arma": "MandibulaSangue",
+	  	    "xpReward": 2
+	  	  },
+	  "Massa Hedionda Maior": {
+	  	    "nome": "Massa Hedionda Maior",
+	  	    "raca": "Demônio-Maior",
+	  	    "grau": 2,
+	  	    "vida": 500,
+	  	    "mana": 10,
+	  	    "agilidade": 10,
+	  	    "defesa": 10,
+	  		"segmentos": 2,
+	  	    "arma": "MassaSobreEscrita2",
+	  	    "xpReward": 75,
+	  	    "propriedades": ["IMUNIDADE_CONTROLE","IMUNIDADE_DOT"]
+	  	  },
+		  "DeathCatcher": {
+		  	  	    "nome": "DeathCatcher",
+		  	  	    "raca": "Demônio",
+		  	  	    "grau": 1,
+		  	  	    "vida": 200,
+		  	  	    "mana": 10,
+		  	  	    "agilidade": 10,
+		  	  	    "defesa": 0,
+		  	  		"segmentos": 1,
+		  	  	    "arma": "Orbe Sangrenta",
+		  	  	    "xpReward": 25,
+		  	  	    "propriedades": ["IMUNIDADE_CONTROLE","IMUNIDADE_DOT"]
+		  	  	  },
 	  "Mysterious Druid Knight": {
 	    "nome": "Mysterious Druid Knight",
 	    "raca": "Casca-Maior",
@@ -133,6 +182,17 @@
     "arma": "Punhos",
     "xpReward": 5
   },
+  "FilthDeSangue": {
+      "nome": "Filth De Sangue",
+      "raca": "Casca-Menor",
+  	  "grau": 1,
+      "vida": 80,
+  	  "mana": 3,
+      "agilidade": 4,
+      "defesa": 1,
+      "arma": "MandibulaSangue",
+      "xpReward": 15
+    },
   "Aranha": {
     "nome": "Aranha",
     "raca": "Casca-Menor",
@@ -236,6 +296,19 @@
 	 	    "xpReward": 75,
 			"propriedades": ["IMUNIDADE_DOT"]
 	 },
+	 "Cerberus_Sangrento": {
+	 	 	    "nome": "Cerberus Sangrento",
+	 	 	    "raca": "Demônio-Maior",
+	 			"grau": 2,
+	 	 	    "vida": 300,
+	 			"mana": 5,
+	 	 	    "agilidade": 5,
+	 	 	    "defesa": 20,
+	 			"segmentos": 2,
+	 	 	    "arma": "Orbe Cerberus2",
+	 	 	    "xpReward": 50,
+	 			"propriedades": ["IMUNIDADE_DOT"]
+	 	 },
 	 "Succubus": {
 	 	    "nome": "Succubus",
 	 	    "raca": "Demônio",
@@ -352,7 +425,20 @@
 	 	    "arma": "Super-Bazooka",
 	 	    "xpReward": 75,
 			"propriedades": []
-	 },
+	 }, 
+	 "Globulo Branco": {
+	 	 	    "nome": "Globulo Branco",
+	 	 	    "raca": "Demônio-Maior",
+	 			"grau": 1,
+	 	 	    "vida": 2000,
+	 			"mana": 10,
+	 	 	    "agilidade": 10,
+	 	 	    "defesa": 0,
+	 			"segmentos": 0,
+	 	 	    "arma": "Aurela-Sagrada",
+	 	 	    "xpReward": 200,
+	 			"propriedades": []
+	 	 },
 	 "Shael": {
 	 	    "nome": "Shael",
 	 	    "raca": "Corte Infernal",
@@ -438,5 +524,18 @@
 			"tamanhoY": 12,
 	 	    "xpReward": 0,
 			"propriedades": []
-	 }
+	 },
+	 "morghul": {
+	    "nome": "morghul - O quinto",
+	    "raca": "Corte Infernal",
+	    "grau": 3,
+	    "vida": 1750,
+	    "mana": 10,
+	    "agilidade": 10,
+	    "defesa": 20,
+		"segmentos": 3,
+	    "arma": "LivroDeMorghul",
+	    "xpReward": 250,
+	    "propriedades": ["IMUNIDADE_CONTROLE"]
+	  }
 }
