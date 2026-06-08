@@ -11,6 +11,7 @@ import javafx.scene.shape.Polygon;
 import br.com.dantesrpg.model.Efeito;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.racas.Humano;
+import br.com.dantesrpg.model.util.EffectTooltipBuilder;
 import br.com.dantesrpg.model.util.FileLoader;
 import javafx.scene.image.Image;
 
@@ -405,9 +406,13 @@ public class PlayerCardController {
 					else
 						effectIcon.getStyleClass().add("effect-icon-dot");
 
-					// Tooltip
-					String tooltipTexto = efeito.getNome() + "\n(" + efeito.getDuracaoTURestante() + " TU)";
-					Tooltip.install(effectIcon, new Tooltip(tooltipTexto));
+					// Tooltip detalhado
+					Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(efeito));
+					tip.setStyle("-fx-font-size: 11px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 6;");
+					tip.setShowDelay(javafx.util.Duration.millis(200));
+					tip.setMaxWidth(320);
+					tip.setWrapText(true);
+					Tooltip.install(effectIcon, tip);
 
 					// Adiciona ao container
 					cardEffectsContainer.getChildren().add(effectIcon);

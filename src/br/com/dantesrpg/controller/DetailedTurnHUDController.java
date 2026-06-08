@@ -3,6 +3,7 @@ package br.com.dantesrpg.controller;
 import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.enums.*;
 import br.com.dantesrpg.model.util.DiceRoller;
+import br.com.dantesrpg.model.util.EffectTooltipBuilder;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -33,15 +34,23 @@ public class DetailedTurnHUDController {
 
 	// --- Coluna 2 ---
 	@FXML
-	private Button btnAbaAtaques, btnAbaItens, btnAbaTaticas;
+	private Button btnAbaAtaques, btnAbaItens;
 	@FXML
 	private GridPane actionsGrid;
+	@FXML
+	private HBox tacticalButtonsBox;
+	@FXML
+	private Button btnMovimentar, btnPassarVez, btnRecarregar;
 
 	// --- Coluna 3 (Detalhes) ---
 	@FXML
 	private VBox actionDetailsColumn;
 	@FXML
 	private Label lblActionTitle, lblActionDesc;
+	@FXML
+	private HBox costInfoBox;
+	@FXML
+	private Label lblCustoTU, lblCustoMana;
 
 	// Opções de Ataque
 	@FXML
@@ -71,6 +80,14 @@ public class DetailedTurnHUDController {
 	@FXML
 	private Button btnConfirmarAcao;
 
+	// --- Coluna 4 (Rolagem de Dados) ---
+	@FXML
+	private VBox diceRollColumn;
+	@FXML
+	private Label lblDiceType, lblDiceResult, lblCritRate, lblCritResult;
+	@FXML
+	private Button btnRolarDado, btnRolarCritico;
+
 	// --- Lógica Interna ---
 	private Personagem atorAtual;
 	private CombatController mainController;
@@ -87,6 +104,11 @@ public class DetailedTurnHUDController {
 	private TextField inputDadoAtributo;
 	private Map<String, TextField> inputsExtras = new HashMap<>();
 
+	// Estado de Rolagem Manual
+	private int tipoDadoAtual = 20;
+	private boolean criticoFoiRolado = false;
+	private boolean criticoManualRolado = false;
+
 	// Alvos selecionados no mapa
 	private List<Personagem> alvosNoMapa = new ArrayList<>();
 	private int epicentroX = -1, epicentroY = -1;
@@ -98,6 +120,8 @@ public class DetailedTurnHUDController {
 			int tiros = newVal.intValue();
 			lblInfoRajada.setText("+" + tiros + " Tiros (+" + (tiros * 10) + "% TU)");
 			atualizarEstimativaDano();
+			atualizarCustosExibidos();
+			enviarTUPreview();
 		});
 
 		// Listener para o Grupo de Modos
@@ -125,6 +149,16 @@ public class DetailedTurnHUDController {
 		// Esconde a coluna de detalhes até selecionar algo
 		actionDetailsColumn.setVisible(false);
 		actionDetailsColumn.setManaged(false);
+		diceRollColumn.setVisible(false);
+		diceRollColumn.setManaged(false);
+
+		// Limpa TU preview anterior
+		if (mainController != null) mainController.limparTUPreview();
+
+		// Configura botão Recarregar (só visível se arma usa munição)
+		boolean mostrarRecarregar = ator.getArmaEquipada() != null && ator.getArmaEquipada().isRequerMunicao();
+		btnRecarregar.setVisible(mostrarRecarregar);
+		btnRecarregar.setManaged(mostrarRecarregar);
 	}
 
 	// --- ABAS ---
@@ -133,7 +167,6 @@ public class DetailedTurnHUDController {
 	private void onAbaAtaquesClick() {
 		estilizarBotaoAba(btnAbaAtaques, true);
 		estilizarBotaoAba(btnAbaItens, false);
-		estilizarBotaoAba(btnAbaTaticas, false);
 		actionsGrid.getChildren().clear();
 
 		int row = 0;
@@ -143,10 +176,17 @@ public class DetailedTurnHUDController {
 		if (!atorAtual.getEfeitosAtivos().containsKey("Modo Justiça")) {
 			Arma arma = atorAtual.getArmaEquipada();
 			String textoAtaque = "Ataque Básico";
+			if (arma != null && arma.isOverclockado()) {
+				textoAtaque = arma.getNomeComOverclock();
+			}
 			if (arma != null && arma.isRequerMunicao()) {
 				textoAtaque += "\n(" + arma.getMunicaoAtual() + "/" + arma.getMunicaoMaxima() + ")";
 			}
-			Button btnAtaque = criarBotaoAcao(textoAtaque, "-fx-base: #500;");
+			String estiloBotao = "-fx-base: #500;";
+			if (arma != null && arma.isOverclockado()) {
+				estiloBotao = "-fx-base: #005555; -fx-text-fill: cyan; -fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);";
+			}
+			Button btnAtaque = criarBotaoAcao(textoAtaque, estiloBotao);
 			btnAtaque.setOnAction(e -> prepararAcao("Ataque Básico", null, null, null, true));
 			adicionarAoGrid(btnAtaque, col++, row);
 			if (col > 1) {
@@ -184,7 +224,7 @@ public class DetailedTurnHUDController {
 		// Renderiza os botões das habilidades filtradas
 		for (Habilidade hab : habilidadesParaMostrar) {
 			if (hab.getTipo() == TipoHabilidade.ATIVA) {
-				String label = hab.getNome() + "\n" + hab.getCustoMana() + " MP | " + hab.getCustoTU() + " TU";
+				String label = hab.getNome();
 				Button btnHab = criarBotaoAcao(label, "-fx-base: #333;");
 
 				// Verifica Cooldown (no próprio Clone)
@@ -302,7 +342,6 @@ public class DetailedTurnHUDController {
 	private void onAbaItensClick() {
 		estilizarBotaoAba(btnAbaAtaques, false);
 		estilizarBotaoAba(btnAbaItens, true);
-		estilizarBotaoAba(btnAbaTaticas, false);
 		actionsGrid.getChildren().clear();
 
 		int row = 0;
@@ -328,43 +367,25 @@ public class DetailedTurnHUDController {
 	}
 
 	@FXML
-	private void onAbaTaticasClick() {
-		estilizarBotaoAba(btnAbaAtaques, false);
-		estilizarBotaoAba(btnAbaItens, false);
-		estilizarBotaoAba(btnAbaTaticas, true);
-		actionsGrid.getChildren().clear();
+	private void onMovimentarClick() {
+		mainController.iniciarMovimentoTaticoComRetorno(atorAtual);
+	}
 
-		int row = 0;
-		int col = 0;
+	@FXML
+	private void onPassarVezClick() {
+		mainController.resolverAcaoPassarVez(new AcaoMestreInput(atorAtual, new ArrayList<>(), (Habilidade) null));
+	}
 
-		Button btnPassar = criarBotaoAcao("Passar a Vez\n(Recupera Mana)", "-fx-base: #224422;");
-		btnPassar.setOnAction(e -> mainController
-				.resolverAcaoPassarVez(new AcaoMestreInput(atorAtual, new ArrayList<>(), (Habilidade) null)));
-		adicionarAoGrid(btnPassar, col++, row);
-
-		Button btnMover = criarBotaoAcao("Movimentar", "-fx-base: #004488;");
-		btnMover.setOnAction(e -> {
-			// Nota para o futuro Controller: verificar se isso consome TU ou encerra o turno lá
-			mainController.iniciarMovimentoTatico(atorAtual);
-		});
-		adicionarAoGrid(btnMover, col++, row);
-
-		Button btnFugir = criarBotaoAcao("Fugir\n(Sair do Combate)", "-fx-base: #442222;");
-		btnFugir.setOnAction(e -> mainController.resolverAcaoFugir(atorAtual));
-		adicionarAoGrid(btnFugir, col++, row);
-
-		if (atorAtual.getArmaEquipada() != null && atorAtual.getArmaEquipada().isRequerMunicao()) {
-			if (col > 1) {
-				col = 0;
-				row++;
-			}
-			Button btnRecarregar = criarBotaoAcao("Recarregar Arma", "-fx-base: #333;");
-			btnRecarregar.setOnAction(e -> {
-				mainController.getCombatManager().resolverAcaoRecarregar(atorAtual);
-				mainController.avancarTurnoAposAcao();
-			});
-			adicionarAoGrid(btnRecarregar, col++, row);
-		}
+	@FXML
+	private void onRecarregarClick() {
+		mainController.getCombatManager().resolverAcaoRecarregar(atorAtual);
+		atualizarInfoPersonagem();
+		// Atualiza visibilidade do botão recarregar
+		boolean mostrarRecarregar = atorAtual.getArmaEquipada() != null && atorAtual.getArmaEquipada().isRequerMunicao();
+		btnRecarregar.setVisible(mostrarRecarregar);
+		btnRecarregar.setManaged(mostrarRecarregar);
+		// Atualiza a aba de ataques para refletir munição nova
+		onAbaAtaquesClick();
 	}
 
 	// --- PREPARAÇÃO DA AÇÃO (Coluna 3) ---
@@ -383,6 +404,15 @@ public class DetailedTurnHUDController {
 		actionDetailsColumn.setManaged(true);
 		lblActionTitle.setText(titulo);
 
+		// Visual ciano para arma overclockada
+		if (isBasicAttack && atorAtual.getArmaEquipada() != null && atorAtual.getArmaEquipada().isOverclockado()) {
+			Arma armaOC = atorAtual.getArmaEquipada();
+			lblActionTitle.setText(armaOC.getNomeComOverclock());
+			lblActionTitle.setStyle("-fx-text-fill: cyan; -fx-effect: dropshadow(gaussian, cyan, 4, 0.3, 0, 0);");
+		} else {
+			lblActionTitle.setStyle("");
+		}
+
 		// Descrição
 		if (hab != null)
 			lblActionDesc.setText(hab.getDescricao());
@@ -392,6 +422,9 @@ public class DetailedTurnHUDController {
 			lblActionDesc.setText(fn.getDescricao());
 		else if (isBasicAttack)
 			lblActionDesc.setText("Ataque com a arma equipada.");
+
+		// Custos de TU e Mana
+		atualizarCustosExibidos();
 
 		// Opções de Ataque (Apenas para armas)
 		if (isBasicAttack) {
@@ -410,6 +443,67 @@ public class DetailedTurnHUDController {
 		configurarBotaoAlvo();
 
 		atualizarEstimativaDano();
+
+		// TU Preview na timeline principal
+		enviarTUPreview();
+	}
+
+	private int obterCustoTUAtual() {
+		int base = 0;
+		if (isAtaqueBasico) {
+			Arma arma = atorAtual.getArmaEquipada();
+			base = (arma != null) ? arma.getCustoTU() : 0;
+			// Modificadores de modo
+			if (toggleFraco.isSelected()) base = (int)(base * 0.80);
+			else if (toggleForte.isSelected()) base = (int)(base * 1.20);
+			// Rajada
+			if (boxRajada.isVisible()) {
+				int tirosExtras = (int) sliderRajada.getValue();
+				base = (int)(base * (1.0 + tirosExtras * 0.10));
+			}
+		} else if (habilidadeSelecionada != null) {
+			base = habilidadeSelecionada.getCustoTU();
+		} else if (fantasmaNobreSelecionado != null) {
+			base = fantasmaNobreSelecionado.getCustoTU();
+		} else if (itemSelecionado != null) {
+			base = itemSelecionado.getCustoTU();
+		}
+		return base;
+	}
+
+	private int obterCustoManaAtual() {
+		if (isAtaqueBasico) {
+			return 0; // Ataque básico não consome mana
+		} else if (habilidadeSelecionada != null) {
+			return habilidadeSelecionada.getCustoMana();
+		} else if (fantasmaNobreSelecionado != null) {
+			return fantasmaNobreSelecionado.getCustoMana();
+		}
+		return 0;
+	}
+
+	private void atualizarCustosExibidos() {
+		int custoTU = obterCustoTUAtual();
+		int custoMana = obterCustoManaAtual();
+
+		lblCustoTU.setText(String.valueOf(custoTU));
+		if (custoMana > 0) {
+			lblCustoMana.setText("-" + custoMana);
+			lblCustoMana.setStyle("-fx-text-fill: #66bbff; -fx-font-weight: bold; -fx-font-size: 13px;");
+		} else if (custoMana == 0 && isAtaqueBasico) {
+			lblCustoMana.setText("+0");
+			lblCustoMana.setStyle("-fx-text-fill: #888; -fx-font-weight: bold; -fx-font-size: 13px;");
+		} else {
+			lblCustoMana.setText("0");
+			lblCustoMana.setStyle("-fx-text-fill: #888; -fx-font-weight: bold; -fx-font-size: 13px;");
+		}
+	}
+
+	private void enviarTUPreview() {
+		if (mainController == null || atorAtual == null) return;
+		int custoTU = obterCustoTUAtual();
+		int tuPreview = atorAtual.getContadorTU() + custoTU;
+		mainController.mostrarTUPreview(atorAtual, tuPreview);
 	}
 
 	private void configurarBotaoAlvo() {
@@ -578,6 +672,10 @@ public class DetailedTurnHUDController {
 		inputsExtras.clear();
 		this.toggleGroupOpcoes = null;
 		this.inputDadoAtributo = null;
+		this.criticoFoiRolado = false;
+		this.criticoManualRolado = false;
+		diceRollColumn.setVisible(false);
+		diceRollColumn.setManaged(false);
 
 		// Regra: Precisa de dado de atributo se for Ataque Básico OU Habilidade com Dano
 		boolean precisaDadoAtributo = (isAtaqueBasico
@@ -624,6 +722,17 @@ public class DetailedTurnHUDController {
 			inputDadoAtributo.textProperty().addListener((o, ov, nv) -> atualizarEstimativaDano());
 
 			diceInputsBox.getChildren().addAll(lbl, inputDadoAtributo);
+
+			// Ativa a coluna de rolagem
+			this.tipoDadoAtual = tipoDado;
+			diceRollColumn.setVisible(true);
+			diceRollColumn.setManaged(true);
+			lblDiceType.setText("d" + tipoDado);
+			lblDiceResult.setText("—");
+			lblDiceResult.setStyle("-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;");
+			lblCritRate.setText(String.format("%.1f%%", atorAtual.getTaxaCritica() * 100));
+			lblCritResult.setText("—");
+			lblCritResult.setStyle("-fx-text-fill: gray; -fx-font-size: 18px; -fx-font-weight: bold;");
 		}
 
 		if (habilidadeSelecionada != null && habilidadeSelecionada.getOpcoesSelection() != null) {
@@ -654,11 +763,55 @@ public class DetailedTurnHUDController {
 		}
 
 		if (atorAtual.getEfeitosAtivos().containsKey("Domínio: Idle Death Gamble")) {
-			// Só adiciona se já não adicionou
 			if (!inputsExtras.containsKey("DADO_LYRIA_1")) {
-				adicionarInputExtra("DADO_LYRIA_1", "Aposta 1 (d3):");
-				adicionarInputExtra("DADO_LYRIA_2", "Aposta 2 (d3):");
-				adicionarInputExtra("DADO_LYRIA_3", "Aposta 3 (d3):");
+				// Painel visual da aposta
+				Label lblAposta = new Label("APOSTA - Idle Death Gamble");
+				lblAposta.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; -fx-font-size: 13px;");
+				diceInputsBox.getChildren().add(lblAposta);
+
+				// Estrelas atuais
+				Efeito estrelas = atorAtual.getEfeitosAtivos().get("Estrelas da Sorte");
+				int numEstrelas = (estrelas != null) ? estrelas.getStacks() : 0;
+				Label lblEstrelas = new Label("Estrelas da Sorte: " + numEstrelas + "/6" + (numEstrelas >= 6 ? " (JACKPOT GARANTIDO!)" : ""));
+				lblEstrelas.setStyle("-fx-text-fill: " + (numEstrelas >= 6 ? "gold" : "yellow") + "; -fx-font-size: 11px;");
+				diceInputsBox.getChildren().add(lblEstrelas);
+
+				// Inputs dos 3 dados
+				adicionarInputExtra("DADO_LYRIA_1", "Dado 1 (d3):");
+				adicionarInputExtra("DADO_LYRIA_2", "Dado 2 (d3):");
+				adicionarInputExtra("DADO_LYRIA_3", "Dado 3 (d3):");
+
+				// Display de resultado visual
+				Label lblResultadoAposta = new Label("");
+				lblResultadoAposta.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+				lblResultadoAposta.setId("lblResultadoAposta");
+
+				// Botão de rolar os 3 dados de uma vez
+				Button btnRolarAposta = new Button("Rolar Aposta (3d3)");
+				btnRolarAposta.setMaxWidth(Double.MAX_VALUE);
+				btnRolarAposta.setStyle("-fx-base: #2a2a4a; -fx-text-fill: cyan; -fx-font-weight: bold;");
+				btnRolarAposta.setOnAction(e -> {
+					int d1 = DiceRoller.rolarDado(3);
+					int d2 = DiceRoller.rolarDado(3);
+					int d3 = DiceRoller.rolarDado(3);
+					inputsExtras.get("DADO_LYRIA_1").setText(String.valueOf(d1));
+					inputsExtras.get("DADO_LYRIA_2").setText(String.valueOf(d2));
+					inputsExtras.get("DADO_LYRIA_3").setText(String.valueOf(d3));
+
+					boolean trinca = (d1 == d2 && d2 == d3);
+					boolean pityJackpot = numEstrelas >= 6;
+					if (trinca || pityJackpot) {
+						lblResultadoAposta.setText("[" + d1 + "] [" + d2 + "] [" + d3 + "]  JACKPOT!");
+						lblResultadoAposta.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: gold; "
+								+ "-fx-effect: dropshadow(gaussian, gold, 8, 0.5, 0, 0);");
+					} else {
+						int soma = d1 + d2 + d3;
+						lblResultadoAposta.setText("[" + d1 + "] [" + d2 + "] [" + d3 + "]  +" + soma + " TU recuperado");
+						lblResultadoAposta.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ff6666;");
+					}
+				});
+
+				diceInputsBox.getChildren().addAll(btnRolarAposta, lblResultadoAposta);
 			}
 		}
 
@@ -853,6 +1006,11 @@ public class DetailedTurnHUDController {
 			}
 		}
 
+		// Crítico manual (se o botão foi pressionado, usa o resultado; senão, auto)
+		if (criticoFoiRolado) {
+			input.setCriticoManual(criticoManualRolado);
+		}
+
 		// Modos de Ataque (Se for básico)
 		if (isAtaqueBasico) {
 			if (this.isModoCoronhadaSelecionado)
@@ -877,6 +1035,46 @@ public class DetailedTurnHUDController {
 			mainController.resolverAcaoItem(input);
 		else
 			mainController.resolverAcaoDoMestre(input);
+	}
+
+	// --- ROLAGEM MANUAL DE DADOS ---
+
+	@FXML
+	private void onRolarDadoClick() {
+		int resultado = DiceRoller.rolarDado(tipoDadoAtual);
+		lblDiceResult.setText(String.valueOf(resultado));
+
+		// Golpe Perfeito visual
+		if (resultado == tipoDadoAtual) {
+			lblDiceResult.setStyle("-fx-text-fill: gold; -fx-font-size: 28px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, gold, 6, 0.4, 0, 0);");
+		} else {
+			lblDiceResult.setStyle("-fx-text-fill: cyan; -fx-font-size: 28px; -fx-font-weight: bold;");
+		}
+
+		// Insere o valor no campo de texto do dado
+		if (inputDadoAtributo != null) {
+			inputDadoAtributo.setText(String.valueOf(resultado));
+		}
+	}
+
+	@FXML
+	private void onRolarCriticoClick() {
+		double taxaCritica = atorAtual.getTaxaCritica();
+		double rolagem = Math.random();
+		boolean critico = rolagem < taxaCritica;
+
+		this.criticoFoiRolado = true;
+		this.criticoManualRolado = critico;
+
+		if (critico) {
+			lblCritResult.setText("CRÍTICO!");
+			lblCritResult.setStyle("-fx-text-fill: #ff4444; -fx-font-size: 18px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, red, 6, 0.4, 0, 0);");
+		} else {
+			lblCritResult.setText("Normal");
+			lblCritResult.setStyle("-fx-text-fill: #888888; -fx-font-size: 18px; -fx-font-weight: bold;");
+		}
+
+		atualizarEstimativaDano();
 	}
 
 	// --- AUXILIARES VISUAIS ---
@@ -906,7 +1104,16 @@ public class DetailedTurnHUDController {
 			// Rajada é complexa de estimar aqui, mostra apenas o base (puta preguiça prç)
 		}
 
-		labelEstimativaDano.setText("Dano Base Est.: " + (int) (dano * modVisual));
+		int danoFinal = (int) (dano * modVisual);
+
+		if (criticoFoiRolado && criticoManualRolado && atorAtual != null) {
+			danoFinal = (int) (danoFinal * (1 + atorAtual.getDanoCritico()));
+			labelEstimativaDano.setText("Dano Est. (CRIT): " + danoFinal);
+			labelEstimativaDano.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff4444;");
+		} else {
+			labelEstimativaDano.setText("Dano Base Est.: " + danoFinal);
+			labelEstimativaDano.setStyle("-fx-font-weight: bold; -fx-text-fill: lightgreen;");
+		}
 	}
 
 	private void atualizarTextoModo() {
@@ -920,6 +1127,9 @@ public class DetailedTurnHUDController {
 			lblInfoModo.setText("1.25x Dano, +20% TU, +1 Alcance");
 		else
 			lblInfoModo.setText("Dano Normal, TU Normal");
+
+		atualizarCustosExibidos();
+		enviarTUPreview();
 	}
 
 	private Button criarBotaoAcao(String texto, String style) {
@@ -967,8 +1177,13 @@ public class DetailedTurnHUDController {
 		final TipoAlvo tipoAlvoFinal = tipoAlvoBase;
 		final int anguloConeFinal = anguloConeBase;
 
-		return new Habilidade("Ataque BÃ¡sico", "", TipoHabilidade.ATIVA, 0, 0, 0, tipoAlvoFinal,
-				(arma != null ? arma.getTamanhoArea() : 0), 0, 0, null) {
+		int areaFinal = (arma != null) ? arma.getTamanhoArea() : 0;
+		if (this.isModoCoronhadaSelecionado && arma != null) {
+			areaFinal = arma.getTamanhoAreaAtaqueAlternativoBasico();
+		}
+
+		return new Habilidade("Ataque Basico", "", TipoHabilidade.ATIVA, 0, 0, 0, tipoAlvoFinal,
+				areaFinal, 0, 0, null) {
 			@Override
 			public int getAlcanceMaximo() {
 				return alcanceFinal;
@@ -1210,7 +1425,7 @@ public class DetailedTurnHUDController {
 		addStatLabel("Movimento:", atorAtual.getMovimento() + " células");
 		addStatLabel("Armadura:", String.valueOf(atorAtual.getArmaduraTotal()));
 		addStatLabel("Red. Dano:", String.format("%.1f%%", atorAtual.getReducaoDanoArmadura() * 100));
-		addStatLabel("Crítico:", String.format("%.1f%%", atorAtual.getTaxaCritica() * 100));
+		addStatLabel("Taxa Crítica:", String.format("%.1f%%", atorAtual.getTaxaCritica() * 100));
 		addStatLabel("Dano Crítico:", String.format("+%.1f%%", atorAtual.getDanoCritico() * 100));
 		addStatLabel("Bônus Dano:", String.format("+%.1f%%", atorAtual.getBonusDanoPercentual() * 100));
 
@@ -1229,9 +1444,23 @@ public class DetailedTurnHUDController {
 
 	private void atualizarInfoPersonagem() {
 		labelNomeAtor.setText(atorAtual.getNome());
-		String raca = (atorAtual.getRaca() != null) ? atorAtual.getRaca().getNome() : "N/A";
+		String raca = "N/A";
+		boolean racaV2 = false;
+		if (atorAtual.getRaca() != null) {
+			racaV2 = atorAtual.getRaca().isV2();
+			if (racaV2 && atorAtual.getRaca().getNomeV2() != null) {
+				raca = atorAtual.getRaca().getNomeV2();
+			} else {
+				raca = atorAtual.getRaca().getNome();
+			}
+		}
 		String classe = (atorAtual.getClasse() != null) ? atorAtual.getClasse().getNome() : "N/A";
 		labelClasseRaca.setText(raca + " / " + classe);
+		if (racaV2) {
+			labelClasseRaca.setStyle("-fx-text-fill: #FFD700;");
+		} else {
+			labelClasseRaca.setStyle("-fx-text-fill: gray;");
+		}
 
 		// FORMATAÇÃO 1k aplicada
 		String hpAtual = formatarNumero(atorAtual.getVidaAtual());
@@ -1277,12 +1506,12 @@ public class DetailedTurnHUDController {
 				}
 
 				// Tooltip detalhado
-				String desc = efeito.getNome() + "\nDuração: " + efeito.getDuracaoTURestante() + " TU";
-				if (efeito.getDanoPorTick() > 0)
-					desc += "\nDano: " + efeito.getDanoPorTick() + "/tick";
-				// Adicionarei aqui descrições específicas se for necessario (switch case do nom para cada)
-
-				Tooltip.install(lblEfeito, new Tooltip(desc));
+				Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(efeito));
+				tip.setStyle("-fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 8;");
+				tip.setShowDelay(javafx.util.Duration.millis(200));
+				tip.setMaxWidth(350);
+				tip.setWrapText(true);
+				Tooltip.install(lblEfeito, tip);
 
 				effectsContainer.getChildren().add(lblEfeito);
 			}

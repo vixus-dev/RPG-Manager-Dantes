@@ -510,6 +510,11 @@ public class EditorJogadorController {
 				Item itemModelo = mainController.getItem(tipoItem);
 
 				if (itemModelo != null) {
+					// Aplica overclock armazenado no inventário
+					int ocGrau = jogadorSelecionado.getInventario().getOverclockDoItem(tipoItem);
+					if (ocGrau > 0) {
+						itemModelo.setGrauOverclock(ocGrau);
+					}
 					inventarioListView.getItems().add(itemModelo);
 				} else {
 					System.err.println("Editor UI: Não foi possível encontrar o item modelo para: " + tipoItem);
@@ -832,15 +837,15 @@ public class EditorJogadorController {
 					val = val * 100;
 				} // %
 				if (key.equals("TAXA_CRITICA")) {
-					nomeAmigavel = "Taxa Critica";
+					nomeAmigavel = "Taxa Crítica";
 					val = val * 100;
 				} // %
-				if (key.equals("TAXA_CRITICA")) {
-					nomeAmigavel = "Dano rítico";
+				if (key.equals("DANO_CRITICO")) {
+					nomeAmigavel = "Dano Crítico";
 					val = val * 100;
 				} // %
 
-				String sulfixo = (key.contains("PERCENTUAL") || key.contains("MODIFICADOR") || key.contains("CRITICA"))
+				String sulfixo = (key.contains("PERCENTUAL") || key.contains("MODIFICADOR") || key.contains("CRITICA") || key.contains("CRITICO"))
 						? "%"
 						: "";
 
