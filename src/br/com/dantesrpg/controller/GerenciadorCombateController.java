@@ -2,151 +2,154 @@ package br.com.dantesrpg.controller;
 
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.Item;
+import br.com.dantesrpg.model.Arma;
+import br.com.dantesrpg.model.Armadura;
+import br.com.dantesrpg.model.Amuleto;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.util.EffectFactory;
 import br.com.dantesrpg.model.util.EffectTooltipBuilder;
 import br.com.dantesrpg.model.Efeito;
+import br.com.dantesrpg.model.enums.Raridade;
+import br.com.dantesrpg.model.enums.TipoEfeito;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class GerenciadorCombateController {
 
-	@FXML
-	private TableView<Personagem> tabelaCombatentes;
-	@FXML
-	private TableColumn<Personagem, String> colNome;
-	@FXML
-	private TableColumn<Personagem, String> colHP;
-	@FXML
-	private TableColumn<Personagem, String> colTU;
-	@FXML
-	private TableColumn<Personagem, String> colFaccao;
-	@FXML
-	private TableColumn<Personagem, String> colStatus;
+	// ========== TABELA DE COMBATENTES ==========
+	@FXML private TableView<Personagem> tabelaCombatentes;
+	@FXML private TableColumn<Personagem, String> colNome;
+	@FXML private TableColumn<Personagem, String> colHP;
+	@FXML private TableColumn<Personagem, String> colEscudo;
+	@FXML private TableColumn<Personagem, String> colTU;
+	@FXML private TableColumn<Personagem, String> colFaccao;
+	@FXML private TableColumn<Personagem, String> colStatus;
 
-	@FXML
-	private TabPane tabPaneDetalhes;
-	@FXML
-	private Label lblNomeSelecionado;
+	// ========== CABECALHO ==========
+	@FXML private TabPane tabPaneDetalhes;
+	@FXML private Label lblNomeSelecionado;
+	@FXML private Label lblInfoSelecionado;
 
-	// Aba Principal
-	@FXML
-	private TextField inputVida;
-	@FXML
-	private TextField inputEscudo;
-	@FXML
-	private TextField inputMana;
-	@FXML
-	private TextField inputTU;
-	@FXML
-	private CheckBox checkAusente;
-	@FXML
-	private CheckBox checkProtagonista;
-	@FXML
-	private TextField inputOuro;
-	@FXML
-	private TextField inputPrata;
-	@FXML
-	private TextField inputBronze;
-	@FXML
-	private TextField inputXPManual;
+	// ========== ABA PRINCIPAL ==========
+	@FXML private TextField inputVida;
+	@FXML private TextField inputEscudo;
+	@FXML private TextField inputMana;
+	@FXML private TextField inputTU;
+	@FXML private Label lblVidaMax;
+	@FXML private Label lblManaMax;
+	@FXML private CheckBox checkEscudoDeSangue;
+	@FXML private CheckBox checkAusente;
+	@FXML private CheckBox checkProtagonista;
+	@FXML private TextField inputOuro;
+	@FXML private TextField inputPrata;
+	@FXML private TextField inputBronze;
+	@FXML private Label lblTotalMoedas;
+	@FXML private TextField inputXPManual;
+	@FXML private Label lblXPInfo;
 
-	// Aba Inventário
-	@FXML
-	private TextField inputBuscaItem;
-	@FXML
-	private ListView<String> listaItensFiltrados;
-	@FXML
-	private TextField inputQtdItem;
-	@FXML
-	private ListView<String> listaInventarioAtual;
+	// ========== ABA INVENTARIO ==========
+	@FXML private TextField inputBuscaItem;
+	@FXML private ComboBox<String> comboFiltroTipoItem;
+	@FXML private ComboBox<String> comboFiltroRaridade;
+	@FXML private ListView<String> listaItensFiltrados;
+	@FXML private TextField inputQtdItem;
+	@FXML private ListView<String> listaInventarioAtual;
 
-	// Aba Efeitos
-	@FXML
-	private ComboBox<String> comboPresetEfeito;
-	@FXML
-	private TextField inputDuracaoEfeito;
-	@FXML
-	private TextField inputValorEfeito;
+	// ========== ABA EFEITOS ==========
+	@FXML private ComboBox<String> comboPresetEfeito;
+	@FXML private TextField inputDuracaoEfeito;
+	@FXML private TextField inputValorEfeito;
+	@FXML private TextField inputStacksEfeito;
+	@FXML private TextField inputIntervaloEfeito;
+	@FXML private ListView<String> listaEfeitosAtivos;
+	// Editor de efeito
+	@FXML private VBox painelEditorEfeito;
+	@FXML private Label lblNomeEfeitoEditando;
+	@FXML private TextField inputEditDuracao;
+	@FXML private TextField inputEditDanoPorTick;
+	@FXML private TextField inputEditIntervalo;
+	@FXML private TextField inputEditStacks;
+	@FXML private TextField inputEditModChave;
+	@FXML private TextField inputEditModValor;
 
-	// Global
-	@FXML
-	private ComboBox<String> comboEfeitoAndar;
-	@FXML
-	private CheckBox checkEfeitoAndarAtivo;
+	// ========== BARRA SUPERIOR ==========
+	@FXML private ComboBox<String> comboEfeitoAndar;
+	@FXML private CheckBox checkEfeitoAndarAtivo;
+	@FXML private Label lblContadorAndar;
 
+	// ========== ESTADO INTERNO ==========
 	private CombatController mainController;
 	private EstadoCombate estadoCombate;
 	private Personagem selecionado;
+	private String efeitoEditandoNome = null;
+
 	private ObservableList<String> masterDataItens = FXCollections.observableArrayList();
+	private List<ItemInfo> masterItemInfoList = new ArrayList<>();
+	private String filtroTipoAtual = null;
+	private String filtroRaridadeAtual = null;
+
+	private Timeline refreshTimer;
+
+	// Classe auxiliar para filtros de item
+	private static class ItemInfo {
+		String chave;
+		String tipo; // "Arma", "Armadura", "Amuleto", "Consumivel"
+		String raridade; // "COMUM", "RARO", etc.
+		ItemInfo(String chave, String tipo, String raridade) {
+			this.chave = chave;
+			this.tipo = tipo;
+			this.raridade = raridade;
+		}
+	}
+
+	// =====================================================================
+	// INICIALIZACAO
+	// =====================================================================
 
 	@FXML
 	public void initialize() {
 		configurarColunasTabela();
 		configurarFiltroItens();
 		configurarEfeitosAndar();
-
-		// Inicializa combo de efeitos da Factory com tooltips
-		comboPresetEfeito.getItems().setAll(EffectFactory.getNomesPresets());
-		comboPresetEfeito.getSelectionModel().selectFirst();
-		comboPresetEfeito.setCellFactory(lv -> new ListCell<String>() {
-			@Override
-			protected void updateItem(String item, boolean empty) {
-				super.updateItem(item, empty);
-				if (empty || item == null) {
-					setText(null);
-					setTooltip(null);
-				} else {
-					setText(item);
-					Efeito preview = EffectFactory.criarEfeito(item, 300, 100);
-					Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(preview));
-					tip.setStyle("-fx-font-size: 11px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 6;");
-					tip.setShowDelay(javafx.util.Duration.millis(300));
-					tip.setMaxWidth(350);
-					tip.setWrapText(true);
-					setTooltip(tip);
-				}
-			}
-		});
+		configurarComboEfeitos();
+		configurarFiltrosInventario();
+		configurarSelecaoEfeitos();
 
 		tabelaCombatentes.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
 			selecionarPersonagem(newVal);
 		});
 
 		tabPaneDetalhes.setDisable(true);
+
+		// Timer de auto-refresh a cada 2 segundos
+		refreshTimer = new Timeline(new KeyFrame(Duration.seconds(2), e -> onTimerRefresh()));
+		refreshTimer.setCycleCount(Timeline.INDEFINITE);
+		refreshTimer.play();
 	}
 
-	@FXML
-	private void onAdicionarXPClick() {
-		if (selecionado == null)
-			return;
-		try {
-			int xp = Integer.parseInt(inputXPManual.getText());
-			selecionado.ganharExperiencia(xp);
-
-			// Feedback
-			System.out.println("GM: Adicionado " + xp + " XP para " + selecionado.getNome());
-
-			// Salva e Atualiza tudo (incluindo nível se upar)
-			autoSaveAndRefresh();
-			inputXPManual.clear();
-
-		} catch (NumberFormatException e) {
-			System.err.println("Erro: Valor de XP inválido.");
-		}
-	}
+	// =====================================================================
+	// SETUP DO MAIN CONTROLLER
+	// =====================================================================
 
 	public void setMainController(CombatController mainController, EstadoCombate estado) {
 		this.mainController = mainController;
 		this.estadoCombate = estado;
 		carregarDados();
+		atualizarContadorAndar();
 	}
 
 	public void setListaItensMestre(List<String> itens) {
@@ -155,26 +158,185 @@ public class GerenciadorCombateController {
 			this.masterDataItens.addAll(itens);
 	}
 
-	// --- MÉTODO DE AUTO-SAVE E REFRESH ---
-	private void autoSaveAndRefresh() {
-		if (mainController != null) {
-			mainController.atualizarInterfaceTotal();
-			mainController.salvarEstadoJogadores();
-			System.out.println("GM: Auto-Save executado.");
+	/**
+	 * Recebe informacao detalhada dos itens para filtros de tipo e raridade.
+	 */
+	public void setListaItensComInfo(List<String> chaves, CombatController controller) {
+		this.masterDataItens.clear();
+		this.masterItemInfoList.clear();
+		if (chaves == null) return;
+
+		for (String chave : chaves) {
+			this.masterDataItens.add(chave);
+			Item item = controller.getItem(chave);
+			String tipo = "Outro";
+			String raridade = "";
+			if (item instanceof Arma) {
+				tipo = "Arma";
+				raridade = ((Arma) item).getRaridade() != null ? ((Arma) item).getRaridade().name() : "";
+			} else if (item instanceof Armadura) {
+				tipo = "Armadura";
+			} else if (item instanceof Amuleto) {
+				tipo = "Amuleto";
+			} else if (item != null) {
+				tipo = "Consumivel";
+			}
+			this.masterItemInfoList.add(new ItemInfo(chave, tipo, raridade));
 		}
-		tabelaCombatentes.refresh();
 	}
-	
-	// --- AÇÕES DA ABA PRINCIPAL ---
+
+	// =====================================================================
+	// TIMER DE AUTO-REFRESH (Atualização em tempo real)
+	// =====================================================================
+
+	private void onTimerRefresh() {
+		if (estadoCombate == null) return;
+
+		// Atualiza a tabela de combatentes
+		removerInvocacoesMortas();
+		tabelaCombatentes.refresh();
+
+		// Atualiza campos se personagem selecionado
+		if (selecionado != null) {
+			atualizarCamposInput();
+			// Só faz refresh leve nos efeitos (re-renderiza células sem destruir a lista)
+			// NÃO chama atualizarListaEfeitosAtivos() aqui para não resetar a seleção/editor
+			listaEfeitosAtivos.refresh();
+		}
+
+		// Atualiza contador de andar
+		atualizarContadorAndar();
+	}
+
+	/**
+	 * Chamado pelo CombatController após cada turno para garantir sincronização total.
+	 */
+	public void refreshCompleto() {
+		if (estadoCombate == null) return;
+		removerInvocacoesMortas();
+		carregarDados();
+		if (selecionado != null) {
+			atualizarCamposInput();
+			atualizarListaInventario();
+			// Se o editor de efeito está aberto, não reconstrói a lista para não perder o contexto
+			if (painelEditorEfeito.isVisible()) {
+				listaEfeitosAtivos.refresh();
+			} else {
+				atualizarListaEfeitosAtivos();
+			}
+		}
+		atualizarContadorAndar();
+	}
+
+	// =====================================================================
+	// REMOÇÃO AUTOMÁTICA DE INVOCAÇÕES MORTAS
+	// =====================================================================
+
+	private void removerInvocacoesMortas() {
+		if (estadoCombate == null) return;
+		Iterator<Personagem> it = estadoCombate.getCombatentes().iterator();
+		while (it.hasNext()) {
+			Personagem p = it.next();
+			// Remove se: morto + sem arquivo JSON (invocação/temporário)
+			if (!p.isVivo() && (p.getJsonFileName() == null || p.getJsonFileName().isEmpty())) {
+				// Não é um personagem com ficha — pode ser removido
+				if (p.isClone() && p.getCriador() != null) {
+					p.getCriador().removerCloneMorto(p);
+				}
+				it.remove();
+				System.out.println("GM: Invocação/temporário removido: " + p.getNome());
+			}
+		}
+	}
+
+	// =====================================================================
+	// CONTADOR DE EFEITO DE ANDAR
+	// =====================================================================
+
+	private void atualizarContadorAndar() {
+		if (mainController == null || estadoCombate == null) {
+			lblContadorAndar.setVisible(false);
+			lblContadorAndar.setManaged(false);
+			return;
+		}
+
+		if (!mainController.isEfeitoAndarAtivo()) {
+			lblContadorAndar.setVisible(false);
+			lblContadorAndar.setManaged(false);
+			return;
+		}
+
+		String efeito = mainController.getEfeitoAndarAtual();
+		if (efeito == null || efeito.equals("Nenhum")) {
+			lblContadorAndar.setVisible(false);
+			lblContadorAndar.setManaged(false);
+			return;
+		}
+
+		int tickAtual = estadoCombate.getTickCounter();
+		int intervalo = getIntervaloAndar(efeito);
+
+		if (intervalo <= 0) {
+			lblContadorAndar.setVisible(false);
+			lblContadorAndar.setManaged(false);
+			return;
+		}
+
+		int tuRestante = intervalo - (tickAtual % intervalo);
+		if (tuRestante == intervalo) tuRestante = 0; // Acabou de ativar
+
+		String nomeEfeitoCurto = getNomeEfeitoCurto(efeito);
+
+		lblContadorAndar.setVisible(true);
+		lblContadorAndar.setManaged(true);
+
+		if (tuRestante == 0) {
+			lblContadorAndar.setText(nomeEfeitoCurto + ": ATIVANDO AGORA!");
+			lblContadorAndar.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff0000; -fx-font-size: 14px; -fx-padding: 4 12; -fx-background-color: rgba(255,0,0,0.25); -fx-background-radius: 5; -fx-border-color: #ff0000; -fx-border-radius: 5; -fx-border-width: 2;");
+		} else if (tuRestante <= 50) {
+			lblContadorAndar.setText(nomeEfeitoCurto + " em " + tuRestante + " TU!");
+			lblContadorAndar.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff4444; -fx-font-size: 14px; -fx-padding: 4 12; -fx-background-color: rgba(255,50,50,0.2); -fx-background-radius: 5; -fx-border-color: #ff4444; -fx-border-radius: 5; -fx-border-width: 2;");
+		} else {
+			lblContadorAndar.setText(nomeEfeitoCurto + " em " + tuRestante + " TU");
+			lblContadorAndar.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff6b6b; -fx-font-size: 14px; -fx-padding: 4 12; -fx-background-color: rgba(255,50,50,0.1); -fx-background-radius: 5; -fx-border-color: #ff6b6b; -fx-border-radius: 5; -fx-border-width: 1;");
+		}
+	}
+
+	private int getIntervaloAndar(String efeito) {
+		if (efeito.startsWith("2º Andar")) return 200;
+		if (efeito.startsWith("3º Andar")) return 300; // O Olho
+		if (efeito.contains("4º Andar - Dia")) return 100;
+		if (efeito.contains("4º Andar")) return 200;
+		if (efeito.startsWith("5º Andar")) return 100;
+		if (efeito.startsWith("7º Andar")) return 150;
+		if (efeito.startsWith("8.1º Andar")) return 200;
+		return 0;
+	}
+
+	private String getNomeEfeitoCurto(String efeito) {
+		if (efeito.startsWith("2º Andar")) return "Arremesso";
+		if (efeito.startsWith("3º Andar")) return "O Olho";
+		if (efeito.contains("Dia")) return "Vento Escaldante";
+		if (efeito.contains("Noite")) return "Vento Congelante";
+		if (efeito.startsWith("5º Andar")) return "Tempestade";
+		if (efeito.startsWith("7º Andar")) return "Holofotes";
+		if (efeito.startsWith("8.1º Andar")) return "Cruzes";
+		return efeito;
+	}
+
+	// =====================================================================
+	// AÇÕES DA ABA PRINCIPAL
+	// =====================================================================
+
 	@FXML
 	private void onAplicarStatusClick() {
-		if (selecionado == null)
-			return;
+		if (selecionado == null) return;
 		try {
-			selecionado.setVidaAtual(Double.parseDouble(inputVida.getText()), estadoCombate, mainController);
-			selecionado.setEscudoAtual(Double.parseDouble(inputEscudo.getText())); // NOVO: Salva Escudo
-			selecionado.setManaAtual(Double.parseDouble(inputMana.getText()));
-			selecionado.setContadorTU(Integer.parseInt(inputTU.getText()));
+			selecionado.setVidaAtual(parseDoubleSeguro(inputVida.getText()), estadoCombate, mainController);
+			selecionado.setEscudoAtual(parseDoubleSeguro(inputEscudo.getText()));
+			selecionado.setTemEscudoDeSangue(checkEscudoDeSangue.isSelected());
+			selecionado.setManaAtual(parseDoubleSeguro(inputMana.getText()));
+			selecionado.setContadorTU(parseIntSeguro(inputTU.getText()));
 			autoSaveAndRefresh();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -210,6 +372,20 @@ public class GerenciadorCombateController {
 	}
 
 	@FXML
+	private void onAdicionarXPClick() {
+		if (selecionado == null) return;
+		try {
+			int xp = parseIntSeguro(inputXPManual.getText());
+			selecionado.ganharExperiencia(xp);
+			System.out.println("GM: Adicionado " + xp + " XP para " + selecionado.getNome());
+			autoSaveAndRefresh();
+			inputXPManual.clear();
+		} catch (NumberFormatException e) {
+			System.err.println("Erro: Valor de XP invalido.");
+		}
+	}
+
+	@FXML
 	private void onCheckAusenteChange() {
 		if (selecionado != null) {
 			selecionado.setAusente(checkAusente.isSelected());
@@ -225,36 +401,123 @@ public class GerenciadorCombateController {
 		}
 	}
 
+	// =====================================================================
+	// FINANCAS — Adicionar / Remover moedas
+	// =====================================================================
+
 	@FXML
-	private void onSetarMoedasClick() {
-		if (selecionado == null)
-			return;
+	private void onAddOuroClick() {
+		alterarMoeda("ouro", true);
+	}
+	@FXML
+	private void onRemoveOuroClick() {
+		alterarMoeda("ouro", false);
+	}
+	@FXML
+	private void onAddPrataClick() {
+		alterarMoeda("prata", true);
+	}
+	@FXML
+	private void onRemovePrataClick() {
+		alterarMoeda("prata", false);
+	}
+	@FXML
+	private void onAddBronzeClick() {
+		alterarMoeda("bronze", true);
+	}
+	@FXML
+	private void onRemoveBronzeClick() {
+		alterarMoeda("bronze", false);
+	}
+
+	private void alterarMoeda(String tipo, boolean adicionar) {
+		if (selecionado == null) return;
 		try {
-			selecionado.getInventario().setMoedasOuro(Integer.parseInt(inputOuro.getText()));
-			selecionado.getInventario().setMoedasPrata(Integer.parseInt(inputPrata.getText()));
-			selecionado.getInventario().setMoedasBronze(Integer.parseInt(inputBronze.getText()));
+			int valor;
+			switch (tipo) {
+				case "ouro":
+					valor = parseIntSeguro(inputOuro.getText());
+					if (adicionar) selecionado.getInventario().receberOuro(valor);
+					else selecionado.getInventario().gastarOuro(valor);
+					break;
+				case "prata":
+					valor = parseIntSeguro(inputPrata.getText());
+					if (adicionar) selecionado.getInventario().receberPrata(valor);
+					else selecionado.getInventario().gastarPrata(valor);
+					break;
+				case "bronze":
+					valor = parseIntSeguro(inputBronze.getText());
+					if (adicionar) selecionado.getInventario().receber(valor);
+					else selecionado.getInventario().gastarBronze(valor);
+					break;
+			}
+			atualizarCamposMoedas();
 			autoSaveAndRefresh();
 		} catch (Exception e) {
+			// Input invalido
 		}
 	}
 
-	// --- AÇÕES DA ABA INVENTÁRIO ---
+	private void atualizarCamposMoedas() {
+		if (selecionado == null || selecionado.getInventario() == null) return;
+		if (!inputOuro.isFocused())
+			inputOuro.setText(String.valueOf(selecionado.getInventario().getMoedasOuro()));
+		if (!inputPrata.isFocused())
+			inputPrata.setText(String.valueOf(selecionado.getInventario().getMoedasPrata()));
+		if (!inputBronze.isFocused())
+			inputBronze.setText(String.valueOf(selecionado.getInventario().getMoedasBronze()));
+		lblTotalMoedas.setText("Total: " + formatarMoedas(selecionado.getInventario().getValorTotalEmBronze()) + " bronze");
+	}
+
+	private String formatarMoedas(int valor) {
+		if (valor >= 1000000) return String.format("%.2fM", valor / 1000000.0);
+		if (valor >= 1000) return String.format("%.1fK", valor / 1000.0);
+		return String.valueOf(valor);
+	}
+
+	/**
+	 * Parse seguro de double que aceita tanto vírgula quanto ponto como separador decimal.
+	 * Ex: "10,5" e "10.5" ambos retornam 10.5
+	 */
+	private double parseDoubleSeguro(String texto) {
+		if (texto == null || texto.trim().isEmpty()) return 0.0;
+		return Double.parseDouble(texto.trim().replace(',', '.'));
+	}
+
+	/**
+	 * Parse seguro de int que remove espaços e caracteres decimais.
+	 * Ex: "100", "100.0", "100,0" todos retornam 100
+	 */
+	private int parseIntSeguro(String texto) {
+		if (texto == null || texto.trim().isEmpty()) return 0;
+		String limpo = texto.trim().replace(',', '.');
+		// Se tem ponto, pega só a parte inteira
+		if (limpo.contains(".")) {
+			return (int) Double.parseDouble(limpo);
+		}
+		return Integer.parseInt(limpo);
+	}
+
+	// =====================================================================
+	// AÇÕES DA ABA INVENTARIO
+	// =====================================================================
 
 	@FXML
 	private void onAdicionarItemClick() {
 		String nomeItem = listaItensFiltrados.getSelectionModel().getSelectedItem();
 		if (selecionado != null && nomeItem != null && mainController != null) {
 			try {
-				int qtd = Integer.parseInt(inputQtdItem.getText());
+				int qtd = parseIntSeguro(inputQtdItem.getText());
 				Item item = mainController.getItem(nomeItem);
 				if (item != null) {
 					for (int i = 0; i < qtd; i++)
 						selecionado.getInventario().adicionarItem(item);
-					System.out.println("GM: Adicionado " + nomeItem);
+					System.out.println("GM: Adicionado " + qtd + "x " + item.getNome());
 					atualizarListaInventario();
 					autoSaveAndRefresh();
 				}
 			} catch (Exception e) {
+				// Input invalido
 			}
 		}
 	}
@@ -263,8 +526,8 @@ public class GerenciadorCombateController {
 	private void onRemoverItemClick() {
 		String selectedString = listaInventarioAtual.getSelectionModel().getSelectedItem();
 		if (selecionado != null && selectedString != null && mainController != null) {
+			// O item armazena a chave no userData
 			String tipoItem = selectedString;
-
 			Item itemModelo = mainController.getItem(tipoItem);
 			if (itemModelo != null) {
 				selecionado.getInventario().removerItem(itemModelo);
@@ -275,90 +538,142 @@ public class GerenciadorCombateController {
 		}
 	}
 
-	private void atualizarListaInventario() {
-		listaInventarioAtual.getItems().clear();
-		if (selecionado != null && selecionado.getInventario() != null) {
-			Map<String, Integer> itens = selecionado.getInventario().getItensAgrupados();
-
-			// Popula com os IDs dos itens
-			listaInventarioAtual.getItems().addAll(itens.keySet());
-
-			// Configura a célula para mostrar "Nome (xQtd)"
-			listaInventarioAtual.setCellFactory(lv -> new ListCell<String>() {
-				@Override
-				protected void updateItem(String tipoItem, boolean empty) {
-					super.updateItem(tipoItem, empty);
-					if (empty || tipoItem == null) {
-						setText(null);
-					} else {
-						int qtd = itens.getOrDefault(tipoItem, 0);
-						// Tenta pegar o nome bonito
-						Item modelo = mainController.getItem(tipoItem);
-						if (modelo != null) {
-							int ocGrau = selecionado.getInventario().getOverclockDoItem(tipoItem);
-							if (ocGrau > 0) modelo.setGrauOverclock(ocGrau);
-						}
-						String nomeExibicao = (modelo != null) ? modelo.getNome() : tipoItem;
-						setText(nomeExibicao + " (x" + qtd + ")");
-					}
-				}
-			});
-		}
-	}
-
-	// --- AÇÕES DA ABA EFEITOS ---
+	// =====================================================================
+	// AÇÕES DA ABA EFEITOS
+	// =====================================================================
 
 	@FXML
 	private void onAdicionarEfeitoManualClick() {
-		if (selecionado == null)
-			return;
+		if (selecionado == null) return;
 		try {
 			String nomePreset = comboPresetEfeito.getValue();
-			int duracao = Integer.parseInt(inputDuracaoEfeito.getText());
-			int valor = Integer.parseInt(inputValorEfeito.getText());
+			int duracao = parseIntSeguro(inputDuracaoEfeito.getText());
+			int valor = parseIntSeguro(inputValorEfeito.getText());
 
 			Efeito novoEfeito = EffectFactory.criarEfeito(nomePreset, duracao, valor);
+
+			// Aplica customizações opcionais
+			String stacksText = inputStacksEfeito.getText();
+			if (stacksText != null && !stacksText.trim().isEmpty()) {
+				int stacks = parseIntSeguro(stacksText);
+				if (stacks > 0) novoEfeito.setStacks(stacks);
+			}
+
+			String intervaloText = inputIntervaloEfeito.getText();
+			if (intervaloText != null && !intervaloText.trim().isEmpty()) {
+				int intervalo = parseIntSeguro(intervaloText);
+				if (intervalo > 0) novoEfeito.setIntervaloTickTU(intervalo);
+			}
+
 			selecionado.adicionarEfeito(novoEfeito);
 			selecionado.recalcularAtributosEstatisticas();
 
+			atualizarListaEfeitosAtivos();
 			autoSaveAndRefresh();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	@FXML
 	private void onLimparEfeitosClick() {
-		if (selecionado == null)
-			return;
+		if (selecionado == null) return;
 		List<String> nomes = new ArrayList<>(selecionado.getEfeitosAtivos().keySet());
 		for (String n : nomes)
 			selecionado.removerEfeito(n);
 		selecionado.recalcularAtributosEstatisticas();
+		atualizarListaEfeitosAtivos();
 		autoSaveAndRefresh();
 	}
 
-	// --- AÇÕES GLOBAIS / SISTEMA ---
+	@FXML
+	private void onSalvarEdicaoEfeitoClick() {
+		if (selecionado == null || efeitoEditandoNome == null) return;
+		Efeito efeito = selecionado.getEfeitosAtivos().get(efeitoEditandoNome);
+		if (efeito == null) return;
+
+		try {
+			// Atualiza duracao restante
+			String duracaoText = inputEditDuracao.getText();
+			if (duracaoText != null && !duracaoText.trim().isEmpty()) {
+				efeito.setDuracaoTURestante(parseIntSeguro(duracaoText));
+			}
+
+			// Atualiza dano por tick
+			String danoText = inputEditDanoPorTick.getText();
+			if (danoText != null && !danoText.trim().isEmpty()) {
+				efeito.setDanoPorTick(parseIntSeguro(danoText));
+			}
+
+			// Atualiza intervalo de tick
+			String intervaloText = inputEditIntervalo.getText();
+			if (intervaloText != null && !intervaloText.trim().isEmpty()) {
+				efeito.setIntervaloTickTU(parseIntSeguro(intervaloText));
+			}
+
+			// Atualiza stacks
+			String stacksText = inputEditStacks.getText();
+			if (stacksText != null && !stacksText.trim().isEmpty()) {
+				efeito.setStacks(parseIntSeguro(stacksText));
+			}
+
+			// Atualiza/adiciona modificador
+			String modChave = inputEditModChave.getText();
+			String modValorText = inputEditModValor.getText();
+			if (modChave != null && !modChave.trim().isEmpty() && modValorText != null && !modValorText.trim().isEmpty()) {
+				double modValor = parseDoubleSeguro(modValorText);
+				Map<String, Double> mods = efeito.getModificadores();
+				if (mods == null) {
+					mods = new HashMap<>();
+					efeito.setModificadores(mods);
+				}
+				mods.put(modChave.toUpperCase(), modValor);
+			}
+
+			selecionado.recalcularAtributosEstatisticas();
+			atualizarListaEfeitosAtivos();
+			autoSaveAndRefresh();
+			System.out.println("GM: Efeito '" + efeitoEditandoNome + "' editado com sucesso.");
+
+		} catch (Exception e) {
+			System.err.println("Erro ao editar efeito: " + e.getMessage());
+		}
+	}
+
+	@FXML
+	private void onRemoverEfeitoClick() {
+		if (selecionado == null || efeitoEditandoNome == null) return;
+		selecionado.removerEfeito(efeitoEditandoNome);
+		selecionado.recalcularAtributosEstatisticas();
+		efeitoEditandoNome = null;
+		painelEditorEfeito.setVisible(false);
+		painelEditorEfeito.setManaged(false);
+		atualizarListaEfeitosAtivos();
+		autoSaveAndRefresh();
+	}
+
+	// =====================================================================
+	// AÇÕES GLOBAIS / SISTEMA
+	// =====================================================================
 
 	@FXML
 	private void onSalvarTudoClick() {
-		if (mainController != null)
-			mainController.salvarEstadoJogadores();
+		if (mainController != null) mainController.salvarEstadoJogadores();
 	}
 
 	@FXML
 	private void onCarregarTudoClick() {
 		if (mainController != null) {
 			mainController.carregarEstadoJogadores();
-			carregarDados(); // Recarrega a tabela local
+			carregarDados();
 		}
 	}
 
 	@FXML
 	private void onCurarTodosClick() {
-		if (estadoCombate == null)
-			return;
+		if (estadoCombate == null) return;
 		for (Personagem p : estadoCombate.getCombatentes()) {
-			if (p.getFaccao().equals("JOGADOR") && p.isVivo()) {
+			if (p.getFaccao() != null && p.getFaccao().equals("JOGADOR") && p.isVivo()) {
 				p.setVidaAtual(p.getVidaMaxima(), estadoCombate, mainController);
 			}
 		}
@@ -366,38 +681,276 @@ public class GerenciadorCombateController {
 		autoSaveAndRefresh();
 	}
 
-	// --- MÉTODOS AUXILIARES ---
+	@FXML
+	private void onRefreshClick() {
+		refreshCompleto();
+	}
+
+	// =====================================================================
+	// AUTO-SAVE E REFRESH
+	// =====================================================================
+
+	private void autoSaveAndRefresh() {
+		if (mainController != null) {
+			mainController.atualizarInterfaceTotal();
+			mainController.salvarEstadoJogadores();
+		}
+		tabelaCombatentes.refresh();
+	}
+
+	// =====================================================================
+	// SELECAO DE PERSONAGEM
+	// =====================================================================
 
 	private void selecionarPersonagem(Personagem p) {
 		this.selecionado = p;
 		if (p == null) {
 			tabPaneDetalhes.setDisable(true);
 			lblNomeSelecionado.setText("Selecione um Personagem");
+			lblInfoSelecionado.setText("");
+			painelEditorEfeito.setVisible(false);
+			painelEditorEfeito.setManaged(false);
 			return;
 		}
 
 		tabPaneDetalhes.setDisable(false);
 		lblNomeSelecionado.setText(p.getNome());
+
+		// Info complementar
+		String info = "";
+		if (p.getClasse() != null) info += p.getClasse().getClass().getSimpleName();
+		if (p.getRaca() != null) info += " | " + p.getRaca().getClass().getSimpleName();
+		info += " | Nv." + p.getNivel();
+		if (p.getJsonFileName() != null) info += " | " + p.getJsonFileName();
+		lblInfoSelecionado.setText(info);
+
 		atualizarCamposInput();
 		atualizarListaInventario();
+		atualizarListaEfeitosAtivos();
 	}
 
+	// =====================================================================
+	// ATUALIZAR CAMPOS (Chamado pelo timer e por seleção)
+	// =====================================================================
+
 	private void atualizarCamposInput() {
-		if (selecionado == null)
-			return;
-		inputVida.setText(String.valueOf(selecionado.getVidaAtual()));
-		inputEscudo.setText(String.valueOf(selecionado.getEscudoAtual()));
-		inputMana.setText(String.valueOf(selecionado.getManaAtual()));
-		inputTU.setText(String.valueOf(selecionado.getContadorTU()));
+		if (selecionado == null) return;
+
+		// Só atualiza se o campo não está focado (evita conflito com digitação do GM)
+		if (!inputVida.isFocused())
+			inputVida.setText(String.format("%.1f", selecionado.getVidaAtual()));
+		if (!inputEscudo.isFocused())
+			inputEscudo.setText(String.format("%.1f", selecionado.getEscudoAtual()));
+		if (!inputMana.isFocused())
+			inputMana.setText(String.format("%.1f", selecionado.getManaAtual()));
+		if (!inputTU.isFocused())
+			inputTU.setText(String.valueOf(selecionado.getContadorTU()));
+
+		lblVidaMax.setText("/ " + String.format("%.0f", selecionado.getVidaMaxima()));
+		lblManaMax.setText("/ " + String.format("%.0f", selecionado.getManaMaxima()));
+
+		checkEscudoDeSangue.setSelected(selecionado.isEscudoDeSangue());
 		checkAusente.setSelected(selecionado.isAusente());
 		checkProtagonista.setSelected(selecionado.isProtagonista());
 
-		if (selecionado.getInventario() != null) {
-			inputOuro.setText(String.valueOf(selecionado.getInventario().getMoedasOuro()));
-			inputPrata.setText(String.valueOf(selecionado.getInventario().getMoedasPrata()));
-			inputBronze.setText(String.valueOf(selecionado.getInventario().getMoedasBronze()));
+		// Moedas
+		atualizarCamposMoedas();
+
+		// XP Info
+		if (selecionado.getJsonFileName() != null) {
+			lblXPInfo.setText("XP: " + selecionado.getXpAtual() + " / " + selecionado.getXpParaProximoNivel()
+					+ " | Grau: " + selecionado.getGrau() + " | Pts: " + selecionado.getPontosParaDistribuir());
+		} else {
+			lblXPInfo.setText("XP Reward: " + selecionado.getXpReward());
 		}
 	}
+
+	// =====================================================================
+	// LISTA DE EFEITOS ATIVOS
+	// =====================================================================
+
+	private void atualizarListaEfeitosAtivos() {
+		listaEfeitosAtivos.getItems().clear();
+		if (selecionado == null) return;
+
+		Map<String, Efeito> efeitos = selecionado.getEfeitosAtivos();
+		if (efeitos == null || efeitos.isEmpty()) {
+			painelEditorEfeito.setVisible(false);
+			painelEditorEfeito.setManaged(false);
+			return;
+		}
+
+		for (Map.Entry<String, Efeito> entry : efeitos.entrySet()) {
+			listaEfeitosAtivos.getItems().add(entry.getKey());
+		}
+
+		// Cell factory com info detalhada
+		listaEfeitosAtivos.setCellFactory(lv -> new ListCell<String>() {
+			@Override
+			protected void updateItem(String nomeEfeito, boolean empty) {
+				super.updateItem(nomeEfeito, empty);
+				if (empty || nomeEfeito == null || selecionado == null) {
+					setText(null);
+					setStyle("");
+					return;
+				}
+
+				Efeito ef = selecionado.getEfeitosAtivos().get(nomeEfeito);
+				if (ef == null) {
+					setText(nomeEfeito + " (expirado)");
+					return;
+				}
+
+				StringBuilder sb = new StringBuilder();
+				// Icone por tipo
+				switch (ef.getTipo()) {
+					case BUFF: sb.append("[BUFF] "); break;
+					case DEBUFF: sb.append("[DEBF] "); break;
+					case DOT: sb.append("[DOT]  "); break;
+				}
+				sb.append(nomeEfeito);
+				sb.append("  |  ").append(ef.getDuracaoTURestante()).append(" TU rest.");
+
+				if (ef.getDanoPorTick() > 0) {
+					sb.append("  |  ").append(ef.getDanoPorTick()).append(" dmg/tick");
+				}
+				if (ef.getStacks() > 0) {
+					sb.append("  |  x").append(ef.getStacks()).append(" stacks");
+				}
+				if (ef.getModificadores() != null && !ef.getModificadores().isEmpty()) {
+					for (Map.Entry<String, Double> mod : ef.getModificadores().entrySet()) {
+						sb.append("  |  ").append(mod.getKey()).append(": ");
+						sb.append(String.format("%.2f", mod.getValue()));
+					}
+				}
+
+				setText(sb.toString());
+
+				// Cor por tipo
+				switch (ef.getTipo()) {
+					case BUFF:
+						setStyle("-fx-text-fill: #88ddff;");
+						break;
+					case DEBUFF:
+						setStyle("-fx-text-fill: #ff8888;");
+						break;
+					case DOT:
+						setStyle("-fx-text-fill: #cc88ff;");
+						break;
+				}
+			}
+		});
+	}
+
+	private void configurarSelecaoEfeitos() {
+		listaEfeitosAtivos.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal == null || selecionado == null) {
+				painelEditorEfeito.setVisible(false);
+				painelEditorEfeito.setManaged(false);
+				efeitoEditandoNome = null;
+				return;
+			}
+
+			Efeito efeito = selecionado.getEfeitosAtivos().get(newVal);
+			if (efeito == null) return;
+
+			efeitoEditandoNome = newVal;
+			painelEditorEfeito.setVisible(true);
+			painelEditorEfeito.setManaged(true);
+
+			lblNomeEfeitoEditando.setText("Editando: " + newVal + " [" + efeito.getTipo() + "]");
+			inputEditDuracao.setText(String.valueOf(efeito.getDuracaoTURestante()));
+			inputEditDanoPorTick.setText(String.valueOf(efeito.getDanoPorTick()));
+			inputEditIntervalo.setText(String.valueOf(efeito.getIntervaloTickTU()));
+			inputEditStacks.setText(String.valueOf(efeito.getStacks()));
+
+			// Carrega primeiro modificador se existir
+			if (efeito.getModificadores() != null && !efeito.getModificadores().isEmpty()) {
+				Map.Entry<String, Double> first = efeito.getModificadores().entrySet().iterator().next();
+				inputEditModChave.setText(first.getKey());
+				inputEditModValor.setText(String.format("%.4f", first.getValue()));
+			} else {
+				inputEditModChave.clear();
+				inputEditModValor.clear();
+			}
+		});
+	}
+
+	// =====================================================================
+	// LISTA DE INVENTARIO
+	// =====================================================================
+
+	private void atualizarListaInventario() {
+		listaInventarioAtual.getItems().clear();
+		if (selecionado == null || selecionado.getInventario() == null) return;
+
+		Map<String, Integer> itens = selecionado.getInventario().getItensAgrupados();
+		listaInventarioAtual.getItems().addAll(itens.keySet());
+
+		listaInventarioAtual.setCellFactory(lv -> new ListCell<String>() {
+			@Override
+			protected void updateItem(String tipoItem, boolean empty) {
+				super.updateItem(tipoItem, empty);
+				if (empty || tipoItem == null) {
+					setText(null);
+					setStyle("");
+					return;
+				}
+
+				int qtd = itens.getOrDefault(tipoItem, 0);
+				Item modelo = mainController != null ? mainController.getItem(tipoItem) : null;
+
+				if (modelo != null) {
+					int ocGrau = selecionado.getInventario().getOverclockDoItem(tipoItem);
+					if (ocGrau > 0) modelo.setGrauOverclock(ocGrau);
+				}
+
+				String nomeExibicao = (modelo != null) ? modelo.getNome() : tipoItem;
+				String tipoStr = "";
+				String cor = "-fx-text-fill: white;";
+
+				if (modelo instanceof Arma) {
+					tipoStr = " [Arma]";
+					Raridade rar = ((Arma) modelo).getRaridade();
+					cor = getCorRaridade(rar);
+				} else if (modelo instanceof Armadura) {
+					tipoStr = " [Armadura]";
+					cor = "-fx-text-fill: #88bbff;";
+				} else if (modelo instanceof Amuleto) {
+					tipoStr = " [Amuleto]";
+					cor = "-fx-text-fill: #ffcc44;";
+				} else if (modelo != null) {
+					tipoStr = " [Item]";
+					cor = "-fx-text-fill: #aaffaa;";
+				}
+
+				if (modelo != null && modelo.isOverclockado()) {
+					setText(modelo.getNomeComOverclock() + " x" + qtd + tipoStr);
+				} else {
+					setText(nomeExibicao + " x" + qtd + tipoStr);
+				}
+				setStyle(cor);
+			}
+		});
+	}
+
+	private String getCorRaridade(Raridade rar) {
+		if (rar == null) return "-fx-text-fill: white;";
+		switch (rar) {
+			case COMUM: return "-fx-text-fill: #aaaaaa;";
+			case INCOMUM: return "-fx-text-fill: #66ff66;";
+			case RARO: return "-fx-text-fill: #6688ff;";
+			case EPICO: return "-fx-text-fill: #bb66ff;";
+			case LENDARIO: return "-fx-text-fill: #ffaa00;";
+			case UNICO: return "-fx-text-fill: #ff4444;";
+			case MITICO: return "-fx-text-fill: #ff66cc;";
+			default: return "-fx-text-fill: white;";
+		}
+	}
+
+	// =====================================================================
+	// CARREGAR DADOS
+	// =====================================================================
 
 	@FXML
 	private void atualizarTabela() {
@@ -410,38 +963,192 @@ public class GerenciadorCombateController {
 		}
 	}
 
+	// =====================================================================
+	// CONFIGURAÇÕES DE INICIALIZACAO
+	// =====================================================================
+
 	private void configurarColunasTabela() {
 		colNome.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNome()));
+
 		colHP.setCellValueFactory(data -> {
 			Personagem p = data.getValue();
-			if (p.isProtagonista())
-				return new SimpleStringProperty("?");
-			return new SimpleStringProperty(String.format("%.1f/%.1f", p.getVidaAtual(), p.getVidaMaxima()));
+			if (p.isProtagonista()) return new SimpleStringProperty("?");
+			return new SimpleStringProperty(String.format("%.0f/%.0f", p.getVidaAtual(), p.getVidaMaxima()));
 		});
+
+		colEscudo.setCellValueFactory(data -> {
+			Personagem p = data.getValue();
+			double escudo = p.getEscudoAtual();
+			if (escudo <= 0) return new SimpleStringProperty("-");
+			String prefix = p.isEscudoDeSangue() ? "S:" : "";
+			return new SimpleStringProperty(prefix + String.format("%.0f", escudo));
+		});
+
 		colTU.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getContadorTU())));
 		colFaccao.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getFaccao()));
+
 		colStatus.setCellValueFactory(data -> {
 			Personagem p = data.getValue();
-			if (p.isAusente())
-				return new SimpleStringProperty("[AUSENTE]");
-			if (!p.isVivo())
-				return new SimpleStringProperty("[MORTO]");
-			if (p.isProtagonista())
-				return new SimpleStringProperty("[PROTAG]");
+			if (p.isAusente()) return new SimpleStringProperty("[AUS]");
+			if (!p.isVivo()) return new SimpleStringProperty("[MORTO]");
+			if (p.isProtagonista()) return new SimpleStringProperty("[PROT]");
+
+			// Mostra numero de efeitos ativos
+			int numEfeitos = p.getEfeitosAtivos() != null ? p.getEfeitosAtivos().size() : 0;
+			if (numEfeitos > 0) return new SimpleStringProperty("EF:" + numEfeitos);
 			return new SimpleStringProperty("OK");
+		});
+
+		// Colorir linhas com base no estado
+		tabelaCombatentes.setRowFactory(tv -> new TableRow<Personagem>() {
+			@Override
+			protected void updateItem(Personagem p, boolean empty) {
+				super.updateItem(p, empty);
+				if (empty || p == null) {
+					setStyle("");
+					return;
+				}
+				if (!p.isVivo()) {
+					setStyle("-fx-background-color: #2a1515; -fx-text-fill: #ff6666;");
+				} else if (p.isAusente()) {
+					setStyle("-fx-background-color: #1a1a2a; -fx-text-fill: #666;");
+				} else if (p.getEfeitosAtivos() != null && !p.getEfeitosAtivos().isEmpty()) {
+					// Tem efeitos: cor leve de aviso
+					boolean temDebuff = p.getEfeitosAtivos().values().stream()
+							.anyMatch(ef -> ef.getTipo() == TipoEfeito.DEBUFF || ef.getTipo() == TipoEfeito.DOT);
+					if (temDebuff) {
+						setStyle("-fx-background-color: #2a2015;");
+					} else {
+						setStyle("-fx-background-color: #152a20;");
+					}
+				} else {
+					setStyle("");
+				}
+			}
 		});
 	}
 
 	private void configurarFiltroItens() {
 		FilteredList<String> filteredData = new FilteredList<>(masterDataItens, p -> true);
-		inputBuscaItem.textProperty().addListener((observable, oldValue, newValue) -> {
-			filteredData.setPredicate(item -> {
-				if (newValue == null || newValue.isEmpty())
-					return true;
-				return item.toLowerCase().contains(newValue.toLowerCase());
-			});
-		});
+
+		// Listener que combina filtro de texto + tipo + raridade
+		inputBuscaItem.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltrosItem(filteredData));
+
 		listaItensFiltrados.setItems(filteredData);
+
+		// Cell factory com cores de raridade
+		listaItensFiltrados.setCellFactory(lv -> new ListCell<String>() {
+			@Override
+			protected void updateItem(String chave, boolean empty) {
+				super.updateItem(chave, empty);
+				if (empty || chave == null) {
+					setText(null);
+					setStyle("");
+					return;
+				}
+
+				if (mainController != null) {
+					Item item = mainController.getItem(chave);
+					if (item != null) {
+						String tipoStr = "";
+						String cor = "-fx-text-fill: white;";
+						if (item instanceof Arma) {
+							tipoStr = " [Arma]";
+							cor = getCorRaridade(((Arma) item).getRaridade());
+						} else if (item instanceof Armadura) {
+							tipoStr = " [Armadura]";
+							cor = "-fx-text-fill: #88bbff;";
+						} else if (item instanceof Amuleto) {
+							tipoStr = " [Amuleto]";
+							cor = "-fx-text-fill: #ffcc44;";
+						} else {
+							tipoStr = " [Item]";
+							cor = "-fx-text-fill: #aaffaa;";
+						}
+						setText(item.getNome() + tipoStr);
+						setStyle(cor);
+						return;
+					}
+				}
+				setText(chave);
+				setStyle("-fx-text-fill: white;");
+			}
+		});
+	}
+
+	private void configurarFiltrosInventario() {
+		// Combo de tipo
+		comboFiltroTipoItem.getItems().addAll("Todos", "Arma", "Armadura", "Amuleto", "Consumivel");
+		comboFiltroTipoItem.getSelectionModel().selectFirst();
+		comboFiltroTipoItem.valueProperty().addListener((obs, oldVal, newVal) -> {
+			filtroTipoAtual = "Todos".equals(newVal) ? null : newVal;
+			aplicarFiltrosItem(null);
+		});
+
+		// Combo de raridade
+		comboFiltroRaridade.getItems().add("Todas");
+		for (Raridade r : Raridade.values()) {
+			comboFiltroRaridade.getItems().add(r.name());
+		}
+		comboFiltroRaridade.getSelectionModel().selectFirst();
+		comboFiltroRaridade.valueProperty().addListener((obs, oldVal, newVal) -> {
+			filtroRaridadeAtual = "Todas".equals(newVal) ? null : newVal;
+			aplicarFiltrosItem(null);
+		});
+	}
+
+	private void aplicarFiltrosItem(FilteredList<String> list) {
+		if (list == null) {
+			// Re-get from listaItensFiltrados
+			if (listaItensFiltrados.getItems() instanceof FilteredList) {
+				list = (FilteredList<String>) listaItensFiltrados.getItems();
+			} else {
+				return;
+			}
+		}
+
+		final String textoFiltro = inputBuscaItem.getText();
+		final String tipoFiltro = filtroTipoAtual;
+		final String raridadeFiltro = filtroRaridadeAtual;
+
+		list.setPredicate(chave -> {
+			// Filtro de texto
+			if (textoFiltro != null && !textoFiltro.isEmpty()) {
+				boolean matchTexto = chave.toLowerCase().contains(textoFiltro.toLowerCase());
+				if (!matchTexto && mainController != null) {
+					Item item = mainController.getItem(chave);
+					if (item != null) {
+						matchTexto = item.getNome().toLowerCase().contains(textoFiltro.toLowerCase());
+					}
+				}
+				if (!matchTexto) return false;
+			}
+
+			// Filtro de tipo
+			if (tipoFiltro != null && mainController != null) {
+				Item item = mainController.getItem(chave);
+				if (item == null) return false;
+				switch (tipoFiltro) {
+					case "Arma": if (!(item instanceof Arma)) return false; break;
+					case "Armadura": if (!(item instanceof Armadura)) return false; break;
+					case "Amuleto": if (!(item instanceof Amuleto)) return false; break;
+					case "Consumivel": if (item instanceof Arma || item instanceof Armadura || item instanceof Amuleto) return false; break;
+				}
+			}
+
+			// Filtro de raridade
+			if (raridadeFiltro != null && mainController != null) {
+				Item item = mainController.getItem(chave);
+				if (item instanceof Arma) {
+					Raridade rar = ((Arma) item).getRaridade();
+					if (rar == null || !rar.name().equals(raridadeFiltro)) return false;
+				} else {
+					return false; // Só armas têm raridade atualmente
+				}
+			}
+
+			return true;
+		});
 	}
 
 	private void configurarEfeitosAndar() {
@@ -452,10 +1159,53 @@ public class GerenciadorCombateController {
 		comboEfeitoAndar.valueProperty().addListener((o, old, newVal) -> {
 			if (mainController != null)
 				mainController.setEfeitoAndar(newVal, checkEfeitoAndarAtivo.isSelected());
+			atualizarContadorAndar();
 		});
 		checkEfeitoAndarAtivo.selectedProperty().addListener((o, old, isSelected) -> {
 			if (mainController != null)
 				mainController.setEfeitoAndar(comboEfeitoAndar.getValue(), isSelected);
+			atualizarContadorAndar();
+		});
+	}
+
+	private void configurarComboEfeitos() {
+		comboPresetEfeito.getItems().setAll(EffectFactory.getNomesPresets());
+		comboPresetEfeito.getSelectionModel().selectFirst();
+
+		comboPresetEfeito.setCellFactory(lv -> new ListCell<String>() {
+			@Override
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty || item == null) {
+					setText(null);
+					setTooltip(null);
+					setStyle("");
+					return;
+				}
+
+				setText(item);
+
+				// Cor baseada no tipo do efeito
+				Efeito preview = EffectFactory.criarEfeito(item, 300, 100);
+				switch (preview.getTipo()) {
+					case BUFF:
+						setStyle("-fx-text-fill: #88ddff;");
+						break;
+					case DEBUFF:
+						setStyle("-fx-text-fill: #ff8888;");
+						break;
+					case DOT:
+						setStyle("-fx-text-fill: #cc88ff;");
+						break;
+				}
+
+				Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(preview));
+				tip.setStyle("-fx-font-size: 11px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 6;");
+				tip.setShowDelay(javafx.util.Duration.millis(300));
+				tip.setMaxWidth(350);
+				tip.setWrapText(true);
+				setTooltip(tip);
+			}
 		});
 	}
 }

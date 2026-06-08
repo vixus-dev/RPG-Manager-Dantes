@@ -10,9 +10,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polygon;
 import br.com.dantesrpg.model.Efeito;
 import br.com.dantesrpg.model.enums.TipoEfeito;
-import br.com.dantesrpg.model.racas.Humano;
+import br.com.dantesrpg.model.util.ContratoDeVida;
+import br.com.dantesrpg.model.util.ContratoDeVidaUtils;
 import br.com.dantesrpg.model.util.EffectTooltipBuilder;
 import br.com.dantesrpg.model.util.FileLoader;
+import br.com.dantesrpg.model.util.ImageCache;
 import javafx.scene.image.Image;
 
 public class PlayerCardController {
@@ -47,6 +49,8 @@ public class PlayerCardController {
 	@FXML
 	private Polygon shieldBarPolygon;
 	@FXML
+	private Polygon bloodShieldBarPolygon;
+	@FXML
 	private Polygon contractBarPolygon;
 	@FXML
 	private Label labelContractCount;
@@ -71,31 +75,18 @@ public class PlayerCardController {
 			String hpAtualTexto = formatarNumero(personagem.getVidaAtual());
 			String hpMaxTexto = formatarNumero(personagem.getVidaMaxima());
 
-			// Texto especial para Humano endividado
-			if (personagem.getRaca() instanceof Humano) {
-				Humano h = (Humano) personagem.getRaca();
-				// Se tiver redução de HP Max (Contrato Ativo)
-				if (h.getReducaoHpMaximo(personagem) > 0) {
-					double divida = h.getDividaPendente();
-					// Mostra: "50/80 (-20)" indicando quanto falta pagar
-					labelHPShieldText.setText(hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) divida + ")");
-					labelHPShieldText.setStyle("-fx-text-fill: #ffaaaa; -fx-font-size: 10px; -fx-font-weight: bold;");
-				} else if (personagem.getEscudoAtual() > 0) {
-					String escudoTexto = formatarNumero(personagem.getEscudoAtual());
-					labelHPShieldText.setText(escudoTexto + " / " + hpAtualTexto);
-					labelHPShieldText.setStyle(""); // Reset estilo
-				} else {
-					labelHPShieldText.setText(hpAtualTexto + "/" + hpMaxTexto);
-					labelHPShieldText.setStyle("");
-				}
+			// Texto especial para qualquer personagem com contrato de vida ativo
+			double dividaTotal = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
+			if (dividaTotal > 0) {
+				labelHPShieldText.setText(hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) dividaTotal + ")");
+				labelHPShieldText.setStyle("-fx-text-fill: #ffaaaa; -fx-font-size: 10px; -fx-font-weight: bold;");
+			} else if (personagem.getEscudoAtual() > 0) {
+				String escudoTexto = formatarNumero(personagem.getEscudoAtual());
+				labelHPShieldText.setText(escudoTexto + " / " + hpAtualTexto);
+				labelHPShieldText.setStyle(""); // Reset estilo
 			} else {
-				// Lógica padrão
-				if (personagem.getEscudoAtual() > 0) {
-					String escudoTexto = formatarNumero(personagem.getEscudoAtual());
-					labelHPShieldText.setText(escudoTexto + " / " + hpAtualTexto);
-				} else {
-					labelHPShieldText.setText(hpAtualTexto + "/" + hpMaxTexto);
-				}
+				labelHPShieldText.setText(hpAtualTexto + "/" + hpMaxTexto);
+				labelHPShieldText.setStyle("");
 			}
 
 			labelMPText.setText((int) personagem.getManaAtual() + "/" + (int) personagem.getManaMaxima());
@@ -179,39 +170,55 @@ public class PlayerCardController {
 			if (labelContractCount != null)
 				labelContractCount.setVisible(false); // Reset
 
-			if (personagem.getRaca() instanceof br.com.dantesrpg.model.racas.Humano) {
-				br.com.dantesrpg.model.racas.Humano h = (br.com.dantesrpg.model.racas.Humano) personagem.getRaca();
+			// Barra vermelha unificada: qualquer contrato de vida ativo (qualquer raça/fonte)
+			double dividaTotal = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
+			double vidaBase = personagem.getVidaMaximaBase();
+			if (dividaTotal > 0 && vidaBase > 0) {
+				contractBarPolygon.setVisible(true);
 
-				// desenha a Barra (Se tiver dívida ativa)
-				double dividaAtual = h.getDividaPendente();
-				if (dividaAtual > 0) {
-					contractBarPolygon.setVisible(true);
+				// Porcentagem bloqueada pela DÍVIDA (em relação ao HP base).
+				// Pode ficar "cheio" (100%) quando sobrecarregado.
+				double pctBlocked = Math.min(1.0, dividaTotal / vidaBase);
+				double pctStart = 1.0 - pctBlocked; // Desenha da direita para esquerda
 
-					// Calcula a porcentagem bloqueada pela DÍVIDA
-					double pctBlocked = Math.min(1.0, dividaAtual / vidaMaxBase);
-					double pctStart = 1.0 - pctBlocked; // Desenha da direita para esquerda
+				double x1 = startX + (fullWidthRect * pctStart);
+				double x2 = startX + (fullWidthAngled * pctStart);
+				double xEndRect = startX + fullWidthRect;
+				double xEndAngled = startX + fullWidthAngled;
 
-					// Pontos iniciais
-					double x1 = startX + (fullWidthRect * pctStart);
-					double x2 = startX + (fullWidthAngled * pctStart);
+				contractBarPolygon.getPoints().setAll(x1, topY, xEndRect, topY, xEndAngled, bottomY, x2, bottomY);
 
-					// Pontos finais
-					double xEndRect = startX + fullWidthRect;
-					double xEndAngled = startX + fullWidthAngled;
-
-					contractBarPolygon.getPoints().setAll(x1, topY, xEndRect, topY, xEndAngled, bottomY, x2, bottomY);
-
-					// Tooltip Atualizado
-					String info = "Contrato Ativo (Teto): -" + (int) h.getReducaoHpMaximo(personagem) + " HP Máx\n"
-							+ "Dívida Restante: " + (int) dividaAtual + "\n" + "Contratos na Fila: "
-							+ h.getContratosRestantes();
-					Tooltip.install(contractBarPolygon, new Tooltip(info));
+				// Tooltip com detalhamento por fonte
+				StringBuilder info = new StringBuilder();
+				info.append("Contrato Ativo (Teto): -").append((int) dividaTotal).append(" HP Máx\n");
+				info.append("Fontes:\n");
+				boolean humanoAtivoVisto = false;
+				int humanosNaFila = 0;
+				for (ContratoDeVida c : personagem.getContratosDeVida()) {
+					if (c.isHumano()) {
+						if (!humanoAtivoVisto) {
+							info.append("  • ").append(c.getFonte()).append(": -")
+									.append((int) c.getDividaRestante()).append("\n");
+							humanoAtivoVisto = true;
+						} else {
+							humanosNaFila++;
+						}
+					} else {
+						info.append("  • ").append(c.getFonte()).append(": -")
+								.append((int) c.getDividaRestante()).append("\n");
+					}
 				}
-				int contratosFila = h.getContratosRestantes();
-				if (labelContractCount != null && contratosFila > 0) {
-					labelContractCount.setText("+" + contratosFila); // Ex: "+1"
-					labelContractCount.setVisible(true);
+				if (humanosNaFila > 0) {
+					info.append("Contratos Humanos na Fila: ").append(humanosNaFila);
+				}
+				if (ContratoDeVidaUtils.estaSobrecarregado(personagem)) {
+					info.append("\n⚠ SOBRECARGA: qualquer dano é letal!");
+				}
+				Tooltip.install(contractBarPolygon, new Tooltip(info.toString()));
 
+				if (labelContractCount != null && humanosNaFila > 0) {
+					labelContractCount.setText("+" + humanosNaFila);
+					labelContractCount.setVisible(true);
 				}
 			}
 		}
@@ -254,39 +261,66 @@ public class PlayerCardController {
 		if (personagem == null || shieldBarPolygon == null || shieldTrack == null)
 			return;
 
-		double escudo = personagem.getEscudoAtual();
-		double vidaMax = personagem.getVidaMaxima();
+		double sangueAtual = personagem.getEscudoSangueAtual();
+		double sangueMax = personagem.getEscudoSangueMaximo();
+		double normalAtual = personagem.getEscudoNormalAtual();
+		double normalMax = personagem.getEscudoNormalMaximo();
 
-		if (escudo > 0) {
-			shieldTrack.setVisible(true);
-			shieldBarPolygon.setVisible(true);
+		double capTotal = sangueMax + normalMax; // "Limite flexível" combinado
 
-			double progress = Math.max(0, (double) escudo / vidaMax);
-
-			double startX = 95.0;
-			double topY = 25.0;
-			double bottomY = 43.0;
-			double endXRectBase = 250.0;
-			double endXAngledBase = 260.0;
-			double maxWidthRect = endXRectBase - startX;
-			double maxWidthAngled = endXAngledBase - startX;
-
-			double currentEndXRect = startX + maxWidthRect * progress;
-			double currentEndXAngled = startX + maxWidthAngled * progress;
-
-			shieldBarPolygon.getPoints().setAll(startX, topY, currentEndXRect, topY, currentEndXAngled, bottomY, startX,
-					bottomY);
-
-			shieldBarPolygon.getStyleClass().clear();
-
-			if (personagem.isEscudoDeSangue()) {
-				shieldBarPolygon.getStyleClass().add("blood-shield-bar-fill"); // Vermelho
-			} else {
-				shieldBarPolygon.getStyleClass().add("shield-bar-fill"); // Azul
-			}
-
-		} else {
+		if (capTotal <= 0) {
 			shieldTrack.setVisible(false);
+			shieldBarPolygon.setVisible(false);
+			shieldBarPolygon.getPoints().clear();
+			if (bloodShieldBarPolygon != null) {
+				bloodShieldBarPolygon.setVisible(false);
+				bloodShieldBarPolygon.getPoints().clear();
+			}
+			return;
+		}
+
+		shieldTrack.setVisible(true);
+
+		// Geometria do track: inclinação +10px (retângulo 95..250 → ângulo 95..260)
+		double startX = 95.0;
+		double topY = 25.0;
+		double bottomY = 43.0;
+		double endXRectBase = 250.0;
+		double endXAngledBase = 260.0;
+		double maxWidthRect = endXRectBase - startX;
+		double maxWidthAngled = endXAngledBase - startX;
+
+		// SANGUE (vermelho) — segmento à esquerda, proporcional a sangueAtual/capTotal
+		if (bloodShieldBarPolygon != null) {
+			if (sangueAtual > 0) {
+				double progress = sangueAtual / capTotal;
+				double endRect = startX + maxWidthRect * progress;
+				double endAngled = startX + maxWidthAngled * progress;
+				bloodShieldBarPolygon.getPoints().setAll(startX, topY, endRect, topY, endAngled, bottomY, startX,
+						bottomY);
+				bloodShieldBarPolygon.setVisible(true);
+			} else {
+				bloodShieldBarPolygon.setVisible(false);
+				bloodShieldBarPolygon.getPoints().clear();
+			}
+		}
+
+		// NORMAL (azul) — segmento à direita do sangue, proporcional a normalAtual/capTotal
+		// O início do segmento normal é posicionado após o "espaço reservado" do sangue,
+		// que é sangueMax/capTotal (mesmo se sangueAtual caiu, a posição é preservada).
+		if (normalAtual > 0) {
+			double offsetPct = (capTotal > 0) ? (sangueMax / capTotal) : 0.0;
+			double widthPct = normalAtual / capTotal;
+			double startPct = offsetPct;
+			double endPct = offsetPct + widthPct;
+			double segStartRect = startX + maxWidthRect * startPct;
+			double segStartAngled = startX + maxWidthAngled * startPct;
+			double segEndRect = startX + maxWidthRect * endPct;
+			double segEndAngled = startX + maxWidthAngled * endPct;
+			shieldBarPolygon.getPoints().setAll(segStartRect, topY, segEndRect, topY, segEndAngled, bottomY,
+					segStartAngled, bottomY);
+			shieldBarPolygon.setVisible(true);
+		} else {
 			shieldBarPolygon.setVisible(false);
 			shieldBarPolygon.getPoints().clear();
 		}
@@ -435,8 +469,8 @@ public class PlayerCardController {
 		}
 		String imagePath = "/portraits/" + nomeBase + ".png";
 		try {
-			Image portraitImage = new Image(FileLoader.carregarArquivo(imagePath));
-			if (portraitImage.isError())
+			Image portraitImage = ImageCache.get(imagePath, 120, 120);
+			if (portraitImage == null || portraitImage.isError())
 				throw new Exception();
 			imgPersonagem.setImage(portraitImage);
 		} catch (Exception e) {

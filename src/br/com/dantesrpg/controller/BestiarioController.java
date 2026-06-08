@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 
 import br.com.dantesrpg.model.Arma;
 import br.com.dantesrpg.model.util.FileLoader;
+import br.com.dantesrpg.model.util.ImageCache;
 
 public class BestiarioController {
 
@@ -149,10 +150,11 @@ public class BestiarioController {
 		if (idSelecionado != null && bestiarioData.containsKey(idSelecionado)) {
 			Map<String, Object> original = bestiarioData.get(idSelecionado);
 
-			// Se o original tem segmentos, passamos para frente
-			if (original.containsKey("segmentos")) {
-				dados.put("segmentos", original.get("segmentos"));
-			}
+			// Copia propriedades especiais que não estão no formulário
+			if (original.containsKey("segmentos")) dados.put("segmentos", original.get("segmentos"));
+			if (original.containsKey("tamanhoX")) dados.put("tamanhoX", original.get("tamanhoX"));
+			if (original.containsKey("tamanhoY")) dados.put("tamanhoY", original.get("tamanhoY"));
+			if (original.containsKey("peso")) dados.put("peso", original.get("peso"));
 		}
 
 		return dados;
@@ -243,8 +245,8 @@ public class BestiarioController {
 		String nomeArquivo = nomeMonstro.toLowerCase().replace(" ", "_") + ".png";
 		String path = "/tokens/" + nomeArquivo;
 		try {
-			Image img = new Image(FileLoader.carregarArquivo(path));
-			if (!img.isError()) {
+			Image img = ImageCache.get(path, 120, 120);
+			if (img != null && !img.isError()) {
 				imgTokenPreview.setImage(img);
 			} else {
 				imgTokenPreview.setImage(null); // Limpa se erro

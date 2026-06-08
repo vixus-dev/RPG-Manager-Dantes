@@ -8,9 +8,13 @@ import javafx.stage.Stage;
 public class AttributeTestPromptController {
 
 	@FXML
+	private Label lblTitulo;
+	@FXML
 	private Label lblContexto;
 	@FXML
 	private Label lblDificuldade;
+	@FXML
+	private Label lblInstrucao;
 	@FXML
 	private TextField inputRolagem;
 
@@ -20,8 +24,22 @@ public class AttributeTestPromptController {
 
 	public void setDados(Stage stage, String nomePersonagem, int na, String textoDificuldade) {
 		this.stage = stage;
+		this.lblTitulo.setText("TESTE DE RESISTÊNCIA");
 		this.lblContexto.setText(nomePersonagem + " atingiu o limite do Empréstimo.");
 		this.lblDificuldade.setText(na + " (" + textoDificuldade + ")");
+		this.lblInstrucao.setText("Role 1d20 + ENDURANCE:");
+		this.inputRolagem.setPromptText("Resultado Final");
+		this.inputRolagem.requestFocus();
+	}
+
+	public void setDadosPersonalizados(Stage stage, String titulo, String contexto, String dificuldade,
+			String instrucao) {
+		this.stage = stage;
+		this.lblTitulo.setText(titulo);
+		this.lblContexto.setText(contexto);
+		this.lblDificuldade.setText(dificuldade);
+		this.lblInstrucao.setText(instrucao);
+		this.inputRolagem.setPromptText("Resultado do dado");
 		this.inputRolagem.requestFocus();
 	}
 

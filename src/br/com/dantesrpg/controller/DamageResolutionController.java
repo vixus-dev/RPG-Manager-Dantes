@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,12 +29,24 @@ public class DamageResolutionController {
 	private Label lblTituloHabilidade;
 	@FXML
 	private Button btnConfirmar;
+	@FXML
+	private CheckBox cbContraAtaqueUnico;
 
 	private GridPane damageGrid;
 	private Personagem atacante;
 	private Habilidade habilidade;
 	private EstadoCombate estado;
 	private List<DamageCell> celulasDeDano = new ArrayList<>();
+
+	// --- CONTRA-ATAQUE ---
+	// Ordem de seleção dos alvos que contra-atacarão (o 1º selecionado age primeiro).
+	private List<Personagem> filaContraAtaque = new ArrayList<>();
+	// Referência aos checkboxes por alvo (usado para atualizar a numeração #N na UI).
+	private Map<Personagem, CheckBox> checkBoxesContraAtaque = new LinkedHashMap<>();
+	// True quando há mais de um alvo na resolução — define onde o checkbox aparece.
+	private boolean multiAlvo = false;
+	// Guarda o único alvo para o caso de alvo único (checkbox ao lado do botão).
+	private Personagem alvoUnico;
 
 	// REFERÊNCIA NECESSÁRIA PARA APLICAR DANO CORRETAMENTE
 	private CombatController mainController;
@@ -66,6 +79,18 @@ public class DamageResolutionController {
 		lblTituloHabilidade.setText("Resolução: " + (habilidade != null ? habilidade.getNome() : "Ataque Básico"));
 		damageGrid.getChildren().clear();
 		celulasDeDano.clear();
+		filaContraAtaque.clear();
+		checkBoxesContraAtaque.clear();
+		this.alvoUnico = null;
+
+		this.multiAlvo = mapaDanos.size() > 1;
+
+		// Configura o checkbox único (ao lado do botão Confirmar) apenas quando houver 1 alvo.
+		if (cbContraAtaqueUnico != null) {
+			cbContraAtaqueUnico.setSelected(false);
+			cbContraAtaqueUnico.setVisible(!multiAlvo);
+			cbContraAtaqueUnico.setManaged(!multiAlvo);
+		}
 
 		int maxColunas = 0;
 		for (List<DamageEvent> lista : mapaDanos.values()) {
@@ -95,7 +120,33 @@ public class DamageResolutionController {
 			Label lblNome = new Label(alvo.getNome());
 			lblNome.setTextFill(Color.WHITE);
 			lblNome.setFont(Font.font("System", FontWeight.BOLD, 14));
-			damageGrid.add(lblNome, 0, row);
+
+			// Multi-alvo: cada linha ganha seu próprio checkbox logo abaixo do nome.
+			// Alvo único: só guardamos a referência do alvo (o checkbox está ao lado do botão).
+			if (multiAlvo) {
+				CheckBox cbContra = new CheckBox("Contra-Ataque");
+				cbContra.setStyle("-fx-text-fill: #ffcc00; -fx-font-size: 11px;");
+				final Personagem alvoFinal = alvo;
+				cbContra.selectedProperty().addListener((obs, oldV, newV) -> {
+					if (newV) {
+						if (!filaContraAtaque.contains(alvoFinal)) {
+							filaContraAtaque.add(alvoFinal);
+						}
+					} else {
+						filaContraAtaque.remove(alvoFinal);
+					}
+					atualizarLabelsFilaContraAtaque();
+				});
+				checkBoxesContraAtaque.put(alvo, cbContra);
+
+				VBox cabecalhoAlvo = new VBox(3);
+				cabecalhoAlvo.setAlignment(Pos.CENTER_LEFT);
+				cabecalhoAlvo.getChildren().addAll(lblNome, cbContra);
+				damageGrid.add(cabecalhoAlvo, 0, row);
+			} else {
+				this.alvoUnico = alvo;
+				damageGrid.add(lblNome, 0, row);
+			}
 
 			for (int col = 0; col < eventos.size(); col++) {
 				DamageEvent evento = eventos.get(col);
@@ -104,6 +155,24 @@ public class DamageResolutionController {
 				celulasDeDano.add(cell);
 			}
 			row++;
+		}
+	}
+
+	/**
+	 * Atualiza o rótulo de cada checkbox de contra-ataque (multi-alvo) com a
+	 * posição ordinal na fila — ex.: "Contra-Ataque #2". Facilita ver ao GM
+	 * a ordem exata em que os contra-ataques ocorrerão.
+	 */
+	private void atualizarLabelsFilaContraAtaque() {
+		for (Map.Entry<Personagem, CheckBox> e : checkBoxesContraAtaque.entrySet()) {
+			Personagem p = e.getKey();
+			CheckBox cb = e.getValue();
+			int idx = filaContraAtaque.indexOf(p);
+			if (idx >= 0) {
+				cb.setText("Contra-Ataque #" + (idx + 1));
+			} else {
+				cb.setText("Contra-Ataque");
+			}
 		}
 	}
 
@@ -124,6 +193,21 @@ public class DamageResolutionController {
 		if (habilidade instanceof BashStrike && atacante != null && danoTotalCausado > 0 && mainController != null) {
 			BashStrike.aplicarRetornoDeDano(atacante, danoTotalCausado, estado,
 					mainController.getCombatManager());
+		}
+
+		// --- CONTRA-ATAQUE ---
+		// Consolida a fila: alvo único usa o checkbox único; multi-alvo usa a ordem de seleção.
+		List<Personagem> filaFinal = new ArrayList<>();
+		if (!multiAlvo) {
+			if (cbContraAtaqueUnico != null && cbContraAtaqueUnico.isSelected() && alvoUnico != null) {
+				filaFinal.add(alvoUnico);
+			}
+		} else {
+			filaFinal.addAll(filaContraAtaque);
+		}
+
+		if (!filaFinal.isEmpty() && mainController != null && estado != null) {
+			mainController.getCombatManager().processarContraAtaques(filaFinal, estado);
 		}
 
 		// Força atualização visual geral após fechar a janela

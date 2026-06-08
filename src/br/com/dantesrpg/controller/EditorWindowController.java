@@ -3,6 +3,7 @@ package br.com.dantesrpg.controller;
 import br.com.dantesrpg.model.map.TileDefinition;
 import br.com.dantesrpg.model.map.TileRegistry;
 import br.com.dantesrpg.model.util.FileLoader;
+import br.com.dantesrpg.model.util.ImageCache;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -104,17 +105,15 @@ public class EditorWindowController {
 		boolean texturaCarregada = false;
 		if (tile.getTexturePath() != null && !tile.getTexturePath().isEmpty()) {
 			try {
-				InputStream is = FileLoader.carregarArquivo("/br/com/dantesrpg/textures/" + tile.getTexturePath());
-				if (is != null) {
-					Image img = new Image(is);
-					if (!img.isError()) {
-						ImageView iv = new ImageView(img);
-						iv.setFitWidth(SIZE - 2);
-						iv.setFitHeight(SIZE - 2);
-						iv.setPreserveRatio(false);
-						container.getChildren().add(iv);
-						texturaCarregada = true;
-					}
+				String path = "/br/com/dantesrpg/textures/" + tile.getTexturePath();
+				Image img = ImageCache.get(path, SIZE - 2, SIZE - 2);
+				if (img != null && !img.isError()) {
+					ImageView iv = new ImageView(img);
+					iv.setFitWidth(SIZE - 2);
+					iv.setFitHeight(SIZE - 2);
+					iv.setPreserveRatio(false);
+					container.getChildren().add(iv);
+					texturaCarregada = true;
 				}
 			} catch (Exception e) {
 				// Fallback silencioso
@@ -214,17 +213,15 @@ public class EditorWindowController {
 			// Tenta carregar textura para o preview
 			if (tile.getTexturePath() != null && !tile.getTexturePath().isEmpty()) {
 				try {
-					InputStream is = FileLoader.carregarArquivo("/br/com/dantesrpg/textures/" + tile.getTexturePath());
-					if (is != null) {
-						Image img = new Image(is);
-						if (!img.isError()) {
-							ImageView iv = new ImageView(img);
-							iv.setFitWidth(30);
-							iv.setFitHeight(30);
-							iv.setPreserveRatio(false);
-							previewTile.getChildren().add(iv);
-							return;
-						}
+					String path = "/br/com/dantesrpg/textures/" + tile.getTexturePath();
+					Image img = ImageCache.get(path, 30, 30);
+					if (img != null && !img.isError()) {
+						ImageView iv = new ImageView(img);
+						iv.setFitWidth(30);
+						iv.setFitHeight(30);
+						iv.setPreserveRatio(false);
+						previewTile.getChildren().add(iv);
+						return;
 					}
 				} catch (Exception e) {
 					// Fallback
