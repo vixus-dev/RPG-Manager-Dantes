@@ -70,7 +70,7 @@ public class Consumivel extends Item {
 				continue;
 
 			case "ESCUDO":
-				usuario.setEscudoAtual(usuario.getEscudoAtual() + valorDouble);
+				usuario.adicionarEscudoNormal(valorDouble);
 				System.out.println(">>> " + usuario.getNome() + " ganhou " + valorInt + " de Escudo.");
 				continue;
 
