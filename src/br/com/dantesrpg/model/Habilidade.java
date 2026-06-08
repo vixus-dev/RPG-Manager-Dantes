@@ -20,6 +20,10 @@ public abstract class Habilidade {
 	private int ticksDeDano;
 	private List<Efeito> efeitosAplicados;
 
+	// --- Empuxo (Knockback) ---
+	/** Força bruta de empuxo. 0 = sem knockback. Calculado vs. PesoEntidade do alvo. */
+	private int forcaEmpuxo = 0;
+
 	public Habilidade(String nome, String descricao, TipoHabilidade tipo, int custoMana, int custoTU,
 			int nivelNecessario, TipoAlvo alvo, int tamanhoArea, double multiplicadorDeDano, int ticksDeDano,
 			List<Efeito> efeitosAplicados) {
@@ -143,6 +147,21 @@ public abstract class Habilidade {
 
 	public int getAlcanceMaximo() {
 		return -1;
+	}
+
+	// --- Empuxo (Knockback) ---
+
+	/** Retorna a força de empuxo desta habilidade. 0 = sem knockback. */
+	public int getForcaEmpuxo() {
+		return forcaEmpuxo;
+	}
+
+	/**
+	 * Define a força de empuxo. Chamar em subclasses construtoras ou via setter
+	 * para habilidades que possuem knockback.
+	 */
+	public void setForcaEmpuxo(int forcaEmpuxo) {
+		this.forcaEmpuxo = Math.max(0, forcaEmpuxo);
 	}
 
 	public int getAnguloCone() {

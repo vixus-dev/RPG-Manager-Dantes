@@ -20,6 +20,7 @@ public abstract class Arma extends Item {
 	private Atributo atributoMultiplicador;
 	private int custoTU;
 	private int alcance;
+	private int wielding = 1;
 
 	protected String tipo;
 	protected int municaoMaxima;
@@ -135,7 +136,15 @@ public abstract class Arma extends Item {
 	}
 
 	public boolean isDuasMaos() {
-		return this.custoTU > 120;
+		return this.wielding >= 2;
+	}
+
+	public int getWielding() {
+		return Math.max(1, Math.min(2, wielding));
+	}
+
+	public void setWielding(int wielding) {
+		this.wielding = Math.max(1, Math.min(2, wielding));
 	}
 
 	public boolean gastarMunicao() {

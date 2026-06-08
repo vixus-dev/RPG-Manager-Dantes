@@ -6,8 +6,8 @@ import br.com.dantesrpg.model.habilidades.boss.*;
 import br.com.dantesrpg.model.habilidades.classe.*;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
-import java.util.TreeMap; // Para ordem alfabética
+import java.util.TreeMap;
+import java.util.function.Supplier; // Para ordem alfabética
 
 public class HabilidadeFactory {
 
@@ -61,12 +61,36 @@ public class HabilidadeFactory {
 		registro.put("Descarga eletrica", DescargaEletrica::new);
 		registro.put("Dilacerar", Dilacerar::new);
 		registro.put("Invocar Filth de Sangue", InvocarFilthDeSangue::new);
+		registro.put("Coagular", Coagular::new);
+		registro.put("Arremesso", Arremesso::new);
+		registro.put("Enraizar", Enraizar::new);
 		registro.put("Cardial", Cardial::new);
 		registro.put("Destructa", Destructa::new);
 		registro.put("Sanctum", Sanctum::new);
+		registro.put("Purus", Purus::new);
+		registro.put("Locus", Locus::new);
+		registro.put("MEAT...", Meat::new);
+		registro.put("Sentinela", SentinelaSkill::new);
+		registro.put("Hide and Build", HideAndBuild::new);
+		registro.put("Poison Was Lethal", PoisonWasLethal::new);
+		registro.put("Sit in Balance", SitInBalance::new);
 		registro.put("Sacrifício Sangrento", SacrificioSangrento::new);
 		registro.put("Parada Cardíaca", ParadaCardiaca::new);
 		registro.put("Respirar", Respirar::new);
+		registro.put("Estocada Divina", EstocadaDivina::new);
+		registro.put("Corte Divino", CorteDivino::new);
+		registro.put("Quebra-Elmo", QuebraElmo::new);
+		registro.put("Arremesso Divino", ArremessoDivino::new);
+		registro.put("pisarOrb", PisarOrb::new);
+
+		// Lua Profana
+		registro.put("sweet dreams", SweetDreams::new);
+		registro.put("bitter Hunt", BitterHunt::new);
+		registro.put("moonshine", Moonshine::new);
+
+		// Elion
+		registro.put("lighting thunder", LightingThunder::new);
+		registro.put("lighting vegeance", LightingVengeance::new);
 
 		// Classes
 		registro.put("Técnica de Barreira", TecnicaDeBarreira::new);
@@ -74,10 +98,16 @@ public class HabilidadeFactory {
 		registro.put("Purificar", Purificar::new);
 		registro.put("Bênção", Bencao::new);
 		registro.put("Trocado", Trocado::new);
+		registro.put("DeadEye", DeadEye::new);
+		registro.put("Gatilho Veloz", GatilhoVeloz::new);
+		registro.put("Descarregar Tambor", DescarregarTambor::new);
+		registro.put("Justiça Dourada", JusticaDourada::new);
 		registro.put("Combo!", Combo::new);
 		registro.put("Ilusão", Ilusao::new);
 		registro.put("Rezar", Rezar::new);
 		registro.put("Auto-Guarda", AutoGuarda::new);
+		registro.put("Invocar Golem", InvocarGolem::new);
+		registro.put("Invocar Guardião", InvocarGuardiao::new);
 		registro.put("Bash Strike", BashStrike::new);
 		registro.put("Impacto Vingativo", ImpactoVingativo::new);
 		registro.put("Drenagem de Efeitos", DrenagemDeEfeitos::new);
