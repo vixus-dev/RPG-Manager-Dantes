@@ -5,6 +5,7 @@ import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.util.FileLoader;
+import br.com.dantesrpg.model.util.ImageCache;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -16,7 +17,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Circle;
 import javafx.util.Pair;
 import javafx.scene.paint.Color;
 import java.util.List;
@@ -35,15 +35,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Queue;
 import javafx.scene.input.MouseEvent;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
+import br.com.dantesrpg.controller.map.AoEShapeCalculator;
+import br.com.dantesrpg.controller.map.MapTokenRenderer;
+import br.com.dantesrpg.controller.map.SquadModeHandler;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ScrollPane;
@@ -102,6 +103,24 @@ public class MapController {
 	private boolean modoMovimentoLivre = false;
 	private Personagem peaoSelecionadoParaMover = null;
 
+	// Fallback de modo mover/mirar quando os toggles do toolbar não existem
+	// (embedded).
+	// Default: mirar (false), idêntico ao FXML externo onde toggleMirar começa
+	// selecionado.
+	private boolean moverModeEmbedded = false;
+
+	private boolean isMoverMode() {
+		return toggleMover != null ? toggleMover.isSelected() : moverModeEmbedded;
+	}
+
+	private void setMoverMode(boolean mover) {
+		if (toggleMover != null)
+			toggleMover.setSelected(mover);
+		if (toggleMirar != null)
+			toggleMirar.setSelected(!mover);
+		this.moverModeEmbedded = mover;
+	}
+
 	private boolean modoSpawnInimigo = false;
 	private String idMonstroEmSpawn = null;
 
@@ -109,9 +128,12 @@ public class MapController {
 	private TileDefinition editorTile = null;
 	private javafx.stage.Stage editorWindowStage = null;
 
+	// Helpers (criados em initialize() e em inicializarHelpers())
+	private AoEShapeCalculator aoeCalc;
+	private MapTokenRenderer tokenRenderer;
+	private SquadModeHandler squadHandler;
+
 	private Personagem atorAtual;
-	private Map<Node, Personagem> peaoParaPersonagem = new HashMap<>();
-	private List<Node> peoesAtuais = new ArrayList<>();
 	private Set<Pane> celulasAlcanceMovimento = new HashSet<>();
 
 	private Pane[][] celulasDoGrid = new Pane[gridLargura][gridAltura];
@@ -127,21 +149,11 @@ public class MapController {
 	// Sistema genérico de domínios
 	private final Map<String, Dominio> dominiosAtivos = new HashMap<>();
 	private final Map<String, List<Pane>> celulasVisuaisDominios = new HashMap<>();
-	private List<Pane> celulasAuraDarrell = new ArrayList<>();
-	private List<Pane> celulasAuraZero = new ArrayList<>();
-	private List<Pane> celulasAuraBadOmen = new ArrayList<>();
 
-	private int rolagemSquadGlobal;
 	private int cargasSpawnRestantes = 0;
 	private List<Pane> celulasGuardiaoDestacadas = new ArrayList<>();
 	private List<Pane> celulasVigiliaDestacadas = new ArrayList<>();
 	private List<Pane> celulasHarmoniaDestacadas = new ArrayList<>();
-
-	private List<Personagem> peoesAtualmenteDestacados = new ArrayList<>();
-
-	private Queue<Personagem> filaClonesSquad = new LinkedList<>();
-	private Map<Personagem, Personagem> ataquesDeclaradosSquad = new HashMap<>();
-	private boolean modoSquad = false;
 
 	@FXML
 	public void initialize() {
@@ -159,13 +171,14 @@ public class MapController {
 		mapGrid.setOnMouseMoved(this::onMouseMovedNoGrid);
 		configurarZoomEPan();
 
+		squadHandler = new SquadModeHandler(this, aoeCalc,
+				toggleMover, toggleMirar, celulasAlcanceMovimento);
+
 		mapGrid.setOnMouseClicked(event -> {
 			if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
 				if (modoSpawnInimigo) {
-					this.modoSpawnInimigo = false;
-					this.idMonstroEmSpawn = null;
-					mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
 					System.out.println("GM: Modo SPAWN cancelado.");
+					mainController.notifySpawnConcluido();
 					event.consume();
 				}
 			}
@@ -173,7 +186,8 @@ public class MapController {
 	}
 
 	private void configurarZoomEPan() {
-		if (mapScrollPane == null) return;
+		if (mapScrollPane == null)
+			return;
 
 		StackPane contentPane = (StackPane) mapScrollPane.getContent();
 		zoomScale = new Scale(1, 1, 0, 0);
@@ -267,54 +281,61 @@ public class MapController {
 	}
 
 	public void zoomIn() {
-		if (mapScrollPane == null) return;
+		if (mapScrollPane == null)
+			return;
 		zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP);
 		zoomScale.setX(zoomLevel);
 		zoomScale.setY(zoomLevel);
 	}
 
 	public void zoomOut() {
-		if (mapScrollPane == null) return;
+		if (mapScrollPane == null)
+			return;
 		zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP);
 		zoomScale.setX(zoomLevel);
 		zoomScale.setY(zoomLevel);
 	}
 
 	public void resetZoom() {
-		if (mapScrollPane == null) return;
+		if (mapScrollPane == null)
+			return;
 		zoomLevel = 1.0;
 		zoomScale.setX(1.0);
 		zoomScale.setY(1.0);
 	}
 
 	@FXML
-	private void onZoomInClick() { zoomIn(); }
+	private void onZoomInClick() {
+		zoomIn();
+	}
+
 	@FXML
-	private void onZoomOutClick() { zoomOut(); }
+	private void onZoomOutClick() {
+		zoomOut();
+	}
+
 	@FXML
-	private void onZoomResetClick() { resetZoom(); }
+	private void onZoomResetClick() {
+		resetZoom();
+	}
 
 	@FXML
 	private void onMovimentoLivreClick() {
-		toggleModoMovimentoLivre();
-		// Sincroniza o estado visual do botão caso tenha sido chamado via código
-		btnMovimentoLivre.setSelected(this.modoMovimentoLivre);
-
-		// Se ativar um, desativa o outro visualmente
-		if (this.modoMovimentoLivre) {
-			btnEditorMapa.setSelected(false);
-			this.modoEditor = false; // Garante integridade lógica
+		if (mainController != null) {
+			boolean ativar = !isModoMovimentoLivre();
+			mainController.forEachMap(m -> m.toggleModoMovimentoLivre(ativar));
+		} else {
+			toggleModoMovimentoLivre(!this.modoMovimentoLivre);
 		}
 	}
 
 	@FXML
 	private void onEditorMapaClick() {
-		toggleModoEditor();
-		btnEditorMapa.setSelected(this.modoEditor);
-
-		if (this.modoEditor) {
-			btnMovimentoLivre.setSelected(false);
-			this.modoMovimentoLivre = false;
+		if (mainController != null) {
+			boolean ativar = !isModoEditor();
+			mainController.forEachMap(m -> m.setModoEditor(ativar));
+		} else {
+			setModoEditor(!this.modoEditor);
 		}
 	}
 
@@ -327,14 +348,14 @@ public class MapController {
 	}
 
 	private void onMouseMovedNoGrid(MouseEvent event) {
-		if (!modoSelecaoAlvo || toggleMover.isSelected() || habilidadeAtual == null) {
+		if (!modoSelecaoAlvo || isMoverMode() || habilidadeAtual == null) {
 			limparCanvas();
 			return;
 		}
 		desenharVisualAoE(event.getX(), event.getY());
 	}
 
-	private void limparCanvas() {
+	public void limparCanvas() {
 		if (aoeCanvas != null) {
 			GraphicsContext gc = aoeCanvas.getGraphicsContext2D();
 			gc.clearRect(0, 0, aoeCanvas.getWidth(), aoeCanvas.getHeight());
@@ -448,8 +469,7 @@ public class MapController {
 			limparDestaqueHarmonia();
 		}
 
-		if (!modoSelecaoAlvo || toggleMover.isSelected() || habilidadeAtual == null) {
-			mainController.limparSelecaoDeAlvo();
+		if (!modoSelecaoAlvo || isMoverMode() || habilidadeAtual == null) {
 			return;
 		}
 
@@ -460,30 +480,30 @@ public class MapController {
 		}
 
 		switch (habilidadeAtual.getTipoAlvo()) {
-		case AREA_QUADRADA:
-			desenharPreviewQuadrado(x, y);
-			break;
-		case AREA:
-		case AREA_CIRCULAR:
-			desenharPreviewCircular(x, y);
-			break;
-		case LINHA:
-			desenharPreviewLinha(x, y);
-			break;
-		case CONE:
-			desenharPreviewCone(x, y);
-			break;
-		default: // INDIVIDUAL ou MULTIPLOS
-			if (p != null && !p.equals(atorAtual)) {
-				List<Personagem> lista = new ArrayList<>();
-				lista.add(p);
-				mainController.alvosIdentificadosNoMapa(lista);
-				destacarPeoesAlvo(lista);
-			} else {
-				mainController.limparSelecaoDeAlvo();
-				limparDestaquesPeoes();
-			}
-			break;
+			case AREA_QUADRADA:
+				desenharPreviewQuadrado(x, y);
+				break;
+			case AREA:
+			case AREA_CIRCULAR:
+				desenharPreviewCircular(x, y);
+				break;
+			case LINHA:
+				desenharPreviewLinha(x, y);
+				break;
+			case CONE:
+				desenharPreviewCone(x, y);
+				break;
+			default: // INDIVIDUAL ou MULTIPLOS
+				if (p != null && !p.equals(atorAtual)) {
+					List<Personagem> lista = new ArrayList<>();
+					lista.add(p);
+					mainController.alvosIdentificadosNoMapa(lista);
+					destacarPeoesAlvo(lista);
+				} else {
+					mainController.limparSelecaoDeAlvo();
+					limparDestaquesPeoes();
+				}
+				break;
 		}
 	}
 
@@ -592,11 +612,10 @@ public class MapController {
 			System.out.println("MAPA: Spawn realizado. Restam: " + cargasSpawnRestantes);
 
 			if (cargasSpawnRestantes <= 0) {
-				// Sai do modo spawn
-				this.modoSpawnInimigo = false;
-				this.idMonstroEmSpawn = null;
-				mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
 				System.out.println("MAPA: Cargas de spawn esgotadas.");
+				// Notifica CombatController para limpar estado global e sincronizar o outro
+				// mapa
+				mainController.notifySpawnConcluido();
 			}
 			return;
 		}
@@ -625,7 +644,11 @@ public class MapController {
 			peaoSelecionadoParaMover.setPosY(y);
 
 			// Atualiza visual
-			desenharPeoes(mainController.getCombatentes());
+			if (mainController != null) {
+				mainController.forEachMap(m -> m.desenharPeoes(mainController.getCombatentes()));
+			} else {
+				desenharPeoes(getCombatentes());
+			}
 
 			// Solta
 			System.out.println("MAPA (GM): Soltou " + peaoSelecionadoParaMover.getNome() + " em (" + x + "," + y + ")");
@@ -634,7 +657,7 @@ public class MapController {
 			return;
 		}
 
-		if (modoSquad && atorAtual != null) {
+		if (squadHandler != null && squadHandler.isModoSquad() && atorAtual != null) {
 			tratarCliqueSquad(cell, x, y);
 			return;
 		}
@@ -643,7 +666,7 @@ public class MapController {
 			return;
 
 		// MODO MOVER
-		if (toggleMover.isSelected()) {
+		if (isMoverMode()) {
 			if (atorAtual.getRaca() != null && !atorAtual.getRaca().podeSeMover(atorAtual)) {
 				System.out.println("MAPA: " + atorAtual.getNome() + " nao pode se mover enquanto estiver em postura.");
 				return;
@@ -672,7 +695,7 @@ public class MapController {
 				}
 
 				if (modoSelecaoAlvo && habilidadeAtual != null) {
-					toggleMirar.setSelected(true);
+					setMoverMode(false);
 					calcularEExibirAtaqueRange(atorAtual, habilidadeAtual);
 					limparCanvas();
 				} else {
@@ -720,125 +743,24 @@ public class MapController {
 	}
 
 	private void calcularAlcanceBFS(int startX, int startY, int maxDist, String cssClass) {
-		if (maxDist <= 0)
+		if (maxDist <= 0 || aoeCalc == null)
 			return;
 		limparDestaquesAlcance();
 
+		Set<Pane> celulas;
 		if (cssClass.equals(CSS_ALCANCE_MOVIMENTO)) {
-			// Lógica de Movimento (Bloqueia em Paredes e Objetos)
-			Queue<Pair<Integer, Integer>> fila = new LinkedList<>();
-			int[][] distancias = new int[gridLargura][gridAltura];
-			for (int i = 0; i < gridLargura; i++)
-				java.util.Arrays.fill(distancias[i], -1);
-
-			fila.add(new Pair<>(startX, startY));
-			distancias[startX][startY] = 0;
-			int[] dx = { 0, 0, 1, -1 };
-			int[] dy = { 1, -1, 0, 0 };
-
-			while (!fila.isEmpty()) {
-				Pair<Integer, Integer> atual = fila.poll();
-				int x = atual.getKey();
-				int y = atual.getValue();
-				if (distancias[x][y] + 1 > maxDist)
-					continue;
-
-				for (int i = 0; i < 4; i++) {
-					int novoX = x + dx[i];
-					int novoY = y + dy[i];
-					if (novoX >= 0 && novoX < gridLargura && novoY >= 0 && novoY < gridAltura) {
-						// Verifica Domínios (bloqueio de fronteira)
-						boolean bloqueadoPorDominio = false;
-						for (Dominio dom : dominiosAtivos.values()) {
-							if (dom.bloqueiaMovimento(x, y, novoX, novoY)) {
-								bloqueadoPorDominio = true;
-								break;
-							}
-						}
-						if (bloqueadoPorDominio)
-							continue;
-
-						// Bloqueia se for Parede física
-						if (!paredesGrid[novoX][novoY] && distancias[novoX][novoY] == -1) {
-							distancias[novoX][novoY] = distancias[x][y] + 1;
-							fila.add(new Pair<>(novoX, novoY));
-							Pane cell = celulasDoGrid[novoX][novoY];
-							cell.getStyleClass().add(cssClass);
-							celulasAlcanceMovimento.add(cell);
-						}
-					}
-				}
-			}
+			celulas = aoeCalc.calcularCelulasMovimento(startX, startY, maxDist, dominiosAtivos);
 		} else {
-			// Lógica de Ataque (LoS) - Permite mirar em Objetos
-			for (int y = startY - maxDist; y <= startY + maxDist; y++) {
-				for (int x = startX - maxDist; x <= startX + maxDist; x++) {
-					if (x < 0 || x >= gridLargura || y < 0 || y >= gridAltura)
-						continue;
-					if (x == startX && y == startY)
-						continue;
-
-					boolean isParede = paredesGrid[x][y];
-					boolean isObjeto = false;
-
-					if (isParede) {
-						Personagem p = getPersonagemNaCelula(x, y);
-						if (p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
-							isObjeto = true;
-						}
-					}
-
-					// Se for parede real (sem objeto), ignora. Se for objeto, permite mirar.
-					if (isParede && !isObjeto)
-						continue;
-
-					int dist = Math.max(Math.abs(x - startX), Math.abs(y - startY));
-					if (dist > maxDist)
-						continue;
-
-					if (temLinhaDeVisao(startX, startY, x, y)) {
-						Pane cell = celulasDoGrid[x][y];
-						cell.getStyleClass().add(cssClass);
-						celulasAlcanceMovimento.add(cell);
-					}
-				}
-			}
+			celulas = aoeCalc.calcularCelulasAtaque(startX, startY, maxDist);
+		}
+		for (Pane cell : celulas) {
+			cell.getStyleClass().add(cssClass);
+			celulasAlcanceMovimento.add(cell);
 		}
 	}
 
 	private boolean temLinhaDeVisao(int x0, int y0, int x1, int y1) {
-		int dx = Math.abs(x1 - x0);
-		int dy = -Math.abs(y1 - y0);
-		int sx = (x0 < x1) ? 1 : -1;
-		int sy = (y0 < y1) ? 1 : -1;
-		int err = dx + dy;
-		int currentX = x0;
-		int currentY = y0;
-
-		while (true) {
-			if ((currentX != x0 || currentY != y0) && paredesGrid[currentX][currentY]) {
-				// Se bateu no destino (x1, y1), é válido (permite atirar na parede)
-				if (currentX == x1 && currentY == y1)
-					return true;
-				return false; // Bateu em algo no caminho
-			}
-			if (currentX == x1 && currentY == y1)
-				break;
-			int e2 = 2 * err;
-			if (e2 >= dy) {
-				if (currentX == x1)
-					break;
-				err += dy;
-				currentX += sx;
-			}
-			if (e2 <= dx) {
-				if (currentY == y1)
-					break;
-				err += dx;
-				currentY += sy;
-			}
-		}
-		return true;
+		return aoeCalc != null && aoeCalc.temLinhaDeVisao(x0, y0, x1, y1);
 	}
 
 	private void onToggleModo() {
@@ -847,7 +769,7 @@ public class MapController {
 
 		limparCanvas();
 
-		if (toggleMover.isSelected()) {
+		if (isMoverMode()) {
 			System.out.println("MAPA: Modo Mover (Squad/Normal).");
 			calcularEExibirMovimento(atorAtual);
 		} else {
@@ -856,22 +778,52 @@ public class MapController {
 		}
 	}
 
-	private void atualizarBotaoPularSquad() {
-		if (btnPularSquad == null)
+	public void atualizarBotaoPularSquad() {
+		if (btnPularSquad == null || squadHandler == null)
 			return;
-
-		boolean mostrar = modoSquad && !filaClonesSquad.isEmpty();
+		boolean mostrar = squadHandler.isModoSquad();
 		btnPularSquad.setVisible(mostrar);
 		btnPularSquad.setManaged(mostrar);
 		btnPularSquad.setDisable(!mostrar);
-
-		if (mostrar) {
-			btnPularSquad.setText("Encerrar Fila de Clones (" + filaClonesSquad.size() + ")");
-		}
 	}
 
 	public void setMainController(CombatController mainController) {
 		this.mainController = mainController;
+	}
+
+	// ========== ACESSORES PARA HELPERS (SquadModeHandler, etc.) ==========
+
+	public Personagem getAtorAtual() {
+		return atorAtual;
+	}
+
+	public void setAtorAtual(Personagem ator) {
+		this.atorAtual = ator;
+	}
+
+	public Habilidade getHabilidadeAtual() {
+		return habilidadeAtual;
+	}
+
+	public void setHabilidadeAtual(Habilidade hab) {
+		this.habilidadeAtual = hab;
+	}
+
+	public void setModoSelecaoAlvo(boolean v) {
+		this.modoSelecaoAlvo = v;
+	}
+
+	public CombatController getMainController() {
+		return mainController;
+	}
+
+	public List<Personagem> getCombatentes() {
+		return mainController != null ? mainController.getCombatentes() : new ArrayList<>();
+	}
+
+	public void setCombatCursor(javafx.scene.Cursor cursor) {
+		if (mapGrid.getScene() != null)
+			mapGrid.getScene().setCursor(cursor);
 	}
 
 	public void carregarMapaDeImagem(File mapaFile) {
@@ -905,10 +857,6 @@ public class MapController {
 			mapGrid.getColumnConstraints().clear();
 			mapGrid.getRowConstraints().clear();
 
-			mapGrid.getChildren().clear();
-			mapGrid.getColumnConstraints().clear	();
-			mapGrid.getRowConstraints().clear();
-
 			for (int x = 0; x < gridLargura; x++) {
 				mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
 			}
@@ -928,7 +876,7 @@ public class MapController {
 					int g = (int) (corPixel.getGreen() * 255);
 					int b = (int) (corPixel.getBlue() * 255);
 
-										// Lookup via TileRegistry (substitui o if-else chain)
+					// Lookup via TileRegistry (substitui o if-else chain)
 					TileRegistry registry = TileRegistry.getInstance();
 					TileDefinition tile = registry.getByRgb(r, g, b);
 					if (tile == null) {
@@ -946,11 +894,23 @@ public class MapController {
 				}
 			}
 
+			inicializarHelpers();
+
 		} catch (Exception e) {
 			System.err.println("Erro crítico ao carregar mapa de imagem.");
 			e.printStackTrace();
 			preencherComChaoPadrao();
 		}
+	}
+
+	private void inicializarHelpers() {
+		aoeCalc = new AoEShapeCalculator(paredesGrid, celulasDoGrid, gridLargura, gridAltura,
+				this::getPersonagemNaCelula,
+				() -> mainController != null ? mainController.getCombatentes() : new ArrayList<>());
+		tokenRenderer = new MapTokenRenderer(mapGrid, mainController, celulasDoGrid,
+				gridLargura, gridAltura, CELL_SIZE);
+		// Recria squadHandler com a nova referência a aoeCalc
+		squadHandler = new SquadModeHandler(this, aoeCalc, toggleMover, toggleMirar, celulasAlcanceMovimento);
 	}
 
 	/**
@@ -978,23 +938,40 @@ public class MapController {
 	 * Aplica um tile no editor, limpando o estado anterior da celula.
 	 */
 	public void aplicarTileNoEditor(Pane cell, TileDefinition tile, int x, int y) {
-		if (tile == null || !dentroDoGrid(x, y)) return;
+		if (tile == null || !dentroDoGrid(x, y))
+			return;
+
+		if (mainController != null) {
+			// Ações lógicas de criação/remoção de objetos, executadas 1 vez apenas
+			if (gridTerreno[x][y] == TipoTerreno.OBJETO) {
+				mainController.removerObjetoNoMapa(x, y);
+			}
+			if ("OBJETO".equals(tile.getTerrainType())) {
+				mainController.criarObjetoNoMapa(x, y);
+			}
+
+			System.out.println("EDITOR GLOBAL: (" + x + "," + y + ") -> " + tile.getName() + " [" + tile.getId() + "]");
+
+			// Atualiza a visualização e arrays internos de TODOS os mapas abertos
+			mainController.forEachMap(m -> m.aplicarTileSomenteVisual(tile, x, y));
+		} else {
+			aplicarTileSomenteVisual(tile, x, y);
+			System.out.println("EDITOR LOCAL: (" + x + "," + y + ") -> " + tile.getName() + " [" + tile.getId() + "]");
+		}
+	}
+
+	public void aplicarTileSomenteVisual(TileDefinition tile, int x, int y) {
+		if (!dentroDoGrid(x, y))
+			return;
+		Pane c = celulasDoGrid[x][y];
+		if (c == null)
+			return;
 
 		TileRegistry registry = TileRegistry.getInstance();
-		cell.getStyleClass().removeAll(registry.getAllCssClasses());
+		c.getStyleClass().removeAll(registry.getAllCssClasses());
 		gridEfeitos[x][y] = null;
 
-		if (gridTerreno[x][y] == TipoTerreno.OBJETO && mainController != null) {
-			mainController.removerObjetoNoMapa(x, y);
-		}
-
-		aplicarTileNaCelula(cell, tile, x, y);
-
-		if ("OBJETO".equals(tile.getTerrainType()) && mainController != null) {
-			mainController.criarObjetoNoMapa(x, y);
-		}
-
-		System.out.println("EDITOR: (" + x + "," + y + ") -> " + tile.getName() + " [" + tile.getId() + "]");
+		aplicarTileNaCelula(c, tile, x, y);
 	}
 
 	public void criarAreaDeFogo(int centroX, int centroY, int raio, int dano, Personagem criador) {
@@ -1102,7 +1079,8 @@ public class MapController {
 
 			if (dentroDoGrid(nx, ny)) {
 				if (gridTerreno[nx][ny] == TipoTerreno.CARVAO) {
-					// Cria uma cópia ou reutiliza a referência (aqui reutilizamos pois é permanente)
+					// Cria uma cópia ou reutiliza a referência (aqui reutilizamos pois é
+					// permanente)
 					aplicarEfeitoNoSolo(nx, ny, efeitoOriginal);
 				}
 			}
@@ -1117,7 +1095,8 @@ public class MapController {
 		EfeitoInstance efeito = gridEfeitos[x][y];
 		TipoTerreno terreno = gridTerreno[x][y];
 
-		// LIMPEZA: Remove qualquer imagem de efeito anterior (preservando o fundo/css base)
+		// LIMPEZA: Remove qualquer imagem de efeito anterior (preservando o fundo/css
+		// base)
 		// Removem tudo que for ImageView e tiver a ID de efeito
 		cell.getChildren().removeIf(node -> node.getId() != null && node.getId().equals("terreno-fx-layer"));
 
@@ -1155,9 +1134,9 @@ public class MapController {
 		// RENDERIZAÇÃO
 		if (imagemParaCarregar != null) {
 			try {
-				// Tenta carregar
-				Image img = new Image(FileLoader.carregarArquivo(imagemParaCarregar));
-				if (!img.isError()) {
+				// Tenta carregar com cache e downsampling
+				Image img = ImageCache.get(imagemParaCarregar, CELL_SIZE, CELL_SIZE);
+				if (img != null && !img.isError()) {
 					ImageView fxView = new ImageView(img);
 					fxView.setFitWidth(CELL_SIZE);
 					fxView.setFitHeight(CELL_SIZE);
@@ -1206,215 +1185,22 @@ public class MapController {
 			}
 		}
 		paredesGrid = new boolean[gridLargura][gridAltura];
+		inicializarHelpers();
 	}
 
 	public void desenharPeoes(List<Personagem> combatentes) {
-		// Limpeza
-		for (Node peaoNode : peoesAtuais) {
-			mapGrid.getChildren().remove(peaoNode);
-		}
-		peoesAtuais.clear();
-		peaoParaPersonagem.clear();
-
-		for (Personagem p : combatentes) {
-			if (p != null && p.isAtivoNoCombate()) {
-
-				// --- LÓGICA DE TAMANHO GIGANTE ---
-				// EU JURO QUE TO TENTANDO MAS QUE PORRA È ESSA ESSA MERDA NÂO RENDEIRIZA CORRETAMENTE FILHAS DA PUTA QUE PROGRAMARAM ESSA MERDA MORRA (EU)
-				int larguraTiles = p.getTamanhoX();
-				int alturaTiles = p.getTamanhoY();
-				int menorDimensao = Math.min(larguraTiles, alturaTiles); // O tamanho da imagem quadrada
-				double margem = 2.0;
-				double tamanhoTotalPixels = (menorDimensao * CELL_SIZE) - (margem * 2);
-				double raioClip = tamanhoTotalPixels / 2.0;
-
-				Pane peaoContainer = new Pane();
-				peaoContainer.setPrefSize(tamanhoTotalPixels, tamanhoTotalPixels);
-
-				String nomeToken = "";
-				String numeroOverlay = "";
-				boolean isPlayer = mainController.isPlayer(p);
-				if (isPlayer) {
-					nomeToken = p.getNome().toLowerCase().replace(" ", "_") + ".png";
-					numeroOverlay = "";
-				} else {
-					String nomeOriginal = p.getNome().toLowerCase();
-					if (nomeOriginal.startsWith("servo: "))
-						nomeOriginal = nomeOriginal.replace("servo: ", "");
-					String nomeLimpo = nomeOriginal.replaceAll("\\s*\\d+$", "");
-					nomeToken = nomeLimpo.replace(" ", "_") + ".png";
-					if (p.getNome().matches(".*\\d+$")) {
-						String[] partes = p.getNome().split(" ");
-						numeroOverlay = partes[partes.length - 1];
-					} else {
-						numeroOverlay = "";
-					}
-				}
-
-				String imagePath = "/tokens/" + nomeToken;
-				try {
-					Image tokenImage = new Image(FileLoader.carregarArquivo(imagePath));
-					if (tokenImage.isError())
-						throw new Exception("Erro imagem");
-
-					javafx.scene.image.ImageView tokenView = new javafx.scene.image.ImageView(tokenImage);
-					tokenView.setFitWidth(tamanhoTotalPixels);
-					tokenView.setFitHeight(tamanhoTotalPixels);
-					tokenView.setPreserveRatio(true); // Mantém proporção dentro do quadrado
-
-					// Clip Circular
-					Circle clip = new Circle(raioClip);
-					clip.setCenterX(tamanhoTotalPixels / 2.0);
-					clip.setCenterY(tamanhoTotalPixels / 2.0);
-					tokenView.setClip(clip);
-
-					Circle borda = new Circle(raioClip, Color.TRANSPARENT);
-					borda.setStrokeWidth(3.0); // Borda um pouco mais grossa para gigantes
-					if (isPlayer)
-						borda.setStroke(Color.CYAN);
-					else
-						borda.setStroke(Color.RED);
-
-					// Centraliza visualmente no Container
-					borda.setCenterX(tamanhoTotalPixels / 2.0);
-					borda.setCenterY(tamanhoTotalPixels / 2.0);
-
-					peaoContainer.getChildren().addAll(tokenView, borda);
-
-					if (!numeroOverlay.isEmpty()) {
-						Label numeroLabel = new Label(numeroOverlay);
-						numeroLabel.setStyle("-fx-font-size: " + (14 + (menorDimensao * 2))
-								+ "px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 2, 0.8, 0, 0);");
-						peaoContainer.getChildren().add(numeroLabel);
-						numeroLabel.layoutXProperty()
-								.bind(peaoContainer.widthProperty().subtract(numeroLabel.widthProperty()).subtract(5));
-						numeroLabel.layoutYProperty().bind(
-								peaoContainer.heightProperty().subtract(numeroLabel.heightProperty()).subtract(2));
-					}
-				} catch (Exception e) {
-					// Fallback (Círculo colorido se falhar imagem)
-					Circle peaoCirculo = new Circle(raioClip);
-					peaoCirculo.setStroke(Color.WHITE);
-					if (isPlayer)
-						peaoCirculo.setFill(Color.CYAN);
-					else
-						peaoCirculo.setFill(Color.RED);
-					peaoCirculo.setCenterX(tamanhoTotalPixels / 2.0);
-					peaoCirculo.setCenterY(tamanhoTotalPixels / 2.0);
-
-					Label nomeLabel = new Label(numeroOverlay.isEmpty() ? p.getNome().substring(0, 1) : numeroOverlay);
-					nomeLabel.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 20px;");
-
-					peaoContainer.getChildren().addAll(peaoCirculo, nomeLabel);
-					nomeLabel.layoutXProperty().bind(
-							peaoContainer.widthProperty().divide(2).subtract(nomeLabel.widthProperty().divide(2)));
-					nomeLabel.layoutYProperty().bind(
-							peaoContainer.heightProperty().divide(2).subtract(nomeLabel.heightProperty().divide(2)));
-				}
-
-				peaoContainer.setMouseTransparent(true);
-				peaoParaPersonagem.put(peaoContainer, p);
-
-				mapGrid.add(peaoContainer, p.getPosX(), p.getPosY());
-
-				if (menorDimensao > 1) {
-					GridPane.setColumnSpan(peaoContainer, menorDimensao);
-					GridPane.setRowSpan(peaoContainer, menorDimensao);
-				}
-
-				// Centraliza o container dentro das células mescladas
-				GridPane.setHalignment(peaoContainer, javafx.geometry.HPos.CENTER);
-				GridPane.setValignment(peaoContainer, javafx.geometry.VPos.CENTER);
-
-				peoesAtuais.add(peaoContainer);
-
-				// --- DESENHO DAS "SOBRAS" (Hitbox Vermelha) ---
-				// Se o inimigo não for quadrado perfeito (ex: 5x7), pinta o resto
-				if (larguraTiles != alturaTiles || larguraTiles > menorDimensao || alturaTiles > menorDimensao) {
-					for (int dy = 0; dy < alturaTiles; dy++) {
-						for (int dx = 0; dx < larguraTiles; dx++) {
-
-							// A imagem ocupa de (0,0) até (menorDimensao, menorDimensao)
-							boolean cobertoPelaImagem = (dx < menorDimensao && dy < menorDimensao);
-
-							if (!cobertoPelaImagem) {
-								int tileRealX = p.getPosX() + dx;
-								int tileRealY = p.getPosY() + dy;
-
-								if (dentroDoGrid(tileRealX, tileRealY)) {
-									Pane cell = celulasDoGrid[tileRealX][tileRealY];
-									if (!cell.getStyleClass().contains("enemy-hitbox-extra")) {
-										cell.getStyleClass().add("enemy-hitbox-extra");
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// --- RESTO DO MÉTODO (Auras, Barras de Vida) ---
-		for (Personagem p : combatentes) {
-			if (p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Modo Justiça")) {
-				desenharAuraDarrell(p);
-				break;
-			}
-		}
-		boolean ninguemComAura = combatentes.stream().noneMatch(p -> p.getEfeitosAtivos().containsKey("Modo Justiça"));
-		if (ninguemComAura && !celulasAuraDarrell.isEmpty()) {
-			for (Pane cell : celulasAuraDarrell)
-				cell.getStyleClass().remove("zona-aura-darrell");
-			celulasAuraDarrell.clear();
-		}
-
-		// --- AURA PRESENÇA DO ZERO ---
-		for (Personagem p : combatentes) {
-			if (p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Aura do Zero")) {
-				desenharAuraZero(p);
-				break;
-			}
-		}
-		boolean ninguemComAuraZero = combatentes.stream().noneMatch(p -> p.getEfeitosAtivos().containsKey("Aura do Zero"));
-		if (ninguemComAuraZero && !celulasAuraZero.isEmpty()) {
-			for (Pane cell : celulasAuraZero)
-				cell.getStyleClass().remove("zona-aura-zero");
-			celulasAuraZero.clear();
-		}
-
-		// --- AURA BAD OMEN (Vampiro V2 em Forma de Cobra) ---
-		for (Personagem p : combatentes) {
-			if (p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Forma de Cobra")
-					&& p.getRaca() instanceof br.com.dantesrpg.model.racas.Vampiro
-					&& p.getRaca().isV2()) {
-				desenharAuraBadOmen(p);
-				break;
-			}
-		}
-		boolean ninguemComBadOmen = combatentes.stream().noneMatch(p ->
-				p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Forma de Cobra")
-				&& p.getRaca() instanceof br.com.dantesrpg.model.racas.Vampiro
-				&& p.getRaca().isV2());
-		if (ninguemComBadOmen && !celulasAuraBadOmen.isEmpty()) {
-			for (Pane cell : celulasAuraBadOmen)
-				cell.getStyleClass().remove("zona-aura-bad-omen");
-			celulasAuraBadOmen.clear();
-		}
-
-		desenharBarrasDeVidaObjetos(combatentes);
+		if (tokenRenderer != null)
+			tokenRenderer.desenharPeoes(combatentes);
 	}
 
-	private Personagem getPersonagemNaCelula(int x, int y) {
+	public Personagem getPersonagemNaCelula(int x, int y) {
 		if (mainController == null)
 			return null;
 		for (Personagem p : mainController.getCombatentes()) {
 			if (p.isAtivoNoCombate()) {
-				// Verifica se o personagem ocupa a célula (suporta 1x1, 3x3,5x7...)
 				if (p.ocupa(x, y))
 					return p;
 			}
-
-			// Verifica objetos (geralmente 1x1, mas se tiverem tamanho, o ocupa() resolve também)
 			if (p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
 				if (((br.com.dantesrpg.model.elementos.ObjetoDestrutivel) p).isIntacto()) {
 					if (p.ocupa(x, y))
@@ -1426,65 +1212,109 @@ public class MapController {
 	}
 
 	private void destacarPeoesAlvo(List<Personagem> alvos) {
-		for (Personagem p : peoesAtualmenteDestacados) {
-			Node peaoNode = getPeaoNode(p);
-			if (peaoNode != null) {
-				peaoNode.setStyle("");
-				Circle borda = (Circle) peaoNode.lookup(".peao-borda-aoe");
-				if (borda != null) {
-					((Pane) peaoNode).getChildren().remove(borda);
-				}
-			}
-		}
-		peoesAtualmenteDestacados.clear();
-
-		for (Personagem alvo : alvos) {
-			Node peaoNode = getPeaoNode(alvo);
-			if (peaoNode != null) {
-				if (peaoNode instanceof Pane) {
-					Circle borda = new Circle(CELL_SIZE / 2.0 - 2);
-					borda.setStroke(Color.RED);
-					borda.setStrokeWidth(3);
-					borda.setFill(Color.TRANSPARENT);
-					borda.getStyleClass().add("peao-borda-aoe");
-
-					// Centraliza o círculo no meio do Pane
-					borda.setCenterX(CELL_SIZE / 2.0);
-					borda.setCenterY(CELL_SIZE / 2.0);
-
-					((Pane) peaoNode).getChildren().add(borda);
-				}
-				peoesAtualmenteDestacados.add(alvo);
-			} else {
-				if (alvo instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
-					Pane cell = celulasDoGrid[alvo.getPosX()][alvo.getPosY()];
-					if (cell != null) {
-						cell.setStyle("-fx-border-color: red; -fx-border-width: 3;");
-					}
-				}
-			}
-		}
+		if (tokenRenderer != null)
+			tokenRenderer.destacarPeoesAlvo(alvos);
 	}
 
-	// Método auxiliar para obter o Node do peão
-	private Node getPeaoNode(Personagem p) {
-		for (Map.Entry<Node, Personagem> entry : peaoParaPersonagem.entrySet()) {
-			if (entry.getValue().equals(p)) {
-				return entry.getKey();
-			}
-		}
-		return null;
-	}
-
-	// Lembre-se de chamar limparDestaquesPeoes() em sairModoSelecao() e iniciarSelecaoDeAlvo()
 	public void limparDestaquesPeoes() {
-		destacarPeoesAlvo(Collections.emptyList()); // Chama com lista vazia para limpar tudo
+		if (tokenRenderer != null)
+			tokenRenderer.limparDestaquesPeoes();
+	}
+
+	private Node getPeaoNode(Personagem p) {
+		return tokenRenderer != null ? tokenRenderer.getPeaoNode(p) : null;
+	}
+
+	// ========== EMPUXO (KNOCKBACK) — API pública ==========
+
+	/** Retorna true se o tile (x,y) é uma parede (bloqueante). */
+	public boolean isParedeem(int x, int y) {
+		if (paredesGrid == null || x < 0 || y < 0
+				|| x >= gridLargura || y >= gridAltura)
+			return true;
+		return paredesGrid[x][y];
+	}
+
+	/** Largura do grid em tiles. */
+	public int getGridLargura() {
+		return gridLargura;
+	}
+
+	/** Altura do grid em tiles. */
+	public int getGridAltura() {
+		return gridAltura;
+	}
+
+	/**
+	 * Desenha no {@code aoeCanvas} um preview da trajetória de empuxo.
+	 *
+	 * <p>
+	 * Tiles de passagem são exibidos em laranja translúcido.
+	 * O tile de destino final é marcado com uma borda mais intensa.
+	 * Se {@code colidiu} for true, o destino é marcado em vermelho.
+	 * </p>
+	 *
+	 * @param trajetoria Lista de coordenadas {x,y} do caminho (gerada por
+	 *                   KnockbackProcessor).
+	 * @param colidiu    true se o empuxo termina em colisão (parede/borda).
+	 */
+	public void desenharPreviewEmpuxo(java.util.List<int[]> trajetoria, boolean colidiu) {
+		if (aoeCanvas == null || trajetoria == null || trajetoria.isEmpty())
+			return;
+
+		GraphicsContext gc = aoeCanvas.getGraphicsContext2D();
+
+		javafx.scene.paint.Color corPassagem = javafx.scene.paint.Color.rgb(255, 165, 0, 0.35); // laranja
+		javafx.scene.paint.Color corBordaPassagem = javafx.scene.paint.Color.rgb(255, 140, 0, 0.85);
+		javafx.scene.paint.Color corDestino = colidiu
+				? javafx.scene.paint.Color.rgb(220, 50, 50, 0.55) // vermelho = colisão
+				: javafx.scene.paint.Color.rgb(255, 200, 0, 0.55); // amarelo-ouro = parada livre
+		javafx.scene.paint.Color corBordaDestino = colidiu
+				? javafx.scene.paint.Color.rgb(180, 20, 20, 0.95)
+				: javafx.scene.paint.Color.rgb(220, 160, 0, 0.95);
+
+		gc.setLineWidth(2.0);
+
+		for (int i = 0; i < trajetoria.size(); i++) {
+			int[] coord = trajetoria.get(i);
+			double px = coord[0] * CELL_SIZE;
+			double py = coord[1] * CELL_SIZE;
+			boolean isDestino = (i == trajetoria.size() - 1);
+
+			gc.setFill(isDestino ? corDestino : corPassagem);
+			gc.fillRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+
+			gc.setStroke(isDestino ? corBordaDestino : corBordaPassagem);
+			gc.strokeRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+		}
+	}
+
+	/**
+	 * Remove o preview de empuxo do canvas (limpa sem apagar outros desenhos AoE).
+	 */
+	public void limparPreviewEmpuxo() {
+		limparCanvas();
+	}
+
+	public boolean isModoEditor() {
+		return this.modoEditor;
 	}
 
 	public void toggleModoEditor() {
-		this.modoEditor = !this.modoEditor;
+		setModoEditor(!this.modoEditor);
+	}
+
+	public void setModoEditor(boolean ativo) {
+		if (this.modoEditor == ativo)
+			return;
+		this.modoEditor = ativo;
+
+		if (btnEditorMapa != null)
+			btnEditorMapa.setSelected(ativo);
 
 		if (this.modoEditor) {
+			if (btnMovimentoLivre != null)
+				btnMovimentoLivre.setSelected(false);
 			this.modoMovimentoLivre = false;
 			this.modoSpawnInimigo = false;
 			this.modoSelecaoAlvo = false;
@@ -1492,7 +1322,11 @@ public class MapController {
 
 			System.out.println("MAPA: Modo EDITOR ativado.");
 			mapGrid.getScene().setCursor(javafx.scene.Cursor.OPEN_HAND);
-			abrirJanelaEditor();
+
+			// Apenas o PrimaryMap gerencia a janela do catálogo para não abrir duplicada
+			if (mainController == null || mainController.getPrimaryMap() == this) {
+				abrirJanelaEditor();
+			}
 		} else {
 			System.out.println("MAPA: Modo EDITOR desativado.");
 			mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
@@ -1534,12 +1368,12 @@ public class MapController {
 			editorWindowStage.setHeight(550);
 
 			editorWindowStage.setOnCloseRequest(e -> {
-				this.modoEditor = false;
-				this.editorTile = null;
-				btnEditorMapa.setSelected(false);
-				if (mapGrid.getScene() != null) {
-					mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
+				if (mainController != null) {
+					mainController.forEachMap(m -> m.setModoEditor(false));
+				} else {
+					setModoEditor(false);
 				}
+				this.editorTile = null;
 				System.out.println("MAPA: Janela do editor fechada. Modo EDITOR desativado.");
 			});
 
@@ -1637,7 +1471,7 @@ public class MapController {
 
 		if (habilidade != null && (habilidade.getTipoAlvo() == TipoAlvo.AREA_QUADRADA
 				|| habilidade.getTipoAlvo() == TipoAlvo.AREA)) {
-			toggleMirar.setSelected(true);
+			setMoverMode(false);
 			System.out.println("MAPA: Modo Mirar Área (AoE) ativado.");
 			calcularEExibirAtaqueRange(ator, habilidade);
 		} else if (habilidade != null && habilidade.getTipoAlvo() == TipoAlvo.MULTIPLOS) {
@@ -1649,7 +1483,7 @@ public class MapController {
 			System.out.println("MAPA: Modo Seleção Múltipla ativado. Alvos restantes: " + alvosRestantes);
 
 		} else {
-			toggleMover.setSelected(true);
+			setMoverMode(true);
 			calcularEExibirMovimento(ator);
 		}
 
@@ -1674,8 +1508,9 @@ public class MapController {
 		}
 		labelContadorAlvos.setText("Alvos restantes: " + alvosRestantes);
 
-		// Adiciona na barra superior se não estiver lá
-		if (!topToolbar.getItems().contains(labelContadorAlvos)) {
+		// Adiciona na barra superior se não estiver lá (ignora em modo embedded sem
+		// toolbar)
+		if (topToolbar != null && !topToolbar.getItems().contains(labelContadorAlvos)) {
 			topToolbar.getItems().add(labelContadorAlvos);
 		}
 	}
@@ -1686,7 +1521,7 @@ public class MapController {
 		}
 	}
 
-	private void limparDestaquesAlcance() {
+	public void limparDestaquesAlcance() {
 		for (Pane cell : celulasAlcanceMovimento) {
 			cell.getStyleClass().remove(CSS_ALCANCE_MOVIMENTO);
 			cell.getStyleClass().remove(CSS_ALCANCE_ATAQUE_MELEE);
@@ -1716,7 +1551,7 @@ public class MapController {
 		sairModoSelecao();
 	}
 
-	private void calcularEExibirMovimento(Personagem ator) {
+	public void calcularEExibirMovimento(Personagem ator) {
 		limparDestaquesAlcance();
 		if (ator == null)
 			return;
@@ -1732,7 +1567,7 @@ public class MapController {
 		calcularAlcanceBFS(startX, startY, maxDist, CSS_ALCANCE_MOVIMENTO);
 	}
 
-	private void calcularEExibirAtaqueRange(Personagem ator, Habilidade habilidade) {
+	public void calcularEExibirAtaqueRange(Personagem ator, Habilidade habilidade) {
 		limparDestaquesAlcance();
 		if (habilidade != null && habilidade.getTipoAlvo() == TipoAlvo.SI_MESMO)
 			return;
@@ -1772,250 +1607,14 @@ public class MapController {
 		mainController.alvosIdentificadosNoMapa(alvos);
 	}
 
-	private int calcularDistancia(int startX, int startY, int endX, int endY) {
-		if (paredesGrid[endX][endY])
-			return -1; // Não pode mirar dentro de uma parede
-
-		Queue<Pair<Integer, Integer>> fila = new LinkedList<>();
-		int[][] distancias = new int[gridLargura][gridAltura];
-		for (int i = 0; i < gridLargura; i++)
-			java.util.Arrays.fill(distancias[i], -1);
-		fila.add(new Pair<>(startX, startY));
-		distancias[startX][startY] = 0;
-		int[] dx = { 0, 0, 1, -1 };
-		int[] dy = { 1, -1, 0, 0 }; // Movimento ortogonal (ou adicione diagonais se quiser)
-
-		while (!fila.isEmpty()) {
-			Pair<Integer, Integer> atual = fila.poll();
-			int x = atual.getKey();
-			int y = atual.getValue();
-			if (x == endX && y == endY)
-				return distancias[x][y];
-
-			for (int i = 0; i < 4; i++) {
-				int novoX = x + dx[i];
-				int novoY = y + dy[i];
-				if (novoX >= 0 && novoX < gridLargura && novoY >= 0 && novoY < gridAltura) {
-					if (!paredesGrid[novoX][novoY] && distancias[novoX][novoY] == -1) {
-						distancias[novoX][novoY] = distancias[x][y] + 1;
-						fila.add(new Pair<>(novoX, novoY));
-					}
-				}
-			}
-		}
-		return -1;
+	public int calcularDistancia(int startX, int startY, int endX, int endY) {
+		return aoeCalc != null ? aoeCalc.calcularDistancia(startX, startY, endX, endY) : -1;
 	}
 
 	public List<Personagem> encontrarAlvosNaForma(int centroX, int centroY, Habilidade habilidade, Personagem ator) {
-		List<Personagem> alvosEncontrados = new ArrayList<>();
-		boolean atravessaParedes = habilidade.ignoraParedes();
-		TipoAlvo tipo = habilidade.getTipoAlvo();
-
-		// Coleta de Células: Encontra todas as CÉLULAS VÁLIDAS na forma
-		Set<Pane> celulasDaForma = new HashSet<>();
-
-		if (tipo == TipoAlvo.AREA) {
-			int raio = (habilidade.getTamanhoArea()) / 2;
-			int px = ator.getPosX();
-			int py = ator.getPosY();
-
-			// Varre ao redor do ATOR, ignorando o centroX/Y do clique do mouse
-			for (int y = py - raio; y <= py + raio; y++) {
-				for (int x = px - raio; x <= px + raio; x++) {
-					// Distância Manhattan
-					if (Math.abs(x - px) + Math.abs(y - py) <= raio) {
-						coletarCelula(x, y, atravessaParedes, celulasDaForma);
-					}
-				}
-			}
-		} else if (tipo == TipoAlvo.AREA_CIRCULAR) {
-			int raio = (habilidade.getTamanhoArea()) / 2;
-			for (int y = centroY - raio; y <= centroY + raio; y++) {
-				for (int x = centroX - raio; x <= centroX + raio; x++) {
-					if (Math.abs(x - centroX) + Math.abs(y - centroY) <= raio) {
-						coletarCelula(x, y, atravessaParedes, celulasDaForma);
-					}
-				}
-			}
-		}
-
-		else if (tipo == TipoAlvo.AREA_QUADRADA) {
-			int tamanho = habilidade.getTamanhoArea();
-			int raio = (tamanho - 1) / 2;
-			for (int y = centroY - raio; y <= centroY + raio; y++) {
-				for (int x = centroX - raio; x <= centroX + raio; x++) {
-					coletarCelula(x, y, atravessaParedes, celulasDaForma);
-				}
-			}
-		}
-
-		else if (tipo == TipoAlvo.LINHA) {
-			int comprimento = habilidade.getAlcanceMaximo();
-			int largura = habilidade.getTamanhoArea();
-			int raioLargura = (largura - 1) / 2;
-			int px = ator.getPosX();
-			int py = ator.getPosY();
-
-			// Determina a direção da linha usando 8 direções (cardeais + diagonais)
-			// Calcula o ângulo do clique em relação ao ator
-			double angulo = Math.atan2(centroY - py, centroX - px);
-			// Normaliza para [0, 2*PI)
-			if (angulo < 0) angulo += 2 * Math.PI;
-
-			// Quantiza em 8 setores de 45° cada
-			// Setor 0 = Leste, 1 = Sudeste, 2 = Sul, 3 = Sudoeste, etc.
-			int setor = (int) Math.round(angulo / (Math.PI / 4)) % 8;
-
-			// Direções: {dirX, dirY} para cada setor
-			int[][] direcoes = {
-				{ 1,  0}, // 0: Leste (→)
-				{ 1,  1}, // 1: Sudeste (↘)
-				{ 0,  1}, // 2: Sul (↓)
-				{-1,  1}, // 3: Sudoeste (↙)
-				{-1,  0}, // 4: Oeste (←)
-				{-1, -1}, // 5: Noroeste (↖)
-				{ 0, -1}, // 6: Norte (↑)
-				{ 1, -1}, // 7: Nordeste (↗)
-			};
-
-			int dirX = direcoes[setor][0];
-			int dirY = direcoes[setor][1];
-			boolean isDiagonal = (dirX != 0 && dirY != 0);
-
-			for (int i = 1; i <= comprimento; i++) {
-				int baseX = px + (i * dirX);
-				int baseY = py + (i * dirY);
-				boolean bloqueado = false;
-
-				// A largura se expande perpendicular à direção da linha
-				for (int j = -raioLargura; j <= raioLargura; j++) {
-					int currentX, currentY;
-					if (isDiagonal) {
-						// Para diagonais, a perpendicular tem duas componentes
-						// Ex: direção (1,1) → perpendicular é (-1,1) e (1,-1)
-						currentX = baseX + (j * (-dirY));
-						currentY = baseY + (j * dirX);
-					} else if (dirX != 0) {
-						// Horizontal: largura se expande no eixo Y
-						currentX = baseX;
-						currentY = baseY + j;
-					} else {
-						// Vertical: largura se expande no eixo X
-						currentX = baseX + j;
-						currentY = baseY;
-					}
-
-					if (!coletarCelula(currentX, currentY, atravessaParedes, celulasDaForma) && !atravessaParedes) {
-						bloqueado = true;
-						break;
-					}
-				}
-				if (bloqueado) break;
-			}
-		} else if (tipo == TipoAlvo.CONE) {
-			int alcance = habilidade.getAlcanceMaximo();
-			double anguloHabilidadeMetade = Math.toRadians(habilidade.getAnguloCone() / 2.0);
-			int px = ator.getPosX();
-			int py = ator.getPosY();
-
-			// Ângulo base do clique do mouse
-			double anguloCentralMouse = Math.atan2(centroY - py, centroX - px + 0.0001);
-
-			// Pega os desvios da habilidade (Ex: -30, 0, +30)
-			List<Integer> desvios = habilidade.getAngulosDesvio();
-
-			// Itera no "quadrado" de alcance (deveria se Otimização mas aumentou em 50MB o consumo por algumo motivo rs)
-			for (int y = py - alcance; y <= py + alcance; y++) {
-				for (int x = px - alcance; x <= px + alcance; x++) {
-					if (x == px && y == py)
-						continue;
-					if (!dentroDoGrid(x, y))
-						continue; 
-
-					int dist = Math.max(Math.abs(x - px), Math.abs(y - py));
-					if (dist > alcance)
-						continue; // Fora do alcance máximo
-
-					// Ângulo da célula atual em relação ao ator
-					double anguloCelula = Math.atan2(y - py, x - px + 0.0001);
-
-					// Verifica se a célula está dentro de PELO MENOS UM dos cones
-					boolean acertou = false;
-
-					for (int desvioGraus : desvios) {
-						double desvioRad = Math.toRadians(desvioGraus);
-						double anguloCentralAjustado = anguloCentralMouse + desvioRad;
-
-						double diff = anguloCelula - anguloCentralAjustado;
-						// Normaliza entre -PI e PI
-						if (diff > Math.PI)
-							diff -= (2 * Math.PI);
-						if (diff < -Math.PI)
-							diff += (2 * Math.PI);
-
-						// Verifica tolerância angular
-						if (Math.abs(diff) <= anguloHabilidadeMetade) {
-							acertou = true;
-							break; // Já está dentro de um cone, não precisa ver os outros
-						}
-					}
-
-					if (acertou) {
-						if (atravessaParedes || temLinhaDeVisao(px, py, x, y)) {
-							coletarCelula(x, y, atravessaParedes, celulasDaForma);
-						}
-					}
-				}
-			}
-		}
-
-		if (mainController != null) {
-			for (Personagem p : mainController.getCombatentes()) {
-
-				boolean alvoValido = p.isAtivoNoCombate();
-				if (!alvoValido && p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
-					alvoValido = ((br.com.dantesrpg.model.elementos.ObjetoDestrutivel) p).isIntacto();
-				}
-				if (!alvoValido)
-					continue;
-
-				if (personagemIntersecaForma(p, celulasDaForma)) {
-						boolean isAliado = p.getFaccao().equals(ator.getFaccao());
-						if (p == ator && !habilidade.afetaSiMesmo())
-							continue;
-						if (isAliado && !habilidade.afetaAliados())
-							continue;
-						if (!isAliado && !habilidade.afetaInimigos() && !p.getFaccao().equals("OBJETO"))
-							continue;
-						if (ator.isClone() && p.isClone()) {
-							if (ator.getCriador() == p.getCriador()) {
-								// São irmãos de invocação. Não pode atacar.
-								continue;
-							}
-						}
-						alvosEncontrados.add(p);
-				}
-			}
-		}
-		return alvosEncontrados;
-	}
-
-	private boolean personagemIntersecaForma(Personagem personagem, Set<Pane> celulasDaForma) {
-		if (personagem == null || celulasDaForma == null || celulasDaForma.isEmpty())
-			return false;
-
-		for (int y = personagem.getPosY(); y < personagem.getPosY() + personagem.getTamanhoY(); y++) {
-			for (int x = personagem.getPosX(); x < personagem.getPosX() + personagem.getTamanhoX(); x++) {
-				if (!dentroDoGrid(x, y))
-					continue;
-
-				if (celulasDaForma.contains(celulasDoGrid[x][y])) {
-					return true;
-				}
-			}
-		}
-
-		return false;
+		if (aoeCalc == null)
+			return new ArrayList<>();
+		return aoeCalc.encontrarAlvosNaForma(centroX, centroY, habilidade, ator);
 	}
 
 	public void sairModoSelecao() {
@@ -2038,10 +1637,30 @@ public class MapController {
 		atualizarBotaoPularSquad();
 	}
 
+	public boolean isModoMovimentoLivre() {
+		return this.modoMovimentoLivre;
+	}
+
 	public void toggleModoMovimentoLivre() {
-		this.modoMovimentoLivre = !this.modoMovimentoLivre; // Inverte o estado
+		toggleModoMovimentoLivre(!this.modoMovimentoLivre);
+	}
+
+	public void toggleModoMovimentoLivre(boolean estado) {
+		if (this.modoMovimentoLivre == estado)
+			return;
+		this.modoMovimentoLivre = estado;
+
+		if (btnMovimentoLivre != null)
+			btnMovimentoLivre.setSelected(estado);
 
 		if (this.modoMovimentoLivre) {
+			if (btnEditorMapa != null)
+				btnEditorMapa.setSelected(false);
+			if (this.modoEditor) {
+				this.modoEditor = false;
+				fecharJanelaEditor();
+			}
+
 			System.out.println("MAPA: Modo Movimento Livre ATIVADO.");
 			mapGrid.getScene().setCursor(javafx.scene.Cursor.OPEN_HAND);
 
@@ -2075,6 +1694,20 @@ public class MapController {
 		System.out.println("MAPA: Desenhando domínio [" + dominio.getId() + "] ("
 				+ dominio.getCoordenadas().size() + " tiles) — " + donoNome);
 
+		// Carrega sprite overlay se o domínio tiver texturePath
+		Image spriteOverlay = null;
+		if (dominio.getTexturePath() != null) {
+			try {
+				spriteOverlay = ImageCache.get(dominio.getTexturePath(), CELL_SIZE, CELL_SIZE);
+				if (spriteOverlay != null && spriteOverlay.isError())
+					spriteOverlay = null;
+			} catch (Exception e) {
+				System.err.println("MAPA: Sprite de domínio não encontrado: " + dominio.getTexturePath());
+			}
+		}
+
+		String fxId = "dominio-fx-" + dominio.getId();
+
 		// Itera pelas coordenadas reais do domínio (suporta formas irregulares/fusões)
 		for (long coordKey : dominio.getCoordenadas()) {
 			int x = (int) (coordKey >> 32);
@@ -2084,6 +1717,18 @@ public class MapController {
 				if (celulaDoGrid != null) {
 					celulaDoGrid.getStyleClass().add(dominio.getCssClass());
 					celulasVisuais.add(celulaDoGrid);
+
+					// Adiciona sprite overlay (ImageView) se disponível
+					if (spriteOverlay != null) {
+						ImageView fxView = new ImageView(spriteOverlay);
+						fxView.setFitWidth(CELL_SIZE);
+						fxView.setFitHeight(CELL_SIZE);
+						fxView.setPreserveRatio(false);
+						fxView.setMouseTransparent(true);
+						fxView.setOpacity(dominio.getOverlayOpacity());
+						fxView.setId(fxId);
+						celulaDoGrid.getChildren().add(fxView);
+					}
 				}
 			}
 		}
@@ -2097,9 +1742,12 @@ public class MapController {
 		if (removido == null || celulas == null)
 			return;
 
+		String fxId = "dominio-fx-" + dominioId;
 		System.out.println("MAPA: Limpando domínio [" + dominioId + "].");
 		for (Pane cell : celulas) {
 			cell.getStyleClass().remove(removido.getCssClass());
+			// Remove sprite overlays do domínio
+			cell.getChildren().removeIf(node -> fxId.equals(node.getId()));
 		}
 	}
 
@@ -2166,68 +1814,26 @@ public class MapController {
 	}
 
 	public void desenharAuraDarrell(Personagem centro) {
-		// Limpa anterior
-		for (Pane cell : celulasAuraDarrell) {
-			cell.getStyleClass().remove("zona-aura-darrell");
-		}
-		celulasAuraDarrell.clear();
-
-		// Desenha nova (Raio 3 = 6x6 aproximado, ou 7x7 centrado. Vamos usar 7x7 para ficar simétrico com o centro)
-		int raio = 3;
-
-		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
-			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
-				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane celulaDoGrid = celulasDoGrid[x][y];
-					if (celulaDoGrid != null) {
-						celulaDoGrid.getStyleClass().add("zona-aura-darrell");
-						celulasAuraDarrell.add(celulaDoGrid);
-					}
-				}
-			}
-		}
+		if (tokenRenderer != null)
+			tokenRenderer.desenharAuraDarrell(centro);
 	}
 
 	// --- AURA PRESENÇA DO ZERO (Zeraphon) ---
 	public void desenharAuraZero(Personagem centro) {
-		for (Pane cell : celulasAuraZero) {
-			cell.getStyleClass().remove("zona-aura-zero");
-		}
-		celulasAuraZero.clear();
+		if (tokenRenderer != null)
+			tokenRenderer.desenharAuraZero(centro);
+	}
 
-		int raio = 3; // 6x6 → raio 3 centrado
-		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
-			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
-				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane celulaDoGrid = celulasDoGrid[x][y];
-					if (celulaDoGrid != null) {
-						celulaDoGrid.getStyleClass().add("zona-aura-zero");
-						celulasAuraZero.add(celulaDoGrid);
-					}
-				}
-			}
-		}
+	// --- AURA DE SANGUE (Lillith — Mergulho) ---
+	public void desenharAuraSangue(Personagem centro) {
+		if (tokenRenderer != null)
+			tokenRenderer.desenharAuraSangue(centro);
 	}
 
 	// --- AURA BAD OMEN (Vampiro V2) ---
 	public void desenharAuraBadOmen(Personagem centro) {
-		for (Pane cell : celulasAuraBadOmen) {
-			cell.getStyleClass().remove("zona-aura-bad-omen");
-		}
-		celulasAuraBadOmen.clear();
-
-		int raio = 2; // 5x5 → raio 2 centrado
-		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
-			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
-				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane celulaDoGrid = celulasDoGrid[x][y];
-					if (celulaDoGrid != null) {
-						celulaDoGrid.getStyleClass().add("zona-aura-bad-omen");
-						celulasAuraBadOmen.add(celulaDoGrid);
-					}
-				}
-			}
-		}
+		if (tokenRenderer != null)
+			tokenRenderer.desenharAuraBadOmen(centro);
 	}
 
 	private int obterAlcanceEfetivo(Personagem ator, Habilidade habilidade) {
@@ -2244,67 +1850,6 @@ public class MapController {
 		return alcanceFinal;
 	}
 
-	private boolean coletarCelula(int x, int y, boolean atravessaParedes, Set<Pane> celulasColetadas) {
-		if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-			Pane cell = celulasDoGrid[x][y];
-			if (cell != null) {
-				if (paredesGrid[x][y] && !atravessaParedes) {
-					Personagem p = getPersonagemNaCelula(x, y);
-					boolean isObjeto = (p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel);
-					if (!isObjeto) {
-						return false;
-					}
-				}
-
-				celulasColetadas.add(cell);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private void desenharBarrasDeVidaObjetos(List<Personagem> combatentes) {
-		// Limpa barras antigas de todas as células (removemos qualquer Node filho que seja barra)
-		for (int x = 0; x < gridLargura; x++) {
-			for (int y = 0; y < gridAltura; y++) {
-				Pane cell = celulasDoGrid[x][y];
-				if (cell != null) {
-					cell.getChildren().removeIf(node -> node.getStyleClass().contains("obj-hp-bar"));
-				}
-			}
-		}
-
-		for (Personagem p : combatentes) {
-			// Verifica se é objeto e se está danificado
-			if (p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
-				if (p.getVidaAtual() < p.getVidaMaxima() && p.isVivo()) {
-					Pane cell = celulasDoGrid[p.getPosX()][p.getPosY()];
-					if (cell != null) {
-						double pct = (double) p.getVidaAtual() / (double) p.getVidaMaxima();
-
-						// Fundo da barra (Vermelho escuro)
-						javafx.scene.shape.Rectangle bgBar = new javafx.scene.shape.Rectangle(5, 5, CELL_SIZE - 10, 6);
-						bgBar.setFill(Color.DARKRED);
-						bgBar.getStyleClass().add("obj-hp-bar");
-
-						// Frente da barra (Verde/Amarelo/Vermelho dependendo do dano)
-						javafx.scene.shape.Rectangle hpBar = new javafx.scene.shape.Rectangle(5, 5,
-								(CELL_SIZE - 10) * pct, 6);
-						if (pct > 0.5)
-							hpBar.setFill(Color.LIME);
-						else if (pct > 0.25)
-							hpBar.setFill(Color.ORANGE);
-						else
-							hpBar.setFill(Color.RED);
-						hpBar.getStyleClass().add("obj-hp-bar");
-
-						cell.getChildren().addAll(bgBar, hpBar);
-					}
-				}
-			}
-		}
-	}
-
 	public void entrarModoSpawn(String idMonstro, int quantidade) {
 		this.modoSpawnInimigo = true;
 		this.idMonstroEmSpawn = idMonstro;
@@ -2313,6 +1858,20 @@ public class MapController {
 		sairModoSelecao();
 		mapGrid.getScene().setCursor(javafx.scene.Cursor.CLOSED_HAND);
 		System.out.println("MAPA: Modo Spawn Ativo (" + quantidade + " cargas) para: " + idMonstro);
+	}
+
+	/**
+	 * Cancela o modo spawn local deste MapController. Chamado pelo CombatController
+	 * quando as cargas se esgotam em qualquer instância, para manter embedded e
+	 * externo sincronizados.
+	 */
+	public void cancelarModoSpawn() {
+		this.modoSpawnInimigo = false;
+		this.idMonstroEmSpawn = null;
+		this.cargasSpawnRestantes = 0;
+		if (mapGrid != null && mapGrid.getScene() != null) {
+			mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
+		}
 	}
 
 	public br.com.dantesrpg.model.map.MapMetadata extrairMetadados() {
@@ -2336,12 +1895,13 @@ public class MapController {
 		// Escaneia Inimigos Atuais (Para criar o Preset)
 		if (mainController != null) {
 			for (Personagem p : mainController.getCombatentes()) {
-				// Salva apenas INIMIGOS e que NÃO sejam Objetos Destrutíveis 
+				// Salva apenas INIMIGOS e que NÃO sejam Objetos Destrutíveis
 				if (!mainController.isPlayer(p) && !(p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel)) {
 					// Tenta extrair o ID original do nome (Ex: "Demônio Menor 1" -> "DemonioMenor")
 					// Isso é complexo se não guardarmos o ID original.
-					
-					// TRUQUE: Vou salvar o nome base limpo e torcer para bater com o bestiário, ou idealmente, adicionar um campo 'idOriginal' no Personagem. (muita FÉ)
+
+					// TRUQUE: Vou salvar o nome base limpo e torcer para bater com o bestiário, ou
+					// idealmente, adicionar um campo 'idOriginal' no Personagem. (muita FÉ)
 
 					// usando um método auxiliar de limpeza de nome
 					String idEstimado = p.getNome().replaceAll("\\s\\d+$", ""); // Remove numero final
@@ -2357,133 +1917,16 @@ public class MapController {
 	}
 
 	public void iniciarSelecaoSquad(List<Personagem> clones, Habilidade habilidade, int rolagem) {
-		this.modoSquad = true;
-		this.modoSelecaoAlvo = true;
-		this.habilidadeAtual = habilidade;
-		this.rolagemSquadGlobal = rolagem;
-		this.filaClonesSquad.clear();
-		this.ataquesDeclaradosSquad.clear();
-		this.filaClonesSquad.addAll(clones);
-		atualizarBotaoPularSquad();
-
-		// Inicia o primeiro
-		prepararProximoCloneSquad();
-	}
-
-	private void prepararProximoCloneSquad() {
-		while (!filaClonesSquad.isEmpty()) {
-			Personagem proximo = filaClonesSquad.peek();
-			if (proximo != null && proximo.isAtivoNoCombate()) {
-				break;
-			}
-			filaClonesSquad.poll();
-		}
-
-		if (filaClonesSquad.isEmpty()) {
-			finalizarSquad();
-			return;
-		}
-
-		// Pega o próximo da fila
-		this.atorAtual = filaClonesSquad.peek();
-
-		System.out.println("MAPA (SQUAD): Vez de " + atorAtual.getNome());
-		atualizarBotaoPularSquad();
-		prepararMiraParaCloneAtual();
-	}
-
-	private void prepararMiraParaCloneAtual() {
-		if (atorAtual == null)
-			return;
-
-		this.modoSelecaoAlvo = true;
-		toggleMover.setSelected(false);
-		toggleMirar.setSelected(true);
-
-		limparCanvas();
-		limparDestaquesAlcance();
-		calcularEExibirAtaqueRange(atorAtual, habilidadeAtual);
-
-		if (mapGrid.getScene() != null) {
-			mapGrid.getScene().setCursor(javafx.scene.Cursor.CROSSHAIR);
-		}
+		squadHandler.iniciarSelecaoSquad(clones, habilidade, rolagem);
 	}
 
 	private void tratarCliqueSquad(Pane cell, int x, int y) {
-		if (toggleMover.isSelected() && atorAtual.getRaca() != null && !atorAtual.getRaca().podeSeMover(atorAtual)) {
-			System.out.println("SQUAD: " + atorAtual.getNome() + " nao pode se mover enquanto estiver em postura.");
-			return;
-		}
-		// CLONE ATUAL: atorAtual
-
-		// --- LÓGICA DE MOVIMENTO (Se toggleMover estiver ativo) ---
-		if (toggleMover.isSelected()) {
-			// Verifica se clicou em uma célula válida de movimento (Azul)
-			if (celulasAlcanceMovimento.contains(cell)) {
-
-				// Verifica se a célula está vazia (não pode andar em cima de outro)
-				// (getPersonagemNaCelula retorna null se vazio)
-				if (getPersonagemNaCelula(x, y) == null) {
-					int dist = calcularDistancia(atorAtual.getPosX(), atorAtual.getPosY(), x, y);
-
-					if (dist != -1 && dist <= atorAtual.getMovimentoRestanteTurno()) {
-						// Move
-						atorAtual.setPosX(x);
-						atorAtual.setPosY(y);
-						atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - dist);
-
-						// Atualiza Visual
-						desenharPeoes(mainController.getCombatentes());
-
-						// Recalcula alcance a partir da nova posição
-						calcularEExibirMovimento(atorAtual);
-						return;
-					}
-				}
-			}
-		}
-
-		// --- LÓGICA DE ATAQUE ---
-		if (toggleMirar.isSelected()) {
-			// Verifica se a célula está no alcance de ataque (Vermelho)
-			if (celulasAlcanceMovimento.contains(cell)) {
-
-				Personagem alvo = getPersonagemNaCelula(x, y);
-
-				// Clicou em um Inimigo/Objeto Válido
-				if (alvo != null && !alvo.equals(atorAtual)) {
-					// Validação Fogo Amigo (Clone vs Clone do mesmo dono)
-					if (alvo.isClone() && alvo.getCriador() == atorAtual.getCriador()) {
-						System.out.println("SQUAD: Fogo amigo bloqueado.");
-						return;
-					}
-
-					ataquesDeclaradosSquad.put(atorAtual, alvo);
-					System.out.println("SQUAD: " + atorAtual.getNome() + " travou mira em " + alvo.getNome());
-
-					filaClonesSquad.poll();
-					prepararProximoCloneSquad();
-				}
-			}
-		}
-	}
-
-	private void finalizarSquad() {
-		Map<Personagem, Personagem> ataquesFinalizados = new HashMap<>(ataquesDeclaradosSquad);
-		this.modoSquad = false;
-		this.filaClonesSquad.clear();
-		atualizarBotaoPularSquad();
-		sairModoSelecao();
-		mainController.retornarDoSquadComAlvos(ataquesFinalizados);
+		squadHandler.tratarCliqueSquad(cell, x, y);
 	}
 
 	@FXML
 	private void onPularSquadClick() {
-		if (!modoSquad)
-			return;
-
-		System.out.println("SQUAD: Seleção encerrada manualmente. Clones restantes serão pulados.");
-		finalizarSquad();
+		squadHandler.pularSquad();
 	}
 
 	public javafx.util.Pair<Integer, Integer> encontrarCelulaLivreMaisProxima(int centroX, int centroY) {
@@ -2586,18 +2029,9 @@ public class MapController {
 		return gridEfeitos[x][y];
 	}
 
-	public boolean isModoMovimentoLivre() {
-		return this.modoMovimentoLivre;
-	}
-
 	private void limparHitboxesExtras() {
-		for (int x = 0; x < gridLargura; x++) {
-			for (int y = 0; y < gridAltura; y++) {
-				if (celulasDoGrid[x][y] != null) {
-					celulasDoGrid[x][y].getStyleClass().remove("enemy-hitbox-extra");
-				}
-			}
-		}
+		if (tokenRenderer != null)
+			tokenRenderer.limparHitboxesExtras();
 	}
 
 }
