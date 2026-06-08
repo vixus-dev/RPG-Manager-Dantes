@@ -67,12 +67,12 @@ public class LojaController {
 
 	private Personagem jogadorAtual;
 	private CombatController mainController;
-	private List<Oferta> ofertasAtuais = new ArrayList<>(); // Lista de objetos Oferta
+	private List<Oferta> ofertasAtuais = new ArrayList<>();
+	private boolean modoOverclock = false;
 
-	// Classe auxiliar para guardar o item e o desconto específico desta loja
 	private class Oferta {
 		Item item;
-		double desconto; // 0.0 a 1.0 (0.5 = 50% off)
+		double desconto;
 
 		public Oferta(Item item, double desconto) {
 			this.item = item;
@@ -86,7 +86,6 @@ public class LojaController {
 
 	@FXML
 	public void initialize() {
-		// Configuração das células do ComboBox
 		playerSelectorComboBox.setCellFactory(lv -> new ListCell<Personagem>() {
 			@Override
 			protected void updateItem(Personagem p, boolean empty) {
@@ -113,7 +112,6 @@ public class LojaController {
 	public void inicializarLoja(CombatController controller, EstadoCombate estado, String idLojaInicial) {
 		this.mainController = controller;
 
-		// Carrega Jogadores
 		playerSelectorComboBox.getItems().clear();
 		List<Personagem> players = estado.getCombatentes().stream().filter(p -> p.getFaccao().equals("JOGADOR"))
 				.collect(Collectors.toList());
@@ -124,10 +122,8 @@ public class LojaController {
 			playerSelectorComboBox.setValue(this.jogadorAtual);
 		}
 
-		// Carrega lista de arquivos de loja
 		carregarListaDeArquivosDeLoja();
 
-		// Seleciona loja inicial (se houver, senão a primeira)
 		if (idLojaInicial != null && comboSelecaoLoja.getItems().contains(idLojaInicial)) {
 			comboSelecaoLoja.getSelectionModel().select(idLojaInicial);
 		} else if (!comboSelecaoLoja.getItems().isEmpty()) {
@@ -166,17 +162,23 @@ public class LojaController {
 
 	private void carregarLoja(String nomeArquivo) {
 		this.ofertasAtuais.clear();
+		this.modoOverclock = false;
 		Gson gson = new Gson();
 		String resourcePath = "/data/lojas/" + nomeArquivo + ".json";
 
 		try (InputStreamReader reader = new InputStreamReader(FileLoader.carregarArquivo(resourcePath),
 				StandardCharsets.UTF_8)) {
-			Type mapType = new TypeToken<Map<String, List<Map<String, Object>>>>() {
+			Type mapType = new TypeToken<Map<String, Object>>() {
 			}.getType();
-			Map<String, List<Map<String, Object>>> data = gson.fromJson(reader, mapType);
+			Map<String, Object> data = gson.fromJson(reader, mapType);
 
-			// Lê a lista de ofertas com descontos
-			List<Map<String, Object>> listaItens = data.get("itensOfertados");
+			// Detecta loja de overclock
+			String tipoLoja = (String) data.getOrDefault("tipo", "normal");
+			if ("overclock".equalsIgnoreCase(tipoLoja)) {
+				this.modoOverclock = true;
+			}
+
+			List<Map<String, Object>> listaItens = (List<Map<String, Object>>) data.get("itensOfertados");
 
 			if (listaItens != null) {
 				for (Map<String, Object> entry : listaItens) {
@@ -192,7 +194,6 @@ public class LojaController {
 					}
 				}
 			} else {
-				// Fallback para lista antiga simples (se houver)
 				System.out.println("Aviso: Formato antigo de loja detectado ou lista vazia.");
 			}
 
@@ -214,7 +215,7 @@ public class LojaController {
 		labelMoedasPrata.setText(inv.getMoedasPrata() + " Prata");
 		labelMoedasBronze.setText(inv.getMoedasBronze() + " Bronze");
 
-		// Renderiza Ofertas
+		// Renderiza Ofertas (tokens à venda)
 		if (ofertasAtuais.isEmpty()) {
 			itensVendaContainer.getChildren().add(new Label("Loja vazia."));
 		} else {
@@ -223,42 +224,278 @@ public class LojaController {
 			}
 		}
 
-		// Renderiza Inventário
-		Map<String, Integer> inventarioAgrupado = inv.getItensAgrupados();
-		for (Map.Entry<String, Integer> entry : inventarioAgrupado.entrySet()) {
-			Item itemModelo = mainController.getItem(entry.getKey());
-			if (itemModelo != null) {
-				inventarioJogadorContainer.getChildren().add(criarCardVendaJogador(itemModelo, entry.getValue()));
+		if (modoOverclock) {
+			// Mostra contagem de tokens do jogador
+			int tokensDisponiveis = contarTokensOverclock();
+			Label lblTokens = new Label("\u26A1 Tokens de Overclock: " + tokensDisponiveis);
+			lblTokens.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; -fx-font-size: 14; -fx-padding: 5 0 10 0;");
+			inventarioJogadorContainer.getChildren().add(lblTokens);
+
+			// --- EQUIPAMENTO ATUAL ---
+			Label lblEquipados = new Label("--- Equipado ---");
+			lblEquipados.setStyle("-fx-text-fill: #00FFFF; -fx-font-weight: bold; -fx-font-size: 13;");
+			inventarioJogadorContainer.getChildren().add(lblEquipados);
+
+			if (jogadorAtual.getArmaEquipada() != null) {
+				inventarioJogadorContainer.getChildren().add(
+						criarCardOverclock(jogadorAtual.getArmaEquipada(), "Arma"));
+			}
+			if (jogadorAtual.getArmaduraEquipada() != null) {
+				inventarioJogadorContainer.getChildren().add(
+						criarCardOverclock(jogadorAtual.getArmaduraEquipada(), "Armadura"));
+			}
+			if (jogadorAtual.getAmuleto1() != null) {
+				inventarioJogadorContainer.getChildren().add(
+						criarCardOverclock(jogadorAtual.getAmuleto1(), "Amuleto 1"));
+			}
+			if (jogadorAtual.getAmuleto2() != null) {
+				inventarioJogadorContainer.getChildren().add(
+						criarCardOverclock(jogadorAtual.getAmuleto2(), "Amuleto 2"));
+			}
+
+			// --- ITENS DO INVENTÁRIO (Armas, Armaduras, Amuletos) ---
+			Map<String, Integer> inventarioAgrupado = inv.getItensAgrupados();
+			boolean temEquipamentoNoInv = false;
+			for (Map.Entry<String, Integer> entry : inventarioAgrupado.entrySet()) {
+				Item itemModelo = mainController.getItem(entry.getKey());
+				if (itemModelo != null) {
+					int ocGrau = inv.getOverclockDoItem(entry.getKey());
+					if (ocGrau > 0) itemModelo.setGrauOverclock(ocGrau);
+				}
+				if (itemModelo != null && (itemModelo instanceof Arma || itemModelo instanceof Armadura || itemModelo instanceof Amuleto)) {
+					if (!temEquipamentoNoInv) {
+						Label lblInv = new Label("--- Invent\u00e1rio ---");
+						lblInv.setStyle("-fx-text-fill: #00AAAA; -fx-font-weight: bold; -fx-font-size: 13; -fx-padding: 10 0 0 0;");
+						inventarioJogadorContainer.getChildren().add(lblInv);
+						temEquipamentoNoInv = true;
+					}
+					String slotLabel = "Inv";
+					if (itemModelo instanceof Arma) slotLabel = "Arma (Inv)";
+					else if (itemModelo instanceof Armadura) slotLabel = "Armad. (Inv)";
+					else if (itemModelo instanceof Amuleto) slotLabel = "Amul. (Inv)";
+					inventarioJogadorContainer.getChildren().add(
+							criarCardOverclock(itemModelo, slotLabel));
+				}
+			}
+		} else {
+			// Modo loja normal: Renderiza Inventário
+			Map<String, Integer> inventarioAgrupado = inv.getItensAgrupados();
+			for (Map.Entry<String, Integer> entry : inventarioAgrupado.entrySet()) {
+				Item itemModelo = mainController.getItem(entry.getKey());
+				if (itemModelo != null) {
+					int ocGrau = inv.getOverclockDoItem(entry.getKey());
+					if (ocGrau > 0) itemModelo.setGrauOverclock(ocGrau);
+					inventarioJogadorContainer.getChildren().add(criarCardVendaJogador(itemModelo, entry.getValue()));
+				}
 			}
 		}
 	}
+
+	// ======================== OVERCLOCK ========================
+
+	private int contarTokensOverclock() {
+		Map<String, Integer> itens = jogadorAtual.getInventario().getItensAgrupados();
+		// O inventário armazena por getTipo() que em Consumivel retorna o tipoId (chave do JSON)
+		return itens.getOrDefault("TokenDeOverclock", 0);
+	}
+
+	private void consumirTokenOverclock() {
+		Item tokenModelo = mainController.getItem("TokenDeOverclock");
+		if (tokenModelo != null) {
+			jogadorAtual.getInventario().removerItem(tokenModelo);
+		}
+	}
+
+	private HBox criarCardOverclock(Item equipamento, String slotNome) {
+		HBox card = new HBox(10.0);
+		card.setStyle("-fx-border-color: #00FFFF; -fx-padding: 8; "
+				+ "-fx-background-color: rgba(0,255,255,0.05); -fx-border-radius: 3;");
+		card.setOnMouseClicked(e -> popularPreview(equipamento));
+
+		int grauAtual = equipamento.getGrauOverclock();
+		boolean isMax = grauAtual >= Item.OVERCLOCK_MAXIMO;
+
+		// Slot + Nome
+		String nomeExibicao = equipamento.isOverclockado() ? equipamento.getNomeComOverclock() : equipamento.getNome();
+		Label lblSlot = new Label("[" + slotNome + "]");
+		lblSlot.setStyle("-fx-text-fill: #888; -fx-font-weight: bold;");
+
+		Label lblNome = new Label(nomeExibicao);
+		if (equipamento.isOverclockado()) {
+			lblNome.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; "
+					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
+		} else {
+			lblNome.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+		}
+
+		// Grau
+		Label lblGrau = new Label("Grau: " + grauAtual + "/" + Item.OVERCLOCK_MAXIMO);
+		lblGrau.setStyle("-fx-text-fill: " + (isMax ? "gold" : "#00FFFF") + ";");
+
+		// Preview do que muda
+		String previewStats = gerarPreviewOverclock(equipamento);
+		Label lblPreview = new Label(previewStats);
+		lblPreview.setStyle("-fx-text-fill: #88FF88; -fx-font-size: 11;");
+
+		Pane spacer = new Pane();
+		HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+		Button btnOverclock = new Button(isMax ? "MAX" : "\u26A1 Overclockar");
+		if (isMax) {
+			btnOverclock.setDisable(true);
+			btnOverclock.setStyle("-fx-text-fill: gold; -fx-font-weight: bold;");
+		} else {
+			boolean temToken = contarTokensOverclock() > 0;
+			btnOverclock.setDisable(!temToken);
+			btnOverclock.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold;");
+			btnOverclock.setOnAction(e -> executarOverclock(equipamento, slotNome));
+		}
+
+		VBox infoBox = new VBox(2);
+		infoBox.getChildren().addAll(lblNome, lblGrau, lblPreview);
+
+		card.getChildren().addAll(lblSlot, infoBox, spacer, btnOverclock);
+		return card;
+	}
+
+	private String gerarPreviewOverclock(Item equipamento) {
+		int grauAtual = equipamento.getGrauOverclock();
+		if (grauAtual >= Item.OVERCLOCK_MAXIMO) return "Overclock MAXIMO!";
+
+		double multAtual = equipamento.getMultiplicadorOverclock();
+		double multProximo = 1.0 + Item.OVERCLOCK_BONUS_POR_GRAU * (grauAtual + 1);
+
+		if (equipamento instanceof Arma) {
+			Arma arma = (Arma) equipamento;
+			int danoAtual = arma.getDanoBase();
+			int danoProximo = (int) Math.round(arma.getDanoBaseOriginal() * multProximo);
+			return "Dano: " + danoAtual + " \u2192 " + danoProximo;
+		} else if (equipamento instanceof Armadura) {
+			Armadura arm = (Armadura) equipamento;
+			int defAtual = arm.getArmaduraBase();
+			int defProximo = (int) Math.round(arm.getArmaduraBaseOriginal() * multProximo);
+			return "Defesa: " + defAtual + " \u2192 " + defProximo;
+		} else if (equipamento instanceof Amuleto) {
+			Amuleto amu = (Amuleto) equipamento;
+			int defAtual = amu.getArmaduraBonus();
+			int defProximo = (int) Math.round(amu.getArmaduraBonusOriginal() * multProximo);
+			if (amu.getArmaduraBonusOriginal() > 0) {
+				return "Defesa: " + defAtual + " \u2192 " + defProximo;
+			}
+			return "+" + (int) (multProximo * 100) + "% nos modificadores";
+		}
+		return "";
+	}
+
+	private void executarOverclock(Item equipamento, String slotNome) {
+		if (equipamento.getGrauOverclock() >= Item.OVERCLOCK_MAXIMO) {
+			Alert alert = new Alert(Alert.AlertType.WARNING, "Este equipamento j\u00e1 est\u00e1 no grau m\u00e1ximo de Overclock!");
+			alert.show();
+			return;
+		}
+
+		if (contarTokensOverclock() <= 0) {
+			Alert alert = new Alert(Alert.AlertType.WARNING, "Voc\u00ea n\u00e3o possui Tokens de Overclock!");
+			alert.show();
+			return;
+		}
+
+		// Se o item vem do inventário, equipa automaticamente (swap com o atual)
+		boolean veioDoInventario = slotNome.contains("Inv");
+		if (veioDoInventario) {
+			equiparItemDoInventario(equipamento);
+		}
+
+		int grauAnterior = equipamento.getGrauOverclock();
+		int novoGrau = grauAnterior + 1;
+
+		// Consome 1 token
+		consumirTokenOverclock();
+
+		// Aplica overclock
+		equipamento.setGrauOverclock(novoGrau);
+
+		System.out.println("OVERCLOCK: " + jogadorAtual.getNome() + " overclockou [" + slotNome + "] "
+				+ equipamento.getNome() + " para grau " + novoGrau + "!");
+
+		mainController.salvarEstadoJogadores();
+		atualizarUI();
+
+		// Feedback visual
+		Alert info = new Alert(Alert.AlertType.INFORMATION);
+		info.setTitle("Overclock Realizado!");
+		info.setHeaderText("\u26A1 " + equipamento.getNomeComOverclock());
+		String msgExtra = veioDoInventario ? "\nItem foi equipado automaticamente." : "";
+		info.setContentText("Grau " + grauAnterior + " \u2192 " + novoGrau
+				+ "\nB\u00f4nus total: +" + (int) (novoGrau * Item.OVERCLOCK_BONUS_POR_GRAU * 100) + "% nos atributos base"
+				+ msgExtra);
+		info.show();
+	}
+
+	private void equiparItemDoInventario(Item equipamento) {
+		Inventario inv = jogadorAtual.getInventario();
+
+		if (equipamento instanceof Arma) {
+			Arma armaAtual = jogadorAtual.getArmaEquipada();
+			// Remove do inventário
+			inv.removerItem(equipamento);
+			// Devolve a arma atual ao inventário (se existir)
+			if (armaAtual != null) {
+				inv.adicionarItem(armaAtual);
+			}
+			// Equipa a nova
+			jogadorAtual.setArmaEquipada((Arma) equipamento);
+			System.out.println("OVERCLOCK: Equipou " + equipamento.getNome() + " automaticamente (arma).");
+
+		} else if (equipamento instanceof Armadura) {
+			Armadura armaduraAtual = jogadorAtual.getArmaduraEquipada();
+			inv.removerItem(equipamento);
+			if (armaduraAtual != null) {
+				inv.adicionarItem(armaduraAtual);
+			}
+			jogadorAtual.setArmaduraEquipada((Armadura) equipamento);
+			System.out.println("OVERCLOCK: Equipou " + equipamento.getNome() + " automaticamente (armadura).");
+
+		} else if (equipamento instanceof Amuleto) {
+			// Equipa no slot amuleto1 por padrão
+			Amuleto amuletoAtual = jogadorAtual.getAmuleto1();
+			inv.removerItem(equipamento);
+			if (amuletoAtual != null) {
+				inv.adicionarItem(amuletoAtual);
+			}
+			jogadorAtual.setAmuleto1((Amuleto) equipamento);
+			System.out.println("OVERCLOCK: Equipou " + equipamento.getNome() + " automaticamente (amuleto 1).");
+		}
+	}
+
+	// ======================== LOJA NORMAL ========================
 
 	private HBox criarCardOferta(Oferta oferta) {
 		HBox card = new HBox(10.0);
 		card.setStyle("-fx-border-color: grey; -fx-padding: 5;");
 		card.setOnMouseClicked(e -> popularPreview(oferta.item));
 
-		int precoFinal = oferta.getPrecoFinal(); // Quantidade de moedas
-		String moedaTipo = oferta.item.getTipoMoeda(); // Tipo da moeda (OURO, PRATA, BRONZE)
+		int precoFinal = oferta.getPrecoFinal();
+		String moedaTipo = oferta.item.getTipoMoeda();
 
 		String textoPreco;
 		String corPreco = "white";
 
-		// Formatação Visual Baseada no TIPO, não no VALOR
 		if ("OURO".equalsIgnoreCase(moedaTipo)) {
 			textoPreco = precoFinal + " Ouro";
 			corPreco = "gold";
 		} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
 			textoPreco = precoFinal + " Prata";
-			corPreco = "silver"; // ou lightgrey
+			corPreco = "silver";
 		} else {
 			textoPreco = precoFinal + " Bronze";
 			corPreco = "#cd7f32";
 		}
 
-		Label nomeLabel = new Label(oferta.item.getNome());
-		if (oferta.item.getNome().contains("Overclock")) {
-			nomeLabel.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold;");
+		Label nomeLabel = new Label(oferta.item.getNomeComOverclock());
+		if (oferta.item.isOverclockado() || oferta.item.getNome().contains("Overclock")) {
+			nomeLabel.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; "
+					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
 		} else {
 			nomeLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
 		}
@@ -271,7 +508,7 @@ public class LojaController {
 		if (oferta.desconto > 0) {
 			double desconto = oferta.desconto;
 
-			if (oferta.item.getNome().contains("Overclock")) {
+			if (oferta.item.isOverclockado() || oferta.item.getNome().contains("Overclock")) {
 				corDesconto = "#00FFFF";
 			} else if (desconto <= 0.20) {
 				corDesconto = "#00FF2E";
@@ -303,7 +540,6 @@ public class LojaController {
 		Button btnComprar = new Button("Comprar");
 		btnComprar.setOnAction(e -> comprarItem(oferta));
 
-		// Validação de Dinheiro Estrita (Baseada no TIPO)
 		boolean podeComprar = false;
 		Inventario inv = jogadorAtual.getInventario();
 
@@ -311,7 +547,7 @@ public class LojaController {
 			podeComprar = inv.getMoedasOuro() >= precoFinal;
 		} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
 			podeComprar = inv.getMoedasPrata() >= precoFinal;
-		} else { // BRONZE
+		} else {
 			podeComprar = inv.getMoedasBronze() >= precoFinal;
 		}
 
@@ -362,7 +598,7 @@ public class LojaController {
 
 			System.out.println("LOJA: Comprou " + oferta.item.getNome());
 			mainController.salvarEstadoJogadores();
-			atualizarUI(); // Usa atualizarUI em português, corrigi o typo anterior
+			atualizarUI();
 		} else {
 			Alert alert = new Alert(Alert.AlertType.WARNING, "Moeda incorreta ou insuficiente!");
 			alert.show();
@@ -374,8 +610,14 @@ public class LojaController {
 		card.setStyle("-fx-border-color: lightblue; -fx-padding: 5;");
 		card.setOnMouseClicked(e -> popularPreview(item));
 
-		Label nomeLabel = new Label(item.getNome() + " (x" + quantidade + ")");
-		nomeLabel.setStyle("-fx-text-fill: white;");
+		String nomeExibicao = item.isOverclockado() ? item.getNomeComOverclock() : item.getNome();
+		Label nomeLabel = new Label(nomeExibicao + " (x" + quantidade + ")");
+		if (item.isOverclockado()) {
+			nomeLabel.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; "
+					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
+		} else {
+			nomeLabel.setStyle("-fx-text-fill: white;");
+		}
 
 		Pane spacer = new Pane();
 		HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
@@ -391,7 +633,7 @@ public class LojaController {
 		TextInputDialog dialog = new TextInputDialog("0");
 		dialog.setTitle("Venda Manual");
 		dialog.setHeaderText("Vendendo: " + item.getNome());
-		dialog.setContentText("Por quanto (Bronze) você vai vender?");
+		dialog.setContentText("Por quanto (Bronze) voc\u00ea vai vender?");
 
 		dialog.getDialogPane().setStyle("-fx-background-color: #222;");
 		dialog.getDialogPane().lookup(".label").setStyle("-fx-text-fill: white;");
@@ -414,24 +656,38 @@ public class LojaController {
 				atualizarUI();
 
 			} catch (NumberFormatException e) {
-				Alert alert = new Alert(Alert.AlertType.ERROR, "Valor inválido!");
+				Alert alert = new Alert(Alert.AlertType.ERROR, "Valor inv\u00e1lido!");
 				alert.show();
 			}
 		}
 	}
 
+	// ======================== PREVIEW ========================
+
 	private void popularPreview(Item item) {
 		if (item == null)
 			return;
 
-		previewNome.setText(item.getNome());
+		// Usa nome com overclock se aplicável
+		String nomeExibicao = item.isOverclockado() ? item.getNomeComOverclock() : item.getNome();
+		previewNome.setText(nomeExibicao);
+		if (item.isOverclockado()) {
+			previewNome.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; "
+					+ "-fx-effect: dropshadow(gaussian, cyan, 4, 0.3, 0, 0);");
+		} else {
+			previewNome.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+		}
 
-		// Descrição para TODOS
-		previewDescricao.setText(item.getDescricao() != null ? item.getDescricao() : "Sem descrição.");
+		previewDescricao.setText(item.getDescricao() != null ? item.getDescricao() : "Sem descri\u00e7\u00e3o.");
 
 		previewStatsPane.getChildren().clear();
 
-		// Stats Específicos de Equipamento
+		// Mostra grau de overclock
+		if (item.isOverclockado()) {
+			addStatLabel("Overclock: Grau " + item.getGrauOverclock() + "/" + Item.OVERCLOCK_MAXIMO
+					+ " (+" + (int) (item.getGrauOverclock() * Item.OVERCLOCK_BONUS_POR_GRAU * 100) + "%)", "cyan");
+		}
+
 		if (item instanceof Arma) {
 			Arma arma = (Arma) item;
 			if (arma.getAtributoMultiplicador() == Atributo.FORCA) {
@@ -480,10 +736,9 @@ public class LojaController {
 				previewStatsPane.getChildren().add(lblHeader);
 
 				for (String nomeHab : arma.getHabilidadesConcedidasNomes()) {
-					Label lblHab = new Label("• " + nomeHab);
+					Label lblHab = new Label("\u2022 " + nomeHab);
 					lblHab.setStyle("-fx-text-fill: gold; -fx-cursor: help;");
 
-					// Cria a habilidade temporariamente para ler os dados
 					Habilidade hab = HabilidadeFactory.criarHabilidadePorNome(nomeHab);
 
 					if (hab != null) {
@@ -509,16 +764,16 @@ public class LojaController {
 							sb.append("\n");
 
 							if (hab.getTamanhoArea() > 0) {
-								sb.append("Área: ").append(hab.getTamanhoArea());
+								sb.append("\u00c1rea: ").append(hab.getTamanhoArea());
 								if (hab.getAnguloCone() > 0) {
-									sb.append(" (Cone ").append(hab.getAnguloCone()).append("º)");
+									sb.append(" (Cone ").append(hab.getAnguloCone()).append("\u00ba)");
 								}
 								sb.append("\n");
 							}
 						}
 
 						Tooltip tp = new Tooltip(sb.toString());
-						tp.setShowDelay(Duration.millis(100)); // Mostra quase instantaneamente
+						tp.setShowDelay(Duration.millis(100));
 						tp.setShowDuration(Duration.seconds(30));
 						lblHab.setTooltip(tp);
 					}
@@ -527,7 +782,6 @@ public class LojaController {
 				}
 			}
 
-			// Exibir modificadores da Arma
 			exibirModificadores(arma.getModificadoresDeAtributo(), arma.getModificadoresStatus());
 		} else if (item instanceof Armadura) {
 			Armadura armadura = (Armadura) item;

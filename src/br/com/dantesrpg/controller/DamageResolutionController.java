@@ -3,6 +3,7 @@ package br.com.dantesrpg.controller;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Habilidade;
+import br.com.dantesrpg.model.habilidades.classe.BashStrike;
 import br.com.dantesrpg.model.util.DamageEvent;
 import br.com.dantesrpg.model.enums.TipoAcao;
 import javafx.fxml.FXML;
@@ -108,9 +109,21 @@ public class DamageResolutionController {
 
 	@FXML
 	private void onConfirmarAction() {
+		// Confirma consumo de munição que foi adiado até este momento
+		if (mainController != null) {
+			mainController.getCombatManager().confirmarMunicaoPendente();
+		}
+
 		// Aplica os danos
+		double danoTotalCausado = 0;
 		for (DamageCell cell : celulasDeDano) {
-			cell.aplicarDanoFinal();
+			danoTotalCausado += cell.aplicarDanoFinal();
+		}
+
+		// Hook: Bash Strike — retorno de dano ao atacante
+		if (habilidade instanceof BashStrike && atacante != null && danoTotalCausado > 0 && mainController != null) {
+			BashStrike.aplicarRetornoDeDano(atacante, danoTotalCausado, estado,
+					mainController.getCombatManager());
 		}
 
 		// Força atualização visual geral após fechar a janela
@@ -240,7 +253,7 @@ public class DamageResolutionController {
 			}
 		}
 
-		public void aplicarDanoFinal() {
+		public double aplicarDanoFinal() {
 			double danoFinal = evento.getValorDano();
 			String selecao = cmbReacao.getValue();
 
@@ -274,11 +287,13 @@ public class DamageResolutionController {
 
 					mainController.getCombatManager().aplicarDanoAoAlvoResolvido(atacante, alvo, danoFinal, false,
 							tipo, estado, 0);
+					evento.aplicarEfeitos(danoFinal);
 				} else {
 					System.out.println(">>> Dano anulado (Esquiva/Bloqueio total). Efeitos on-hit cancelados.");
 				}
-				evento.aplicarEfeitos(danoFinal);
+
 			}
+			return danoFinal;
 		}
 	}
 }

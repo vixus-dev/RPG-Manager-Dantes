@@ -15,6 +15,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 
 // Imports Gson
 import com.google.gson.Gson;
@@ -43,6 +45,7 @@ import java.util.stream.Collectors;
 import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.classes.ClassePlaceholder;
 import br.com.dantesrpg.model.classes.Barbaro;
+import br.com.dantesrpg.model.classes.Campeao;
 import br.com.dantesrpg.model.classes.Feiticeiro;
 import br.com.dantesrpg.model.classes.Ilusionista;
 import br.com.dantesrpg.model.classes.Invocador;
@@ -54,6 +57,7 @@ import br.com.dantesrpg.model.elementos.ObjetoDestrutivel;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.ModoAtaque;
 import br.com.dantesrpg.model.enums.Raridade;
+import br.com.dantesrpg.model.map.Dominio;
 import br.com.dantesrpg.model.enums.TipoAcao;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
@@ -65,6 +69,7 @@ import br.com.dantesrpg.model.racas.HalfDemon;
 import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.racas.Marionette;
 import br.com.dantesrpg.model.racas.RaçaPlaceholder;
+import br.com.dantesrpg.model.racas.Lobisomem;
 import br.com.dantesrpg.model.racas.Vampiro;
 import br.com.dantesrpg.model.util.BarbaroUtils;
 import br.com.dantesrpg.model.util.FileLoader;
@@ -178,6 +183,10 @@ public class CombatController {
 	private String efeitoAndarAtual = "Nenhum";
 	private boolean efeitoAndarAtivo = false;
 
+	// TU Preview na Timeline
+	private Label tuPreviewLabel;
+	private FadeTransition tuPreviewAnimation;
+
 	@FXML
 	public void initialize() {
 		this.combatViewCenterNode = rootPane.getCenter();
@@ -196,6 +205,7 @@ public class CombatController {
 			return;
 		}
 		this.estadoCombate = new EstadoCombate(todosCombatentes);
+		this.estadoCombate.setCombatManager(combatManager);
 
 		for (Personagem p : estadoCombate.getCombatentes()) {
 			if (p.getArmaEquipada() != null) {
@@ -319,6 +329,10 @@ public class CombatController {
 			double maxHeight = screenBounds.getHeight() * 0.80;
 
 			stage.setHeight(maxHeight);
+
+			// Se a janela for fechada sem confirmar (botão X), cancela munição pendente
+			stage.setOnHidden(e -> getCombatManager().cancelarMunicaoPendente());
+
 			stage.show();
 
 		} catch (IOException e) {
@@ -380,10 +394,14 @@ public class CombatController {
 			btnCombateState.setStyle(
 					"-fx-background-color: #550000; -fx-text-fill: red; -fx-border-color: red; -fx-font-weight: bold; -fx-font-size: 14px;");
 
-			// Aplica Contratos Pendentes (Humanos)
+			// Aplica Contratos Pendentes (Humanos) e hooks de início de combate
 			for (Personagem p : estadoCombate.getCombatentes()) {
 				if (p.getRaca() instanceof Humano) {
 					((Humano) p.getRaca()).avancarProximoContrato(p);
+				}
+				// Hook de início de combate (Raça V2)
+				if (p.getRaca() != null) {
+					p.getRaca().onCombatStart(p, estadoCombate);
 				}
 				// Reset de movimento para começar fresco
 				p.setMovimentoRestanteTurno(p.getMovimento());
@@ -532,6 +550,15 @@ public class CombatController {
 				if (raca == null || classe == null)
 					return null; // Aborta se mapeamento falhar
 
+				// Raça V2
+				if (data.containsKey("RaçaV2")) {
+					Object v2Flag = data.get("RaçaV2");
+					if (v2Flag instanceof Boolean && (Boolean) v2Flag) {
+						raca.setV2(true);
+						System.out.println(">>> " + nome + " tem Raça V2 desbloqueada: " + raca.getNomeV2());
+					}
+				}
+
 				int grau = 0;
 				if (data.containsKey("grau")) {
 					grau = ((Double) data.get("grau")).intValue();
@@ -581,6 +608,10 @@ public class CombatController {
 
 				p.setArmaEquipada(arma);
 
+				if (arma != null && data.containsKey("armaOverclock")) {
+					arma.setGrauOverclock(((Number) data.get("armaOverclock")).intValue());
+				}
+
 				Armadura armadura = null;
 				Object armaduraObj = data.get("armaduraEquipada");
 
@@ -595,6 +626,9 @@ public class CombatController {
 
 				if (armadura != null) {
 					p.setArmaduraEquipada(armadura);
+					if (data.containsKey("armaduraOverclock")) {
+						armadura.setGrauOverclock(((Number) data.get("armaduraOverclock")).intValue());
+					}
 				}
 
 				Amuleto amuleto1 = null;
@@ -610,6 +644,9 @@ public class CombatController {
 
 				if (amuleto1 != null) {
 					p.setAmuleto1(amuleto1);
+					if (data.containsKey("amuleto1Overclock")) {
+						amuleto1.setGrauOverclock(((Number) data.get("amuleto1Overclock")).intValue());
+					}
 				}
 
 				Amuleto amuleto2 = null;
@@ -625,6 +662,9 @@ public class CombatController {
 
 				if (amuleto2 != null) {
 					p.setAmuleto2(amuleto2);
+					if (data.containsKey("amuleto2Overclock")) {
+						amuleto2.setGrauOverclock(((Number) data.get("amuleto2Overclock")).intValue());
+					}
 				}
 
 				Map<String, ?> inventarioData = (Map<String, ?>) data.get("inventario");
@@ -660,6 +700,18 @@ public class CombatController {
 							}
 						}
 					}
+
+					// Restaura overclock dos itens do inventário
+					if (data.containsKey("inventarioOverclock")) {
+						Map<String, ?> ocRaw = (Map<String, ?>) data.get("inventarioOverclock");
+						Map<String, Integer> ocData = new HashMap<>();
+						for (Map.Entry<String, ?> ocEntry : ocRaw.entrySet()) {
+							if (ocEntry.getValue() instanceof Number) {
+								ocData.put(ocEntry.getKey(), ((Number) ocEntry.getValue()).intValue());
+							}
+						}
+						p.getInventario().setOverclockData(ocData);
+					}
 				}
 
 				if (nome.equals("Alexei")) {
@@ -689,6 +741,9 @@ public class CombatController {
 				if (nome.equals("Arkos")) {
 					p.setFantasmaNobre(new IraDeAnthyros());
 				}
+				if (nome.equals("KuangLi")) {
+					p.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.ProfetaDeBehemoth());
+				}
 
 				if (data.containsKey("racaData") && p.getRaca() instanceof Humano) {
 					Map<String, Object> racaData = (Map<String, Object>) data.get("racaData");
@@ -696,10 +751,21 @@ public class CombatController {
 
 					if (racaData.containsKey("filaContratos")) {
 						List<Double> lista = (List<Double>) racaData.get("filaContratos");
-						h.setFilaContratos(lista); // Precisa do setter
+						h.setFilaContratos(lista);
 					}
 					if (racaData.containsKey("vidaNegativaAcumulada")) {
 						h.setVidaNegativaAcumulada(((Number) racaData.get("vidaNegativaAcumulada")).doubleValue());
+					}
+					if (racaData.containsKey("estadoEmprestimo")) {
+						String estadoStr = (String) racaData.get("estadoEmprestimo");
+						h.setEstadoAtual(Humano.EstadoEmprestimo.valueOf(estadoStr));
+					}
+					if (racaData.containsKey("contratoAtivoValorTotal")) {
+						h.setContratoAtivoValorTotal(((Number) racaData.get("contratoAtivoValorTotal")).doubleValue());
+					}
+					if (racaData.containsKey("contratoAtivoDividaRestante")) {
+						h.setContratoAtivoDividaRestante(
+								((Number) racaData.get("contratoAtivoDividaRestante")).doubleValue());
 					}
 				}
 
@@ -919,6 +985,8 @@ public class CombatController {
 			return new HalfDemon();
 		if ("Anjo-Caido".equalsIgnoreCase(nomeRaca))
 			return new AnjoCaido();
+		if ("Lobisomem".equalsIgnoreCase(nomeRaca))
+			return new Lobisomem();
 		System.err.println("Raça não reconhecida: " + nomeRaca);
 		return new RaçaPlaceholder();
 	}
@@ -940,6 +1008,8 @@ public class CombatController {
 			return new Ilusionista();
 		if ("Invocador".equalsIgnoreCase(nomeClasse))
 			return new Invocador();
+		if ("Campeão".equalsIgnoreCase(nomeClasse))
+			return new Campeao();
 		System.err.println("Classe não reconhecida: " + nomeClasse);
 		return new ClassePlaceholder();
 	}
@@ -1123,13 +1193,18 @@ public class CombatController {
 		// personagens inutilizados
 		Personagem trakin = carregarPersonagemComGson("trakin");
 		Personagem ayame = carregarPersonagemComGson("ayame");
-
+		Personagem KuangLi = carregarPersonagemComGson("KuangLi");
+		
 		if (alexei != null) {
 			alexei.setPosX(4);
 			alexei.setPosY(4);
 			players.add(alexei);
 		}
+		
+		if (lyria != null) { lyria.setPosX(4); lyria.setPosY(5); players.add(lyria);
+		 }
 
+		/*
 		if (lilith != null) {
 			lilith.setPosX(4);
 			lilith.setPosY(5);
@@ -1142,38 +1217,49 @@ public class CombatController {
 			players.add(eidan);
 		}
 		
-		if (darrell != null) {
-			darrell.setPosX(5);
-			darrell.setPosY(5);
-			players.add(darrell);
-		} 
-		
-		
-		
-		/*
-		 
-		if (Arkos != null) {
-			Arkos.setPosX(5);
-			Arkos.setPosY(10);
-			players.add(Arkos);
-		}
-		
-		if (vivian != null) {
-			vivian.setPosX(4);
-			vivian.setPosY(6);
-			players.add(vivian);
-		} 
-		
-		*/
-
 		
 		if (Virgilio != null) {
 			Virgilio.setPosX(5);
 			Virgilio.setPosY(6);
 			players.add(Virgilio);
 		}
+		
+		if (KuangLi != null) {
+			KuangLi.setPosX(5);
+			KuangLi.setPosY(7);
+			players.add(KuangLi);
+		}
+		
+		if (Arkos != null) {
+			Arkos.setPosX(5);
+			Arkos.setPosY(5);
+			players.add(Arkos);
+		}
+		
+		
+		
+		if (darrell != null) {
+			darrell.setPosX(5);
+			darrell.setPosY(5);
+			players.add(darrell);
+		} 
 
-
+		if (vivian != null) {
+			vivian.setPosX(4);
+			vivian.setPosY(6);
+			players.add(vivian);
+		}
+		
+		
+		
+		if (ayame != null) {
+			ayame.setPosX(5);
+			ayame.setPosY(7);
+			players.add(ayame);
+		}
+		
+		*/
+		
 		/*
 		 * Personagens inutilizados if (Julius != null) { Julius.setPosX(4);
 		 * Julius.setPosY(7); players.add(Julius); }
@@ -1189,7 +1275,8 @@ public class CombatController {
 		 * 
 		 * // Segunda leva Leva
 		 * 
-		 * if (Aristóteles != null) { Aristóteles.setPosX(6); Aristóteles.setPosY(5); players.add(Aristóteles); }
+		 * if (Aristóteles != null) { Aristóteles.setPosX(6); Aristóteles.setPosY(5);
+		 * players.add(Aristóteles); }
 		 * 
 		 * /* Personagens inutilizados
 		 * 
@@ -1199,11 +1286,11 @@ public class CombatController {
 		 * if (trakin != null) { trakin.setPosX(4); trakin.setPosY(6); // Define Posição
 		 * players.add(trakin); }
 		 * 
-		 * if (lyria != null) { lyria.setPosX(4); lyria.setPosY(5); players.add(lyria);
-		 * }
+		 * 
 		 * 
 		 * 
 		 */
+
 
 		return players;
 	}
@@ -1467,7 +1554,7 @@ public class CombatController {
 				if (ownerWindow != null)
 					detailedTurnHudStage.initOwner(ownerWindow);
 				detailedTurnHudStage.setResizable(false);
-				detailedTurnHudStage.setMinWidth(820);
+				detailedTurnHudStage.setMinWidth(920);
 				detailedTurnHudStage.setMinHeight(520);
 				detailedTurnHudStage.setScene(new Scene(detailedTurnHudRoot));
 			}
@@ -1704,6 +1791,7 @@ public class CombatController {
 	}
 
 	private void fecharHudEAvançar() {
+		limparTUPreview();
 		if (detailedTurnHudStage != null && detailedTurnHudStage.isShowing())
 			detailedTurnHudStage.hide();
 		avancarParaProximoTurno();
@@ -1779,6 +1867,12 @@ public class CombatController {
 	private void atualizarTimelineTU() {
 		if (timelineContainer == null || estadoCombate == null || estadoCombate.getCombatentes() == null)
 			return;
+		// Limpa preview antes de rebuild (referência será invalidada pelo clear)
+		if (tuPreviewAnimation != null) {
+			tuPreviewAnimation.stop();
+			tuPreviewAnimation = null;
+		}
+		tuPreviewLabel = null;
 		timelineContainer.getChildren().clear();
 
 		List<Personagem> ordenadosPorTU = new ArrayList<>(estadoCombate.getCombatentes());
@@ -1807,6 +1901,62 @@ public class CombatController {
 						isPlayer(p) ? "-fx-text-fill: cyan; -fx-font-weight: bold;" : "-fx-text-fill: lightcoral;");
 				timelineContainer.getChildren().add(marcador);
 			}
+		}
+	}
+
+	public void mostrarTUPreview(Personagem ator, int tuPrevisto) {
+		if (timelineContainer == null) return;
+
+		// Remove preview anterior se existir
+		limparTUPreview();
+
+		// Cria o label de preview
+		tuPreviewLabel = new Label(ator.getNome() + " [" + tuPrevisto + "]");
+		tuPreviewLabel.setStyle(
+			"-fx-text-fill: #00ff88; -fx-font-weight: bold; -fx-font-size: 12px; " +
+			"-fx-border-color: #00ff88; -fx-border-width: 1; -fx-border-style: dashed; " +
+			"-fx-padding: 2 6; -fx-border-radius: 3; -fx-background-radius: 3;"
+		);
+
+		// Insere na posição correta baseado no TU
+		int insertIndex = 0;
+		for (int i = 0; i < timelineContainer.getChildren().size(); i++) {
+			Node child = timelineContainer.getChildren().get(i);
+			if (child instanceof Label) {
+				String text = ((Label) child).getText();
+				// Extrai TU do label: "Nome [TU]"
+				int bracketStart = text.lastIndexOf('[');
+				int bracketEnd = text.lastIndexOf(']');
+				if (bracketStart != -1 && bracketEnd != -1) {
+					try {
+						int tuDoMarcador = Integer.parseInt(text.substring(bracketStart + 1, bracketEnd));
+						if (tuPrevisto > tuDoMarcador) {
+							insertIndex = i + 1;
+						}
+					} catch (NumberFormatException ignored) {}
+				}
+			}
+		}
+
+		timelineContainer.getChildren().add(insertIndex, tuPreviewLabel);
+
+		// Animação pulsante
+		tuPreviewAnimation = new FadeTransition(Duration.millis(600), tuPreviewLabel);
+		tuPreviewAnimation.setFromValue(1.0);
+		tuPreviewAnimation.setToValue(0.3);
+		tuPreviewAnimation.setCycleCount(FadeTransition.INDEFINITE);
+		tuPreviewAnimation.setAutoReverse(true);
+		tuPreviewAnimation.play();
+	}
+
+	public void limparTUPreview() {
+		if (tuPreviewAnimation != null) {
+			tuPreviewAnimation.stop();
+			tuPreviewAnimation = null;
+		}
+		if (tuPreviewLabel != null && timelineContainer != null) {
+			timelineContainer.getChildren().remove(tuPreviewLabel);
+			tuPreviewLabel = null;
 		}
 	}
 
@@ -1940,7 +2090,7 @@ public class CombatController {
 				arquivoMapaAtual.getAbsolutePath().lastIndexOf('.')) + ".json";
 
 		// Salva
-		try (Writer writer = new FileWriter(pathJson)) {
+		try (Writer writer = new FileWriter(pathJson, StandardCharsets.UTF_8)) {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			gson.toJson(meta, writer);
 			System.out.println("MAPA SALVO COM SUCESSO: " + pathJson);
@@ -2039,9 +2189,31 @@ public class CombatController {
 	}
 
 	public void notificarMovimentoRealizado() {
-		if (btnConfirmarMovimento != null && estadoCombate.getAtorAtual() != null) {
-			Personagem ator = estadoCombate.getAtorAtual();
-			btnConfirmarMovimento.setText("CONCLUIR MOVIMENTO (" + ator.getMovimentoRestanteTurno() + " restos)");
+		Personagem ator = estadoCombate.getAtorAtual();
+		if (ator == null) return;
+
+		if (movimentoComRetorno) {
+			// Movimento com retorno: finaliza imediatamente e reabre a HUD
+			if (mapController != null) {
+				mapController.sairModoSelecao();
+				if (mapController.isModoMovimentoLivre()) {
+					mapController.toggleModoMovimentoLivre();
+				}
+			}
+			if (btnConfirmarMovimento != null) {
+				btnConfirmarMovimento.setVisible(false);
+				btnConfirmarMovimento.setManaged(false);
+			}
+			if (combatManager != null) {
+				combatManager.atualizarAuras(estadoCombate);
+			}
+			movimentoComRetorno = false;
+			reabrirHudParaAtor(ator);
+		} else {
+			// Comportamento original: só atualiza o texto do botão
+			if (btnConfirmarMovimento != null) {
+				btnConfirmarMovimento.setText("CONCLUIR MOVIMENTO (" + ator.getMovimentoRestanteTurno() + " restos)");
+			}
 		}
 	}
 
@@ -2152,10 +2324,40 @@ public class CombatController {
 		fecharHudEAvançar();
 	}
 
-	public void limparRingueDoMapa() {
+	// === SISTEMA GENÉRICO DE DOMÍNIOS ===
+
+	/** Registra e desenha um domínio no mapa. */
+	public void registrarDominio(Dominio dominio) {
 		if (mapController != null) {
-			mapController.limparRingueAlexei();
+			mapController.registrarDominio(dominio);
 		}
+	}
+
+	/** Remove um domínio pelo ID. */
+	public void removerDominio(String dominioId) {
+		if (mapController != null) {
+			mapController.removerDominio(dominioId);
+		}
+	}
+
+	/** Verifica se um personagem está dentro de um domínio específico. */
+	public boolean isPersonagemNoDominio(Personagem p, String dominioId) {
+		if (mapController == null)
+			return false;
+		return mapController.isPersonagemNoDominio(p, dominioId);
+	}
+
+	/** Retorna todos os domínios ativos no mapa. */
+	public java.util.Map<String, Dominio> getDominiosAtivos() {
+		if (mapController == null)
+			return java.util.Collections.emptyMap();
+		return mapController.getDominiosAtivos();
+	}
+
+	// === MÉTODOS RETROCOMPATÍVEIS (delegam ao sistema genérico) ===
+
+	public void limparRingueDoMapa() {
+		removerDominio("ringue_alexei");
 	}
 
 	public void desenharRingueDoMapa(Personagem centro, int tamanho) {
@@ -2164,16 +2366,14 @@ public class CombatController {
 		}
 	}
 
-	public void desenharDominioLyriaNoMapa(Personagem centro) {
+	public void desenharDominioLyriaNoMapa(Personagem centro, int tamanho) {
 		if (mapController != null) {
-			mapController.desenharDominioLyria(centro, 5); // Tamanho 5 (raio 2)
+			mapController.desenharDominioLyria(centro, tamanho);
 		}
 	}
 
 	public void limparDominioLyriaDoMapa() {
-		if (mapController != null) {
-			mapController.limparDominioLyria();
-		}
+		removerDominio("dominio_lyria");
 	}
 
 	public void spawnarCloneIlusao(Personagem invocador) {
@@ -2250,6 +2450,11 @@ public class CombatController {
 			data.put("xpAtual", personagem.getXpAtual());
 			data.put("pontosParaDistribuir", personagem.getPontosParaDistribuir());
 			data.put("vidaMaximaBase", personagem.getVidaMaximaBase());
+			data.put("grau", personagem.getGrau());
+			data.put("segmentos", personagem.getSegmentosVida());
+			if (personagem.getRaca() != null && personagem.getRaca().isV2()) {
+				data.put("RaçaV2", true);
+			}
 
 			// Recalcula iniciativa base para salvar o valor puro
 			int des = personagem.getAtributosFinais().getOrDefault(Atributo.DESTREZA, 1);
@@ -2278,17 +2483,35 @@ public class CombatController {
 				else {
 					data.put("armaEquipada", arma.getNome());
 				}
+				if (arma.getGrauOverclock() > 0) {
+					data.put("armaOverclock", arma.getGrauOverclock());
+				}
 			}
 			if (personagem.getArmaduraEquipada() != null) {
 				data.put("armaduraEquipada", personagem.getArmaduraEquipada().getNome());
+				if (personagem.getArmaduraEquipada().getGrauOverclock() > 0) {
+					data.put("armaduraOverclock", personagem.getArmaduraEquipada().getGrauOverclock());
+				}
 			}
 			if (personagem.getAmuleto1() != null) {
 				data.put("amuleto1", personagem.getAmuleto1().getNome());
+				if (personagem.getAmuleto1().getGrauOverclock() > 0) {
+					data.put("amuleto1Overclock", personagem.getAmuleto1().getGrauOverclock());
+				}
 			}
 			if (personagem.getAmuleto2() != null) {
 				data.put("amuleto2", personagem.getAmuleto2().getNome());
+				if (personagem.getAmuleto2().getGrauOverclock() > 0) {
+					data.put("amuleto2Overclock", personagem.getAmuleto2().getGrauOverclock());
+				}
 			}
 			data.put("inventario", personagem.getInventario().getItensAgrupados());
+
+			// Salva overclock dos itens do inventário
+			Map<String, Integer> ocData = personagem.getInventario().getOverclockData();
+			if (!ocData.isEmpty()) {
+				data.put("inventarioOverclock", new HashMap<>(ocData));
+			}
 
 			Map<String, Integer> moedas = new HashMap<>();
 			moedas.put("bronze", personagem.getInventario().getMoedasBronze());
@@ -2309,8 +2532,11 @@ public class CombatController {
 			if (personagem.getRaca() instanceof Humano) {
 				Humano h = (Humano) personagem.getRaca();
 				Map<String, Object> dadosHumano = new HashMap<>();
-				dadosHumano.put("filaContratos", h.getFilaContratos()); // Precisa do getter na classe Humano
-				dadosHumano.put("vidaNegativaAcumulada", h.getVidaNegativaAcumulada()); // Precisa do getter
+				dadosHumano.put("filaContratos", h.getFilaContratos());
+				dadosHumano.put("vidaNegativaAcumulada", h.getVidaNegativaAcumulada());
+				dadosHumano.put("estadoEmprestimo", h.getEstadoAtual().name());
+				dadosHumano.put("contratoAtivoValorTotal", h.getContratoAtivoValorTotal());
+				dadosHumano.put("contratoAtivoDividaRestante", h.getContratoAtivoDividaRestante());
 				data.put("racaData", dadosHumano);
 			}
 
@@ -2368,6 +2594,8 @@ public class CombatController {
 		if (nomeArma.equals("Laminas Do Exterminio"))
 			return new LaminasDoExterminio();
 
+		if (nomeArma.equals("Bastão Primordial Behemoth"))
+			return new br.com.dantesrpg.model.armas.unicas.BastaoPrimordialBehemoth();
 		if (nomeArma.equals("Espada-Serra"))
 			return new br.com.dantesrpg.model.armas.boss.EspadaSerra();
 
@@ -2682,6 +2910,10 @@ public class CombatController {
 			monstro.setTamanhoY(7);
 		}
 
+		if (idMonstro.equalsIgnoreCase("morghul")) {
+			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.Ritual());
+		}
+
 		// Aplica o valor corrigido
 		monstro.setGrau(grau);
 		monstro.setSegmentosVida(segmentos);
@@ -2907,6 +3139,11 @@ public class CombatController {
 			monstro.setEscudoAtual(vida * porcentagem);
 		}
 
+		// Fantasmas Nobres de Monstros
+		if (idMonstro.equalsIgnoreCase("morghul")) {
+			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.Ritual());
+		}
+
 		// Finalização
 		monstro.recalcularAtributosEstatisticas(); // Garante que stats derivados (como Defesa) estejam certos
 		monstro.setVidaAtual(monstro.getVidaMaxima()); // Cura total após recalculo
@@ -3016,7 +3253,20 @@ public class CombatController {
 		}
 	}
 
+	// Flag: se true, ao confirmar movimento o turno NÃO avança — retorna à HUD
+	private boolean movimentoComRetorno = false;
+
 	public void iniciarMovimentoTatico(Personagem ator) {
+		this.movimentoComRetorno = false;
+		iniciarMovimentoNoMapa(ator);
+	}
+
+	public void iniciarMovimentoTaticoComRetorno(Personagem ator) {
+		this.movimentoComRetorno = true;
+		iniciarMovimentoNoMapa(ator);
+	}
+
+	private void iniciarMovimentoNoMapa(Personagem ator) {
 		// Esconde a HUD
 		if (detailedTurnHudStage != null)
 			detailedTurnHudStage.hide();
@@ -3043,7 +3293,6 @@ public class CombatController {
 	private void onConfirmarMovimentoClick() {
 		// Desativa modo mover no mapa
 		if (mapController != null) {
-			// Sai do modo de seleção/movimento
 			mapController.sairModoSelecao();
 			if (mapController.isModoMovimentoLivre()) {
 				mapController.toggleModoMovimentoLivre();
@@ -3064,7 +3313,23 @@ public class CombatController {
 			if (combatManager != null) {
 				combatManager.atualizarAuras(estadoCombate);
 			}
-			resolverAcaoPassarVez(new AcaoMestreInput(ator, new ArrayList<>(), (Habilidade) null));
+
+			if (movimentoComRetorno) {
+				// Retorna à HUD para o jogador continuar o turno
+				movimentoComRetorno = false;
+				reabrirHudParaAtor(ator);
+			} else {
+				// Comportamento original: encerra o turno
+				resolverAcaoPassarVez(new AcaoMestreInput(ator, new ArrayList<>(), (Habilidade) null));
+			}
+		}
+	}
+
+	private void reabrirHudParaAtor(Personagem ator) {
+		if (detailedTurnHudStage != null && detailedTurnHudController != null) {
+			detailedTurnHudController.setAtor(ator, this);
+			detailedTurnHudStage.setTitle("Ações Detalhadas de " + ator.getNome());
+			detailedTurnHudStage.show();
 		}
 	}
 

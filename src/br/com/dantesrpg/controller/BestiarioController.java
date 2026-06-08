@@ -335,7 +335,7 @@ public class BestiarioController {
 				file.getParentFile().mkdirs();
 			}
 
-			try (FileWriter writer = new FileWriter(file)) {
+			try (FileWriter writer = new FileWriter(file, java.nio.charset.StandardCharsets.UTF_8)) {
 				gson.toJson(bestiarioData, writer);
 				System.out.println("BESTIÁRIO: Arquivo atualizado em " + file.getAbsolutePath());
 			}

@@ -4,6 +4,7 @@ import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.Item;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.util.EffectFactory;
+import br.com.dantesrpg.model.util.EffectTooltipBuilder;
 import br.com.dantesrpg.model.Efeito;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -92,9 +93,28 @@ public class GerenciadorCombateController {
 		configurarFiltroItens();
 		configurarEfeitosAndar();
 
-		// Inicializa combo de efeitos da Factory
+		// Inicializa combo de efeitos da Factory com tooltips
 		comboPresetEfeito.getItems().setAll(EffectFactory.getNomesPresets());
 		comboPresetEfeito.getSelectionModel().selectFirst();
+		comboPresetEfeito.setCellFactory(lv -> new ListCell<String>() {
+			@Override
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty || item == null) {
+					setText(null);
+					setTooltip(null);
+				} else {
+					setText(item);
+					Efeito preview = EffectFactory.criarEfeito(item, 300, 100);
+					Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(preview));
+					tip.setStyle("-fx-font-size: 11px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 6;");
+					tip.setShowDelay(javafx.util.Duration.millis(300));
+					tip.setMaxWidth(350);
+					tip.setWrapText(true);
+					setTooltip(tip);
+				}
+			}
+		});
 
 		tabelaCombatentes.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
 			selecionarPersonagem(newVal);
@@ -274,6 +294,10 @@ public class GerenciadorCombateController {
 						int qtd = itens.getOrDefault(tipoItem, 0);
 						// Tenta pegar o nome bonito
 						Item modelo = mainController.getItem(tipoItem);
+						if (modelo != null) {
+							int ocGrau = selecionado.getInventario().getOverclockDoItem(tipoItem);
+							if (ocGrau > 0) modelo.setGrauOverclock(ocGrau);
+						}
 						String nomeExibicao = (modelo != null) ? modelo.getNome() : tipoItem;
 						setText(nomeExibicao + " (x" + qtd + ")");
 					}

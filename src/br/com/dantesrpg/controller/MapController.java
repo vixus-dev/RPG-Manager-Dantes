@@ -26,6 +26,9 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import br.com.dantesrpg.model.map.TerrainData;
 import br.com.dantesrpg.model.map.TerrainData.*;
+import br.com.dantesrpg.model.map.TileDefinition;
+import br.com.dantesrpg.model.map.TileRegistry;
+import br.com.dantesrpg.model.map.Dominio;
 
 import java.util.HashMap;
 import java.io.File;
@@ -43,6 +46,10 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
 import javax.imageio.ImageIO;
 import java.io.FileInputStream;
 
@@ -61,11 +68,23 @@ public class MapController {
 	@FXML
 	private Canvas aoeCanvas;
 	@FXML
+	private ScrollPane mapScrollPane;
+	@FXML
 	private ToggleButton btnMovimentoLivre;
 	@FXML
 	private ToggleButton btnEditorMapa;
 	@FXML
 	private Button btnPularSquad;
+
+	private double zoomLevel = 1.0;
+	private static final double ZOOM_MIN = 0.3;
+	private static final double ZOOM_MAX = 3.0;
+	private static final double ZOOM_STEP = 0.1;
+	private Scale zoomScale;
+	private double dragAnchorX;
+	private double dragAnchorY;
+	private double dragAnchorHvalue;
+	private double dragAnchorVvalue;
 
 	private CombatController mainController;
 
@@ -87,6 +106,8 @@ public class MapController {
 	private String idMonstroEmSpawn = null;
 
 	private boolean modoEditor = false;
+	private TileDefinition editorTile = null;
+	private javafx.stage.Stage editorWindowStage = null;
 
 	private Personagem atorAtual;
 	private Map<Node, Personagem> peaoParaPersonagem = new HashMap<>();
@@ -103,14 +124,18 @@ public class MapController {
 	private final String CSS_ALCANCE_ATAQUE_MELEE = "ataque-alcance-melee";
 	private final String CSS_ALCANCE_ATAQUE_RANGED = "ataque-alcance-ranged";
 
-	// dominios a serem expandidos
-	private List<Pane> celulasRingueAlexei = new ArrayList<>();
-	private List<Pane> celulasDominioLyria = new ArrayList<>();
+	// Sistema genérico de domínios
+	private final Map<String, Dominio> dominiosAtivos = new HashMap<>();
+	private final Map<String, List<Pane>> celulasVisuaisDominios = new HashMap<>();
 	private List<Pane> celulasAuraDarrell = new ArrayList<>();
+	private List<Pane> celulasAuraZero = new ArrayList<>();
+	private List<Pane> celulasAuraBadOmen = new ArrayList<>();
 
 	private int rolagemSquadGlobal;
 	private int cargasSpawnRestantes = 0;
 	private List<Pane> celulasGuardiaoDestacadas = new ArrayList<>();
+	private List<Pane> celulasVigiliaDestacadas = new ArrayList<>();
+	private List<Pane> celulasHarmoniaDestacadas = new ArrayList<>();
 
 	private List<Personagem> peoesAtualmenteDestacados = new ArrayList<>();
 
@@ -132,6 +157,7 @@ public class MapController {
 		}
 
 		mapGrid.setOnMouseMoved(this::onMouseMovedNoGrid);
+		configurarZoomEPan();
 
 		mapGrid.setOnMouseClicked(event -> {
 			if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
@@ -145,6 +171,128 @@ public class MapController {
 			}
 		});
 	}
+
+	private void configurarZoomEPan() {
+		if (mapScrollPane == null) return;
+
+		StackPane contentPane = (StackPane) mapScrollPane.getContent();
+		zoomScale = new Scale(1, 1, 0, 0);
+		contentPane.getTransforms().add(zoomScale);
+
+		// Zoom com Ctrl + Scroll
+		mapScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+			if (event.isControlDown()) {
+				event.consume();
+				double delta = event.getDeltaY();
+				double oldZoom = zoomLevel;
+
+				if (delta > 0) {
+					zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP);
+				} else {
+					zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP);
+				}
+
+				// Calcula o ponto do mouse relativo ao conteudo para zoom centrado
+				double mouseX = event.getX();
+				double mouseY = event.getY();
+
+				double viewportW = mapScrollPane.getViewportBounds().getWidth();
+				double viewportH = mapScrollPane.getViewportBounds().getHeight();
+
+				double contentW = contentPane.getBoundsInLocal().getWidth() * oldZoom;
+				double contentH = contentPane.getBoundsInLocal().getHeight() * oldZoom;
+
+				// Posicao relativa do mouse no conteudo
+				double relX = (mapScrollPane.getHvalue() * (contentW - viewportW) + mouseX) / contentW;
+				double relY = (mapScrollPane.getVvalue() * (contentH - viewportH) + mouseY) / contentH;
+
+				zoomScale.setX(zoomLevel);
+				zoomScale.setY(zoomLevel);
+
+				// Recalcula scrollbar para manter o ponto sob o cursor
+				contentPane.layout();
+				double newContentW = contentPane.getBoundsInLocal().getWidth() * zoomLevel;
+				double newContentH = contentPane.getBoundsInLocal().getHeight() * zoomLevel;
+
+				double newHvalue = (relX * newContentW - mouseX) / (newContentW - viewportW);
+				double newVvalue = (relY * newContentH - mouseY) / (newContentH - viewportH);
+
+				mapScrollPane.setHvalue(Math.max(0, Math.min(1, newHvalue)));
+				mapScrollPane.setVvalue(Math.max(0, Math.min(1, newVvalue)));
+			}
+		});
+
+		// Drag com botao do meio para pan
+		mapScrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+			if (event.isMiddleButtonDown()) {
+				dragAnchorX = event.getSceneX();
+				dragAnchorY = event.getSceneY();
+				dragAnchorHvalue = mapScrollPane.getHvalue();
+				dragAnchorVvalue = mapScrollPane.getVvalue();
+				mapScrollPane.setPannable(false);
+				event.consume();
+			}
+		});
+
+		mapScrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
+			if (event.isMiddleButtonDown()) {
+				double contentW = contentPane.getBoundsInLocal().getWidth() * zoomLevel;
+				double contentH = contentPane.getBoundsInLocal().getHeight() * zoomLevel;
+				double viewportW = mapScrollPane.getViewportBounds().getWidth();
+				double viewportH = mapScrollPane.getViewportBounds().getHeight();
+
+				double deltaX = event.getSceneX() - dragAnchorX;
+				double deltaY = event.getSceneY() - dragAnchorY;
+
+				double hRange = contentW - viewportW;
+				double vRange = contentH - viewportH;
+
+				if (hRange > 0) {
+					mapScrollPane.setHvalue(Math.max(0, Math.min(1,
+							dragAnchorHvalue - deltaX / hRange)));
+				}
+				if (vRange > 0) {
+					mapScrollPane.setVvalue(Math.max(0, Math.min(1,
+							dragAnchorVvalue - deltaY / vRange)));
+				}
+				event.consume();
+			}
+		});
+
+		mapScrollPane.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+			if (event.getButton() == javafx.scene.input.MouseButton.MIDDLE) {
+				mapScrollPane.setPannable(true);
+			}
+		});
+	}
+
+	public void zoomIn() {
+		if (mapScrollPane == null) return;
+		zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP);
+		zoomScale.setX(zoomLevel);
+		zoomScale.setY(zoomLevel);
+	}
+
+	public void zoomOut() {
+		if (mapScrollPane == null) return;
+		zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP);
+		zoomScale.setX(zoomLevel);
+		zoomScale.setY(zoomLevel);
+	}
+
+	public void resetZoom() {
+		if (mapScrollPane == null) return;
+		zoomLevel = 1.0;
+		zoomScale.setX(1.0);
+		zoomScale.setY(1.0);
+	}
+
+	@FXML
+	private void onZoomInClick() { zoomIn(); }
+	@FXML
+	private void onZoomOutClick() { zoomOut(); }
+	@FXML
+	private void onZoomResetClick() { resetZoom(); }
 
 	@FXML
 	private void onMovimentoLivreClick() {
@@ -274,15 +422,6 @@ public class MapController {
 			gc.strokeRect(0, -larguraLinha / 2, alcancePixels, larguraLinha);
 			gc.restore();
 
-		} else if (tipo == TipoAlvo.AREA_CIRCULAR) {
-			double raio = (habilidadeAtual.getTamanhoArea() / 2.0) * CELL_SIZE;
-			int gridX = (int) (mouseX / CELL_SIZE);
-			int gridY = (int) (mouseY / CELL_SIZE);
-			double snapX = gridX * CELL_SIZE + (CELL_SIZE / 2.0);
-			double snapY = gridY * CELL_SIZE + (CELL_SIZE / 2.0);
-
-			gc.fillOval(snapX - raio, snapY - raio, raio * 2, raio * 2);
-			gc.strokeOval(snapX - raio, snapY - raio, raio * 2, raio * 2);
 		}
 	}
 
@@ -292,6 +431,21 @@ public class MapController {
 			desenharAlcanceGuardiao(x, y);
 		} else {
 			limparDestaqueGuardiao();
+		}
+
+		// Pálida Vigília: mostra alcance de cura (raio 5) ao passar o cursor
+		if (p != null && p.getArmaEquipada() instanceof br.com.dantesrpg.model.armas.unicas.PalidaVigilia
+				&& !p.getEfeitosAtivos().containsKey("CD: Pálida Vigília")) {
+			desenharAlcanceVigilia(p.getPosX(), p.getPosY());
+		} else {
+			limparDestaqueVigilia();
+		}
+
+		// Anjo Caído V2 (Harmonia Perfeita): mostra alcance de ataque 360° (raio 2)
+		if (p != null && p.getEfeitosAtivos().containsKey("Τέλεια αρμονία")) {
+			desenharAlcanceHarmonia(p.getPosX(), p.getPosY());
+		} else {
+			limparDestaqueHarmonia();
 		}
 
 		if (!modoSelecaoAlvo || toggleMover.isSelected() || habilidadeAtual == null) {
@@ -361,10 +515,66 @@ public class MapController {
 		celulasGuardiaoDestacadas.clear();
 	}
 
+	// --- PÁLIDA VIGÍLIA: Alcance de cura em área (raio 5) ---
+	private void desenharAlcanceVigilia(int centroX, int centroY) {
+		limparDestaqueVigilia();
+		int raio = 5;
+		for (int y = centroY - raio; y <= centroY + raio; y++) {
+			for (int x = centroX - raio; x <= centroX + raio; x++) {
+				if (dentroDoGrid(x, y)) {
+					if (!paredesGrid[x][y] || (x == centroX && y == centroY)) {
+						Pane cell = celulasDoGrid[x][y];
+						cell.getStyleClass().add("alcance-vigilia");
+						celulasVigiliaDestacadas.add(cell);
+					}
+				}
+			}
+		}
+	}
+
+	private void limparDestaqueVigilia() {
+		if (celulasVigiliaDestacadas.isEmpty())
+			return;
+		for (Pane cell : celulasVigiliaDestacadas) {
+			cell.getStyleClass().remove("alcance-vigilia");
+		}
+		celulasVigiliaDestacadas.clear();
+	}
+
+	// --- ANJO CAÍDO V2 (Harmonia Perfeita): Alcance de ataque 360° (raio 2) ---
+	private void desenharAlcanceHarmonia(int centroX, int centroY) {
+		limparDestaqueHarmonia();
+		int raio = 2;
+		for (int y = centroY - raio; y <= centroY + raio; y++) {
+			for (int x = centroX - raio; x <= centroX + raio; x++) {
+				if (dentroDoGrid(x, y)) {
+					if (!paredesGrid[x][y] || (x == centroX && y == centroY)) {
+						Pane cell = celulasDoGrid[x][y];
+						cell.getStyleClass().add("alcance-harmonia");
+						celulasHarmoniaDestacadas.add(cell);
+					}
+				}
+			}
+		}
+	}
+
+	private void limparDestaqueHarmonia() {
+		if (celulasHarmoniaDestacadas.isEmpty())
+			return;
+		for (Pane cell : celulasHarmoniaDestacadas) {
+			cell.getStyleClass().remove("alcance-harmonia");
+		}
+		celulasHarmoniaDestacadas.clear();
+	}
+
 	private void onGridCellClicked(Pane cell, int x, int y) {
 		// Modos Especiais
 		if (modoEditor) {
-			ciclarTerreno(cell, x, y);
+			if (editorTile != null) {
+				aplicarTileNoEditor(cell, editorTile, x, y);
+			} else {
+				System.out.println("EDITOR: Nenhum tile selecionado. Abra o catalogo e selecione um tile.");
+			}
 			return;
 		}
 
@@ -537,14 +747,15 @@ public class MapController {
 					int novoX = x + dx[i];
 					int novoY = y + dy[i];
 					if (novoX >= 0 && novoX < gridLargura && novoY >= 0 && novoY < gridAltura) {
-						// Verifica Auras (Domínios)
-						boolean origemA = isCelulaNoDominio(x, y, celulasRingueAlexei);
-						boolean destinoA = isCelulaNoDominio(novoX, novoY, celulasRingueAlexei);
-						if (origemA != destinoA)
-							continue;
-						boolean origemL = isCelulaNoDominio(x, y, celulasDominioLyria);
-						boolean destinoL = isCelulaNoDominio(novoX, novoY, celulasDominioLyria);
-						if (origemL != destinoL)
+						// Verifica Domínios (bloqueio de fronteira)
+						boolean bloqueadoPorDominio = false;
+						for (Dominio dom : dominiosAtivos.values()) {
+							if (dom.bloqueiaMovimento(x, y, novoX, novoY)) {
+								bloqueadoPorDominio = true;
+								break;
+							}
+						}
+						if (bloqueadoPorDominio)
 							continue;
 
 						// Bloqueia se for Parede física
@@ -695,7 +906,7 @@ public class MapController {
 			mapGrid.getRowConstraints().clear();
 
 			mapGrid.getChildren().clear();
-			mapGrid.getColumnConstraints().clear();
+			mapGrid.getColumnConstraints().clear	();
 			mapGrid.getRowConstraints().clear();
 
 			for (int x = 0; x < gridLargura; x++) {
@@ -717,115 +928,15 @@ public class MapController {
 					int g = (int) (corPixel.getGreen() * 255);
 					int b = (int) (corPixel.getBlue() * 255);
 
-					TipoTerreno tipoDetectado = TipoTerreno.PADRAO;
-
-					if (r == 48 && g == 48 && b == 48) {
-						cell.getStyleClass().add("map-fog");
-						paredesGrid[x][y] = true;
-						tipoDetectado = TipoTerreno.PAREDE;
-					} else if (r == 240 && g == 240 && b == 240) {
-						cell.getStyleClass().add("map-wall");
-						paredesGrid[x][y] = true;
-						tipoDetectado = TipoTerreno.PAREDE;
+										// Lookup via TileRegistry (substitui o if-else chain)
+					TileRegistry registry = TileRegistry.getInstance();
+					TileDefinition tile = registry.getByRgb(r, g, b);
+					if (tile == null) {
+						tile = registry.getDefault();
 					}
 
-					else if (r == 1 && g == 1 && b == 1) {
-						cell.getStyleClass().add("map-wall2");
-						paredesGrid[x][y] = true;
-						tipoDetectado = TipoTerreno.PAREDE;
-					} else if (r == 2 && g == 2 && b == 2) {
-						cell.getStyleClass().add("map-wall3");
-						paredesGrid[x][y] = true;
-						tipoDetectado = TipoTerreno.PAREDE;
-					}
-
-					else if (r == 3 && g == 3 && b == 3) {
-						cell.getStyleClass().add("map-wall4");
-						paredesGrid[x][y] = true;
-						tipoDetectado = TipoTerreno.PAREDE;
-					}
-
-					else if (r == 5 && g == 5 && b == 5) {
-						cell.getStyleClass().add("map-wall5");
-						paredesGrid[x][y] = true;
-						tipoDetectado = TipoTerreno.PAREDE;
-					}
-
-					else if (r == 6 && g == 6 && b == 6) {
-						cell.getStyleClass().add("map-wall6");
-						paredesGrid[x][y] = true;
-						tipoDetectado = TipoTerreno.PAREDE;
-					}
-
-					else if (r == 240 && g == 240 && b == 50) {
-						cell.getStyleClass().add("map-object-light");
-						paredesGrid[x][y] = true;
-						tipoDetectado = TipoTerreno.OBJETO;
-					} else if (r == 50 && g == 200 && b == 50) {
-						cell.getStyleClass().add("map-exit");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.SAIDA;
-					} else if (r == 40 && g == 40 && b == 40) {
-						cell.getStyleClass().add("map-coal");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.CARVAO;
-					}
-
-					else if (r == 60 && g == 60 && b == 60) {
-						cell.getStyleClass().add("map-floor2");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.PADRAO;
-					} else if (r == 255 && g == 0 && b == 25) {
-						cell.getStyleClass().add("map-floor3");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.PADRAO;
-					} else if (r == 182 && g == 255 && b == 0) {
-						cell.getStyleClass().add("map-grass1");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.PADRAO;
-					}
-
-					else if (r == 160 && g == 160 && b == 160) {
-						cell.getStyleClass().add("map-floor4");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.PADRAO;
-					}
-
-					else if (r == 80 && g == 80 && b == 80) {
-						cell.getStyleClass().add("map-floor5");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.PADRAO;
-					}
-
-					else if (r == 100 && g == 100 && b == 100) {
-						cell.getStyleClass().add("map-floor6");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.PADRAO;
-					}
-
-					else if (r == 110 && g == 110 && b == 110) {
-						cell.getStyleClass().add("map-floor7");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.PADRAO;
-					}
-
-					else if (r == 255 && g == 106 && b == 0) {
-						cell.getStyleClass().add("map-lava");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.LAVA;
-
-						EfeitoInstance lavaEffect = new EfeitoInstance(TipoEfeitoSolo.FOGO, 99999, 10, null);
-						lavaEffect.setPermanente(true);
-						gridEfeitos[x][y] = lavaEffect;
-					}
-
-					else {
-						cell.getStyleClass().add("map-floor");
-						paredesGrid[x][y] = false;
-						tipoDetectado = TipoTerreno.PADRAO;
-					}
-
-					gridTerreno[x][y] = tipoDetectado;
+					// Aplica CSS, propriedades de terreno e efeitos a partir da definicao
+					aplicarTileNaCelula(cell, tile, x, y);
 
 					cell.getStyleClass().add("map-cell");
 					cell.setOnMouseClicked(event -> onGridCellClicked(cell, cellX, cellY));
@@ -840,6 +951,50 @@ public class MapController {
 			e.printStackTrace();
 			preencherComChaoPadrao();
 		}
+	}
+
+	/**
+	 * Aplica uma TileDefinition em uma celula do grid.
+	 * Metodo central usado pelo carregamento de PNG e pelo editor.
+	 */
+	private void aplicarTileNaCelula(Pane cell, TileDefinition tile, int x, int y) {
+		cell.getStyleClass().add(tile.getCssClass());
+		paredesGrid[x][y] = !tile.isWalkable();
+		gridTerreno[x][y] = TipoTerreno.valueOf(tile.getTerrainType());
+
+		TileDefinition.EffectConfig ec = tile.getEffect();
+		if (ec != null) {
+			EfeitoInstance efeito = new EfeitoInstance(
+					TipoEfeitoSolo.valueOf(ec.getTipo()),
+					ec.getDuracao(),
+					ec.getDano(),
+					null);
+			efeito.setPermanente(ec.isPermanente());
+			gridEfeitos[x][y] = efeito;
+		}
+	}
+
+	/**
+	 * Aplica um tile no editor, limpando o estado anterior da celula.
+	 */
+	public void aplicarTileNoEditor(Pane cell, TileDefinition tile, int x, int y) {
+		if (tile == null || !dentroDoGrid(x, y)) return;
+
+		TileRegistry registry = TileRegistry.getInstance();
+		cell.getStyleClass().removeAll(registry.getAllCssClasses());
+		gridEfeitos[x][y] = null;
+
+		if (gridTerreno[x][y] == TipoTerreno.OBJETO && mainController != null) {
+			mainController.removerObjetoNoMapa(x, y);
+		}
+
+		aplicarTileNaCelula(cell, tile, x, y);
+
+		if ("OBJETO".equals(tile.getTerrainType()) && mainController != null) {
+			mainController.criarObjetoNoMapa(x, y);
+		}
+
+		System.out.println("EDITOR: (" + x + "," + y + ") -> " + tile.getName() + " [" + tile.getId() + "]");
 	}
 
 	public void criarAreaDeFogo(int centroX, int centroY, int raio, int dano, Personagem criador) {
@@ -1212,6 +1367,40 @@ public class MapController {
 				cell.getStyleClass().remove("zona-aura-darrell");
 			celulasAuraDarrell.clear();
 		}
+
+		// --- AURA PRESENÇA DO ZERO ---
+		for (Personagem p : combatentes) {
+			if (p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Aura do Zero")) {
+				desenharAuraZero(p);
+				break;
+			}
+		}
+		boolean ninguemComAuraZero = combatentes.stream().noneMatch(p -> p.getEfeitosAtivos().containsKey("Aura do Zero"));
+		if (ninguemComAuraZero && !celulasAuraZero.isEmpty()) {
+			for (Pane cell : celulasAuraZero)
+				cell.getStyleClass().remove("zona-aura-zero");
+			celulasAuraZero.clear();
+		}
+
+		// --- AURA BAD OMEN (Vampiro V2 em Forma de Cobra) ---
+		for (Personagem p : combatentes) {
+			if (p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Forma de Cobra")
+					&& p.getRaca() instanceof br.com.dantesrpg.model.racas.Vampiro
+					&& p.getRaca().isV2()) {
+				desenharAuraBadOmen(p);
+				break;
+			}
+		}
+		boolean ninguemComBadOmen = combatentes.stream().noneMatch(p ->
+				p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Forma de Cobra")
+				&& p.getRaca() instanceof br.com.dantesrpg.model.racas.Vampiro
+				&& p.getRaca().isV2());
+		if (ninguemComBadOmen && !celulasAuraBadOmen.isEmpty()) {
+			for (Pane cell : celulasAuraBadOmen)
+				cell.getStyleClass().remove("zona-aura-bad-omen");
+			celulasAuraBadOmen.clear();
+		}
+
 		desenharBarrasDeVidaObjetos(combatentes);
 	}
 
@@ -1295,19 +1484,80 @@ public class MapController {
 	public void toggleModoEditor() {
 		this.modoEditor = !this.modoEditor;
 
-		// Desativa outros modos para evitar conflito
 		if (this.modoEditor) {
 			this.modoMovimentoLivre = false;
 			this.modoSpawnInimigo = false;
 			this.modoSelecaoAlvo = false;
-			sairModoSelecao(); // Limpa visual de combate
+			sairModoSelecao();
 
 			System.out.println("MAPA: Modo EDITOR ativado.");
-			mapGrid.getScene().setCursor(javafx.scene.Cursor.OPEN_HAND); // Cursor diferente (ex: Ajuste)
+			mapGrid.getScene().setCursor(javafx.scene.Cursor.OPEN_HAND);
+			abrirJanelaEditor();
 		} else {
 			System.out.println("MAPA: Modo EDITOR desativado.");
 			mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
+			fecharJanelaEditor();
 		}
+	}
+
+	public void setEditorTile(TileDefinition tile) {
+		this.editorTile = tile;
+		if (tile != null) {
+			System.out.println("EDITOR: Tile selecionado -> " + tile.getName() + " [" + tile.getId() + "]");
+		}
+	}
+
+	public TileDefinition getEditorTile() {
+		return this.editorTile;
+	}
+
+	private void abrirJanelaEditor() {
+		if (editorWindowStage != null && editorWindowStage.isShowing()) {
+			editorWindowStage.toFront();
+			return;
+		}
+
+		try {
+			javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+					getClass().getResource("/br/com/dantesrpg/view/EditorWindow.fxml"));
+			javafx.scene.Parent root = loader.load();
+
+			EditorWindowController editorController = loader.getController();
+			editorController.setMapController(this);
+
+			editorWindowStage = new javafx.stage.Stage();
+			editorWindowStage.setTitle("Editor de Mapa - Catalogo de Tiles");
+			editorWindowStage.setScene(new javafx.scene.Scene(root));
+			editorWindowStage.setAlwaysOnTop(true);
+			editorWindowStage.setResizable(true);
+			editorWindowStage.setWidth(340);
+			editorWindowStage.setHeight(550);
+
+			editorWindowStage.setOnCloseRequest(e -> {
+				this.modoEditor = false;
+				this.editorTile = null;
+				btnEditorMapa.setSelected(false);
+				if (mapGrid.getScene() != null) {
+					mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
+				}
+				System.out.println("MAPA: Janela do editor fechada. Modo EDITOR desativado.");
+			});
+
+			editorWindowStage.show();
+			System.out.println("MAPA: Janela do editor aberta.");
+
+		} catch (Exception e) {
+			System.err.println("ERRO ao abrir janela do editor de mapa:");
+			e.printStackTrace();
+		}
+	}
+
+	private void fecharJanelaEditor() {
+		if (editorWindowStage != null && editorWindowStage.isShowing()) {
+			editorWindowStage.close();
+		}
+		editorWindowStage = null;
+		editorTile = null;
 	}
 
 	private void ciclarTerreno(Pane cell, int x, int y) {
@@ -1385,8 +1635,8 @@ public class MapController {
 
 		System.out.println("MAPA: " + ator.getNome() + " entrando em modo de seleção...");
 
-		if (habilidade != null && habilidade.getTipoAlvo() == TipoAlvo.AREA_QUADRADA
-				|| habilidade.getTipoAlvo() == TipoAlvo.AREA) {
+		if (habilidade != null && (habilidade.getTipoAlvo() == TipoAlvo.AREA_QUADRADA
+				|| habilidade.getTipoAlvo() == TipoAlvo.AREA)) {
 			toggleMirar.setSelected(true);
 			System.out.println("MAPA: Modo Mirar Área (AoE) ativado.");
 			calcularEExibirAtaqueRange(ator, habilidade);
@@ -1606,34 +1856,61 @@ public class MapController {
 			int px = ator.getPosX();
 			int py = ator.getPosY();
 
-			// centroX/Y é a posição do cursor no momento do clique
-			int deltaX = Math.abs(centroX - px);
-			int deltaY = Math.abs(centroY - py);
+			// Determina a direção da linha usando 8 direções (cardeais + diagonais)
+			// Calcula o ângulo do clique em relação ao ator
+			double angulo = Math.atan2(centroY - py, centroX - px);
+			// Normaliza para [0, 2*PI)
+			if (angulo < 0) angulo += 2 * Math.PI;
 
-			if (deltaX > deltaY) { // Horizontal
-				int dirX = (centroX > px) ? 1 : -1;
-				for (int i = 1; i <= comprimento; i++) {
-					int currentX = px + (i * dirX);
-					for (int j = -raioLargura; j <= raioLargura; j++) {
-						int currentY = py + j;
-						if (!coletarCelula(currentX, currentY, atravessaParedes, celulasDaForma) && !atravessaParedes) {
-							i = comprimento;
-							break;
-						}
+			// Quantiza em 8 setores de 45° cada
+			// Setor 0 = Leste, 1 = Sudeste, 2 = Sul, 3 = Sudoeste, etc.
+			int setor = (int) Math.round(angulo / (Math.PI / 4)) % 8;
+
+			// Direções: {dirX, dirY} para cada setor
+			int[][] direcoes = {
+				{ 1,  0}, // 0: Leste (→)
+				{ 1,  1}, // 1: Sudeste (↘)
+				{ 0,  1}, // 2: Sul (↓)
+				{-1,  1}, // 3: Sudoeste (↙)
+				{-1,  0}, // 4: Oeste (←)
+				{-1, -1}, // 5: Noroeste (↖)
+				{ 0, -1}, // 6: Norte (↑)
+				{ 1, -1}, // 7: Nordeste (↗)
+			};
+
+			int dirX = direcoes[setor][0];
+			int dirY = direcoes[setor][1];
+			boolean isDiagonal = (dirX != 0 && dirY != 0);
+
+			for (int i = 1; i <= comprimento; i++) {
+				int baseX = px + (i * dirX);
+				int baseY = py + (i * dirY);
+				boolean bloqueado = false;
+
+				// A largura se expande perpendicular à direção da linha
+				for (int j = -raioLargura; j <= raioLargura; j++) {
+					int currentX, currentY;
+					if (isDiagonal) {
+						// Para diagonais, a perpendicular tem duas componentes
+						// Ex: direção (1,1) → perpendicular é (-1,1) e (1,-1)
+						currentX = baseX + (j * (-dirY));
+						currentY = baseY + (j * dirX);
+					} else if (dirX != 0) {
+						// Horizontal: largura se expande no eixo Y
+						currentX = baseX;
+						currentY = baseY + j;
+					} else {
+						// Vertical: largura se expande no eixo X
+						currentX = baseX + j;
+						currentY = baseY;
+					}
+
+					if (!coletarCelula(currentX, currentY, atravessaParedes, celulasDaForma) && !atravessaParedes) {
+						bloqueado = true;
+						break;
 					}
 				}
-			} else { // Vertical
-				int dirY = (centroY > py) ? 1 : -1;
-				for (int i = 1; i <= comprimento; i++) {
-					int currentY = py + (i * dirY);
-					for (int j = -raioLargura; j <= raioLargura; j++) {
-						int currentX = px + j;
-						if (!coletarCelula(currentX, currentY, atravessaParedes, celulasDaForma) && !atravessaParedes) {
-							i = comprimento;
-							break;
-						}
-					}
-				}
+				if (bloqueado) break;
 			}
 		} else if (tipo == TipoAlvo.CONE) {
 			int alcance = habilidade.getAlcanceMaximo();
@@ -1781,75 +2058,111 @@ public class MapController {
 		}
 	}
 
-	public void desenharRingueAlexei(Personagem centro, int tamanho) {
-		limparRingueAlexei(); // Limpa qualquer ringue antigo
+	// === SISTEMA GENÉRICO DE DOMÍNIOS ===
 
-		// Calcula o raio (para 7x7, tamanho=7, raio=3)
-		int raio = (tamanho - 1) / 2;
+	/**
+	 * Registra e desenha um domínio no mapa. Se já existir um domínio com o mesmo
+	 * ID, ele é removido antes.
+	 */
+	public void registrarDominio(Dominio dominio) {
+		removerDominio(dominio.getId()); // Limpa qualquer domínio antigo com mesmo ID
 
-		System.out.println("MAPA: Desenhando Ringue " + tamanho + "x" + tamanho + " centrado em " + centro.getNome());
-		// Itera do (centro - raio) até (centro + raio)
-		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
-			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
-				// Verifica se a célula está dentro do grid
-				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane celulaDoGrid = celulasDoGrid[x][y];
-					if (celulaDoGrid != null) {
-						celulaDoGrid.getStyleClass().add("zona-dominio-alexei");
-						celulasRingueAlexei.add(celulaDoGrid); // Rastreia para limpar
-					}
+		dominiosAtivos.put(dominio.getId(), dominio);
+
+		List<Pane> celulasVisuais = new ArrayList<>();
+
+		String donoNome = (dominio.getDono() != null) ? dominio.getDono().getNome() : "Fusão";
+		System.out.println("MAPA: Desenhando domínio [" + dominio.getId() + "] ("
+				+ dominio.getCoordenadas().size() + " tiles) — " + donoNome);
+
+		// Itera pelas coordenadas reais do domínio (suporta formas irregulares/fusões)
+		for (long coordKey : dominio.getCoordenadas()) {
+			int x = (int) (coordKey >> 32);
+			int y = (int) coordKey;
+			if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
+				Pane celulaDoGrid = celulasDoGrid[x][y];
+				if (celulaDoGrid != null) {
+					celulaDoGrid.getStyleClass().add(dominio.getCssClass());
+					celulasVisuais.add(celulaDoGrid);
 				}
 			}
 		}
+		celulasVisuaisDominios.put(dominio.getId(), celulasVisuais);
+	}
+
+	/** Remove um domínio pelo ID, limpando visuais e dados lógicos. */
+	public void removerDominio(String dominioId) {
+		Dominio removido = dominiosAtivos.remove(dominioId);
+		List<Pane> celulas = celulasVisuaisDominios.remove(dominioId);
+		if (removido == null || celulas == null)
+			return;
+
+		System.out.println("MAPA: Limpando domínio [" + dominioId + "].");
+		for (Pane cell : celulas) {
+			cell.getStyleClass().remove(removido.getCssClass());
+		}
+	}
+
+	/** Remove todos os domínios ativos do mapa. */
+	public void limparTodosDominios() {
+		for (String id : new ArrayList<>(dominiosAtivos.keySet())) {
+			removerDominio(id);
+		}
+	}
+
+	/** Retorna o domínio ativo pelo ID, ou null. */
+	public Dominio getDominio(String dominioId) {
+		return dominiosAtivos.get(dominioId);
+	}
+
+	/** Retorna todos os domínios ativos. */
+	public Map<String, Dominio> getDominiosAtivos() {
+		return dominiosAtivos;
+	}
+
+	/**
+	 * Verifica se um personagem está dentro de um domínio específico.
+	 * Também checa domínios fundidos — se o personagem está dentro de uma fusão
+	 * que contém o domínio original, retorna true.
+	 */
+	public boolean isPersonagemNoDominio(Personagem p, String dominioId) {
+		// Checagem direta
+		Dominio dom = dominiosAtivos.get(dominioId);
+		if (dom != null && dom.contemPersonagem(p))
+			return true;
+
+		// Checagem em fusões — se algum domínio fundido contém o original
+		for (Dominio ativo : dominiosAtivos.values()) {
+			if (ativo.isFusao() && ativo.contemPersonagem(p)) {
+				for (Dominio original : ativo.getDominiosOriginais()) {
+					if (original.getId().equals(dominioId))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	// === MÉTODOS RETROCOMPATÍVEIS (delegam ao sistema genérico) ===
+
+	public void desenharRingueAlexei(Personagem centro, int tamanho) {
+		Dominio ringue = new Dominio("ringue_alexei", "Ringue da Vontade", centro, centro.getPosX(), centro.getPosY(),
+				tamanho, "zona-dominio-alexei");
+		registrarDominio(ringue);
 	}
 
 	public void limparRingueAlexei() {
-		if (celulasRingueAlexei.isEmpty())
-			return;
-
-		System.out.println("MAPA: Limpando Ringue do Alexei.");
-		for (Pane cell : celulasRingueAlexei) {
-			cell.getStyleClass().remove("zona-dominio-alexei");
-		}
-		celulasRingueAlexei.clear();
+		removerDominio("ringue_alexei");
 	}
 
-	public void desenharDominioLyria(Personagem centro, int tamanhoIgnorado) {
-		limparDominioLyria();
-
-		// Regra: 2 quadrados para cada lado (Centro + 2 Esq + 2 Dir = 5x5)
-		int raio = 2;
-
-		System.out.println("MAPA: Desenhando Cassino 5x5 centrado em " + centro.getNome());
-		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
-			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
-				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane celulaDoGrid = celulasDoGrid[x][y];
-					if (celulaDoGrid != null) {
-						celulaDoGrid.getStyleClass().add("zona-dominio-lyria");
-						celulasDominioLyria.add(celulaDoGrid);
-					}
-				}
-			}
-		}
-	}
-
-	private boolean isCelulaNoDominio(int x, int y, List<Pane> listaDominio) {
-		if (listaDominio.isEmpty())
-			return false;
-		if (x < 0 || x >= gridLargura || y < 0 || y >= gridAltura)
-			return false;
-		return listaDominio.contains(celulasDoGrid[x][y]);
+	public void desenharDominioLyria(Personagem centro, int tamanho) {
+		Dominio dominio = new Dominio("dominio_lyria", "Domínio: Idle Death Gamble", centro, centro.getPosX(),
+				centro.getPosY(), tamanho, "zona-dominio-lyria");
+		registrarDominio(dominio);
 	}
 
 	public void limparDominioLyria() {
-		if (celulasDominioLyria.isEmpty())
-			return;
-		System.out.println("MAPA: Limpando Domínio da Lyria.");
-		for (Pane cell : celulasDominioLyria) {
-			cell.getStyleClass().remove("zona-dominio-lyria");
-		}
-		celulasDominioLyria.clear();
+		removerDominio("dominio_lyria");
 	}
 
 	public void desenharAuraDarrell(Personagem centro) {
@@ -1869,6 +2182,48 @@ public class MapController {
 					if (celulaDoGrid != null) {
 						celulaDoGrid.getStyleClass().add("zona-aura-darrell");
 						celulasAuraDarrell.add(celulaDoGrid);
+					}
+				}
+			}
+		}
+	}
+
+	// --- AURA PRESENÇA DO ZERO (Zeraphon) ---
+	public void desenharAuraZero(Personagem centro) {
+		for (Pane cell : celulasAuraZero) {
+			cell.getStyleClass().remove("zona-aura-zero");
+		}
+		celulasAuraZero.clear();
+
+		int raio = 3; // 6x6 → raio 3 centrado
+		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
+			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
+				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
+					Pane celulaDoGrid = celulasDoGrid[x][y];
+					if (celulaDoGrid != null) {
+						celulaDoGrid.getStyleClass().add("zona-aura-zero");
+						celulasAuraZero.add(celulaDoGrid);
+					}
+				}
+			}
+		}
+	}
+
+	// --- AURA BAD OMEN (Vampiro V2) ---
+	public void desenharAuraBadOmen(Personagem centro) {
+		for (Pane cell : celulasAuraBadOmen) {
+			cell.getStyleClass().remove("zona-aura-bad-omen");
+		}
+		celulasAuraBadOmen.clear();
+
+		int raio = 2; // 5x5 → raio 2 centrado
+		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
+			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
+				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
+					Pane celulaDoGrid = celulasDoGrid[x][y];
+					if (celulaDoGrid != null) {
+						celulaDoGrid.getStyleClass().add("zona-aura-bad-omen");
+						celulasAuraBadOmen.add(celulaDoGrid);
 					}
 				}
 			}
@@ -1925,7 +2280,7 @@ public class MapController {
 				if (p.getVidaAtual() < p.getVidaMaxima() && p.isVivo()) {
 					Pane cell = celulasDoGrid[p.getPosX()][p.getPosY()];
 					if (cell != null) {
-						double pct = p.getVidaAtual() / p.getVidaMaxima();
+						double pct = (double) p.getVidaAtual() / (double) p.getVidaMaxima();
 
 						// Fundo da barra (Vermelho escuro)
 						javafx.scene.shape.Rectangle bgBar = new javafx.scene.shape.Rectangle(5, 5, CELL_SIZE - 10, 6);
