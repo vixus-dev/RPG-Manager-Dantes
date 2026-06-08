@@ -4,34 +4,33 @@ import br.com.dantesrpg.model.Classe;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.Atributo;
-import br.com.dantesrpg.model.habilidades.classe.BalancoTemerario;
-import br.com.dantesrpg.model.habilidades.classe.GolpeDevastador;
-import br.com.dantesrpg.model.habilidades.classe.GritoDeGuerra;
-import br.com.dantesrpg.model.habilidades.classe.RaivaImparavel;
+import br.com.dantesrpg.model.habilidades.classe.DeadEye;
+import br.com.dantesrpg.model.habilidades.classe.DescarregarTambor;
+import br.com.dantesrpg.model.habilidades.classe.GatilhoVeloz;
+import br.com.dantesrpg.model.habilidades.classe.JusticaDourada;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Barbaro extends Classe {
+public class Pistoleiro extends Classe {
 
-	private final String nome = "Barbaro";
-	private final String descricao = "Um combatente brutal que troca a própria vida por dano e pressão constante.";
+	private final String nome = "Pistoleiro";
+	private final String descricao = "Um atirador calculista que transforma precisão, reflexo e fortuna em disparos letais.";
 	private final Map<Atributo, Integer> modificadores;
 	private final List<Habilidade> habilidadesDaClasse;
 
-	public Barbaro() {
+	public Pistoleiro() {
 		this.modificadores = new HashMap<>();
-		modificadores.put(Atributo.FORCA, 2);
-		modificadores.put(Atributo.ENDURANCE, -1);
-		modificadores.put(Atributo.INTELIGENCIA, -1);
+		modificadores.put(Atributo.SAGACIDADE, 1);
+		modificadores.put(Atributo.PERCEPCAO, 1);
 
 		this.habilidadesDaClasse = new ArrayList<>();
-		this.habilidadesDaClasse.add(new RaivaImparavel());
-		this.habilidadesDaClasse.add(new BalancoTemerario());
-		this.habilidadesDaClasse.add(new GritoDeGuerra());
-		this.habilidadesDaClasse.add(new GolpeDevastador());
+		this.habilidadesDaClasse.add(new DeadEye());
+		this.habilidadesDaClasse.add(new GatilhoVeloz());
+		this.habilidadesDaClasse.add(new DescarregarTambor());
+		this.habilidadesDaClasse.add(new JusticaDourada());
 	}
 
 	@Override
