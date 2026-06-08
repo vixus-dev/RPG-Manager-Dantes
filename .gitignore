@@ -1,0 +1,53 @@
+# ==========================================
+# RPG: A Decadência - .gitignore
+# ==========================================
+
+# Java Compiled Files
+*.class
+*.log
+
+# Eclipse Metadata & Build Outputs
+bin/
+.classpath
+.project
+.settings/
+build.fxbuild.xml
+*.fxbuild
+
+# VS Code Configuration
+.vscode/
+
+# CodeTogether Metadata
+.codetogether/
+*codetogether*
+
+# SDKs / Bibliotecas Locais (Evitar comitar SDK inteiro)
+lib/javafx-sdk-*/
+lib/javafx-sdk-21.0.8/
+
+# Python Scripts (Scripts de automação locais)
+*.py
+
+# Imagens (formatos comuns solicitados para ignorar)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.bmp
+*.webp
+
+# Sistema Operacional (Windows / macOS / Linux)
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Agent Configuration / Files
+.agents/
+
+# Agent Skills
+ui-ux-pro-max-skill-2.5.0/
+*-skill-*/
+
+
