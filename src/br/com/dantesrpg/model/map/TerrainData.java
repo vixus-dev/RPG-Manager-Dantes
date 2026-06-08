@@ -9,7 +9,7 @@ public class TerrainData {
 	}
 
 	public enum TipoEfeitoSolo {
-		FOGO, ACIDO, GAS, ELETRICIDADE, PORTAL, SANGUE
+		FOGO, ACIDO, GAS, ELETRICIDADE, PORTAL, SANGUE, AREIA
 	}
 
 	public static class EfeitoInstance {

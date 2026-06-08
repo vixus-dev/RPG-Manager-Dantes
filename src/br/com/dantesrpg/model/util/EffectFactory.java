@@ -25,10 +25,13 @@ public class EffectFactory {
 			return new Efeito("Toxina", TipoEfeito.DOT, 200, null, danoPorTick, 50);
 		});
 
-		// Choque (Grau 1): Apenas +20 TU ao alvo no momento da aplicação (não é DoT)
-		presets.put("Choque", (duracao, danoDaSource) ->
-			new Efeito("Choque", TipoEfeito.DEBUFF, 100, null, 0, 0)
-		);
+		// Choque (Grau 1): Apenas +X TU ao alvo no próximo TU (a duração sempre é 1 TU)
+		presets.put("Choque", (duracao, valor) -> {
+			Map<String, Double> mods = new HashMap<>();
+			double tu = (valor > 0) ? valor : 20.0;
+			mods.put("TU_ADICIONADO", tu);
+			return new Efeito("Choque", TipoEfeito.DEBUFF, 1, mods, 0, 0);
+		});
 
 		// Pesadelo (Grau 2): Só pode ser aplicado em alvos "Dormindo". Acorda e +60% dano recebido.
 		presets.put("Pesadelo", (duracao, danoDaSource) ->
@@ -42,6 +45,11 @@ public class EffectFactory {
 		// Sono (Grau 1): Aplica acúmulos (sem tempo limite). 5 acúmulos = Dormindo (300 TU, acorda com 2 ticks de dano)
 		presets.put("Sono", (duracao, danoDaSource) ->
 			new Efeito("Sono", TipoEfeito.DEBUFF, 99999, null, 0, 0)
+		);
+
+		// Dormindo: Estado incapacitado direto (300 TU, acorda com 2 ticks/golpes)
+		presets.put("Dormindo", (duracao, danoDaSource) ->
+			new Efeito("Dormindo", TipoEfeito.DEBUFF, 300, null, 0, 0)
 		);
 
 		// Sangramento (Grau 1): 5 ticks, 25% do dano por tick | Intervalo 100 TU | Duração 500 TU
@@ -87,15 +95,18 @@ public class EffectFactory {
 		// EFEITOS EXTRAS (CC / Utility)
 		// =====================================================================
 
-		// Stun (Grau 2): Incapacita o alvo, próximo turno pulado
-		presets.put("Stun (Atordoado)", (duracao, danoDaSource) ->
-			new Efeito("Stun", TipoEfeito.DEBUFF, 100, null, 0, 0)
+		// STUN (Grau 2): Incapacita o alvo, próximo turno pulado
+		presets.put("STUN", (duracao, danoDaSource) ->
+			new Efeito("STUN", TipoEfeito.DEBUFF, 100, null, 0, 0)
 		);
 
-		// Lento (Grau 1): Aumenta custo em TU das habilidades (+30%)
-		presets.put("Lento", (duracao, danoDaSource) ->
-			new Efeito("Lento", TipoEfeito.DEBUFF, duracao, null, 0, 0)
-		);
+		// Lento (Grau 1): Aumenta custo em TU das habilidades (percentual dinâmico)
+		presets.put("Lento", (duracao, valor) -> {
+			Map<String, Double> mods = new HashMap<>();
+			double percent = (valor > 0) ? (valor / 100.0) : 0.30;
+			mods.put("CUSTO_TU_PERCENTUAL", percent);
+			return new Efeito("Lento", TipoEfeito.DEBUFF, duracao, mods, 0, 0);
+		});
 
 		// Charm (Grau 1): Acúmulos baseados em Carisma. 100 acúmulos = transe de 100 TU
 		presets.put("Charm", (duracao, danoDaSource) ->
