@@ -5,11 +5,11 @@ import br.com.dantesrpg.model.Personagem;
 public class TerrainData {
 
 	public enum TipoTerreno {
-		PADRAO, PAREDE, CARVAO, OBJETO, SAIDA, LAVA
+		PADRAO, PAREDE, CARVAO, OBJETO, SAIDA, LAVA, SANGUE, ACIDO
 	}
 
 	public enum TipoEfeitoSolo {
-		FOGO, ACIDO, GAS, ELETRICIDADE, PORTAL
+		FOGO, ACIDO, GAS, ELETRICIDADE, PORTAL, SANGUE
 	}
 
 	public static class EfeitoInstance {
