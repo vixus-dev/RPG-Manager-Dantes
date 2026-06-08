@@ -17,6 +17,7 @@ public class Efeito {
 	private int danoPorTick;
 	private int intervaloTickTU;
 	private int stacks = 0;
+	private double escudoSangueOutorgado = 0.0;
 
 	// CONSTRUTOR COMPLETO
 	public Efeito(String nome, TipoEfeito tipo, int duracaoTUInicial, Map<String, Double> modificadores,
@@ -29,7 +30,17 @@ public class Efeito {
 		this.danoPorTick = danoPorTick;
 		this.intervaloTickTU = intervaloTickTU;
 		this.stacks = 0;
+		this.escudoSangueOutorgado = 0.0;
 	}
+
+	public double getEscudoSangueOutorgado() {
+		return escudoSangueOutorgado;
+	}
+
+	public void setEscudoSangueOutorgado(double escudoSangueOutorgado) {
+		this.escudoSangueOutorgado = escudoSangueOutorgado;
+	}
+
 
 	// --- GETTERS ---
 	public String getNome() {
@@ -78,6 +89,22 @@ public class Efeito {
 
 	public void setDuracaoTURestante(int duracao) {
 		this.duracaoTURestante = duracao;
+	}
+
+	public void setDanoPorTick(int danoPorTick) {
+		this.danoPorTick = danoPorTick;
+	}
+
+	public void setIntervaloTickTU(int intervaloTickTU) {
+		this.intervaloTickTU = intervaloTickTU;
+	}
+
+	public void setModificadores(Map<String, Double> modificadores) {
+		this.modificadores = modificadores;
+	}
+
+	public void setDuracaoTUInicial(int duracaoTUInicial) {
+		this.duracaoTUInicial = duracaoTUInicial;
 	}
 
 }

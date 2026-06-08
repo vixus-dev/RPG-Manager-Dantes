@@ -33,7 +33,7 @@ public class EffectTooltipBuilder {
 				"Só pode ser aplicado em alvos dormindo. Acorda o alvo e aumenta o dano recebido em 60%.");
 		DESCRICOES.put("Sono",
 				"Acumula sonolência. 5 acúmulos = Dormindo (300 TU). O alvo acorda após receber 2 ticks de dano.");
-		DESCRICOES.put("Stun", "Atordoa o alvo, fazendo-o perder o próximo turno.");
+		DESCRICOES.put("STUN", "Atordoa o alvo, fazendo-o perder o próximo turno.");
 		DESCRICOES.put("Lento", "Retarda o alvo, aumentando o custo em TU de todas as habilidades em +30%.");
 		DESCRICOES.put("Charm",
 				"Acúmulos baseados em Carisma do atacante. Ao atingir 100 acúmulos, o alvo entra em transe por 100 TU.");
@@ -131,6 +131,7 @@ public class EffectTooltipBuilder {
 		NOMES_MODIFICADORES.put("REDUCAO_CURA", "Redução de Cura");
 		NOMES_MODIFICADORES.put("REDUCAO_DANO_MODIFICADOR", "Redução de Dano");
 		NOMES_MODIFICADORES.put("PERCENTUAL_HP_MAX", "% Vida Máx/tick");
+		NOMES_MODIFICADORES.put("CUSTO_TU_PERCENTUAL", "Custo de TU Extra");
 		NOMES_MODIFICADORES.put("FORCA", "Força");
 		NOMES_MODIFICADORES.put("DESTREZA", "Destreza");
 		NOMES_MODIFICADORES.put("INTELIGENCIA", "Inteligência");
