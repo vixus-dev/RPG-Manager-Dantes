@@ -31,6 +31,7 @@ public class EspadaSerra extends br.com.dantesrpg.model.ArmaMelee {
 		if (portador.getVidaAtual() <= (portador.getVidaMaxima() * 0.5)) {
 			ativarModoEngaged(portador, controller);
 		}
+		this.setWielding(2); 
 	}
 
 	private void ativarModoEngaged(Personagem p, br.com.dantesrpg.controller.CombatController controller) {
@@ -48,7 +49,7 @@ public class EspadaSerra extends br.com.dantesrpg.model.ArmaMelee {
 		// Agora este método existe porque adicionamos no Passo 2
 		this.setCustoTU((int) (this.getCustoTU() * 0.7));
 
-		p.setEscudoAtual(p.getVidaMaxima() * 0.3);
+		p.adicionarEscudoNormal(p.getVidaMaxima() * 0.3);
 		p.recalcularAtributosEstatisticas();
 
 		if (controller != null)

@@ -16,7 +16,8 @@ public class BastaoPrimordialBehemoth extends ArmaMelee {
 				"Um bastão ancestral imbuído com a essência de um Behemoth primordial. "
 						+ "Quando seu portador assume a forma lupina, o bastão se transforma em um martelo colossal "
 						+ "capaz de devastar uma área inteira com cada golpe.",
-				Raridade.UNICO, 0, 10, 1, Atributo.FORCA, 100, 2);
+				Raridade.UNICO, 0, 29, 1, Atributo.FORCA, 100, 2);
+				this.setWielding(2); 
 	}
 
 	private boolean isPortadorTransformado() {
@@ -35,7 +36,7 @@ public class BastaoPrimordialBehemoth extends ArmaMelee {
 
 	@Override
 	public int getDanoBase() {
-		return isPortadorTransformado() ? 15 : 10;
+		return isPortadorTransformado() ? 38 : 29; 
 	}
 
 	@Override

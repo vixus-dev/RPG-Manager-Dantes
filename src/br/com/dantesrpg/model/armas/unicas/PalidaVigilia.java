@@ -14,10 +14,11 @@ import java.util.Map;
 public class PalidaVigilia extends ArmaMelee {
 
 	public PalidaVigilia() {
-		super("Pálida Vigília", "Foice", "Uma foice invocavel composta de um material angelical", Raridade.UNICO, 0, 14,
+		super("Pálida Vigília", "Foice", "Uma foice invocavel composta de um material angelical", Raridade.UNICO, 0, 18,
 				1, Atributo.FORCA, 110, 2);
 		this.setTipoAlvo(br.com.dantesrpg.model.enums.TipoAlvo.CONE);
 		this.setTamanhoArea(2);
+		this.setWielding(2); 
 	}
 
 	@Override
@@ -35,6 +36,16 @@ public class PalidaVigilia extends ArmaMelee {
 	@Override
 	public int getAnguloCone() {
 		return 135;
+	}
+
+	@Override
+	public void onRollSuccess(Personagem ator, Personagem alvo, int rolagem, int dadoMax, double danoDoTick,
+			EstadoCombate estado) {
+		if (danoDoTick <= 0)
+			return;
+		double escudo = ator.getVidaMaxima() * 0.025;
+		ator.adicionarEscudoSangue(escudo);
+		System.out.println(">>> PÁLIDA VIGÍLIA (On-Hit): +" + String.format("%.1f", escudo) + " Escudo de Sangue.");
 	}
 
 	// === Ataque Alternativo: Ceifa Divina ===

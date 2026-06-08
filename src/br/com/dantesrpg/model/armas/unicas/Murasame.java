@@ -15,7 +15,7 @@ public class Murasame extends ArmaMelee {
 		super("Murasame", "Arma de uma mão",
 				"é uma uchigatana forjada com microcanais que permitem aplicar toxinas na lâmina", Raridade.UNICO, 0,
 				11, 1, Atributo.DESTREZA, 90, 1);
-
+				this.setWielding(1); 
 	}
 
 	@Override

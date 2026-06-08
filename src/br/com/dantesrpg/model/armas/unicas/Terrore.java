@@ -25,6 +25,7 @@ public class Terrore extends ArmaRanged {
 				"Terrore é uma pistola estilo revólver, não se sabe do que o revólver é feito, mas não parece ser de ferro, você consegue confrontar seus medos ?",
 				Raridade.UNICO, 0, 4, 1, Atributo.SAGACIDADE, 80, 4, 7);
 		this.marcasDoMedo = new HashMap<>();
+		this.setWielding(1); 
 	}
 
 	@Override

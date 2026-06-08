@@ -10,8 +10,9 @@ import br.com.dantesrpg.model.enums.Raridade;
 public class PunhoInfinito extends ArmaMelee {
 
 	public PunhoInfinito() {
-		super("Punho Infinito", "Manoplas", "manoplas espectrais que cobrem os punhos de Alexei", Raridade.UNICO, 0, 13,
+		super("Punho Infinito", "Manoplas", "manoplas espectrais que cobrem os punhos de Alexei", Raridade.UNICO, 0, 29,
 				1, Atributo.FORCA, 85, 1);
+				this.setWielding(2); 
 	}
 
 	private boolean isRingueAtivoEDentro(Personagem ator, EstadoCombate estado) {
@@ -40,21 +41,22 @@ public class PunhoInfinito extends ArmaMelee {
 
 			if (porcentagemVidaPerdida > 0) {
 				System.out.println(
-						">>> Punho Infinito: +" + String.format("%.1f", porcentagemVidaPerdida * 100) + "% Dano (por HP perdido).");
-				return 1.0 + porcentagemVidaPerdida;
+						">>> Punho Infinito: +" + String.format("%.1f", porcentagemVidaPerdida * 100)
+								+ "% Dano (por HP perdido).");
+				return 1.0 + (porcentagemVidaPerdida * 2);
 			}
 		}
 		return 1.0;
 	}
 
-	// Passiva 3: Aumentar TU do Alvo (só dentro do Ringue, abaixo de 50% HP)
+	// Passiva 3: Aumentar TU do Alvo (só dentro do Ringue, abaixo de 75% HP)
 	@Override
 	public void onAttackHit(Personagem ator, Personagem alvo, double danoCausado, EstadoCombate estado) {
 		if (isRingueAtivoEDentro(ator, estado)) {
 			double vidaAtual = ator.getVidaAtual();
 			double vidaMax = ator.getVidaMaxima();
 
-			if (vidaAtual <= (vidaMax * 0.50)) {
+			if (vidaAtual <= (vidaMax * 0.75)) {
 				int forca = ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0);
 				alvo.setContadorTU(alvo.getContadorTU() + forca);
 				System.out.println(
