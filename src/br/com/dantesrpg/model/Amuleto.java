@@ -10,7 +10,6 @@ public class Amuleto extends Item {
 
 	private Map<String, Double> modificadoresStatus;
 
-	// Atualize o construtor
 	public Amuleto(String nome, String descricao, int valor, int armaduraBonus, Map<Atributo, Integer> modAtributos,
 			Map<String, Double> modStatus) {
 		super(nome, descricao, valor, false);
@@ -20,15 +19,31 @@ public class Amuleto extends Item {
 	}
 
 	public int getArmaduraBonus() {
+		return (int) Math.round(armaduraBonus * getMultiplicadorOverclock());
+	}
+
+	public int getArmaduraBonusOriginal() {
 		return armaduraBonus;
 	}
 
 	public Map<Atributo, Integer> getModificadoresDeAtributo() {
-		return modificadoresDeAtributo;
+		if (modificadoresDeAtributo == null || getGrauOverclock() == 0) return modificadoresDeAtributo;
+		Map<Atributo, Integer> resultado = new HashMap<>();
+		double mult = getMultiplicadorOverclock();
+		for (Map.Entry<Atributo, Integer> e : modificadoresDeAtributo.entrySet()) {
+			resultado.put(e.getKey(), (int) Math.round(e.getValue() * mult));
+		}
+		return resultado;
 	}
 
 	public Map<String, Double> getModificadoresStatus() {
-		return modificadoresStatus;
+		if (modificadoresStatus == null || getGrauOverclock() == 0) return modificadoresStatus;
+		Map<String, Double> resultado = new HashMap<>();
+		double mult = getMultiplicadorOverclock();
+		for (Map.Entry<String, Double> e : modificadoresStatus.entrySet()) {
+			resultado.put(e.getKey(), e.getValue() * mult);
+		}
+		return resultado;
 	}
 
 	@Override

@@ -58,6 +58,9 @@ public abstract class FantasmaNobre {
 	public void onCriticalHit(Personagem conjurador, Personagem alvo, EstadoCombate estado, CombatManager manager) {
 	}
 
+	public void onRaceTransformation(Personagem personagem, boolean transformado) {
+	}
+
 	public abstract void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado,
 			AcaoMestreInput input, CombatManager manager);
 }

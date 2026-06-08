@@ -162,6 +162,7 @@ public class Personagem {
 		this.movimento = 0;
 		this.reducaoDanoTopor = 0.0;
 		this.reducaoDoTTopor = 0.0;
+		this.reducaoCuraPercentual = 0.0;
 		this.vidaMaxima = (double) this.vidaMaximaBase;
 
 		// RESET ATRIBUTOS
@@ -287,6 +288,11 @@ public class Personagem {
 
 		if (this.raca != null) {
 			this.vidaMaxima -= this.raca.getReducaoHpMaximo(this);
+			// Bônus de armadura percentual (Raça V2 - Anjo Caído Harmonia)
+			double bonusArmPct = this.raca.getBonusArmaduraPercentual(this);
+			if (bonusArmPct > 0) {
+				this.armaduraTotal += (int) (this.armaduraTotal * bonusArmPct);
+			}
 		}
 
 		// CLAMPS FINAIS
@@ -297,6 +303,15 @@ public class Personagem {
 		this.armaduraTotal = Math.max(0, this.armaduraTotal);
 
 		this.reducaoDanoArmadura = (double) this.armaduraTotal / (100.0 + this.armaduraTotal);
+
+		// Converte excesso de redução de dano (acima de 90%) em bônus de dano
+		double reducaoTotal = this.reducaoDanoArmadura + this.reducaoDanoTopor;
+		if (reducaoTotal > 0.90) {
+			double excesso = reducaoTotal - 0.90;
+			this.bonusDanoPercentual += excesso;
+			System.out.println(">>> EXCESSO DE DEFESA: " + String.format("%.1f%%", excesso * 100)
+					+ " convertido em bônus de dano para " + this.nome);
+		}
 
 		// Importante: Não resetar movimentoRestanteTurno se estivermos no meio de um turno!
 		if (this.movimentoRestanteTurno > this.movimento) {
@@ -398,37 +413,22 @@ public class Personagem {
 		double curaRecebida = novaVida - vidaAntiga;
 
 		if (curaRecebida > 0) {
+			// Redução de cura unificada (calculada via modificadores em recalcularAtributosEstatisticas)
 			if (this.reducaoCuraPercentual > 0) {
 				double fatorCura = Math.max(0.0, 1.0 - this.reducaoCuraPercentual);
-				double curaReduzida = curaRecebida * fatorCura;
-				curaRecebida = curaReduzida;
-			}
-
-			if (this.efeitosAtivos.containsKey("Ruptura")) {
-				curaRecebida = curaRecebida * 0.50;
-			} else if (this.efeitosAtivos.containsKey("Dilaceramento")) {
-				curaRecebida = curaRecebida * 0.75;
-			}
-
-			if (efeitosAtivos.containsKey("Corta Cura")) {
-				curaRecebida *= 0.75; // Reduz 25%
-				System.out.println(">>> " + this.nome + " teve a cura reduzida em 25% (Corta Cura).");
-			}
-
-			// Verifica Corta Cura+
-			if (efeitosAtivos.containsKey("Corta Cura+")) {
-				curaRecebida *= 0.60; // Reduz 40%
-				System.out.println(">>> " + this.nome + " teve a cura reduzida em 40% (Corta Cura+).");
-			}
-
-			if (this.raca instanceof Marionette) {
-				return;
+				System.out.println(">>> " + this.nome + " teve a cura reduzida em "
+						+ String.format("%.0f", this.reducaoCuraPercentual * 100) + "%.");
+				curaRecebida = curaRecebida * fatorCura;
 			}
 
 			if (this.raca != null) {
-				// Raça pode modificar a cura (Humano pagando dívida)
+				// Raça pode modificar a cura (Humano pagando dívida, Marionette bloqueia)
 				curaRecebida = this.raca.onCuraAttempt(this, curaRecebida);
 				novaVida = vidaAntiga + curaRecebida;
+			}
+
+			if (curaRecebida <= 0) {
+				return;
 			}
 		}
 
@@ -484,17 +484,6 @@ public class Personagem {
 		if (efeito == null || this.efeitosAtivos == null)
 			return;
 
-		// Imunidade de Protagonista 
-		if (this.isProtagonista) {
-			if (efeito.getTipo() == br.com.dantesrpg.model.enums.TipoEfeito.DEBUFF
-					|| efeito.getTipo() == br.com.dantesrpg.model.enums.TipoEfeito.DOT) {
-				if (!efeito.getNome().equals("Charm") && !efeito.getNome().equals("Controle Mental")) {
-					System.out.println(">>> PROTAGONISTA: " + this.nome + " ignorou o efeito ruim " + efeito.getNome());
-					return;
-				}
-			}
-		}
-
 		// Imunidade DoT
 		if (efeito.getTipo() == br.com.dantesrpg.model.enums.TipoEfeito.DOT) {
 			if (this.efeitosAtivos.containsKey("Bênção da Vigília") || this.efeitosAtivos.containsKey("JACKPOT!")) {
@@ -516,25 +505,24 @@ public class Personagem {
 			int novosStacks = stacksAtuais + 1;
 
 			if (novosStacks >= 5) {
-				// ESTOUROU: Vira "Dormindo"
-				this.removerEfeito("Sono"); // Limpa o acumulador
+				// ESTOUROU: Vira "Dormindo" (300 TU, acorda com 2 ticks de dano)
+				this.removerEfeito("Sono");
 
-				// Cria o efeito "Dormindo" (6 Stacks = 6 Turnos)
-				Efeito dormindo = new Efeito("Dormindo", br.com.dantesrpg.model.enums.TipoEfeito.DEBUFF, 99999, null, 0,
+				// Stacks começa em 0 — será incrementado a cada hit de dano recebido (2 hits = acorda)
+				Efeito dormindo = new Efeito("Dormindo", br.com.dantesrpg.model.enums.TipoEfeito.DEBUFF, 300, null, 0,
 						0);
-				dormindo.setStacks(6);
+				dormindo.setStacks(0);
 
 				this.efeitosAtivos.put("Dormindo", dormindo);
-				System.out.println(">>> " + this.getNome() + " caiu no sono profundo! (6 Turnos)");
+				System.out.println(">>> " + this.getNome() + " caiu no sono profundo! (300 TU ou 2 hits de dano)");
 
 			} else {
-				// Apenas acumula
+				// Apenas acumula (sem tempo limite — não expira por duração)
 				if (sonoAtual != null) {
 					sonoAtual.setStacks(novosStacks);
-					sonoAtual.setDuracaoTURestante(400); // Renova duração (não deixa expirar entre turnos)
 				} else {
-					// Primeiro stack: Cria um efeito LIMPO localmente
-					Efeito novoSono = new Efeito("Sono", br.com.dantesrpg.model.enums.TipoEfeito.DEBUFF, 400, null, 0,
+					// Primeiro stack: duração infinita (acúmulos não expiram por tempo)
+					Efeito novoSono = new Efeito("Sono", br.com.dantesrpg.model.enums.TipoEfeito.DEBUFF, 99999, null, 0,
 							0);
 					novoSono.setStacks(novosStacks);
 					this.efeitosAtivos.put("Sono", novoSono);
@@ -563,6 +551,12 @@ public class Personagem {
 		}
 
 		System.out.println("DEBUG [" + nome + "]: Efeito aplicado: " + efeito.getNome());
+
+		// Hook: notifica a raça sobre novo efeito
+		if (this.raca != null) {
+			this.raca.onEffectUpdate(this, efeito, true);
+		}
+
 		recalcularAtributosEstatisticas();
 	}
 
@@ -1046,6 +1040,9 @@ public class Personagem {
 				break;
 			case "RESISTENCIA_DOT":
 				this.reducaoDoTTopor += valor;
+				break;
+			case "REDUCAO_CURA":
+				this.reducaoCuraPercentual += valor;
 				break;
 			default:
 				// Se não for um status direto, pode ser ignorado ou logado

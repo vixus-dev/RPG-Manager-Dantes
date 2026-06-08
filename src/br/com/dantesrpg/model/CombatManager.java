@@ -2,6 +2,7 @@ package br.com.dantesrpg.model;
 
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.controller.MapController;
+import br.com.dantesrpg.model.classes.Campeao;
 import br.com.dantesrpg.model.classes.Invocador;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.ModoAtaque;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import br.com.dantesrpg.model.map.Dominio;
 import br.com.dantesrpg.model.map.TerrainData.EfeitoInstance;
 import br.com.dantesrpg.model.map.TerrainData.TipoEfeitoSolo;
 
@@ -39,6 +41,7 @@ public class CombatManager {
 	private Personagem atorAtualAnterior;
 	private TipoAcao ultimoTipoAcao = TipoAcao.MOVIMENTO;
 	private int duracaoChuvaRestante = 0;
+	private Runnable pendingMunicaoConsumption;
 
 	public CombatManager(CombatController controller) {
 		this.mainController = controller;
@@ -46,6 +49,20 @@ public class CombatManager {
 
 	public AcaoMestreInput getLastInput() {
 		return this.lastInput;
+	}
+
+	public void confirmarMunicaoPendente() {
+		if (pendingMunicaoConsumption != null) {
+			pendingMunicaoConsumption.run();
+			pendingMunicaoConsumption = null;
+		}
+	}
+
+	public void cancelarMunicaoPendente() {
+		if (pendingMunicaoConsumption != null) {
+			System.out.println(">>> ARMA: Resolução cancelada. Munição não consumida.");
+			pendingMunicaoConsumption = null;
+		}
 	}
 
 	public void proximoTurno(EstadoCombate estado) {
@@ -84,31 +101,22 @@ public class CombatManager {
 		estado.setAtorAtual(proximoAtor);
 		Personagem atual = estado.getAtorAtual();
 
-		if (atual.getEfeitosAtivos().containsKey("Choque")) {
-			System.out.println(">>> " + atual.getNome() + " sofre atraso pelo CHOQUE (+20 TU)!");
-			atual.setContadorTU(atual.getContadorTU() + 20);
-		}
-
 		if (atual.getEfeitosAtivos().containsKey("Dormindo")) {
 			Efeito dormindo = atual.getEfeitosAtivos().get("Dormindo");
-			int turnosRestantes = dormindo.getStacks(); 
 
-			System.out.println(">>> " + atual.getNome() + " está dormindo... Zzz... (Restam " + (turnosRestantes - 1)
-					+ " turnos)");
-
-			// Consome 1 turno
-			dormindo.setStacks(turnosRestantes - 1);
+			System.out.println(">>> " + atual.getNome() + " está dormindo... Zzz... (Restam "
+					+ dormindo.getDuracaoTURestante() + " TU)");
 
 			// Adiciona penalidade de TU (Pula a vez)
 			atual.setContadorTU(atual.getContadorTU() + 100);
 
-			// Se acabou os turnos, acorda
-			if (dormindo.getStacks() <= 0) {
+			// Se expirou por duração (300 TU), acorda
+			if (dormindo.expirou()) {
 				System.out.println(">>> " + atual.getNome() + " acordou naturalmente!");
 				atual.removerEfeito("Dormindo");
 			}
 
-			//Passa para o próximo imediatamente
+			// Passa para o próximo imediatamente
 			proximoTurno(estado);
 			return;
 		}
@@ -136,20 +144,11 @@ public class CombatManager {
 			}
 		}
 
-		// Lógica de Pular Turno (Sono/Stun)
-		boolean estaDormindo = atual.getEfeitosAtivos().containsKey("Dormindo");
-		boolean estaStunado = atual.getEfeitosAtivos().containsKey("Stun");
-
-		if (estaDormindo || estaStunado) {
-			System.out.println(">>> " + atual.getNome() + " está " + (estaDormindo ? "Dormindo" : "Atordoado")
-					+ " e pula o turno!");
+		// Fallback: Pular turno se Dormindo/Stun (segurança caso efeito aplicado entre checagens)
+		if (atual.getEfeitosAtivos().containsKey("Dormindo") || atual.getEfeitosAtivos().containsKey("Stun")) {
 			atual.setContadorTU(atual.getContadorTU() + 100);
-
-			// Remove Stun 
-			if (estaStunado)
+			if (atual.getEfeitosAtivos().containsKey("Stun"))
 				atual.removerEfeito("Stun");
-
-			// Chama próximo turno imediatamente
 			proximoTurno(estado);
 			return;
 		}
@@ -184,19 +183,63 @@ public class CombatManager {
 					br.com.dantesrpg.model.util.SessionLogger
 							.log("⚠️ 2º ANDAR: Turbulência! Todos devem rodar TOPOR para não serem arremessados!");
 				} else if (efeito.startsWith("3º Andar") && tempoGlobalAtual % 300 == 0) {
-					Personagem alvoDoOlho = estado.getAtorAtual();
-					if (alvoDoOlho != null && alvoDoOlho.isAtivoNoCombate()) {
-						br.com.dantesrpg.model.util.SessionLogger
-								.log("👁️ O OLHO observou " + alvoDoOlho.getNome() + "!");
-						Efeito stun = new Efeito("Stun", TipoEfeito.DEBUFF, 100, null, 0, 0);
-						Map<String, Double> mods = new HashMap<>();
-						mods.put("REDUCAO_DANO_MODIFICADOR", -0.30);
-						Efeito olhoDebuff = new Efeito("O Olho", TipoEfeito.DEBUFF, 300, mods, 0, 0);
+					// Popup para selecionar alvos do Olho da Gula
+					List<Personagem> combatentesAtivos = estado.getCombatentes().stream()
+							.filter(Personagem::isAtivoNoCombate)
+							.collect(Collectors.toList());
 
-						if (!alvoDoOlho.isProtagonista()) {
-							alvoDoOlho.adicionarEfeito(stun);
-							alvoDoOlho.adicionarEfeito(olhoDebuff);
-							alvoDoOlho.recalcularAtributosEstatisticas();
+					if (!combatentesAtivos.isEmpty()) {
+						javafx.scene.control.Dialog<List<Personagem>> dialog = new javafx.scene.control.Dialog<>();
+						dialog.setTitle("👁️ O Olho da Gula");
+						dialog.setHeaderText("O Olho se abre! Selecione os alvos que serão observados.\n(50 de dano fixo + Stun)");
+						dialog.getDialogPane().setStyle("-fx-background-color: #1a1a2e; -fx-border-color: #e94560;");
+						dialog.getDialogPane().lookup(".label").setStyle("-fx-text-fill: #eee; -fx-font-size: 13px;");
+
+						javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(8);
+						content.setStyle("-fx-padding: 10;");
+						List<javafx.scene.control.CheckBox> checkBoxes = new ArrayList<>();
+
+						for (Personagem p : combatentesAtivos) {
+							javafx.scene.control.CheckBox cb = new javafx.scene.control.CheckBox(
+									p.getNome() + " (HP: " + (int) p.getVidaAtual() + "/" + (int) p.getVidaMaxima() + ")");
+							cb.setUserData(p);
+							cb.setStyle("-fx-text-fill: " + (p.isProtagonista() ? "#00d4ff" : "#ff6b6b") + "; -fx-font-size: 12px;");
+							checkBoxes.add(cb);
+							content.getChildren().add(cb);
+						}
+
+						javafx.scene.control.ScrollPane scroll = new javafx.scene.control.ScrollPane(content);
+						scroll.setFitToWidth(true);
+						scroll.setMaxHeight(400);
+						scroll.setStyle("-fx-background: #1a1a2e; -fx-background-color: #1a1a2e;");
+						dialog.getDialogPane().setContent(scroll);
+
+						dialog.getDialogPane().getButtonTypes().addAll(
+								javafx.scene.control.ButtonType.OK, javafx.scene.control.ButtonType.CANCEL);
+
+						dialog.setResultConverter(buttonType -> {
+							if (buttonType == javafx.scene.control.ButtonType.OK) {
+								List<Personagem> selecionados = new ArrayList<>();
+								for (javafx.scene.control.CheckBox cb : checkBoxes) {
+									if (cb.isSelected()) {
+										selecionados.add((Personagem) cb.getUserData());
+									}
+								}
+								return selecionados;
+							}
+							return null;
+						});
+
+						Optional<List<Personagem>> resultado = dialog.showAndWait();
+						if (resultado.isPresent() && resultado.get() != null && !resultado.get().isEmpty()) {
+							for (Personagem alvo : resultado.get()) {
+								br.com.dantesrpg.model.util.SessionLogger
+										.log("👁️ O OLHO DA GULA observou " + alvo.getNome() + "!");
+								aplicarDanoAoAlvo(null, alvo, 50.0, true, TipoAcao.AMBIENTE, estado);
+								Efeito stun = new Efeito("Stun", TipoEfeito.DEBUFF, 100, null, 0, 0);
+								alvo.adicionarEfeito(stun);
+								alvo.recalcularAtributosEstatisticas();
+							}
 						}
 					}
 				}
@@ -239,12 +282,13 @@ public class CombatManager {
 								if (!alvoRaio.isProtagonista()) {
 									br.com.dantesrpg.model.util.SessionLogger
 											.log("⚡ RAIO atingiu " + alvoRaio.getNome() + "!");
-									Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 100,
-											20);
-									Efeito queimadura = br.com.dantesrpg.model.util.EffectFactory
-											.criarEfeito("Queimadura", 200, 5);
+									// Choque: +20 TU no alvo
+									alvoRaio.setContadorTU(alvoRaio.getContadorTU() + 20);
+									Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 100, 0);
+									Efeito queimacao = br.com.dantesrpg.model.util.EffectFactory
+											.criarEfeito("Queimação", 0, 15);
 									alvoRaio.adicionarEfeito(choque);
-									alvoRaio.adicionarEfeito(queimadura);
+									alvoRaio.adicionarEfeito(queimacao);
 									aplicarDanoAoAlvo(null, alvoRaio, 15.0, true, TipoAcao.AMBIENTE, estado);
 								}
 							}
@@ -292,7 +336,21 @@ public class CombatManager {
 					if (efeito == null)
 						continue;
 
-					efeito.decrementarDuracao(1);
+					efeito.reduzirDuracao(1);
+
+					// Drenagem de Efeitos: perde 1% de bônus de dano por TU
+					if (nomeEfeito.equals("Drenagem de Efeitos") && efeito.getModificadores() != null) {
+						Double bonusAtual = efeito.getModificadores().get("DANO_BONUS_PERCENTUAL");
+						if (bonusAtual != null) {
+							double novoBonus = bonusAtual - 0.01;
+							if (novoBonus <= 0) {
+								novoBonus = 0;
+								efeito.setDuracaoTURestante(0); // Expira quando o bônus zerar
+							}
+							efeito.getModificadores().put("DANO_BONUS_PERCENTUAL", novoBonus);
+							p.recalcularAtributosEstatisticas();
+						}
+					}
 
 					// Bloco de Dano DoT
 					if (efeito.getTipo() == TipoEfeito.DOT && efeito.getIntervaloTickTU() > 0
@@ -325,17 +383,22 @@ public class CombatManager {
 							efeito.getModificadores().put("REDUCAO_CURA", redAtual + 0.02);
 							p.recalcularAtributosEstatisticas();
 						}
-						if (efeito.getNome().equals("Choque")) {
-							p.setContadorTU(p.getContadorTU() + 20);
-
-						}
-
 						if (danoFinalDoT > 0) {
+							// Dormindo: acorda após 2 ticks de dano (usa stacks para contar)
 							if (p.getEfeitosAtivos().containsKey("Dormindo")) {
-								System.out.println(">>> " + p.getNome() + " ACORDOU devido ao dano do DoT!");
-								br.com.dantesrpg.model.util.SessionLogger
-										.log(p.getNome() + " acordou com a dor (" + efeito.getNome() + ").");
-								p.removerEfeito("Dormindo");
+								Efeito dormindo = p.getEfeitosAtivos().get("Dormindo");
+								int hitsRecebidos = dormindo.getStacks() + 1;
+								dormindo.setStacks(hitsRecebidos);
+
+								if (hitsRecebidos >= 2) {
+									System.out.println(">>> " + p.getNome() + " ACORDOU após 2 ticks de dano!");
+									br.com.dantesrpg.model.util.SessionLogger
+											.log(p.getNome() + " acordou com a dor (" + efeito.getNome() + ").");
+									p.removerEfeito("Dormindo");
+								} else {
+									System.out.println(">>> " + p.getNome() + " recebeu dano dormindo ("
+											+ hitsRecebidos + "/2 para acordar).");
+								}
 							}
 							if (p.getEfeitosAtivos().containsKey("Sono")) {
 								System.out.println(">>> " + p.getNome() + " ACORDOU devido ao dano do DoT!");
@@ -408,10 +471,14 @@ public class CombatManager {
 								((Elfo) p.getRaca()).onEstadoDouradoEnd(p, estado);
 							}
 							if (nomeEfeito.equals("Ringue da Vontade") && mainController != null) {
-								mainController.limparRingueDoMapa();
+								mainController.removerDominio("ringue_alexei");
+								limparFusoesComDominio("ringue_alexei");
 							}
 							if (nomeEfeito.equals("Domínio: Idle Death Gamble") && mainController != null) {
-								mainController.limparDominioLyriaDoMapa();
+								mainController.removerDominio("dominio_lyria");
+								limparFusoesComDominio("dominio_lyria");
+								// Limpa Estrelas da Sorte ao expirar o domínio
+								p.removerEfeito("Estrelas da Sorte");
 							}
 							if (nomeEfeito.equals("Modo Justiça")) {
 								br.com.dantesrpg.model.fantasmasnobres.ModoPolaris.reverterParaPolaris(p);
@@ -477,7 +544,8 @@ public class CombatManager {
 
 				if (ator.getEfeitosAtivos().containsKey("JACKPOT!")) {
 					if (mainController != null) {
-						mainController.limparDominioLyriaDoMapa();
+						mainController.removerDominio("dominio_lyria");
+						limparFusoesComDominio("dominio_lyria");
 						System.out.println(">>> JACKPOT! O Domínio visual foi encerrado.");
 					}
 				}
@@ -647,6 +715,12 @@ public class CombatManager {
 		} else if (input.getModoAtaque() == br.com.dantesrpg.model.enums.ModoAtaque.FORTE) {
 			custoTUBase = (int) (custoTUBase * 1.20); // +20% TU
 			System.out.println(">>> Modo FORTE: TU aumentado para " + custoTUBase);
+		} else if (input.getModoAtaque() == br.com.dantesrpg.model.enums.ModoAtaque.CORONHADA && ator.getArmaEquipada() != null) {
+			double multTU = ator.getArmaEquipada().getCustoTUMultiplierAtaqueAlternativo();
+			if (multTU != 1.0) {
+				custoTUBase = (int) (custoTUBase * multTU);
+				System.out.println(">>> Modo " + ator.getArmaEquipada().getNomeAtaqueAlternativoBasico() + ": TU ajustado para " + custoTUBase);
+			}
 		}
 
 		// Custo de Rajada (Ranged): +10% TU por tiro EXTRA
@@ -745,6 +819,7 @@ public class CombatManager {
 			if (ator.getBonusDanoPercentual() > 0) {
 				dano *= (1.0 + ator.getBonusDanoPercentual());
 			}
+			dano *= getMultiplicadorDanoDominio(ator);
 
 			dano *= (1.0 + bonusTiroEspecial);
 
@@ -793,7 +868,7 @@ public class CombatManager {
 		int tirosExtrasSolicitados = input.getTirosExtras();
 		int tirosExtrasReais = 0;
 
-		// Consumo de Munição
+		// Consumo de Munição (adiado até confirmação da janela de resolução)
 		if (arma.isRequerMunicao() && habilidade == null && !isModoCoronhada) {
 			int municaoAtual = arma.getMunicaoAtual();
 
@@ -803,23 +878,25 @@ public class CombatManager {
 				return;
 			}
 
-			// Gasta o tiro base
-			arma.gastarMunicao();
-
 			if (isRajada && tirosExtrasSolicitados > 0) {
-				// Calcula quantos extras podemos dar com a munição restante
-				int municaoRestante = arma.getMunicaoAtual();
-				tirosExtrasReais = Math.min(tirosExtrasSolicitados, municaoRestante);
-
-				// Gasta as balas extras
-				for (int k = 0; k < tirosExtrasReais; k++) {
-					arma.gastarMunicao();
-				}
-				System.out.println(">>> ARMA: Rajada de +" + tirosExtrasReais + " tiros. (Total gasto: "
-						+ (1 + tirosExtrasReais) + ")");
-			} else {
-				System.out.println(">>> ARMA: Tiro único disparado.");
+				// Calcula quantos extras podemos dar com a munição disponível
+				int municaoDisponivel = municaoAtual - 1; // -1 para o tiro base
+				tirosExtrasReais = Math.min(tirosExtrasSolicitados, municaoDisponivel);
 			}
+
+			// Adia o consumo real de munição até confirmação na janela de resolução
+			final int totalTirosAGastar = 1 + tirosExtrasReais;
+			final Arma armaRef = arma;
+			this.pendingMunicaoConsumption = () -> {
+				for (int k = 0; k < totalTirosAGastar; k++) {
+					armaRef.gastarMunicao();
+				}
+				if (totalTirosAGastar > 1) {
+					System.out.println(">>> ARMA: Rajada confirmada. " + totalTirosAGastar + " tiros gastos.");
+				} else {
+					System.out.println(">>> ARMA: Tiro único confirmado.");
+				}
+			};
 		}
 
 		double fatorSorte = 1.0 + ator.getSortePercentual();
@@ -844,8 +921,9 @@ public class CombatManager {
 				double multiplicadorFinal = multiplicadorHabilidade * modModo;
 
 				// Crítico
+				Boolean criticoManual = (input != null) ? input.getCriticoManual() : null;
 				double modCritico = calcularModificadorCritico(ator, rolagemDadoAtributo, arma, i, estavaEmStealth,
-						multiplicadorFinal, isTiroEspecial);
+						multiplicadorFinal, isTiroEspecial, criticoManual);
 				boolean isCrit = (modCritico > 1.0);
 
 				// Cálculo
@@ -906,6 +984,20 @@ public class CombatManager {
 
 	// --- Métodos Auxiliares para Limpar o Código Acima ---
 
+	/**
+	 * Retorna o multiplicador de dano posicional baseado em domínios ativos.
+	 * Ex: Lyria dentro do domínio "Idle Death Gamble" sofre -50% dano.
+	 */
+	private double getMultiplicadorDanoDominio(Personagem ator) {
+		double mult = 1.0;
+		if (ator.getEfeitosAtivos().containsKey("Domínio: Idle Death Gamble")
+				&& mainController != null && mainController.isPersonagemNoDominio(ator, "dominio_lyria")) {
+			mult *= 0.50; // -50% dano dentro do domínio
+			System.out.println(">>> Idle Death Gamble: -50% dano (dentro do domínio).");
+		}
+		return mult;
+	}
+
 	private double getMultiplicadorBonusDanoComArma(Personagem ator, Arma arma, Personagem alvo, EstadoCombate estado,
 			AcaoMestreInput input) {
 		if (arma == null) {
@@ -932,6 +1024,7 @@ public class CombatManager {
 	private double aplicarReducaoArmadura(double danoBruto, Personagem ator, Personagem alvo, EstadoCombate estado) {
 		double danoAjustado = aplicarReducaoDanoPreArmadura(danoBruto, ator, alvo, estado);
 		double reducaoArmadura = alvo.getReducaoDanoArmadura() + alvo.getReducaoDanoTopor();
+		reducaoArmadura = Math.min(reducaoArmadura, 0.90); // Cap de 90% — sempre passa pelo menos 10% do dano
 		double pularDefesa = 0.0;
 		if (ator != null && ator.getArmaEquipada() != null) {
 			pularDefesa = ator.getArmaEquipada().getIgnorarDefesaPercentual(ator, alvo, estado);
@@ -975,6 +1068,7 @@ public class CombatManager {
 		double danoParaCascata = arma.getDanoBase() * (1 + (0.075 * rolagemOriginal));
 		if (ator.getBonusDanoPercentual() > 0)
 			danoParaCascata *= (1.0 + ator.getBonusDanoPercentual());
+		danoParaCascata *= getMultiplicadorDanoDominio(ator);
 		danoParaCascata *= (1.0 + ator.getSortePercentual());
 		danoParaCascata *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, estado, input);
 
@@ -982,10 +1076,6 @@ public class CombatManager {
 		double reducaoArmadura = alvo.getReducaoDanoArmadura() + alvo.getReducaoDanoTopor();
 		if (alvo.getEfeitosAtivos().containsKey("Ruptura"))
 			reducaoArmadura -= 0.25;
-		if (ator.getBonusDanoPercentual() > 0)
-			danoParaCascata *= (1.0 + ator.getBonusDanoPercentual());
-		danoParaCascata *= (1.0 + ator.getSortePercentual());
-		danoParaCascata *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, estado, input);
 
 		int nivel = 1;
 		while (nivel <= 7) {
@@ -1062,6 +1152,7 @@ public class CombatManager {
 		if (ator.getBonusDanoPercentual() > 0) {
 			dano *= (1.0 + ator.getBonusDanoPercentual());
 		}
+		dano *= getMultiplicadorDanoDominio(ator);
 
 		// Bônus Especiais
 		if (isTiroEspecial) {
@@ -1117,8 +1208,16 @@ public class CombatManager {
 				}
 				// --- OUTROS EFEITOS PADRÃO (Veneno, Sangramento, etc) ---
 				else {
-					Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito(nomeEfeito, 200,
-							(arma.getDanoBase() / 4));
+					// O dano do DoT é baseado no dano REAL do golpe que aplicou o efeito
+					int danoDaSource = Math.max(1, (int) danoCausado);
+					Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito(nomeEfeito, 0, danoDaSource);
+
+					// Choque: apenas adiciona +20 TU ao alvo (não é DoT)
+					if (nomeEfeito.equalsIgnoreCase("Choque")) {
+						alvo.setContadorTU(alvo.getContadorTU() + 20);
+						System.out.println(">>> CHOQUE! +" + 20 + " TU em " + alvo.getNome());
+					}
+
 					efeito.setStacks(1);
 					aplicarEfeito(alvo, efeito);
 				}
@@ -1126,15 +1225,16 @@ public class CombatManager {
 		}
 
 		if (ator.getEfeitosAtivos().containsKey(BarbaroUtils.EFEITO_BALANCO_TEMERARIO) && Math.random() <= 0.50) {
-			int danoChoque = Math.max(1, (int) Math.ceil(arma.getDanoBase() * 0.25));
-			Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 100, danoChoque);
+			// Choque: apenas +20 TU ao alvo
+			alvo.setContadorTU(alvo.getContadorTU() + 20);
+			Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 100, 0);
 			aplicarEfeito(alvo, choque);
-			System.out.println(">>> Balanço Temerário aplicou Choque em " + alvo.getNome() + ".");
+			System.out.println(">>> Balanço Temerário aplicou Choque em " + alvo.getNome() + " (+20 TU).");
 		}
 	}
 
 	private void aplicarControleMental(Personagem alvo, EstadoCombate estado) {
-		System.out.println(">>> " + alvo.getNome() + " FOI SEDUZIDO! Trocando de lado por 300 TU.");
+		System.out.println(">>> " + alvo.getNome() + " FOI SEDUZIDO! Trocando de lado por 100 TU.");
 		br.com.dantesrpg.model.util.SessionLogger.log("❤ " + alvo.getNome() + " teve a mente controlada! ❤");
 
 		// Remove os stacks de Charm
@@ -1155,7 +1255,7 @@ public class CombatManager {
 
 		// Aplica o Efeito Temporizador
 		// Esse efeito não faz nada nos stats, serve apenas para contar o tempo (300 TU) Quando ele expirar, o Personagem.removerEfeito vai disparar o hook de eversão.
-		Efeito controle = new Efeito("Controle Mental", TipoEfeito.DEBUFF, 300, null, 0, 0);
+		Efeito controle = new Efeito("Controle Mental", TipoEfeito.DEBUFF, 100, null, 0, 0);
 		alvo.adicionarEfeito(controle);
 
 		// Atualiza UI imediatamente para refletir a mudança de cor/time
@@ -1163,10 +1263,10 @@ public class CombatManager {
 	}
 
 	private double calcularModificadorCritico(Personagem ator, int rolagem, Arma arma, int tickIndex, boolean stealth,
-			double modHabilidade, boolean isTiroEspecial) {
+			double modHabilidade, boolean isTiroEspecial, Boolean criticoManual) {
 		double mod = 1.0;
 
-		// Golpe Perfeito (Apenas 1º tick)
+		// Golpe Perfeito (Apenas 1º tick) - sempre verificado independente de rolagem manual
 		if (tickIndex == 0) {
 			int tipoDado = DiceRoller
 					.getTipoDado(ator.getAtributosFinais().getOrDefault(arma.getAtributoMultiplicador(), 1));
@@ -1176,19 +1276,29 @@ public class CombatManager {
 			}
 		}
 
-		// Crítico Normal
-		double bonusCritRate = 0.0;
-		if (isTiroEspecial) {
-			int sag = ator.getAtributosFinais().getOrDefault(Atributo.SAGACIDADE, 0);
-			bonusCritRate = sag * 0.01;
+		// Crítico - Manual override ou auto
+		if (criticoManual != null) {
+			// Rolagem manual foi feita pelo mestre
+			if (criticoManual) {
+				mod *= (1 + ator.getDanoCritico());
+				System.out.println(">>> ACERTO CRÍTICO! (Manual)");
+			}
+			// Se false, não aplica crit (mod fica como está)
+		} else {
+			// Rolagem automática (comportamento original)
+			double bonusCritRate = 0.0;
+			if (isTiroEspecial) {
+				int sag = ator.getAtributosFinais().getOrDefault(Atributo.SAGACIDADE, 0);
+				bonusCritRate = sag * 0.01;
+			}
+
+			if (Math.random() < (ator.getTaxaCritica() + bonusCritRate)) {
+				mod *= (1 + ator.getDanoCritico());
+				System.out.println(">>> ACERTO CRÍTICO!");
+			}
 		}
 
-		if (Math.random() < (ator.getTaxaCritica() + bonusCritRate)) {
-			mod *= (1 + ator.getDanoCritico());
-			System.out.println(">>> ACERTO CRÍTICO!");
-		}
-
-		// Stealth (Crítico Garantido no 1º hit básico)
+		// Stealth (Crítico Garantido no 1º hit básico) - sempre verificado
 		if (tickIndex == 0 && stealth && modHabilidade == 1.0 && mod == 1.0) {
 			mod = (1 + ator.getDanoCritico());
 			System.out.println(">>> Stealth: Crítico Garantido!");
@@ -1237,7 +1347,13 @@ public class CombatManager {
 
 		// Custo de Mana por Hit (Regra Geral)
 		if (modHabilidade == 1.0 && danoTick > 0) {
-			double custoMP = arma.getTipo().equalsIgnoreCase("Ranged") ? 1.0 : 2.0;
+			double custoMP;
+			boolean isCoronhada = input != null && input.getModoAtaque() == br.com.dantesrpg.model.enums.ModoAtaque.CORONHADA;
+			if (isCoronhada && arma.getManaGainAtaqueAlternativo() >= 0) {
+				custoMP = arma.getManaGainAtaqueAlternativo();
+			} else {
+				custoMP = arma.getTipo().equalsIgnoreCase("Ranged") ? 1.0 : 2.0;
+			}
 			ator.setManaAtual(ator.getManaAtual() + custoMP);
 		}
 	}
@@ -1295,6 +1411,7 @@ public class CombatManager {
 			double danoCalculado = arma.getDanoBase() * (1 + (0.075 * rolagemDadoAtributo));
 			if (ator.getBonusDanoPercentual() > 0)
 				danoCalculado *= (1.0 + ator.getBonusDanoPercentual());
+			danoCalculado *= getMultiplicadorDanoDominio(ator);
 			danoCalculado *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, estado, input);
 
 			double multiplicador;
@@ -1384,7 +1501,8 @@ public class CombatManager {
 			System.out.println(">>> Modo Engaged: Custo de TU reduzido!");
 		}
 
-		if (conjurador.getEfeitosAtivos().containsKey("Domínio: Idle Death Gamble")) {
+		if (conjurador.getEfeitosAtivos().containsKey("Domínio: Idle Death Gamble")
+				&& mainController != null && mainController.isPersonagemNoDominio(conjurador, "dominio_lyria")) {
 			modTU -= 0.25;
 			System.out.println(">>> Idle Death Gamble: Custo de TU reduzido em 25%!");
 		}
@@ -1456,19 +1574,9 @@ public class CombatManager {
 		String nomeEf = efeito.getNome().toLowerCase();
 		List<String> props = alvo.getPropriedades();
 
-		if (props.contains("IMUNIDADE_DOT")) {
-			if (efeito.getTipo() == TipoEfeito.DOT) {
-				System.out.println(">>> IMUNE! " + alvo.getNome() + " é imune a DoT: " + efeito.getNome());
-				return;
-			}
-
-			if (nomeEf.contains("sangramento") || nomeEf.contains("toxina") || nomeEf.contains("veneno")
-					|| nomeEf.contains("queima") || nomeEf.contains("ruptura") || nomeEf.contains("dilacera")
-					|| nomeEf.contains("podridão")) {
-
-				System.out.println(">>> IMUNE! " + alvo.getNome() + " resistiu ao efeito: " + efeito.getNome());
-				return;
-			}
+		if (props.contains("IMUNIDADE_DOT") && efeito.getTipo() == TipoEfeito.DOT) {
+			System.out.println(">>> IMUNE! " + alvo.getNome() + " é imune a DoT: " + efeito.getNome());
+			return;
 		}
 		if (props.contains("IMUNIDADE_CONTROLE")) {
 			// Lista de efeitos de controle de grupo (CC)
@@ -1492,7 +1600,6 @@ public class CombatManager {
 		alvo.adicionarEfeito(efeito);
 		System.out.println(">>> Efeito [" + efeito.getNome() + "] aplicado em " + alvo.getNome() + " ("
 				+ efeito.getDuracaoTUInicial() + " TU).");
-		alvo.recalcularAtributosEstatisticas(); // Continua essencial
 	}
 
 	private void aplicarEfeitosDaHabilidade(Personagem conjurador, Habilidade habilidade, List<Personagem> alvos,
@@ -1530,29 +1637,48 @@ public class CombatManager {
 
 	private void aplicarDanoAoAlvoInterno(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal, boolean danoJaResolvido) {
+		aplicarDanoAoAlvoInterno(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, ataqueTotal, danoJaResolvido, false);
+	}
+
+	private void aplicarDanoAoAlvoInterno(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
+			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal, boolean danoJaResolvido,
+			boolean skipVinculoDano) {
 		if (alvo == null || dano <= 0)
 			return;
 
+		// Dormindo: golpe direto conta como hit (2 hits para acordar)
 		if (alvo.getEfeitosAtivos().containsKey("Dormindo")) {
-			System.out.println(">>> " + alvo.getNome() + " ACORDOU COM O GOLPE!");
-			alvo.removerEfeito("Dormindo");
+			Efeito dormindo = alvo.getEfeitosAtivos().get("Dormindo");
+			int hitsRecebidos = dormindo.getStacks() + 1;
+			dormindo.setStacks(hitsRecebidos);
+
+			if (hitsRecebidos >= 2) {
+				System.out.println(">>> " + alvo.getNome() + " ACORDOU após 2 hits de dano!");
+				alvo.removerEfeito("Dormindo");
+			} else {
+				System.out.println(">>> " + alvo.getNome() + " recebeu dano dormindo ("
+						+ hitsRecebidos + "/2 para acordar).");
+			}
 		}
 
-		for (String prop : alvo.getPropriedades()) {
-			if (prop.startsWith("VINCULO_DANO:")) {
-				String nomeDono = prop.split(":")[1];
+		if (!skipVinculoDano) {
+			for (String prop : alvo.getPropriedades()) {
+				if (prop.startsWith("VINCULO_DANO:")) {
+					String nomeDono = prop.split(":")[1];
 
-				// Encontra o dono original na lista
-				Personagem dono = estado.getCombatentes().stream()
-						.filter(p -> p.getNome().equals(nomeDono) && p.isAtivoNoCombate()).findFirst().orElse(null);
+					Personagem dono = estado.getCombatentes().stream()
+							.filter(p -> p.getNome().equals(nomeDono) && p.isAtivoNoCombate()).findFirst()
+							.orElse(null);
 
-				if (dono != null) {
-					double danoTransferido = dano * 0.50; // 50%
-					if (danoTransferido >= 1.0) {
-						System.out.println(
-								">>> VUDU: " + danoTransferido + " de dano transferido para " + dono.getNome());
-						// Aplica dano direto (tipo OUTRO para não gerar loop infinito ou reações)
-						aplicarDanoAoAlvo(ator, dono, danoTransferido, true, TipoAcao.OUTRO, estado, 0);
+					if (dono != null) {
+						double danoTransferido = dano * 0.50; // 50%
+						if (danoTransferido >= 1.0) {
+							System.out.println(
+									">>> VUDU: " + danoTransferido + " de dano transferido para " + dono.getNome());
+							// skipVinculoDano=true para impedir loop infinito de redirecionamento
+							aplicarDanoAoAlvoInterno(ator, dono, danoTransferido, true, TipoAcao.OUTRO, estado, 0,
+									false, true);
+						}
 					}
 				}
 			}
@@ -1604,13 +1730,11 @@ public class CombatManager {
 			}
 		}
 
-		// Acorda alvos (Lógica Mantida)
+		// Pesadelo: se ativo, aumenta dano em 60% e remove (acorda o alvo)
 		if (alvo.getEfeitosAtivos().containsKey("Pesadelo")) {
 			dano = (int) (dano * 1.60);
 			alvo.removerEfeito("Pesadelo");
-		}
-		if (alvo.getEfeitosAtivos().containsKey("Dormindo")) {
-			alvo.removerEfeito("Dormindo");
+			System.out.println(">>> PESADELO! " + alvo.getNome() + " acorda e sofre +60% dano!");
 		}
 
 		if (!danoJaResolvido) {
@@ -1642,6 +1766,7 @@ public class CombatManager {
 				// O Escudo de Sangue não tem redução de dano.
 
 				double reducaoArmadura = alvo.getReducaoDanoArmadura() + alvo.getReducaoDanoTopor();
+				reducaoArmadura = Math.min(reducaoArmadura, 0.90); // Cap de 90%
 				if (alvo.getEfeitosAtivos().containsKey("Ruptura"))
 					reducaoArmadura -= 0.25;
 
@@ -1720,6 +1845,11 @@ public class CombatManager {
 				// XP
 				if (alvo.getXpReward() > 0)
 					estado.adicionarXpAoPool(alvo.getXpReward());
+
+				// Hook de kill para Raça V2
+				if (ator != null && ator.getRaca() != null) {
+					ator.getRaca().onKill(ator, alvo, estado, this);
+				}
 
 				if (alvo.getPropriedades().contains("EXPLOSIVO")) {
 					System.out.println(">>> PROPRIEDADE ATIVADA: " + alvo.getNome() + " EXPLODIU!");
@@ -2166,30 +2296,314 @@ public class CombatManager {
 		if (ator.getEfeitosAtivos().containsKey("Ringue (Preparando)")) {
 			System.out.println(">>> Início do Turno: Ativando 'O Ringue da Vontade Inquebrantável'!");
 
-			// Remove o efeito de preparação
 			ator.removerEfeito("Ringue (Preparando)");
 
-			// Aplica o efeito real (duração de 200 TU)
-			Efeito efeitoRingue = new Efeito("Ringue da Vontade", // O nome que a Arma (PunhoInfinito) verifica
-					TipoEfeito.BUFF, 400, // Duração real do ringue
+			Efeito efeitoRingue = new Efeito("Ringue da Vontade",
+					TipoEfeito.BUFF, 400, // Duração: 400 TU
 					Map.of(), 0, 0);
-			aplicarEfeito(ator, efeitoRingue); // Usa o método do CombatManager
-			// Chama o CombatController para desenhar a zona 7x7
+			aplicarEfeito(ator, efeitoRingue);
+
 			if (mainController != null) {
-				mainController.desenharRingueDoMapa(ator, 7); // 7x7
+				Dominio ringue = new Dominio("ringue_alexei", "Ringue da Vontade", ator,
+						ator.getPosX(), ator.getPosY(), 7, "zona-dominio-alexei");
+				ativarDominioNoMapa(ringue, ator, estado);
 			}
 		}
 
+		// Verifica se o Domínio da Lyria está sendo preparado
 		if (ator.getEfeitosAtivos().containsKey("Domínio: Idle Death Gamble (Preparando)")) {
 			System.out.println(">>> Início do Turno: Ativando 'Idle Death Gamble'!");
 
 			ator.removerEfeito("Domínio: Idle Death Gamble (Preparando)");
 
 			br.com.dantesrpg.model.fantasmasnobres.ApostadorIncansavel.ativarEfeitoDominio(ator);
-			// Desenha no mapa
+
 			if (mainController != null) {
-				mainController.desenharDominioLyriaNoMapa(ator);
+				Dominio dominio = new Dominio("dominio_lyria", "Domínio: Idle Death Gamble", ator,
+						ator.getPosX(), ator.getPosY(), 7, "zona-dominio-lyria");
+				ativarDominioNoMapa(dominio, ator, estado);
 			}
+		}
+
+		// Passiva do Campeão: +20 armadura se 2+ inimigos em área 3x3
+		if (ator.getClasse() instanceof Campeao) {
+			verificarPassivaCampeao(ator, estado);
+		}
+	}
+
+	// === SISTEMA DE COLISÃO DE DOMÍNIOS ===
+
+	/**
+	 * Registra um domínio no mapa, verificando colisão com domínios existentes.
+	 * Se houver sobreposição, abre dialog de disputa (rolagem de dados).
+	 * Vitória: domínio vencedor expande; Empate: fusão com aura preta.
+	 */
+	private void ativarDominioNoMapa(Dominio novoDominio, Personagem ator, EstadoCombate estado) {
+		if (mainController == null)
+			return;
+
+		// Detecta sobreposição com domínios já ativos
+		java.util.Map<String, Dominio> ativos = mainController.getDominiosAtivos();
+		Dominio conflitante = null;
+
+		for (Dominio existente : ativos.values()) {
+			if (existente.getId().equals(novoDominio.getId()))
+				continue; // Mesmo domínio sendo re-registrado
+			if (novoDominio.sobrepoe(existente)) {
+				conflitante = existente;
+				break;
+			}
+		}
+
+		if (conflitante == null) {
+			// Sem colisão, registra normalmente
+			mainController.registrarDominio(novoDominio);
+			return;
+		}
+
+		// COLISÃO DETECTADA — abrir dialog de disputa
+		System.out.println(">>> COLISÃO DE DOMÍNIOS! [" + novoDominio.getId() + "] vs [" + conflitante.getId() + "]");
+
+		Personagem donoExistente = conflitante.getDono();
+		if (donoExistente == null) {
+			// Se o domínio existente é uma fusão, o novo domínio vence automaticamente
+			mainController.removerDominio(conflitante.getId());
+			mainController.registrarDominio(novoDominio);
+			return;
+		}
+
+		// Determina o dado de cada jogador baseado na arma
+		int dadoNovo = getDadoArmaPersonagem(ator);
+		int dadoExistente = getDadoArmaPersonagem(donoExistente);
+
+		// Abre dialog pedindo rolagem
+		int[] resultados = abrirDialogDisputaDominio(ator, dadoNovo, donoExistente, dadoExistente);
+		int rolagemNovo = resultados[0];
+		int rolagemExistente = resultados[1];
+
+		System.out.println(">>> Disputa: " + ator.getNome() + " rolou " + rolagemNovo
+				+ " (d" + dadoNovo + ") vs " + donoExistente.getNome() + " rolou " + rolagemExistente
+				+ " (d" + dadoExistente + ")");
+
+		if (rolagemNovo > rolagemExistente) {
+			// VITÓRIA DO NOVO — expande e toma a área do perdedor
+			System.out.println(">>> " + ator.getNome() + " VENCEU a disputa! Domínio expandido!");
+			mainController.removerDominio(conflitante.getId());
+			Dominio expandido = Dominio.criarExpandido(novoDominio, conflitante);
+			mainController.registrarDominio(expandido);
+
+			// Remove efeito de domínio do perdedor
+			donoExistente.removerEfeito(conflitante.getNomeEfeito());
+			donoExistente.recalcularAtributosEstatisticas();
+
+		} else if (rolagemExistente > rolagemNovo) {
+			// VITÓRIA DO EXISTENTE — expande e absorve a área do novo
+			System.out.println(">>> " + donoExistente.getNome() + " VENCEU a disputa! Domínio expandido!");
+			mainController.removerDominio(conflitante.getId());
+			Dominio expandido = Dominio.criarExpandido(conflitante, novoDominio);
+			mainController.registrarDominio(expandido);
+
+			// Remove efeito de domínio do perdedor (o novo que tentou ativar)
+			ator.removerEfeito(novoDominio.getNomeEfeito());
+			ator.recalcularAtributosEstatisticas();
+
+		} else {
+			// EMPATE — fusão dos domínios
+			System.out.println(">>> EMPATE! Domínios FUNDIDOS! Ambos os efeitos se aplicam na área unida.");
+			mainController.removerDominio(conflitante.getId());
+
+			String fusaoId = "fusao_" + novoDominio.getId() + "_" + conflitante.getId();
+			Dominio fusao = Dominio.criarFusao(novoDominio, conflitante, fusaoId,
+					"Fusão: " + novoDominio.getNomeEfeito() + " + " + conflitante.getNomeEfeito());
+			mainController.registrarDominio(fusao);
+
+			// Ajusta duração dos efeitos para a média
+			Efeito efeitoNovo = ator.getEfeitosAtivos().get(novoDominio.getNomeEfeito());
+			Efeito efeitoExistente = donoExistente.getEfeitosAtivos().get(conflitante.getNomeEfeito());
+			if (efeitoNovo != null && efeitoExistente != null) {
+				int media = (efeitoNovo.getDuracaoTURestante() + efeitoExistente.getDuracaoTURestante()) / 2;
+				efeitoNovo.setDuracaoTURestante(media);
+				efeitoExistente.setDuracaoTURestante(media);
+				System.out.println(">>> Duração dos efeitos ajustada para média: " + media + " TU");
+			}
+		}
+	}
+
+	/**
+	 * Retorna o tipo de dado da arma do personagem (ex: d12, d20).
+	 */
+	private int getDadoArmaPersonagem(Personagem p) {
+		Arma arma = p.getArmaEquipada();
+		if (arma == null)
+			return 4; // Sem arma, d4
+		Atributo atrib = arma.getAtributoMultiplicador();
+		int valorAtrib = p.getAtributosFinais().getOrDefault(atrib, 2);
+		return br.com.dantesrpg.model.util.DiceRoller.getTipoDado(valorAtrib);
+	}
+
+	/**
+	 * Remove qualquer domínio fundido que contenha o domínio original expirado.
+	 */
+	private void limparFusoesComDominio(String dominioIdOriginal) {
+		if (mainController == null)
+			return;
+		java.util.Map<String, Dominio> ativos = mainController.getDominiosAtivos();
+		List<String> fusoesParaRemover = new ArrayList<>();
+		for (Dominio dom : ativos.values()) {
+			if (dom.isFusao()) {
+				for (Dominio original : dom.getDominiosOriginais()) {
+					if (original.getId().equals(dominioIdOriginal)) {
+						fusoesParaRemover.add(dom.getId());
+						break;
+					}
+				}
+			}
+		}
+		for (String fusaoId : fusoesParaRemover) {
+			System.out.println(">>> Removendo domínio fundido [" + fusaoId + "] (componente expirou).");
+			mainController.removerDominio(fusaoId);
+		}
+	}
+
+	/**
+	 * Abre um dialog modal pedindo a rolagem de dados para a disputa de domínios.
+	 * Retorna [rolagemJogador1, rolagemJogador2].
+	 */
+	private int[] abrirDialogDisputaDominio(Personagem jogador1, int dado1, Personagem jogador2, int dado2) {
+		// Usa JavaFX Dialog para coletar as rolagens
+		javafx.scene.control.Dialog<int[]> dialog = new javafx.scene.control.Dialog<>();
+		dialog.setTitle("COLISÃO DE DOMÍNIOS!");
+		dialog.setHeaderText("Os domínios se sobrepõem! Rolagem de disputa necessária.");
+
+		// Layout do dialog
+		javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
+		content.setStyle("-fx-padding: 20; -fx-background-color: #1a1a2a;");
+
+		// Título visual
+		javafx.scene.control.Label lblTitulo = new javafx.scene.control.Label("DISPUTA DE DOMÍNIOS");
+		lblTitulo.setStyle("-fx-text-fill: #ff4444; -fx-font-size: 18px; -fx-font-weight: bold;"
+				+ " -fx-effect: dropshadow(gaussian, red, 6, 0.3, 0, 0);");
+
+		// Info jogador 1
+		javafx.scene.control.Label lbl1 = new javafx.scene.control.Label(
+				jogador1.getNome() + " — d" + dado1);
+		lbl1.setStyle("-fx-text-fill: cyan; -fx-font-size: 14px; -fx-font-weight: bold;");
+		javafx.scene.control.TextField input1 = new javafx.scene.control.TextField();
+		input1.setPromptText("Resultado do d" + dado1 + "...");
+		input1.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-font-size: 16px;"
+				+ " -fx-alignment: center;");
+
+		// Separador "VS"
+		javafx.scene.control.Label lblVs = new javafx.scene.control.Label("VS");
+		lblVs.setStyle("-fx-text-fill: #ff6666; -fx-font-size: 22px; -fx-font-weight: bold;"
+				+ " -fx-alignment: center;");
+		lblVs.setMaxWidth(Double.MAX_VALUE);
+		lblVs.setAlignment(javafx.geometry.Pos.CENTER);
+
+		// Info jogador 2
+		javafx.scene.control.Label lbl2 = new javafx.scene.control.Label(
+				jogador2.getNome() + " — d" + dado2);
+		lbl2.setStyle("-fx-text-fill: orange; -fx-font-size: 14px; -fx-font-weight: bold;");
+		javafx.scene.control.TextField input2 = new javafx.scene.control.TextField();
+		input2.setPromptText("Resultado do d" + dado2 + "...");
+		input2.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-font-size: 16px;"
+				+ " -fx-alignment: center;");
+
+		// Label de resultado
+		javafx.scene.control.Label lblResultado = new javafx.scene.control.Label("");
+		lblResultado.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+		lblResultado.setMaxWidth(Double.MAX_VALUE);
+		lblResultado.setAlignment(javafx.geometry.Pos.CENTER);
+
+		// Listener para mostrar preview do resultado
+		javafx.beans.value.ChangeListener<String> previewListener = (obs, oldVal, newVal) -> {
+			try {
+				int v1 = Integer.parseInt(input1.getText().trim());
+				int v2 = Integer.parseInt(input2.getText().trim());
+				if (v1 > v2) {
+					lblResultado.setText(jogador1.getNome() + " VENCE — Domínio Expandido!");
+					lblResultado.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: cyan;");
+				} else if (v2 > v1) {
+					lblResultado.setText(jogador2.getNome() + " VENCE — Domínio Expandido!");
+					lblResultado.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: orange;");
+				} else {
+					lblResultado.setText("EMPATE — Domínios FUNDIDOS!");
+					lblResultado.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #cc44cc;"
+							+ " -fx-effect: dropshadow(gaussian, purple, 4, 0.3, 0, 0);");
+				}
+			} catch (NumberFormatException e) {
+				lblResultado.setText("");
+			}
+		};
+		input1.textProperty().addListener(previewListener);
+		input2.textProperty().addListener(previewListener);
+
+		content.getChildren().addAll(lblTitulo, lbl1, input1, lblVs, lbl2, input2, lblResultado);
+
+		dialog.getDialogPane().setContent(content);
+		dialog.getDialogPane().setStyle("-fx-background-color: #1a1a2a;");
+
+		// Botão confirmar
+		javafx.scene.control.ButtonType btnConfirmar = new javafx.scene.control.ButtonType("Confirmar Disputa",
+				javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().add(btnConfirmar);
+
+		// Desabilita fechar sem confirmar
+		dialog.setOnCloseRequest(e -> {
+			try {
+				Integer.parseInt(input1.getText().trim());
+				Integer.parseInt(input2.getText().trim());
+			} catch (Exception ex) {
+				e.consume(); // Não fecha se não tiver valores válidos
+			}
+		});
+
+		dialog.setResultConverter(buttonType -> {
+			if (buttonType == btnConfirmar) {
+				try {
+					int v1 = Integer.parseInt(input1.getText().trim());
+					int v2 = Integer.parseInt(input2.getText().trim());
+					return new int[] { v1, v2 };
+				} catch (NumberFormatException e) {
+					return new int[] { 1, 1 }; // Fallback: empate
+				}
+			}
+			return new int[] { 1, 1 };
+		});
+
+		Optional<int[]> result = dialog.showAndWait();
+		return result.orElse(new int[] { 1, 1 });
+	}
+
+	private void verificarPassivaCampeao(Personagem ator, EstadoCombate estado) {
+		String faccaoAtor = ator.getFaccao();
+		int inimigosProximos = 0;
+
+		for (Personagem p : estado.getCombatentes()) {
+			if (p == ator || !p.isAtivoNoCombate())
+				continue;
+			if (faccaoAtor != null && faccaoAtor.equals(p.getFaccao()))
+				continue; // Mesmo time, pula
+
+			int dist = Math.max(Math.abs(p.getPosX() - ator.getPosX()), Math.abs(p.getPosY() - ator.getPosY()));
+			if (dist <= 1) { // Área 3x3 = 1 casa ao redor
+				inimigosProximos++;
+			}
+		}
+
+		boolean temEfeito = ator.getEfeitosAtivos().containsKey("Escudo do Campeão");
+
+		if (inimigosProximos >= 2 && !temEfeito) {
+			Efeito escudo = new Efeito("Escudo do Campeão", TipoEfeito.BUFF, 9999,
+					Map.of("ARMADURA_TOTAL", 20.0), 0, 0);
+			ator.adicionarEfeito(escudo);
+			ator.recalcularAtributosEstatisticas();
+			System.out.println(">>> Passiva Campeão: " + ator.getNome() + " recebe +20 de armadura! ("
+					+ inimigosProximos + " inimigos próximos)");
+		} else if (inimigosProximos < 2 && temEfeito) {
+			ator.removerEfeito("Escudo do Campeão");
+			ator.recalcularAtributosEstatisticas();
+			System.out.println(">>> Passiva Campeão: Armadura extra removida (poucos inimigos próximos).");
 		}
 	}
 
@@ -2271,6 +2685,45 @@ public class CombatManager {
 			} else {
 				Efeito queimacao = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Queimação", 200, 10);
 				aplicarEfeito(ator, queimacao);
+			}
+		}
+
+		// --- LÓGICA DO SANGUE ---
+		// Aplica Lento e drena 1 de mana a cada 100TU enquanto estiver no sangue
+		if (efeitoSolo.getTipo() == TipoEfeitoSolo.SANGUE) {
+			System.out.println(">>> ALERTA: " + ator.getNome() + " pisou em sangue!");
+
+			// Aplica ou renova efeito Lento (300 TU)
+			if (ator.getEfeitosAtivos().containsKey("Lento")) {
+				Efeito existente = ator.getEfeitosAtivos().get("Lento");
+				existente.setDuracaoTURestante(300);
+				System.out.println(">>> Debuff Lento renovado.");
+			} else {
+				Efeito lento = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Lento", 300, 0);
+				aplicarEfeito(ator, lento);
+			}
+
+			// Drena 1 de mana (aplicado a cada interação com o terreno, que ocorre a cada 100TU de movimento)
+			int manaAtual = (int) ator.getManaAtual();
+			if (manaAtual > 0) {
+				ator.setManaAtual(manaAtual - 1);
+				System.out.println(">>> " + ator.getNome() + " perdeu 1 de mana no sangue! Mana restante: " + ator.getManaAtual());
+			}
+		}
+
+		// --- LÓGICA DO ÁCIDO ---
+		// Aplica Toxina com dano fixo de 10 por tick
+		if (efeitoSolo.getTipo() == TipoEfeitoSolo.ACIDO) {
+			System.out.println(">>> ALERTA: " + ator.getNome() + " pisou em ácido!");
+
+			if (ator.getEfeitosAtivos().containsKey("Toxina")) {
+				Efeito existente = ator.getEfeitosAtivos().get("Toxina");
+				existente.setDuracaoTURestante(200);
+				System.out.println(">>> Debuff Toxina renovado.");
+			} else {
+				// Cria Toxina com dano fixo de 10 por tick (passa 20 como source para 50% = 10)
+				Efeito toxina = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Toxina", 200, 20);
+				aplicarEfeito(ator, toxina);
 			}
 		}
 

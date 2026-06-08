@@ -74,6 +74,10 @@ public abstract class Arma extends Item {
 	}
 
 	public int getDanoBase() {
+		return (int) Math.round(danoBase * getMultiplicadorOverclock());
+	}
+
+	public int getDanoBaseOriginal() {
 		return danoBase;
 	}
 
@@ -130,6 +134,10 @@ public abstract class Arma extends Item {
 		this.tamanhoArea = tamanhoArea;
 	}
 
+	public boolean isDuasMaos() {
+		return this.custoTU > 120;
+	}
+
 	public boolean gastarMunicao() {
 		if (municaoAtual > 0) {
 			municaoAtual--;
@@ -159,10 +167,30 @@ public abstract class Arma extends Item {
 	}
 
 	public Map<Atributo, Integer> getModificadoresDeAtributo() {
+		if (modificadoresDeAtributo == null || getGrauOverclock() == 0) return modificadoresDeAtributo;
+		Map<Atributo, Integer> resultado = new HashMap<>();
+		double mult = getMultiplicadorOverclock();
+		for (Map.Entry<Atributo, Integer> e : modificadoresDeAtributo.entrySet()) {
+			resultado.put(e.getKey(), (int) Math.round(e.getValue() * mult));
+		}
+		return resultado;
+	}
+
+	public Map<Atributo, Integer> getModificadoresDeAtributoOriginais() {
 		return modificadoresDeAtributo;
 	}
 
 	public Map<String, Double> getModificadoresStatus() {
+		if (modificadoresStatus == null || getGrauOverclock() == 0) return modificadoresStatus;
+		Map<String, Double> resultado = new HashMap<>();
+		double mult = getMultiplicadorOverclock();
+		for (Map.Entry<String, Double> e : modificadoresStatus.entrySet()) {
+			resultado.put(e.getKey(), e.getValue() * mult);
+		}
+		return resultado;
+	}
+
+	public Map<String, Double> getModificadoresStatusOriginais() {
 		return modificadoresStatus;
 	}
 
@@ -255,6 +283,22 @@ public abstract class Arma extends Item {
 
 	public int getAnguloAtaqueAlternativoBasico() {
 		return getAnguloCone();
+	}
+
+	public int getTamanhoAreaAtaqueAlternativoBasico() {
+		return 0;
+	}
+
+	public double getCustoTUMultiplierAtaqueAlternativo() {
+		return 1.0;
+	}
+
+	/**
+	 * Retorna a quantidade de mana ganha ao acertar com o ataque alternativo.
+	 * -1 = usa a regra normal (Ranged=1, Melee=2).
+	 */
+	public double getManaGainAtaqueAlternativo() {
+		return -1;
 	}
 
 }

@@ -19,6 +19,7 @@ public class AcaoMestreInput {
 	private int epicentroX = -1;
 	private int epicentroY = -1;
 	private Map<String, Integer> resultadosDados;
+	private Boolean criticoManual = null; // null = auto, true = crit forçado, false = sem crit
 
 	public AcaoMestreInput(Personagem ator, List<Personagem> alvos, Habilidade habilidade) {
 		this.ator = ator;
@@ -109,6 +110,14 @@ public class AcaoMestreInput {
 
 	public void setTirosExtras(int extras) {
 		this.tirosExtras = extras;
+	}
+
+	public Boolean getCriticoManual() {
+		return criticoManual;
+	}
+
+	public void setCriticoManual(Boolean criticoManual) {
+		this.criticoManual = criticoManual;
 	}
 
 }

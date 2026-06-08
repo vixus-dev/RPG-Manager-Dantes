@@ -61,6 +61,10 @@ public abstract class Habilidade {
 		return descricao;
 	}
 
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
 	public TipoHabilidade getTipo() {
 		return tipo;
 	}

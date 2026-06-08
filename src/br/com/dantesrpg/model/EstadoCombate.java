@@ -12,6 +12,7 @@ public class EstadoCombate {
 	private int tickCounter; // Contador para gerenciar os ticks de DoT
 	private int tempoGlobalCombate = 0;
 	private int xpAcumuladoPool = 0;
+	private CombatManager combatManager;
 
 	public EstadoCombate(List<Personagem> personagensIniciais) {
 		this.combatentes = new ArrayList<>(personagensIniciais);
@@ -93,6 +94,24 @@ public class EstadoCombate {
 
 	public void avancarTempoGlobal(int tempo) {
 		this.tempoGlobalCombate += tempo;
+	}
+
+	public CombatManager getCombatManager() {
+		return combatManager;
+	}
+
+	public void setCombatManager(CombatManager combatManager) {
+		this.combatManager = combatManager;
+	}
+
+	/**
+	 * Verifica se um personagem está fisicamente dentro de um domínio específico.
+	 * Atalho que delega ao CombatManager -> CombatController -> MapController.
+	 */
+	public boolean isPersonagemNoDominio(Personagem p, String dominioId) {
+		if (combatManager == null || combatManager.getMainController() == null)
+			return false;
+		return combatManager.getMainController().isPersonagemNoDominio(p, dominioId);
 	}
 
 }

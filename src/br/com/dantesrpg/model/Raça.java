@@ -15,6 +15,31 @@ public abstract class Raça {
 	protected int currentStacks = 0;
 	protected int maxStacks = 0;
 	protected boolean isTransformed = false;
+	protected boolean isV2 = false;
+
+	public boolean isV2() {
+		return isV2;
+	}
+
+	public void setV2(boolean v2) {
+		this.isV2 = v2;
+	}
+
+	public String getNomeV2() {
+		return null;
+	}
+
+	public void onKill(Personagem personagem, Personagem alvoMorto, EstadoCombate estado, CombatManager manager) {
+		// Padrao: nao faz nada
+	}
+
+	public void onCombatStart(Personagem personagem, EstadoCombate estado) {
+		// Padrao: nao faz nada
+	}
+
+	public double getBonusArmaduraPercentual(Personagem personagem) {
+		return 0.0;
+	}
 
 	public int getCurrentStacks() {
 		return currentStacks;

@@ -7,10 +7,11 @@ import java.util.Map;
 public class Inventario {
 
 	private Map<String, Integer> itens;
+	private Map<String, Integer> overclockData;
 
 	// Valores para referência
-	public static final int PRATA_VALE_BRONZE = 100;
-	public static final int OURO_VALE_BRONZE = 10000;
+	public static final int PRATA_VALE_BRONZE = 1000;
+	public static final int OURO_VALE_BRONZE = 1000000;
 
 	private int moedasBronze;
 	private int moedasPrata;
@@ -18,6 +19,7 @@ public class Inventario {
 
 	public Inventario() {
 		this.itens = new HashMap<>();
+		this.overclockData = new HashMap<>();
 		this.moedasBronze = 0;
 		this.moedasPrata = 0;
 		this.moedasOuro = 0;
@@ -27,6 +29,11 @@ public class Inventario {
 		String tipo = item.getTipo();
 		int quantidadeAtual = this.itens.getOrDefault(tipo, 0);
 		this.itens.put(tipo, quantidadeAtual + 1);
+
+		// Preserva overclock do item
+		if (item.getGrauOverclock() > 0) {
+			overclockData.put(tipo, item.getGrauOverclock());
+		}
 	}
 
 	public void removerItem(Item item) {
@@ -37,7 +44,20 @@ public class Inventario {
 			this.itens.put(tipo, quantidadeAtual - 1);
 		} else if (quantidadeAtual == 1) {
 			this.itens.remove(tipo);
+			overclockData.remove(tipo);
 		}
+	}
+
+	public int getOverclockDoItem(String tipo) {
+		return overclockData.getOrDefault(tipo, 0);
+	}
+
+	public Map<String, Integer> getOverclockData() {
+		return Collections.unmodifiableMap(overclockData);
+	}
+
+	public void setOverclockData(Map<String, Integer> data) {
+		this.overclockData = new HashMap<>(data);
 	}
 
 	public Map<String, Integer> getItensAgrupados() {

@@ -60,10 +60,6 @@ public class Efeito {
 		return intervaloTickTU;
 	}
 
-	public void decrementarDuracao(int tempoPassado) {
-		this.duracaoTURestante -= tempoPassado;
-	}
-
 	public void reduzirDuracao(int tempo) {
 		this.duracaoTURestante -= tempo;
 	}
