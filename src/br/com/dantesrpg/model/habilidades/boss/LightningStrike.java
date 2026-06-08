@@ -30,7 +30,7 @@ public class LightningStrike extends Habilidade {
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
 		System.out.println(">>> Virgilio se move como um relâmpago!");
 
-		Efeito stun = new Efeito("Stun", TipoEfeito.DEBUFF, 100, null, 0, 0);
+		Efeito stun = new Efeito("STUN", TipoEfeito.DEBUFF, 100, null, 0, 0);
 
 		for (Personagem alvo : alvos) {
 			// Aplica Stun

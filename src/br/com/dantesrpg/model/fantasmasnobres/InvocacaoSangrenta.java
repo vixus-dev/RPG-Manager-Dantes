@@ -31,7 +31,7 @@ public class InvocacaoSangrenta extends FantasmaNobre {
 
 	@Override
 	public int getCooldownTU() {
-		return 120;
+		return 110;
 	}
 
 	@Override
@@ -71,40 +71,40 @@ public class InvocacaoSangrenta extends FantasmaNobre {
 		int custoTU = 0;
 
 		switch (escolha) {
-		case "Golem":
-			invocacao = criarSummon(conjurador, "Golem Sangrento", 1.25, 0.5, "Espada Larga", estado);
-			custoMana = 2;
-			custoTU = 100;
-			break;
-		case "Vigilante":
-			invocacao = criarSummon(conjurador, "Vigilante", 0.1, 0, "Nulo", estado);
-			custoMana = 5;
-			custoTU = 500;
-			break;
-		case "Ecos":
-			invocacao = criarSummon(conjurador, "Eco Umbral", 0.75, 0.75, "Garras", estado);
-			invocacao.getArmaEquipada().setNomeEfeitoOnHit("Sangramento");
-			invocacao.getArmaEquipada().setChanceEfeitoOnHit(0.50);
-			custoMana = 2;
-			custoTU = 120;
-			break;
-		case "Portador de Selo":
-			invocacao = criarSummon(conjurador, "Portador de Selo", 0.5, 0.2, "Cajado", estado);
-			invocacao.adicionarPropriedade("PORTADOR_SELO:" + conjurador.getNome());
-			custoMana = 3;
-			custoTU = 80;
-			break;
-		case "Tecelão":
-			invocacao = criarSummon(conjurador, "Tecelão de Almas", 0.5, 1.5, "Agulhas", estado);
-			custoMana = 3;
-			custoTU = 125;
-			break;
-		case "Dominus Albus":
-			invocacao = criarDominusAlbus(conjurador, estado);
-			conjurador.adicionarPropriedade("LOCK_SUMMON");
-			custoMana = 8;
-			custoTU = 50;
-			break;
+			case "Golem":
+				invocacao = criarSummon(conjurador, "Golem Sangrento", 1.35, 0.5, "Espada Larga", estado);
+				custoMana = 2;
+				custoTU = 100;
+				break;
+			case "Vigilante":
+				invocacao = criarSummon(conjurador, "Vigilante", 0.1, 0, "Nulo", estado);
+				custoMana = 5;
+				custoTU = 500;
+				break;
+			case "Ecos":
+				invocacao = criarSummon(conjurador, "Eco Umbral", 0.75, 1.0, "Garras", estado);
+				invocacao.getArmaEquipada().setNomeEfeitoOnHit("Sangramento");
+				invocacao.getArmaEquipada().setChanceEfeitoOnHit(0.50);
+				custoMana = 2;
+				custoTU = 120;
+				break;
+			case "Portador de Selo":
+				invocacao = criarSummon(conjurador, "Portador de Selo", 0.5, 0.2, "Cajado", estado);
+				invocacao.adicionarPropriedade("PORTADOR_SELO:" + conjurador.getNome());
+				custoMana = 3;
+				custoTU = 80;
+				break;
+			case "Tecelão":
+				invocacao = criarSummon(conjurador, "Tecelão de Almas", 0.5, 2.0, "Agulhas", estado);
+				custoMana = 3;
+				custoTU = 125;
+				break;
+			case "Dominus Albus":
+				invocacao = criarDominusAlbus(conjurador, estado);
+				conjurador.adicionarPropriedade("LOCK_SUMMON");
+				custoMana = 6;
+				custoTU = 50;
+				break;
 		}
 
 		if (invocacao != null) {
@@ -139,7 +139,7 @@ public class InvocacaoSangrenta extends FantasmaNobre {
 	}
 
 	private Personagem criarDominusAlbus(Personagem mestre, EstadoCombate estado) {
-		Personagem dominus = criarSummon(mestre, "Dominus Albus", 2.5, 1.5, "Presas Alvas", estado);
+		Personagem dominus = criarSummon(mestre, "Dominus Albus", 3.0, 2.0, "Presas Alvas", estado);
 		dominus.setMestreInvocador(mestre);
 
 		// Injeção de Habilidades Únicas

@@ -25,6 +25,14 @@ public class Mergulho extends Habilidade {
 		conjurador.adicionarEfeito(stealth);
 		System.out.println(">>> Efeito [Stealth] aplicado.");
 
+		// Lillith (Cajado da Imperatriz Boss): ao mergulhar, irradia Aura de Sangue.
+		if (conjurador.getArmaEquipada() != null
+				&& "Cajado da Imperatriz (Boss)".equals(conjurador.getArmaEquipada().getNome())) {
+			Efeito auraDeSangue = new Efeito("Aura de Sangue", TipoEfeito.BUFF, 9999, null, 0, 0);
+			conjurador.adicionarEfeito(auraDeSangue);
+			System.out.println(">>> Aura de Sangue ativada em torno de " + conjurador.getNome() + ".");
+		}
+
 		conjurador.recalcularAtributosEstatisticas();
 	}
 }

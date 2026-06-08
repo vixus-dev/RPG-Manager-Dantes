@@ -76,8 +76,7 @@ public class KickTheChair extends Habilidade {
 				conjurador.setVidaAtual(vidaMax, estado, manager.getController()); // Enche a vida
 
 				double escudoSangue = excedente * 3;
-				conjurador.setEscudoAtual(conjurador.getEscudoAtual() + escudoSangue);
-				conjurador.setTemEscudoDeSangue(true);
+				conjurador.adicionarEscudoSangue(escudoSangue);
 				System.out.println(">>> Overheal! Darrell ganhou " + escudoSangue + " de Escudo de Sangue.");
 			}
 

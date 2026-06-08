@@ -33,18 +33,15 @@ public class DoubleDown extends Habilidade {
 		System.out.println(
 				">>> BOSS SKILL: " + conjurador.getNome() + " usa DOUBLE DOWN em (" + alvoX + "," + alvoY + ")!");
 
-		// Causa Dano Direto (Impacto)
+		// Dano já é tratado por resolverDanoPadrao() via janela de resolução.
+		// Aqui só aplica o efeito secundário (fogo no chão).
+
 		Arma arma = conjurador.getArmaEquipada();
 		double danoArma = (arma != null) ? arma.getDanoBase() : 10;
 		if (arma != null && conjurador.getRaca() != null) {
 			Personagem alvoReferencia = alvos.isEmpty() ? null : alvos.get(0);
 			danoArma *= conjurador.getRaca().getMultiplicadorBonusDanoArma(conjurador, arma, alvoReferencia, estado,
 					null);
-		}
-		double danoFinal = danoArma * getMultiplicadorDeDano();
-
-		for (Personagem alvo : alvos) {
-			manager.aplicarDanoAoAlvo(conjurador, alvo, danoFinal, false, TipoAcao.HABILIDADE, estado, 0);
 		}
 
 		// Aplica Efeito de Terreno (Fogo)
@@ -76,7 +73,7 @@ public class DoubleDown extends Habilidade {
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
 		System.err.println("ERRO: DoubleDown foi chamado sem coordenadas! O chão não queimará.");
-		// Aplica apenas dano nos alvos como fallback
+		// Aplica apenas efeitos de terreno como fallback
 		executar(conjurador, 0, 0, alvos, estado, manager);
 	}
 }

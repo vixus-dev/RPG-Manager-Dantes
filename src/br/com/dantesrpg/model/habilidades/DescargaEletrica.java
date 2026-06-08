@@ -33,7 +33,7 @@ public class DescargaEletrica extends Habilidade {
 		for (Personagem alvo : alvos) {
 			if (!alvo.isAtivoNoCombate())
 				continue;
-			Efeito stun = EffectFactory.criarEfeito("Stun", 100, 0);
+			Efeito stun = EffectFactory.criarEfeito("STUN", 100, 0);
 			alvo.adicionarEfeito(stun);
 			alvo.recalcularAtributosEstatisticas();
 		}

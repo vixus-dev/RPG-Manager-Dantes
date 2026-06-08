@@ -33,9 +33,9 @@ public class TecnicaDeBarreira extends Habilidade {
 		}
 
 		// Adiciona o escudo ao personagem
-		conjurador.setEscudoAtual(conjurador.getEscudoAtual() + valorEscudo);
+		conjurador.adicionarEscudoNormal(valorEscudo);
 		System.out.println(">>> " + conjurador.getNome() + " criou Barreira de Mana de " + valorEscudo
-				+ " escudo! Total: " + conjurador.getEscudoAtual());
+				+ " escudo! Total: " + conjurador.getEscudoNormalAtual());
 
 		// Cria e aplica o efeito "marcador" (para a UI saber que a barreira está ativa)
 		Efeito escudoEfeito = new Efeito("Barreira de Mana", TipoEfeito.BUFF, 300, // Duração

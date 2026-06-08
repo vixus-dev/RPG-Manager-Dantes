@@ -33,9 +33,9 @@ public class CampoDeForça2 extends Habilidade {
 		}
 
 		// Adiciona o escudo ao personagem
-		conjurador.setEscudoAtual(conjurador.getEscudoAtual() + valorEscudo);
+		conjurador.adicionarEscudoNormal(valorEscudo);
 		System.out.println(">>> " + conjurador.getNome() + " criou um Campo de força com valor de " + valorEscudo
-				+ " Total: " + conjurador.getEscudoAtual());
+				+ " Total: " + conjurador.getEscudoNormalAtual());
 
 		Efeito escudoEfeito = new Efeito("Campo De Força", TipoEfeito.BUFF, 500, // Duração
 				null, 0, 0);
@@ -44,4 +44,5 @@ public class CampoDeForça2 extends Habilidade {
 		// Recalcula stats (para a UI atualizar o valor do escudo e o ícone do efeito)
 		conjurador.recalcularAtributosEstatisticas();
 	}
+
 }

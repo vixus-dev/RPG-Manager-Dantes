@@ -14,7 +14,7 @@ import java.util.List;
 public class CampoDeForça extends Habilidade {
 	public CampoDeForça() {
 		super("Campo de Força I", "Cria um escudo de energia com valor de 50% da vida maxima.", TipoHabilidade.ATIVA, 2,
-				100, 3, // Custo de mana de 2
+				100, 2, // Custo de mana de 2
 				TipoAlvo.SI_MESMO, 0.0, // Multiplicador de dano (não causa dano)
 				0, // Ticks de dano
 				Collections.emptyList());
@@ -33,9 +33,9 @@ public class CampoDeForça extends Habilidade {
 		}
 
 		// Adiciona o escudo ao personagem
-		conjurador.setEscudoAtual(conjurador.getEscudoAtual() + valorEscudo);
+		conjurador.adicionarEscudoNormal(valorEscudo);
 		System.out.println(">>> " + conjurador.getNome() + " criou um Campo de força com valor de " + valorEscudo
-				+ " Total: " + conjurador.getEscudoAtual());
+				+ " Total: " + conjurador.getEscudoNormalAtual());
 
 		Efeito escudoEfeito = new Efeito("Campo De Força", TipoEfeito.BUFF, 300, // Duração
 				null, 0, 0);

@@ -53,7 +53,6 @@ public class ChamarReforços extends Habilidade {
 
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
-		// TODO Auto-generated method stub
 
 	}
 }

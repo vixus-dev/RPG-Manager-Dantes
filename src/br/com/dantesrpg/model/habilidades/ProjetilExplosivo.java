@@ -18,17 +18,15 @@ public class ProjetilExplosivo extends Habilidade {
 	public void executar(Personagem conjurador, int alvoX, int alvoY, List<Personagem> alvos, EstadoCombate estado,
 			CombatManager manager) {
 
+		// Dano já é tratado por resolverDanoPadrao() via janela de resolução.
+		// Aqui só aplica o efeito secundário (fogo no chão).
+
 		Arma arma = conjurador.getArmaEquipada();
 		double danoArma = (arma != null) ? arma.getDanoBase() : 10;
 		if (arma != null && conjurador.getRaca() != null) {
 			Personagem alvoReferencia = alvos.isEmpty() ? null : alvos.get(0);
 			danoArma *= conjurador.getRaca().getMultiplicadorBonusDanoArma(conjurador, arma, alvoReferencia, estado,
 					null);
-		}
-		double danoFinal = danoArma * getMultiplicadorDeDano();
-
-		for (Personagem alvo : alvos) {
-			manager.aplicarDanoAoAlvo(conjurador, alvo, danoFinal, false, TipoAcao.HABILIDADE, estado, 0);
 		}
 
 		br.com.dantesrpg.controller.CombatController main = manager.getMainController();

@@ -36,7 +36,7 @@ public class Bencao extends Habilidade {
 			mods.put("MOVIMENTO", 3.0);
 			break;
 		case "Vida":
-			alvo.setEscudoAtual(alvo.getEscudoAtual() + (int) (alvo.getVidaMaxima() * 0.25));
+			alvo.adicionarEscudoNormal((int) (alvo.getVidaMaxima() * 0.25));
 			break;
 		case "Fé":
 			mods.put("ARMADURA_TOTAL", 25.0);

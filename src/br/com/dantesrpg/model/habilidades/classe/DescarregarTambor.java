@@ -6,22 +6,26 @@ import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoHabilidade;
+
 import java.util.Collections;
 import java.util.List;
 
-public class Meteoro extends Habilidade {
-	public Meteoro() {
-		super("Meteoro", "Invoca um meteoro que devasta uma área 3x3. Dano: 2.25x, Alcance: 5.",
-				TipoHabilidade.ATIVA, 2, 150, 1, TipoAlvo.AREA_QUADRADA, 3, 2.25, 1, Collections.emptyList());
+public class DescarregarTambor extends Habilidade {
+
+	public DescarregarTambor() {
+		super("Descarregar Tambor",
+				"Dispara 6 tiros sequenciais. Cada bala causa 50% do dano base e resolve crítico, armadura e escudo separadamente.",
+				TipoHabilidade.ATIVA, 3, 200, 5, TipoAlvo.INDIVIDUAL, 0.50, 6,
+				Collections.emptyList());
 	}
 
 	@Override
 	public int getAlcanceMaximo() {
-		return 5;
+		return 8;
 	}
 
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
-		System.out.println(conjurador.getNome() + " invoca um METEORO!");
+		System.out.println(conjurador.getNome() + " descarrega o tambor!");
 	}
 }

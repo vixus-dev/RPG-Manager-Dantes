@@ -22,12 +22,12 @@ public class VigiliaEterna extends FantasmaNobre {
 
 	@Override
 	public String getDescricao() {
-		return "Concede +50 Armadura e 20% de dano para aliados. para si mesmo +20% de taxa critica e 20% de bonus de dano e Imunidade a DoT para todos os aliados. Eidan ganha Crítico.";
+		return "Concede +50 Armadura e 25% de dano para aliados. para si mesmo +25% de taxa critica e 25% de bonus de dano e Imunidade a DoT para todos os aliados. Eidan ganha Crítico.";
 	}
 
 	@Override
 	public int getCustoMana() {
-		return 5;
+		return 2;
 	}
 
 	@Override
@@ -83,8 +83,8 @@ public class VigiliaEterna extends FantasmaNobre {
 
 		// Buff Pessoal do Eidan (+20% Crit)
 		Map<String, Double> modsEidan = new HashMap<>();
-		modsEidan.put("TAXA_CRITICA", 0.20);
-		modsEidan.put("DANO_BONUS_PERCENTUAL", 0.20);
+		modsEidan.put("TAXA_CRITICA", 0.25);
+		modsEidan.put("DANO_BONUS_PERCENTUAL", 0.25);
 		Efeito buffEidan = new Efeito("Vigília (Foco)", TipoEfeito.BUFF, duracao, modsEidan, 0, 0);
 
 		conjurador.adicionarEfeito(buffEidan);

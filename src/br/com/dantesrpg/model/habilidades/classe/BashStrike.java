@@ -6,8 +6,8 @@ import java.util.*;
 
 public class BashStrike extends Habilidade {
 	public BashStrike() {
-		super("Bash Strike", "Golpe brutal que causa 135% de dano e devolve 15% ao usuário.", TipoHabilidade.ATIVA, 1,
-				90, 1, TipoAlvo.INDIVIDUAL, 1.35, 1, Collections.emptyList());
+		super("Bash Strike", "Golpe brutal que causa 175% de dano e devolve 7.5% ao usuário.", TipoHabilidade.ATIVA, 1,
+				90, 1, TipoAlvo.INDIVIDUAL, 1.75, 1, Collections.emptyList());
 	}
 
 	@Override
@@ -22,11 +22,11 @@ public class BashStrike extends Habilidade {
 
 	/**
 	 * Chamado pelo CombatManager após resolver o dano total causado.
-	 * Aplica 15% do dano causado de volta ao conjurador.
+	 * Aplica 7.5% do dano causado de volta ao conjurador.
 	 */
 	public static void aplicarRetornoDeDano(Personagem ator, double danoCausado, EstadoCombate estado,
 			CombatManager manager) {
-		double danoRetorno = danoCausado * 0.15;
+		double danoRetorno = danoCausado * 0.075;
 		if (danoRetorno >= 1.0) {
 			System.out.println(">>> Bash Strike: " + ator.getNome() + " sofre " + String.format("%.0f", danoRetorno)
 					+ " de dano de retorno!");

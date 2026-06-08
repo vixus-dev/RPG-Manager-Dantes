@@ -16,7 +16,7 @@ import br.com.dantesrpg.model.util.EffectFactory;
 public class MordidaBestial extends Habilidade {
 
 	public MordidaBestial() {
-		super("Garras da Morte", "Um ataque rápido e mortal que causa dano massivo baseado", TipoHabilidade.ATIVA, 2, // Custo
+		super("Mordida Bestial", "Um ataque rápido e mortal que causa dano massivo baseado", TipoHabilidade.ATIVA, 2, // Custo
 																														// de
 																														// Mana
 				100, // Custo de TU

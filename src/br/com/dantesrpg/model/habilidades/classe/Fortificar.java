@@ -16,24 +16,25 @@ import java.util.Map;
 
 public class Fortificar extends Habilidade {
 	public Fortificar() {
-		super("Fortificar", "Ganha um escudo de pedra (10 + 5xIS de armadura) por 1000TU.", TipoHabilidade.ATIVA,
+		super("Fortificar", "Ganha um escudo de sangue equivalente a (Inspiração % de vida máxima) por 200TU. Ao encerrar, metade do valor restante vira cura.", TipoHabilidade.ATIVA,
 				1, 100, 1, TipoAlvo.SI_MESMO, 0, 0, Collections.emptyList());
 	}
 
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
 		int inspiracao = conjurador.getAtributosFinais().getOrDefault(Atributo.INSPIRACAO, 0);
-		double escudo = 10 + (5.0 * inspiracao);
+		double pct = Math.max(0.0, inspiracao) / 100.0;
+		double escudoSangue = conjurador.getVidaMaxima() * pct;
 
-		System.out.println(conjurador.getNome() + " usa Fortificar! Escudo de " + (int) escudo + " de armadura.");
+		System.out.println(conjurador.getNome() + " usa Fortificar! Escudo de Sangue de " + (int) escudoSangue + ".");
 
-		Map<String, Double> mods = new HashMap<>();
-		mods.put("ARMADURA_TOTAL", escudo);
+		conjurador.adicionarEscudoSangue(escudoSangue);
 
-		Efeito fortificacao = new Efeito("Fortificar", TipoEfeito.BUFF, 1000, mods, 0, 0);
+		Efeito fortificacao = new Efeito("Fortificar", TipoEfeito.BUFF, 200, null, 0, 0);
+		fortificacao.setEscudoSangueOutorgado(escudoSangue);
 		conjurador.adicionarEfeito(fortificacao);
 
 		conjurador.recalcularAtributosEstatisticas();
-		System.out.println(">>> Efeito [Fortificar] aplicado: +" + (int) escudo + " Armadura por 1000TU.");
+		System.out.println(">>> Efeito [Fortificar] aplicado: Escudo de Sangue (" + (int) escudoSangue + ") por 200TU.");
 	}
 }

@@ -37,7 +37,7 @@ public class Rezar extends Habilidade {
 			c.setContadorTU(Math.max(0, c.getContadorTU() - 20));
 			break;
 		case "Proteção":
-			c.setEscudoAtual(c.getEscudoAtual() + (int) (c.getVidaMaxima() * 0.20));
+			c.adicionarEscudoNormal((int) (c.getVidaMaxima() * 0.20));
 			break;
 		case "Resistência":
 			mods.put("ARMADURA_TOTAL", 20.0);
