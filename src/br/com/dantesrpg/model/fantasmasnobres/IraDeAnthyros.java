@@ -10,6 +10,7 @@ import br.com.dantesrpg.model.Efeito;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.FantasmaNobre;
 import br.com.dantesrpg.model.Personagem;
+import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 
@@ -207,7 +208,8 @@ public class IraDeAnthyros extends FantasmaNobre {
 	}
 
 	private void aplicarFuria(Personagem personagem) {
-		Efeito furia = new Efeito(EFEITO_FURIA, TipoEfeito.BUFF, DURACAO_FURIA, criarModsFuria(getAcumulos(personagem)),
+		Efeito furia = new Efeito(EFEITO_FURIA, TipoEfeito.BUFF, DURACAO_FURIA,
+				criarModsFuria(getAcumulos(personagem), personagem),
 				0, 0);
 		personagem.adicionarEfeito(furia);
 		atualizarBonusFuria(personagem);
@@ -227,16 +229,17 @@ public class IraDeAnthyros extends FantasmaNobre {
 		}
 
 		modificadores.clear();
-		modificadores.putAll(criarModsFuria(getAcumulos(personagem)));
+		modificadores.putAll(criarModsFuria(getAcumulos(personagem), personagem));
 		personagem.recalcularAtributosEstatisticas();
 	}
 
-	private Map<String, Double> criarModsFuria(int acumulos) {
+	private Map<String, Double> criarModsFuria(int acumulos, Personagem alvo) {
+		double enduranceAlvo = alvo != null ? alvo.getAtributosFinais().getOrDefault(Atributo.ENDURANCE, 0) : 0;
 		Map<String, Double> mods = new HashMap<>();
 		mods.put("ENDURANCE", 2.0);
 		mods.put("SAGACIDADE", 2.0);
 		mods.put("ARMADURA_TOTAL", 50.0);
-		mods.put("DANO_BONUS_PERCENTUAL", acumulos * BONUS_DANO_POR_ACUMULO);
+		mods.put("DANO_BONUS_PERCENTUAL", acumulos * (BONUS_DANO_POR_ACUMULO + (enduranceAlvo * 0.01)));
 		return mods;
 	}
 }
