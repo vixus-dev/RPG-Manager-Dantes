@@ -87,11 +87,7 @@ public class HalfDemon extends Raça {
 	private void aplicarSobrecarga(Personagem p) {
 		double valorEscudo = p.getVidaMaxima() * 0.05; // 5% do HP Max
 
-		// Ativa a flag de Escudo de Sangue
-		p.setTemEscudoDeSangue(true);
-
-		// Adiciona ao escudo atual
-		p.setEscudoAtual(p.getEscudoAtual() + valorEscudo);
+		p.adicionarEscudoSangue(valorEscudo);
 
 		System.out.println(">>> SOBRECARGA DEMONÍACA! Escudo de Sangue +" + (int) valorEscudo);
 
@@ -139,8 +135,7 @@ public class HalfDemon extends Raça {
 
 		// V2 (Ουράνιο Χάος): +10% max HP como escudo de sangue + 5 stacks DT
 		double escudo = personagem.getVidaMaxima() * 0.10;
-		personagem.setTemEscudoDeSangue(true);
-		personagem.setEscudoAtual(personagem.getEscudoAtual() + escudo);
+		personagem.adicionarEscudoSangue(escudo);
 		System.out.println(">>> ΟΥΡΆΝΙΟ ΧΆΟΣ: Kill! Escudo de Sangue +" + (int) escudo);
 
 		// Adiciona 5 stacks (respeitando maxStacks)

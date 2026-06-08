@@ -7,6 +7,8 @@ import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.Raça;
 import br.com.dantesrpg.model.enums.TipoEfeito;
+import br.com.dantesrpg.model.util.ContratoDeVida;
+import br.com.dantesrpg.model.util.ContratoDeVidaUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -24,9 +26,12 @@ public class Humano extends Raça {
 
 	private EstadoEmprestimo estadoAtual = EstadoEmprestimo.NENHUM;
 
+	/**
+	 * Fila de contratos aguardando ativação (em percentual do HP base).
+	 * Após o teste de sucesso, gera vários deles; cada um vira um {@link ContratoDeVida}
+	 * na lista central quando ativado via {@link #avancarProximoContrato(Personagem)}.
+	 */
 	private Queue<Double> filaContratos = new LinkedList<>();
-	private double contratoAtivoValorTotal = 0; // Define o Teto (Redução de HP Máx)
-	private double contratoAtivoDividaRestante = 0; // Define quanto falta pagar (Barra Vermelha)
 
 	private double vidaNegativada = 0;
 
@@ -38,7 +43,7 @@ public class Humano extends Raça {
 	@Override
 	public String getDescricaoPassiva() {
 		if (isV2) {
-			return "Overtime: Acumula contratos sobre contratos. Cada contrato dá escudo (20% HP) no início do combate e +15% dano. Falhar no teste = perde tudo.";
+			return "Overtime: Permanece com HP negativo durante o combate. Ao fim, a dívida vira contratos. Contratos geram escudo de sangue; cada 10 de escudo de sangue concede +5% de dano.";
 		}
 		return descricaoPassiva;
 	}
@@ -64,10 +69,26 @@ public class Humano extends Raça {
 	@Override
 	public boolean onHpChangeAttempt(Personagem personagem, double vidaAntiga, double novaVida, EstadoCombate estado,
 			CombatController controller) {
-		// V1: Não permite empréstimo se já tem contratos
-		// V2 (Overtime): Permite empréstimo mesmo com contratos ativos
+		if (isV2) {
+			if (novaVida <= 0 && vidaAntiga > 0 && estadoAtual == EstadoEmprestimo.NENHUM) {
+				iniciarEmprestimo(personagem);
+				return true;
+			}
+			if (estadoAtual == EstadoEmprestimo.ATIVO && novaVida > 0) {
+				resetarEstadoEmprestimo(personagem);
+				return false;
+			}
+			if (estadoAtual == EstadoEmprestimo.ATIVO && novaVida <= 0) {
+				return true;
+			}
+			return false;
+		}
+
+		// V1: Não permite empréstimo se já tem contratos RACIAIS (ativo ou fila).
+		// Contratos de outras fontes (Bárbaro, Respirar, Sit in Balance) NÃO bloqueiam.
 		if (!isV2) {
-			if (hasContratoAtivo() || !filaContratos.isEmpty()) {
+			boolean temRacialAtivo = ContratoDeVidaUtils.temContratoHumanoAtivo(personagem);
+			if (temRacialAtivo || !filaContratos.isEmpty()) {
 				if (novaVida <= 0)
 					return false;
 			}
@@ -83,13 +104,29 @@ public class Humano extends Raça {
 		if (estadoAtual == EstadoEmprestimo.ATIVO && novaVida <= 0) {
 			return true;
 		}
+		if (estadoAtual == EstadoEmprestimo.RECUPERADO && novaVida <= 0) {
+			this.estadoAtual = EstadoEmprestimo.ATIVO;
+			return true;
+		}
+		if (estadoAtual == EstadoEmprestimo.PENDENTE_RESOLUCAO && novaVida <= 0) {
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public void onHpChanged(Personagem personagem, double vidaAntiga, double hpNovo, EstadoCombate estado,
 			CombatController controller) {
-		if (estadoAtual == EstadoEmprestimo.ATIVO && hpNovo < 0) {
+		if (isV2) {
+			if (estadoAtual == EstadoEmprestimo.ATIVO && hpNovo <= 0) {
+				this.vidaNegativada = Math.abs(hpNovo);
+			} else if (estadoAtual == EstadoEmprestimo.ATIVO && hpNovo > 0) {
+				resetarEstadoEmprestimo(personagem);
+			}
+			return;
+		}
+
+		if (estadoAtual == EstadoEmprestimo.ATIVO && hpNovo <= 0) {
 			this.vidaNegativada = Math.abs(hpNovo);
 			if (this.vidaNegativada >= personagem.getVidaMaxima()) {
 				this.estadoAtual = EstadoEmprestimo.PENDENTE_RESOLUCAO;
@@ -99,6 +136,9 @@ public class Humano extends Raça {
 
 	@Override
 	public void onTimeAdvanced(Personagem personagem, EstadoCombate estado, CombatController controller) {
+		if (isV2)
+			return;
+
 		if (estadoAtual == EstadoEmprestimo.ATIVO) {
 			if (!personagem.getEfeitosAtivos().containsKey("Empréstimo")) {
 				this.estadoAtual = EstadoEmprestimo.PENDENTE_RESOLUCAO;
@@ -108,6 +148,10 @@ public class Humano extends Raça {
 
 	@Override
 	public double getBonusDanoPercentual(Personagem personagem) {
+		if (isV2) {
+			return Math.floor(personagem.getEscudoSangueAtual() / 10.0) * 0.05;
+		}
+
 		double bonus = 0.0;
 
 		if (estadoAtual == EstadoEmprestimo.RECUPERADO)
@@ -117,24 +161,26 @@ public class Humano extends Raça {
 			bonus += pctPerdida * 1.5;
 		}
 
-		// V2 (Overtime): +15% de dano por contrato pendente (ativo + fila)
-		if (isV2) {
-			int totalContratos = getTotalContratosV2();
-			bonus += totalContratos * 0.15;
-		}
-
 		return bonus;
 	}
 
-	public int getTotalContratosV2() {
+	public int getTotalContratosV2(Personagem personagem) {
 		int count = filaContratos.size();
-		if (hasContratoAtivo())
-			count++;
+		if (personagem != null) {
+			for (ContratoDeVida contrato : personagem.getContratosDeVida()) {
+				if (contrato != null && contrato.isHumano()) {
+					count++;
+				}
+			}
+		}
 		return count;
 	}
 
 	@Override
 	public double getReducaoTUPercentual(Personagem personagem) {
+		if (isV2)
+			return 0.0;
+
 		if (estadoAtual == EstadoEmprestimo.RECUPERADO)
 			return 0.25;
 		if (estadoAtual == EstadoEmprestimo.ATIVO) {
@@ -144,84 +190,28 @@ public class Humano extends Raça {
 		return 0.0;
 	}
 
-	// --- SISTEMA DE CONTRATOS (LÓGICA NOVA) ---
-
 	@Override
 	public double getReducaoHpMaximo(Personagem personagem) {
-		if (hasContratoAtivo()) {
-			return this.contratoAtivoValorTotal;
-		}
 		return 0.0;
 	}
-
-	@Override
-	public double onCuraAttempt(Personagem personagem, double curaRecebida) {
-		if (hasContratoAtivo()) {
-			double vidaAtual = personagem.getVidaAtual();
-			double tetoAtual = personagem.getVidaMaxima(); // Agora isso retorna o valor reduzido (ex: 60)
-
-			// Calcula o espaço vazio no HP (até o teto do contrato)
-			double espacoNoHp = Math.max(0, tetoAtual - vidaAtual);
-
-			double curaParaVida = 0;
-			double curaParaDivida = 0;
-
-			if (curaRecebida <= espacoNoHp) {
-				// Se a cura cabe inteira na vida atual, usa tudo na vida
-				curaParaVida = curaRecebida;
-				curaParaDivida = 0;
-			} else {
-				// Se a cura transborda o teto, enche a vida e usa o resto na dívida
-				curaParaVida = espacoNoHp;
-				curaParaDivida = curaRecebida - espacoNoHp;
-			}
-
-			// Aplica o pagamento da dívida com o excedente
-			if (curaParaDivida > 0) {
-				if (curaParaDivida >= this.contratoAtivoDividaRestante) {
-					// Quitou a dívida!
-					double troco = curaParaDivida - this.contratoAtivoDividaRestante;
-
-					System.out.println(">>> HUMANO: Contrato Quitado! Teto de vida liberado.");
-					this.contratoAtivoDividaRestante = 0;
-					this.contratoAtivoValorTotal = 0; // Remove o teto
-
-					personagem.removerEfeito("Contrato de Vida");
-
-					personagem.recalcularAtributosEstatisticas();
-
-					// Avança automaticamente para o próximo contrato da fila, se houver
-					avancarProximoContrato(personagem);
-
-					return curaParaVida + troco;
-
-				} else {
-					// Abate a dívida parcialmente
-					this.contratoAtivoDividaRestante -= curaParaDivida;
-					System.out.println(">>> HUMANO: Dívida reduzida em " + (int) curaParaDivida + ". Resta: "
-							+ (int) this.contratoAtivoDividaRestante);
-					// O teto continua baixo, então só retornamos o que coube na vida
-					return curaParaVida;
-				}
-			}
-
-			return curaParaVida;
-		}
-
-		return curaRecebida; // Sem contrato, cura normal
-	}
-
-	// --- MÉTODOS DE CONTROLE ---
 
 	private void iniciarEmprestimo(Personagem p) {
 		this.estadoAtual = EstadoEmprestimo.ATIVO;
 		this.vidaNegativada = 0;
-		Efeito emp = new Efeito("Empréstimo", TipoEfeito.BUFF, 500, null, 0, 0);
+		int duracao = isV2 ? 99999 : 500;
+		Efeito emp = new Efeito("Empréstimo", TipoEfeito.BUFF, duracao, null, 0, 0);
 		p.adicionarEfeito(emp);
-		System.out.println(">>> HUMANO: Empréstimo Iniciado (500 TU).");
+		if (isV2) {
+			System.out.println(">>> OVERTIME: Empréstimo iniciado sem limite de TU até o fim do combate.");
+		} else {
+			System.out.println(">>> HUMANO: Empréstimo Iniciado (500 TU).");
+		}
 	}
 
 	public void resolverResultadoTeste(Personagem p, boolean sucesso, int valorRolado) {
+		if (isV2)
+			return;
+
 		if (estadoAtual == EstadoEmprestimo.RECUPERADO) {
 			System.out.println(">>> HUMANO: Sobreviveu por recuperação. Bônus encerrado.");
 			resetarEstadoEmprestimo(p);
@@ -235,16 +225,7 @@ public class Humano extends Raça {
 			p.setVidaAtual(1);
 			avancarProximoContrato(p);
 		} else {
-			if (isV2) {
-				// V2 (Overtime): Falha = perde TODOS os contratos acumulados e morre
-				System.out.println(">>> OVERTIME: Falha no Teste! Todos os contratos perdidos. Morte.");
-				this.filaContratos.clear();
-				this.contratoAtivoValorTotal = 0;
-				this.contratoAtivoDividaRestante = 0;
-				p.removerEfeito("Contrato de Vida");
-			} else {
-				System.out.println(">>> HUMANO: Falha no Teste. Morte.");
-			}
+			System.out.println(">>> HUMANO: Falha no Teste. Morte.");
 			p.setVidaAtual(0);
 		}
 	}
@@ -254,13 +235,36 @@ public class Humano extends Raça {
 		if (!isV2)
 			return;
 
-		int totalContratos = getTotalContratosV2();
+		int totalContratos = getTotalContratosV2(personagem);
 		if (totalContratos > 0) {
-			double escudo = personagem.getVidaMaximaBase() * 0.20 * totalContratos;
-			personagem.setEscudoAtual(personagem.getEscudoAtual() + escudo);
-			System.out.println(">>> OVERTIME: Escudo de Contratos +" + (int) escudo + " (" + totalContratos
+			double escudo = personagem.getVidaMaxima() * 0.20 * totalContratos;
+			personagem.adicionarEscudoSangue(escudo);
+			System.out.println(">>> OVERTIME: Escudo de Sangue +" + (int) escudo + " (" + totalContratos
 					+ " contratos x 20% HP).");
 		}
+	}
+
+	public void encerrarCombateOvertime(Personagem p) {
+		if (!isV2)
+			return;
+
+		double dividaFinal = Math.max(this.vidaNegativada, Math.max(0, -p.getVidaAtual()));
+		if (dividaFinal <= 0) {
+			if (estadoAtual == EstadoEmprestimo.ATIVO) {
+				resetarEstadoEmprestimo(p);
+			}
+			return;
+		}
+
+		if (dividaFinal > 0) {
+			gerarContratosDiretos(p, dividaFinal);
+			System.out.println(">>> OVERTIME: Dívida final de " + (int) dividaFinal
+					+ " HP convertida em Contratos de Vida.");
+		}
+
+		resetarEstadoEmprestimo(p);
+		p.setVidaAtualInterno(Math.min(1.0, p.getVidaMaxima()));
+		p.recalcularAtributosEstatisticas();
 	}
 
 	private void gerarContratos(Personagem p) {
@@ -276,18 +280,31 @@ public class Humano extends Raça {
 		}
 	}
 
+	private void gerarContratosDiretos(Personagem p, double dividaTotal) {
+		double maxHpBase = p.getVidaMaximaBase();
+		double limiteContrato = maxHpBase * 0.40;
+
+		while (dividaTotal > 0) {
+			double valorDesteContrato = Math.min(dividaTotal, limiteContrato);
+			ContratoDeVida novo = new ContratoDeVida(ContratoDeVida.FONTE_HUMANO, valorDesteContrato, -1, true);
+			ContratoDeVidaUtils.adicionarContrato(p, novo);
+			dividaTotal -= valorDesteContrato;
+		}
+	}
+
+	/**
+	 * Ativa o próximo contrato da fila racial.
+	 * Se já houver um contrato humano ativo, não faz nada.
+	 */
 	public void avancarProximoContrato(Personagem p) {
-		if (hasContratoAtivo())
+		if (ContratoDeVidaUtils.temContratoHumanoAtivo(p))
 			return;
 		if (!filaContratos.isEmpty()) {
 			double pctProximo = filaContratos.poll();
-			this.contratoAtivoValorTotal = p.getVidaMaximaBase() * pctProximo;
-			this.contratoAtivoDividaRestante = this.contratoAtivoValorTotal; // Dívida começa cheia
-
-			Efeito visualContrato = new Efeito("Contrato de Vida", TipoEfeito.DEBUFF, 99999, null, 0, 0);
-			p.adicionarEfeito(visualContrato);
-			p.recalcularAtributosEstatisticas();
-			System.out.println(">>> HUMANO: Novo Contrato Ativado (-" + (int) contratoAtivoValorTotal + " HP).");
+			double valor = p.getVidaMaximaBase() * pctProximo;
+			ContratoDeVida novo = new ContratoDeVida(ContratoDeVida.FONTE_HUMANO, valor, -1, true);
+			ContratoDeVidaUtils.adicionarContrato(p, novo);
+			System.out.println(">>> HUMANO: Novo Contrato Ativado (-" + (int) valor + " HP).");
 		}
 	}
 
@@ -297,10 +314,6 @@ public class Humano extends Raça {
 		p.removerEfeito("Empréstimo");
 		p.recalcularAtributosEstatisticas();
 	}
-
-	private boolean hasContratoAtivo() {
-		return contratoAtivoValorTotal > 0;
-	} // Verificação pelo Teto e não pela dívida
 
 	public int calcularDificuldadeTeste(Personagem p) {
 		double pct = this.vidaNegativada / p.getVidaMaximaBase();
@@ -323,9 +336,9 @@ public class Humano extends Raça {
 		return "Quase Impossível";
 	}
 
-	// Getter para a UI (Barra Vermelha) saber o tamanho atual da dívida
+	/** Dívida pendente do contrato humano racial atualmente ativo. */
 	public double getDividaPendente() {
-		return this.contratoAtivoDividaRestante;
+		return 0;
 	}
 
 	public Queue<Double> getFilaContratos() {
@@ -336,7 +349,6 @@ public class Humano extends Raça {
 		return this.vidaNegativada;
 	}
 
-	// Setters para Persistência (Carregamento)
 	public void setFilaContratos(List<Double> listaSalva) {
 		this.filaContratos.clear();
 		if (listaSalva != null) {
@@ -348,21 +360,21 @@ public class Humano extends Raça {
 		this.vidaNegativada = valor;
 	}
 
-	// Getters/Setters para Persistência Completa
+	/** Retorna 0; valor total do contrato racial ativo é armazenado na lista central. */
 	public double getContratoAtivoValorTotal() {
-		return this.contratoAtivoValorTotal;
+		return 0;
 	}
 
 	public void setContratoAtivoValorTotal(double valor) {
-		this.contratoAtivoValorTotal = valor;
+		// Compat: carregamento antigo aplica o contrato no CombatController.
 	}
 
 	public double getContratoAtivoDividaRestante() {
-		return this.contratoAtivoDividaRestante;
+		return 0;
 	}
 
 	public void setContratoAtivoDividaRestante(double valor) {
-		this.contratoAtivoDividaRestante = valor;
+		// Compat: carregamento antigo aplica o contrato no CombatController.
 	}
 
 	public void setEstadoAtual(EstadoEmprestimo estado) {

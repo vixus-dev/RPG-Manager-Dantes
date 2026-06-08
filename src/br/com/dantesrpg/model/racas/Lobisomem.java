@@ -109,6 +109,14 @@ public class Lobisomem extends Raça {
 		}
 	}
 
+	@Override
+	public void onEffectUpdate(Personagem personagem, Efeito efeito, boolean isAplicado) {
+		if (isAplicado || efeito == null || !"Forma Lupina".equals(efeito.getNome()) || !this.isTransformed)
+			return;
+
+		finalizarTransformacao(personagem);
+	}
+
 	public boolean podeTransformar() {
 		if (this.isTransformed)
 			return false;
@@ -198,16 +206,22 @@ public class Lobisomem extends Raça {
 	}
 
 	public void sairTransformacao(Personagem p) {
-		this.isTransformed = false;
-		System.out.println(">>> " + p.getNome() + " voltou ao normal (Forma Lupina expirou).");
+		finalizarTransformacao(p);
 
 		// removerEfeito chama recalcularAtributosEstatisticas, que reseta vidaMaxima
 		// sem o HP_MAXIMO do efeito e clampeia vidaAtual automaticamente
 		p.removerEfeito("Forma Lupina");
+	}
+
+	private void finalizarTransformacao(Personagem p) {
+		if (!this.isTransformed)
+			return;
+
+		this.isTransformed = false;
+		System.out.println(">>> " + p.getNome() + " voltou ao normal (Forma Lupina expirou).");
 
 		this.stacksAoTransformar = 0;
 
-		// Notifica o Fantasma Nobre sobre o fim da transformação
 		if (p.getFantasmaNobre() != null) {
 			p.getFantasmaNobre().onRaceTransformation(p, false);
 		}
