@@ -7,8 +7,7 @@ import java.util.*;
 public class FormaDeMorcego extends Habilidade {
 
 	public FormaDeMorcego() {
-		super("Forma de Morcego", "Alterna a transformação em morcego.", // sim está correto isso acredite em mim o
-																			// jogador me implorou por isso
+		super("Forma de Cobra", "Alterna a transformação em cobra.",
 				TipoHabilidade.ATIVA, 0, 50, 1, TipoAlvo.SI_MESMO, 0, 0, Collections.emptyList());
 	}
 

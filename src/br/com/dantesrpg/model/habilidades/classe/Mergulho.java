@@ -11,22 +11,19 @@ import br.com.dantesrpg.model.enums.TipoHabilidade;
 import java.util.Collections;
 import java.util.List;
 
-public class AutoGuarda extends Habilidade {
-	public AutoGuarda() {
-		super("Auto-Guarda", "Redireciona golpes leves de aliados próximos para si.", TipoHabilidade.ATIVA, 2,
-				50, 3, TipoAlvo.SI_MESMO, 0, 0, Collections.emptyList());
+public class Mergulho extends Habilidade {
+	public Mergulho() {
+		super("Mergulho", "Entra no modo stealth, se escondendo de ataques básicos.", TipoHabilidade.ATIVA, 1, 50,
+				1, TipoAlvo.SI_MESMO, 0, 0, Collections.emptyList());
 	}
 
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
-		System.out.println(conjurador.getNome() + " ativa a " + getNome() + "!");
+		System.out.println(conjurador.getNome() + " usa Mergulho e desaparece sob a terra...");
 
-		// Cria o efeito "marcador"
-		Efeito guardiao = new Efeito("Guardião", TipoEfeito.BUFF, 500, null, 0, 0);
-
-		// Aplica o efeito no conjurador
-		conjurador.adicionarEfeito(guardiao);
-		System.out.println(">>> Efeito [Guardião] aplicado.");
+		Efeito stealth = new Efeito("Stealth", TipoEfeito.BUFF, 9999, null, 0, 0);
+		conjurador.adicionarEfeito(stealth);
+		System.out.println(">>> Efeito [Stealth] aplicado.");
 
 		conjurador.recalcularAtributosEstatisticas();
 	}

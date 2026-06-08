@@ -21,7 +21,7 @@ public class ApostadorIncansavel extends FantasmaNobre {
 
 	@Override
 	public String getDescricao() {
-		return "Expansão de Domínio (6x6). Entra no modo de Aposta. Causa -75% dano, mas custa -50% TU até conseguir o JACKPOT.";
+		return "Expansão de Domínio (7x7). Entra no modo de Aposta. Causa -50% dano, mas custa -25% TU até conseguir o JACKPOT.";
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class ApostadorIncansavel extends FantasmaNobre {
 	@Override
 	public int getTamanhoArea() {
 		return 7;
-	} // 6x6
+	} // 7x7
 
 	@Override
 	public int getNumeroDeAlvos() {
@@ -71,11 +71,11 @@ public class ApostadorIncansavel extends FantasmaNobre {
 
 	/**
 	 * Chamado quando o Domínio se ativa realmente (no início do turno). Aplica os
-	 * debuffs iniciais (-75% dano, -25% TU).
+	 * debuffs iniciais (-50% dano, -25% TU).
 	 */
 	public static void ativarEfeitoDominio(Personagem p) {
 		Map<String, Double> mods = new HashMap<>();
-		mods.put("DANO_BONUS_PERCENTUAL", -0.50); // Reduz dano em 75%
+		// -50% dano é aplicado posicionalmente pelo CombatManager (só dentro do domínio)
 		Efeito dominioAtivo = new Efeito("Domínio: Idle Death Gamble", TipoEfeito.BUFF, 300, // Duração base
 				mods, 0, 0);
 		// Inicializa contador de estrelas nos stacks do efeito
@@ -87,6 +87,7 @@ public class ApostadorIncansavel extends FantasmaNobre {
 	public static void ativarJackpot(Personagem p) {
 		System.out.println(">>> " + p.getNome() + " TIROU O JACKPOT!!!!");
 		p.removerEfeito("Domínio: Idle Death Gamble"); // Remove os debuffs
+		p.removerEfeito("Estrelas da Sorte"); // Reseta estrelas acumuladas
 
 		Map<String, Double> mods = new HashMap<>();
 		mods.put("MOVIMENTO", 3.0);
@@ -107,9 +108,7 @@ public class ApostadorIncansavel extends FantasmaNobre {
 		boolean jackpotGarantido = (estrelasAtuais >= 6);
 		boolean trinca = (d1 == d2 && d2 == d3);
 		if (jackpotGarantido || trinca) {
-			ativarJackpot(lyria);
-			if (efeitoEstrelas != null)
-				lyria.removerEfeito("Estrelas da Sorte"); // Reseta estrelas
+			ativarJackpot(lyria); // ativarJackpot já limpa Estrelas da Sorte
 		} else {
 			int somaDados = d1 + d2 + d3;
 			System.out.println(">>> Aposta Falhou. Redução de TU no próximo ataque: -" + somaDados);

@@ -1,41 +1,39 @@
 package br.com.dantesrpg.model.fantasmasnobres;
 
+import java.util.List;
+
 import br.com.dantesrpg.model.AcaoMestreInput;
 import br.com.dantesrpg.model.CombatManager;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.FantasmaNobre;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
-import java.util.List;
-import br.com.dantesrpg.model.Efeito;
-import br.com.dantesrpg.model.enums.TipoEfeito;
-import java.util.Map;
 
-public class RingOfTheUndyingWill extends FantasmaNobre {
+public class Ritual extends FantasmaNobre {
 
 	@Override
 	public String getNome() {
-		return "O Ringue da Vontade Inquebrantável";
+		return "Ritual";
 	}
 
 	@Override
 	public String getDescricao() {
-		return "Prepara um ringue de 7x7. No seu próximo turno, o ringue se ativa por 400 TU.";
+		return "Forca o HP do usuario a cair para 1% da vida maxima.";
 	}
 
 	@Override
 	public int getCustoMana() {
-		return 1;
+		return 0;
 	}
 
 	@Override
 	public int getCustoTU() {
-		return 120;
+		return 0;
 	}
 
 	@Override
 	public int getCooldownTU() {
-		return 600;
+		return 0;
 	}
 
 	@Override
@@ -45,8 +43,8 @@ public class RingOfTheUndyingWill extends FantasmaNobre {
 
 	@Override
 	public int getTamanhoArea() {
-		return 7;
-	} // 7x7
+		return 0;
+	}
 
 	@Override
 	public int getNumeroDeAlvos() {
@@ -56,12 +54,11 @@ public class RingOfTheUndyingWill extends FantasmaNobre {
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, AcaoMestreInput input,
 			CombatManager manager) {
-		System.out.println(">>> " + conjurador.getNome() + " começa a canalizar O RINGUE DA VONTADE INQUEBRÁVEL!");
 
-		Efeito efeitoPreparando = new Efeito("Ringue (Preparando)", // Efeito "Flag"
-				TipoEfeito.BUFF, 9999, // Duração "infinita" (será removido manualmente)
-				Map.of(), 0, 0);
-		conjurador.adicionarEfeito(efeitoPreparando);
-		conjurador.recalcularAtributosEstatisticas();
+		double vidaMaxima = conjurador.getVidaMaxima();
+		double umPorcento = vidaMaxima * 0.01;
+
+		conjurador.setVidaAtual(umPorcento);
+		System.out.println(">>> " + conjurador.getNome() + " ativou Ritual! HP reduzido para " + (int) umPorcento + ".");
 	}
 }

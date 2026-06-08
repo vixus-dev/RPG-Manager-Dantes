@@ -65,7 +65,9 @@ public class Terrore extends ArmaRanged {
 						">>> TERRORE (ID " + idDoAlvo + "): Acerto Crítico de Medo! (+20% Dano, Dilaceramento)");
 				bonus += 0.20;
 
-				Efeito dilaceramento = new Efeito("Dilaceramento", TipoEfeito.DEBUFF, 300, Map.of(), 0, 0);
+				Map<String, Double> modsDilac = new java.util.HashMap<>();
+				modsDilac.put("REDUCAO_CURA", 0.25);
+				Efeito dilaceramento = new Efeito("Dilaceramento", TipoEfeito.DEBUFF, 300, modsDilac, 0, 0);
 				alvo.adicionarEfeito(dilaceramento);
 				alvo.recalcularAtributosEstatisticas();
 			}

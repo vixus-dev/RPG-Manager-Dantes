@@ -17,7 +17,7 @@ import java.util.Map;
 public class GolpeDevastador extends Habilidade {
 
 	public GolpeDevastador() {
-		super("Golpe Devastador", "Desfere 250% de dano e abre uma Hemorragia por 400 TU.", TipoHabilidade.ATIVA, 4,
+		super("Golpe Devastador", "Desfere 250% de dano e abre uma Hemorragia (5 ticks de 2% HP max, -30% cura por 1000 TU).", TipoHabilidade.ATIVA, 4,
 				200, 8, TipoAlvo.INDIVIDUAL, 2.5, 1, Collections.emptyList());
 	}
 
@@ -33,18 +33,19 @@ public class GolpeDevastador extends Habilidade {
 		}
 
 		Personagem alvo = alvos.get(0);
-		Map<String, Double> mods = new HashMap<>();
-		mods.put("PERCENTUAL_HP_MAX", 0.025);
 
+		// Hemorragia: 5 ticks × 2% HP max, reduz cura em 30% pelo dobro da duração (1000 TU)
 		Efeito hemorragiaExistente = alvo.getEfeitosAtivos().get("Hemorragia");
 		if (hemorragiaExistente != null && hemorragiaExistente.getModificadores() != null) {
-			hemorragiaExistente.getModificadores().put("PERCENTUAL_HP_MAX", 0.025);
-			hemorragiaExistente.setDuracaoTURestante(Math.max(hemorragiaExistente.getDuracaoTURestante(), 400));
+			// Renova duração se já existe
+			hemorragiaExistente.setDuracaoTURestante(Math.max(hemorragiaExistente.getDuracaoTURestante(), 500));
 		} else {
-			Efeito hemorragia = new Efeito("Hemorragia", TipoEfeito.DOT, 400, mods, 0, 100);
+			// Cria via Factory (já inclui PERCENTUAL_HP_MAX e REDUCAO_CURA)
+			Efeito hemorragia = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Hemorragia", 500, 0);
 			alvo.adicionarEfeito(hemorragia);
 		}
 
+		alvo.recalcularAtributosEstatisticas();
 		System.out.println(">>> " + alvo.getNome() + " sofreu Hemorragia de Golpe Devastador.");
 	}
 }

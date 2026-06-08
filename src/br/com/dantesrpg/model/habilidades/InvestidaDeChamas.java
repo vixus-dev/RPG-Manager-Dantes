@@ -47,10 +47,10 @@ public class InvestidaDeChamas extends Habilidade {
 
 				// Chance de Queimar (50% por tick)
 				if (Math.random() < 0.50) {
-					Efeito queimadura = EffectFactory.criarEfeito("Queimadura", 200, (int) (danoBase / 2)); // 200 TU, 3
+					Efeito queimadura = EffectFactory.criarEfeito("Queimação", 200, (int) (danoBase / 2)); // 200 TU, 3
 																											// de dano
-					if (alvo.getEfeitosAtivos().containsKey("Queimadura")) {
-						Efeito existente = alvo.getEfeitosAtivos().get("Queimadura");
+					if (alvo.getEfeitosAtivos().containsKey("Queimação")) {
+						Efeito existente = alvo.getEfeitosAtivos().get("Queimação");
 						existente.setStacks(existente.getStacks() + 1);
 						existente.setDuracaoTURestante(200); // Renova duração
 						System.out.println(">>> " + alvo.getNome() + " está queimando mais forte! ("

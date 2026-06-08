@@ -27,14 +27,11 @@ public class MordidaQuente extends Habilidade {
 		if (alvos == null || alvos.isEmpty())
 			return;
 		Personagem alvoPrincipal = alvos.get(0);
-		int danoTick = 3;
+		int danoDaSource = 10; // Dano base da mordida para cálculo do DoT
+		Efeito queimacao = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Queimação", 0, danoDaSource);
 
-		Efeito Queimadura = new Efeito("Queimadura", TipoEfeito.DOT, 455, null, danoTick, 65);
-
-		// O Personagem.java já tem um método para adicionar efeitos
-		alvoPrincipal.adicionarEfeito(Queimadura);
-		System.out.println(">>> " + getNome() + " aplica [Queimadura] (Dano: " + danoTick + "/tick) em "
-				+ alvoPrincipal.getNome() + ".");
+		alvoPrincipal.adicionarEfeito(queimacao);
+		System.out.println(">>> " + getNome() + " aplica [Queimação] em " + alvoPrincipal.getNome() + ".");
 
 		// É crucial recalcular os stats para a UI (e lógicas) verem o novo efeito
 		alvoPrincipal.recalcularAtributosEstatisticas();

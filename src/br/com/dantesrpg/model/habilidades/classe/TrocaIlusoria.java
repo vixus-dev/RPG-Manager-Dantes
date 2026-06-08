@@ -3,6 +3,7 @@ package br.com.dantesrpg.model.habilidades.classe;
 import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.enums.*;
 import java.util.*;
+import java.util.Map;
 
 public class TrocaIlusoria extends Habilidade {
 	public TrocaIlusoria() {
@@ -44,7 +45,14 @@ public class TrocaIlusoria extends Habilidade {
 		int curaTotal = curaBase + percepcao;
 
 		conjurador.setVidaAtual(conjurador.getVidaAtual() + curaTotal, estado, manager.getController());
-		System.out.println(">>> " + conjurador.getNome() + "curou " + curaTotal + " HP e entrou em Stealth.");
+
+		// Aplica Stealth diretamente, garantindo o efeito independente de processarMorteClone
+		if (!conjurador.getEfeitosAtivos().containsKey("Stealth")) {
+			Efeito stealth = new Efeito("Stealth", TipoEfeito.BUFF, 9999, Map.of(), 0, 0);
+			conjurador.adicionarEfeito(stealth);
+		}
+
+		System.out.println(">>> " + conjurador.getNome() + " curou " + curaTotal + " HP e entrou em Stealth.");
 
 		conjurador.recalcularAtributosEstatisticas();
 	}

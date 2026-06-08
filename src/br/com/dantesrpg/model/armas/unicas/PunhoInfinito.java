@@ -14,56 +14,51 @@ public class PunhoInfinito extends ArmaMelee {
 				1, Atributo.FORCA, 85, 1);
 	}
 
-	// Passiva 1: Ignorar Defesa (Já existia, mantida)
+	private boolean isRingueAtivoEDentro(Personagem ator, EstadoCombate estado) {
+		if (!ator.getEfeitosAtivos().containsKey("Ringue da Vontade"))
+			return false;
+		return estado.isPersonagemNoDominio(ator, "ringue_alexei");
+	}
+
+	// Passiva 1: Ignorar Defesa — 5% base, +5% dentro do Ringue
 	@Override
 	public double getIgnorarDefesaPercentual(Personagem ator, Personagem alvo, EstadoCombate estado) {
 		double ignoreBase = ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0) * 0.05;
-		if (ator.getEfeitosAtivos().containsKey("Ringue da Vontade")) {
+		if (isRingueAtivoEDentro(ator, estado)) {
 			ignoreBase += ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0) * 0.05;
 		}
 		return ignoreBase;
 	}
 
+	// Passiva 2: Dano escala com HP perdido (só dentro do Ringue)
 	@Override
 	public double getBonusDanoArma(Personagem ator, Personagem alvo, EstadoCombate estado, AcaoMestreInput input) {
-		// Só aplica se o Ringue estiver ativo
-		if (ator.getEfeitosAtivos().containsKey("Ringue da Vontade")) {
-
+		if (isRingueAtivoEDentro(ator, estado)) {
 			double vidaAtual = ator.getVidaAtual();
 			double vidaMax = ator.getVidaMaxima();
-			double porcentagemVidaPerdida = (vidaMax - vidaAtual) / vidaMax; // Ex: 0.40 (40% perdida)
+			double porcentagemVidaPerdida = (vidaMax - vidaAtual) / vidaMax;
 
-			// Se perdeu 40%, ganha 40% de dano
-			double bonusDano = (porcentagemVidaPerdida * 100) * 0.01;
-
-			if (bonusDano > 0) {
+			if (porcentagemVidaPerdida > 0) {
 				System.out.println(
-						">>> Punho Infinito: +" + String.format("%.1f", bonusDano * 100) + "% Dano (por HP perdido).");
-				return 1.0 + bonusDano;
+						">>> Punho Infinito: +" + String.format("%.1f", porcentagemVidaPerdida * 100) + "% Dano (por HP perdido).");
+				return 1.0 + porcentagemVidaPerdida;
 			}
 		}
 		return 1.0;
 	}
 
-	// Passiva 3: Aumentar TU do Alvo
+	// Passiva 3: Aumentar TU do Alvo (só dentro do Ringue, abaixo de 50% HP)
 	@Override
 	public void onAttackHit(Personagem ator, Personagem alvo, double danoCausado, EstadoCombate estado) {
-		// Só aplica se o Ringue estiver ativo
-		if (ator.getEfeitosAtivos().containsKey("Ringue da Vontade")) {
-
+		if (isRingueAtivoEDentro(ator, estado)) {
 			double vidaAtual = ator.getVidaAtual();
 			double vidaMax = ator.getVidaMaxima();
 
-			// Regra: "ao chegar em 50% de HP perdido..."
 			if (vidaAtual <= (vidaMax * 0.50)) {
 				int forca = ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0);
-
-				// "...aumentam o TU do alvo em 1 para cada ponto em ST"
-				int aumentoTU = forca * 1;
-
-				alvo.setContadorTU(alvo.getContadorTU() + aumentoTU);
+				alvo.setContadorTU(alvo.getContadorTU() + forca);
 				System.out.println(
-						">>> Punho Infinito (Berserk): Aumentou o TU de " + alvo.getNome() + " em +" + aumentoTU + "!");
+						">>> Punho Infinito (Berserk): Aumentou o TU de " + alvo.getNome() + " em +" + forca + "!");
 			}
 		}
 	}

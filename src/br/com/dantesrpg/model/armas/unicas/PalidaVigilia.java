@@ -7,6 +7,7 @@ import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.Raridade;
+import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class PalidaVigilia extends ArmaMelee {
 
 	@Override
 	public boolean isDanoHibrido(Personagem ator) {
-		return false;
+		return false; // Ignora redução de armadura física
 	}
 
 	@Override
@@ -36,6 +37,7 @@ public class PalidaVigilia extends ArmaMelee {
 		return 135;
 	}
 
+	// === Ataque Alternativo: Ceifa Divina ===
 	@Override
 	public boolean hasAtaqueAlternativoBasico() {
 		return true;
@@ -43,17 +45,17 @@ public class PalidaVigilia extends ArmaMelee {
 
 	@Override
 	public String getNomeAtaqueAlternativoBasico() {
-		return "Golpe da Vigilia";
+		return "Ceifa Divina";
 	}
 
 	@Override
 	public String getDescricaoAtaqueAlternativoBasico() {
-		return "1.25x Dano, alcance 3";
+		return "1.3x Dano, alcance 3, alvo único";
 	}
 
 	@Override
 	public double getMultiplicadorAtaqueAlternativoBasico() {
-		return 1.25;
+		return 1.3;
 	}
 
 	@Override
@@ -62,8 +64,8 @@ public class PalidaVigilia extends ArmaMelee {
 	}
 
 	@Override
-	public br.com.dantesrpg.model.enums.TipoAlvo getTipoAlvoAtaqueAlternativoBasico() {
-		return br.com.dantesrpg.model.enums.TipoAlvo.INDIVIDUAL;
+	public TipoAlvo getTipoAlvoAtaqueAlternativoBasico() {
+		return TipoAlvo.INDIVIDUAL;
 	}
 
 	@Override
