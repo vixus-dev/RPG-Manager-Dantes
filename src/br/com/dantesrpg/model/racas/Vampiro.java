@@ -1,6 +1,9 @@
 package br.com.dantesrpg.model.racas;
 
+import br.com.dantesrpg.controller.CombatController;
+import br.com.dantesrpg.model.CombatManager;
 import br.com.dantesrpg.model.Efeito;
+import br.com.dantesrpg.model.enums.TipoAcao;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import java.util.List;
 import br.com.dantesrpg.model.EstadoCombate;
@@ -22,13 +25,21 @@ public class Vampiro extends Raça {
 
 	@Override
 	public String getDescricaoPassiva() {
+		if (isV2) {
+			return "Bad Omen: Sede de Sangue + Forma de Cobra cria aura 5x5 (10% dano arma a cada 50TU, cura 100% do dano da aura).";
+		}
 		return descricaoPassiva;
+	}
+
+	@Override
+	public String getNomeV2() {
+		return "Bad Omen";
 	}
 
 	public void toggleTransform(Personagem personagem) {
 		this.isTransformed = !this.isTransformed; // Inverte o estado
 
-		String nomeEfeito = "Forma de Cobra"; // O nome do Efeito
+		String nomeEfeito = "Forma de Cobra";
 
 		if (this.isTransformed) {
 			// Se ENTROU na forma
@@ -57,8 +68,54 @@ public class Vampiro extends Raça {
 	@Override
 	public List<Habilidade> getRacialAbilities(Personagem personagem) {
 		List<Habilidade> abilities = new ArrayList<>();
-		abilities.add(new FormaDeMorcego());
+		FormaDeMorcego forma = new FormaDeMorcego();
+		if (isV2) {
+			forma.setDescricao("Alterna Forma de Cobra (Bad Omen): cria aura 5x5 que causa 10% dano da arma a cada 50TU e cura 100% do dano da aura.");
+		}
+		abilities.add(forma);
 		return abilities;
+	}
+
+	@Override
+	public void onTimeAdvanced(Personagem personagem, EstadoCombate estado, CombatController controller) {
+		// V2 (Bad Omen): Aura de dano 5x5 enquanto transformado
+		if (!isV2 || !this.isTransformed || estado == null || controller == null)
+			return;
+
+		int tempoGlobal = estado.getTickCounter();
+		if (tempoGlobal % 50 != 0 || tempoGlobal == 0)
+			return;
+
+		if (personagem.getArmaEquipada() == null || !personagem.isAtivoNoCombate())
+			return;
+
+		int danoAura = Math.max(1, (int) (personagem.getArmaEquipada().getDanoBase() * 0.10));
+		int raio = 2; // 5x5 = raio 2 (centro + 2 em cada direção)
+		int cx = personagem.getPosX();
+		int cy = personagem.getPosY();
+		String faccao = personagem.getFaccao();
+		double curaTotal = 0;
+
+		for (Personagem alvo : estado.getCombatentes()) {
+			if (!alvo.isAtivoNoCombate() || alvo == personagem)
+				continue;
+			if (alvo.getFaccao().equals(faccao))
+				continue;
+
+			int dist = Math.max(Math.abs(alvo.getPosX() - cx), Math.abs(alvo.getPosY() - cy));
+			if (dist <= raio) {
+				CombatManager manager = controller.getCombatManager();
+				manager.aplicarDanoAoAlvo(personagem, alvo, danoAura, false, TipoAcao.REACAO_FANTASMA, estado);
+				curaTotal += danoAura;
+				System.out.println(
+						">>> BAD OMEN: Aura causa " + danoAura + " de dano em " + alvo.getNome() + "!");
+			}
+		}
+
+		if (curaTotal > 0) {
+			personagem.setVidaAtual(personagem.getVidaAtual() + curaTotal, estado, controller);
+			System.out.println(">>> BAD OMEN: Aura curou " + personagem.getNome() + " em " + (int) curaTotal + " HP!");
+		}
 	}
 
 	@Override
@@ -83,44 +140,29 @@ public class Vampiro extends Raça {
 		boolean aplicaSangramento = Math.random() < 0.50;
 		boolean aplicaVeneno = Math.random() < 0.50;
 
-		// --- DEFINIÇÕES DOS EFEITOS (Baseado no danoCausado) ---
-
-		int intervaloTick = 67;
-		int intervaloTickToxina = 50;
-
-		// Sangramento: 5 ticks, 25% do 'danoCausado' por tick
-		int dano_sangramento = Math.max(1, (int) (danoCausado * 0.25));
-		int duracao_sangramento = 5 * intervaloTick; // 325 TU
-
-		// Veneno: 6 ticks, 20% do 'danoCausado' por tick
-		int dano_veneno = Math.max(1, (int) (danoCausado * 0.20));
-		int duracao_veneno = 6 * intervaloTick; // 402 TU
-
-		// Toxina: 4 ticks, 50% do 'danoCausado' por tick
-		int dano_toxina = Math.max(1, (int) (danoCausado * 0.50));
-		int duracao_toxina = 4 * intervaloTickToxina; // 200 TU
-
+		// --- EFEITOS VIA FACTORY (Baseado no danoCausado) ---
+		// A Factory calcula o dano por tick como % do dano real do golpe
+		int danoDaSource = Math.max(1, (int) danoCausado);
 		boolean efeitoAplicado = false;
 
 		if (aplicaSangramento && aplicaVeneno) {
-			// Causa Toxina (em vez dos outros dois)
+			// Causa Toxina (Grau 2: 4 ticks × 50%)
 			System.out.println(">>> SUCESSO! Aplica [Toxina]!");
-			Efeito toxina = new Efeito("Toxina", TipoEfeito.DOT, duracao_toxina, null, dano_toxina, intervaloTick);
+			Efeito toxina = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Toxina", 0, danoDaSource);
 			alvo.adicionarEfeito(toxina);
 			efeitoAplicado = true;
 
 		} else if (aplicaSangramento) {
-			// Causa Sangramento
+			// Causa Sangramento (Grau 1: 5 ticks × 25%)
 			System.out.println(">>> SUCESSO! Aplica [Sangramento]!");
-			Efeito sangramento = new Efeito("Sangramento", TipoEfeito.DOT, duracao_sangramento, null, dano_sangramento,
-					intervaloTick);
+			Efeito sangramento = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Sangramento", 0, danoDaSource);
 			alvo.adicionarEfeito(sangramento);
 			efeitoAplicado = true;
 
 		} else if (aplicaVeneno) {
-			// Causa Veneno
+			// Causa Veneno (Grau 1: 6 ticks × 20%)
 			System.out.println(">>> SUCESSO! Aplica [Veneno]!");
-			Efeito veneno = new Efeito("Veneno", TipoEfeito.DOT, duracao_veneno, null, dano_veneno, intervaloTick);
+			Efeito veneno = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Veneno", 0, danoDaSource);
 			alvo.adicionarEfeito(veneno);
 			efeitoAplicado = true;
 		}

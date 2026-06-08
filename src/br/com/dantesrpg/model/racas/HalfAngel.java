@@ -22,7 +22,15 @@ public class HalfAngel extends Raça {
 
 	@Override
 	public String getDescricaoPassiva() {
+		if (isV2) {
+			return "λογοσ: Benevolência sem limite. A cada 5 acúmulos, +20% dano. Transformado com >10 stacks gasta 2/turno.";
+		}
 		return "Ascensão: Golpes geram Benevolência (Críticos geram 2). Max 10. Acima de 10, gera Sobrecarga Angelical (+Dano).";
+	}
+
+	@Override
+	public String getNomeV2() {
+		return "λογοσ";
 	}
 
 	@Override
@@ -40,18 +48,56 @@ public class HalfAngel extends Raça {
 
 	private void gerarAcumulo(Personagem p, int quantidade) {
 		for (int i = 0; i < quantidade; i++) {
-			if (this.currentStacks < this.maxStacks) {
+			if (isV2) {
+				// V2 (λογοσ): Sem cap de stacks
 				this.currentStacks++;
-				System.out.println(
-						">>> Half-Angel: +1 Benevolência. Total: " + this.currentStacks + "/" + this.maxStacks);
+				System.out.println(">>> λογοσ: +1 Benevolência. Total: " + this.currentStacks);
 
 				if (this.currentStacks == 5) {
-					System.out.println(">>> Half-Angel: Ascensão Desbloqueada (5/10)!");
+					System.out.println(">>> λογοσ: Ascensão Desbloqueada!");
+				}
+
+				// A cada 5 acúmulos, atualiza o bônus de dano
+				if (this.currentStacks % 5 == 0) {
+					aplicarBonusDanoLogos(p);
 				}
 			} else {
-				aplicarSobrecargaAngelical(p);
+				if (this.currentStacks < this.maxStacks) {
+					this.currentStacks++;
+					System.out.println(
+							">>> Half-Angel: +1 Benevolência. Total: " + this.currentStacks + "/" + this.maxStacks);
+
+					if (this.currentStacks == 5) {
+						System.out.println(">>> Half-Angel: Ascensão Desbloqueada (5/10)!");
+					}
+				} else {
+					aplicarSobrecargaAngelical(p);
+				}
 			}
 		}
+	}
+
+	private void aplicarBonusDanoLogos(Personagem p) {
+		int blocosDe5 = this.currentStacks / 5;
+		double bonusTotal = blocosDe5 * 0.20;
+
+		String nomeEfeito = "Logos - Poder Divino";
+		Efeito existente = p.getEfeitosAtivos().get(nomeEfeito);
+
+		if (existente != null) {
+			existente.getModificadores().put("DANO_BONUS_PERCENTUAL", bonusTotal);
+			existente.setStacks(blocosDe5);
+			System.out.println(">>> λογοσ: Poder Divino atualizado! +" + (int) (bonusTotal * 100) + "% Dano (" + blocosDe5 + " blocos).");
+		} else {
+			Map<String, Double> mods = new HashMap<>();
+			mods.put("DANO_BONUS_PERCENTUAL", bonusTotal);
+			Efeito novoEfeito = new Efeito(nomeEfeito, TipoEfeito.BUFF, 99999, mods, 0, 0);
+			novoEfeito.setStacks(blocosDe5);
+			p.adicionarEfeito(novoEfeito);
+			System.out.println(">>> λογοσ: Poder Divino ativado! +" + (int) (bonusTotal * 100) + "% Dano.");
+		}
+
+		p.recalcularAtributosEstatisticas();
 	}
 
 	private void aplicarSobrecargaAngelical(Personagem p) {
@@ -91,11 +137,15 @@ public class HalfAngel extends Raça {
 	public void onTurnStart(Personagem personagem, EstadoCombate estado) {
 		// Lógica de manutenção da forma Ascendida
 		if (this.isTransformed) {
-			this.currentStacks--;
-			System.out
-					.println(">>> Half-Angel (Ascendido): -1 Benevolência (Manutenção). Restam: " + this.currentStacks);
+			// V2 (λογοσ): Gasta 2 stacks/turno quando acima de 10
+			int custo = (isV2 && this.currentStacks > 10) ? 2 : 1;
+			this.currentStacks -= custo;
+
+			System.out.println(">>> Half-Angel (Ascendido): -" + custo + " Benevolência (Manutenção). Restam: "
+					+ this.currentStacks);
 
 			if (this.currentStacks <= 0) {
+				this.currentStacks = 0;
 				sairAscensao(personagem);
 			}
 		}
@@ -103,7 +153,11 @@ public class HalfAngel extends Raça {
 
 	@Override
 	public List<Habilidade> getRacialAbilities(Personagem personagem) {
-		return java.util.Arrays.asList(new br.com.dantesrpg.model.habilidades.raciais.Ascensao());
+		br.com.dantesrpg.model.habilidades.raciais.Ascensao asc = new br.com.dantesrpg.model.habilidades.raciais.Ascensao();
+		if (isV2) {
+			asc.setDescricao("Consome 5 de Benevolência para ascender (λογοσ). Stacks sem cap, +20% dano a cada 5 acúmulos. Gasta 2/turno acima de 10.");
+		}
+		return java.util.Arrays.asList(asc);
 	}
 	
 	public void ativarAscensaoManual(Personagem p) {

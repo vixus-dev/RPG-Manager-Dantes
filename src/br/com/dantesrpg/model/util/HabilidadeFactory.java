@@ -60,6 +60,13 @@ public class HabilidadeFactory {
 		registro.put("Chamar Reforços", ChamarReforços::new);
 		registro.put("Descarga eletrica", DescargaEletrica::new);
 		registro.put("Dilacerar", Dilacerar::new);
+		registro.put("Invocar Filth de Sangue", InvocarFilthDeSangue::new);
+		registro.put("Cardial", Cardial::new);
+		registro.put("Destructa", Destructa::new);
+		registro.put("Sanctum", Sanctum::new);
+		registro.put("Sacrifício Sangrento", SacrificioSangrento::new);
+		registro.put("Parada Cardíaca", ParadaCardiaca::new);
+		registro.put("Respirar", Respirar::new);
 
 		// Classes
 		registro.put("Técnica de Barreira", TecnicaDeBarreira::new);
@@ -70,11 +77,24 @@ public class HabilidadeFactory {
 		registro.put("Combo!", Combo::new);
 		registro.put("Ilusão", Ilusao::new);
 		registro.put("Rezar", Rezar::new);
-		registro.put("Auto-Guarda", NanoGuarda::new);
+		registro.put("Auto-Guarda", AutoGuarda::new);
+		registro.put("Bash Strike", BashStrike::new);
+		registro.put("Impacto Vingativo", ImpactoVingativo::new);
+		registro.put("Drenagem de Efeitos", DrenagemDeEfeitos::new);
 		registro.put("Raiva Imparável", RaivaImparavel::new);
 		registro.put("Balanço Temerário", BalancoTemerario::new);
 		registro.put("Grito de Guerra", GritoDeGuerra::new);
 		registro.put("Golpe Devastador", GolpeDevastador::new);
+		registro.put("SANGUE...", Sangue::new);
+		registro.put("Fome...", Fome::new);
+
+		// KuangLi - Profeta de Behemoth
+		registro.put("Mergulho", Mergulho::new);
+		registro.put("Pedregulho", Pedregulho::new);
+		registro.put("Fortificar", Fortificar::new);
+		registro.put("Paredão de Pedra", ParedaoDePedra::new);
+		registro.put("Meteoro", Meteoro::new);
+		registro.put("Terremoto", Terremoto::new);
 	}
 
 	public static Habilidade criarHabilidadePorNome(String nome) {

@@ -32,4 +32,10 @@ public class Marionette extends Raça {
 		return Collections.emptyList(); // Sem habilidades ativas
 	}
 
+	@Override
+	public double onCuraAttempt(Personagem personagem, double curaRecebida) {
+		System.out.println(">>> Marionette: Cura bloqueada. Marionettes não podem ser curadas.");
+		return 0;
+	}
+
 }

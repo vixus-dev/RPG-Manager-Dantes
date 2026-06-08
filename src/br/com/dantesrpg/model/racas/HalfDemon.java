@@ -23,7 +23,15 @@ public class HalfDemon extends Raça {
 
 	@Override
 	public String getDescricaoPassiva() {
+		if (isV2) {
+			return "Ουράνιο Χάος: +25% Crítico. DT transforma com 5. +100% Dano Crítico transformado. Matar = 10% HP escudo + 5 stacks DT.";
+		}
 		return "Devil Trigger: +25% Crítico. Acertos geram DT. Transforma com 5. Sobrecarga acima de 10 gera Escudo de Sangue.";
+	}
+
+	@Override
+	public String getNomeV2() {
+		return "Ουράνιο Χάος";
 	}
 
 	// Passiva Inata: +25% de Taxa Crítica Permanente
@@ -53,13 +61,7 @@ public class HalfDemon extends Raça {
 	@Override
 	public void onDamageDealt(Personagem personagem, Personagem alvo, double danoCausado, EstadoCombate estado,
 			CombatController controller) {
-		Personagem p = personagem;
-		if (danoCausado > 0) {
-			gerarAcumulo(personagem, 1);
-			if (this.currentStacks > 9 && this.isTransformed) {
-				aplicarSobrecarga(p);
-			}
-		}
+		// Acúmulos são gerados apenas por críticos (onCriticalHit)
 	}
 
 	@Override
@@ -71,9 +73,15 @@ public class HalfDemon extends Raça {
 
 	private void gerarAcumulo(Personagem p, int quantidade) {
 		for (int i = 0; i < quantidade; i++) {
-			this.currentStacks++;
+			if (this.currentStacks < this.maxStacks) {
+				this.currentStacks++;
+			} else {
+				if (this.isTransformed) {
+					aplicarSobrecarga(p);
+				}
+			}
 		}
-		System.out.println(">>> Devil Trigger: " + this.currentStacks + " Stacks.");
+		System.out.println(">>> Devil Trigger: " + this.currentStacks + "/" + this.maxStacks + " Stacks.");
 	}
 
 	private void aplicarSobrecarga(Personagem p) {
@@ -99,10 +107,9 @@ public class HalfDemon extends Raça {
 		this.isTransformed = true;
 		System.out.println(">>> " + p.getNome() + " PUXOU O DEVIL TRIGGER!");
 
-		// Bônus: +30% Crit (Total 55%), +75% Dano Crit, +25% ST/IS/SA
+		// Bônus: Dano Crit + Atributos. V2 (Ουράνιο Χάος): +100% Dano Crit total
 		Map<String, Double> mods = new HashMap<>();
-		mods.put("TAXA_CRITICA", 0.25);
-		mods.put("DANO_CRITICO", 0.75);
+		mods.put("DANO_CRITICO", isV2 ? 1.00 : 0.75);
 
 		// Calcula 25% dos atributos base atuais
 		int forca = p.getAtributosFinais().getOrDefault(Atributo.FORCA, 0);
@@ -126,7 +133,31 @@ public class HalfDemon extends Raça {
 	}
 
 	@Override
+	public void onKill(Personagem personagem, Personagem alvoMorto, EstadoCombate estado, CombatManager manager) {
+		if (!isV2 || !this.isTransformed)
+			return;
+
+		// V2 (Ουράνιο Χάος): +10% max HP como escudo de sangue + 5 stacks DT
+		double escudo = personagem.getVidaMaxima() * 0.10;
+		personagem.setTemEscudoDeSangue(true);
+		personagem.setEscudoAtual(personagem.getEscudoAtual() + escudo);
+		System.out.println(">>> ΟΥΡΆΝΙΟ ΧΆΟΣ: Kill! Escudo de Sangue +" + (int) escudo);
+
+		// Adiciona 5 stacks (respeitando maxStacks)
+		for (int i = 0; i < 5; i++) {
+			if (this.currentStacks < this.maxStacks) {
+				this.currentStacks++;
+			}
+		}
+		System.out.println(">>> ΟΥΡΆΝΙΟ ΧΆΟΣ: +5 DT Stacks. Total: " + this.currentStacks + "/" + this.maxStacks);
+	}
+
+	@Override
 	public List<br.com.dantesrpg.model.Habilidade> getRacialAbilities(Personagem personagem) {
-		return java.util.Arrays.asList(new DevilTrigger());
+		DevilTrigger dt = new DevilTrigger();
+		if (isV2) {
+			dt.setDescricao("Consome 5 acúmulos para liberar Ουράνιο Χάος: +100% Dano Crítico, +25% Atributos. Matar = +10% HP Escudo + 5 stacks.");
+		}
+		return java.util.Arrays.asList(dt);
 	}
 }

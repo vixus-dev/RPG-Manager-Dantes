@@ -28,12 +28,24 @@ public class Anao extends Raça {
 
 	@Override
 	public String getDescricaoPassiva() {
+		if (isV2) {
+			return "O Monolito: Postura Inabalável com 60% de redução de dano, imunidade a DoTs nível 1 (Sangramento, Veneno, Queimação) e +50% de dano com armas de duas mãos.";
+		}
 		return descricaoPassiva;
 	}
 
 	@Override
+	public String getNomeV2() {
+		return "O Monolito";
+	}
+
+	@Override
 	public List<Habilidade> getRacialAbilities(Personagem personagem) {
-		return List.of(new PosturaInabalavel());
+		PosturaInabalavel postura = new PosturaInabalavel();
+		if (isV2) {
+			postura.setDescricao("Postura Inabalável (O Monolito): 60% redução de dano, imunidade a DoTs nível 1 (Sangramento, Veneno, Queimação), +50% dano com armas de duas mãos. Ataques custam +20 TU.");
+		}
+		return List.of(postura);
 	}
 
 	public boolean estaEmPostura(Personagem personagem) {
@@ -67,10 +79,23 @@ public class Anao extends Raça {
 	@Override
 	public double getMultiplicadorBonusDanoArma(Personagem personagem, Arma arma, Personagem alvo,
 			EstadoCombate estado, AcaoMestreInput input) {
-		if (!estaEmPostura(personagem) || arma == null || arma.getCustoTU() <= 120) {
+		if (!estaEmPostura(personagem) || arma == null) {
 			return 1.0;
 		}
-		return 1.20;
+
+		double mult = 1.0;
+
+		// V1: +20% para armas com TU > 120
+		if (arma.getCustoTU() > 120) {
+			mult *= 1.20;
+		}
+
+		// V2 (O Monolito): +50% para armas de duas mãos
+		if (isV2 && arma.isDuasMaos()) {
+			mult *= 1.50;
+		}
+
+		return mult;
 	}
 
 	@Override
@@ -79,7 +104,21 @@ public class Anao extends Raça {
 		if (!estaEmPostura(personagem)) {
 			return 1.0;
 		}
-		return 0.50;
+		// V2 (O Monolito): 60% de redução (0.40 multiplier)
+		return isV2 ? 0.40 : 0.50;
+	}
+
+	@Override
+	public void onEffectUpdate(Personagem personagem, br.com.dantesrpg.model.Efeito efeito, boolean isAplicado) {
+		// V2 (O Monolito): Imunidade a DoTs nível 1 enquanto em postura
+		if (!isV2 || !estaEmPostura(personagem) || !isAplicado)
+			return;
+
+		String nome = efeito.getNome();
+		if (nome.equals("Sangramento") || nome.equals("Veneno") || nome.equals("Queimação")) {
+			personagem.removerEfeito(nome);
+			System.out.println(">>> O MONOLITO: " + personagem.getNome() + " é imune a " + nome + "!");
+		}
 	}
 
 	@Override

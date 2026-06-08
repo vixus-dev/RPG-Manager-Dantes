@@ -37,7 +37,15 @@ public class Humano extends Raça {
 
 	@Override
 	public String getDescricaoPassiva() {
+		if (isV2) {
+			return "Overtime: Acumula contratos sobre contratos. Cada contrato dá escudo (20% HP) no início do combate e +15% dano. Falhar no teste = perde tudo.";
+		}
 		return descricaoPassiva;
+	}
+
+	@Override
+	public String getNomeV2() {
+		return "Overtime";
 	}
 
 	@Override
@@ -56,9 +64,13 @@ public class Humano extends Raça {
 	@Override
 	public boolean onHpChangeAttempt(Personagem personagem, double vidaAntiga, double novaVida, EstadoCombate estado,
 			CombatController controller) {
-		if (hasContratoAtivo() || !filaContratos.isEmpty()) {
-			if (novaVida <= 0)
-				return false;
+		// V1: Não permite empréstimo se já tem contratos
+		// V2 (Overtime): Permite empréstimo mesmo com contratos ativos
+		if (!isV2) {
+			if (hasContratoAtivo() || !filaContratos.isEmpty()) {
+				if (novaVida <= 0)
+					return false;
+			}
 		}
 		if (novaVida <= 0 && vidaAntiga > 0 && estadoAtual == EstadoEmprestimo.NENHUM) {
 			iniciarEmprestimo(personagem);
@@ -96,13 +108,29 @@ public class Humano extends Raça {
 
 	@Override
 	public double getBonusDanoPercentual(Personagem personagem) {
+		double bonus = 0.0;
+
 		if (estadoAtual == EstadoEmprestimo.RECUPERADO)
-			return 0.50;
-		if (estadoAtual == EstadoEmprestimo.ATIVO) {
+			bonus += 0.50;
+		else if (estadoAtual == EstadoEmprestimo.ATIVO) {
 			double pctPerdida = this.vidaNegativada / personagem.getVidaMaximaBase();
-			return pctPerdida * 1.5;
+			bonus += pctPerdida * 1.5;
 		}
-		return 0.0;
+
+		// V2 (Overtime): +15% de dano por contrato pendente (ativo + fila)
+		if (isV2) {
+			int totalContratos = getTotalContratosV2();
+			bonus += totalContratos * 0.15;
+		}
+
+		return bonus;
+	}
+
+	public int getTotalContratosV2() {
+		int count = filaContratos.size();
+		if (hasContratoAtivo())
+			count++;
+		return count;
 	}
 
 	@Override
@@ -162,6 +190,9 @@ public class Humano extends Raça {
 
 					personagem.recalcularAtributosEstatisticas();
 
+					// Avança automaticamente para o próximo contrato da fila, se houver
+					avancarProximoContrato(personagem);
+
 					return curaParaVida + troco;
 
 				} else {
@@ -192,8 +223,9 @@ public class Humano extends Raça {
 
 	public void resolverResultadoTeste(Personagem p, boolean sucesso, int valorRolado) {
 		if (estadoAtual == EstadoEmprestimo.RECUPERADO) {
-			System.out.println(">>> HUMANO: Sobreviveu por recuperação.");
+			System.out.println(">>> HUMANO: Sobreviveu por recuperação. Bônus encerrado.");
 			resetarEstadoEmprestimo(p);
+			p.recalcularAtributosEstatisticas();
 			return;
 		}
 		if (sucesso) {
@@ -203,8 +235,31 @@ public class Humano extends Raça {
 			p.setVidaAtual(1);
 			avancarProximoContrato(p);
 		} else {
-			System.out.println(">>> HUMANO: Falha no Teste. Morte.");
+			if (isV2) {
+				// V2 (Overtime): Falha = perde TODOS os contratos acumulados e morre
+				System.out.println(">>> OVERTIME: Falha no Teste! Todos os contratos perdidos. Morte.");
+				this.filaContratos.clear();
+				this.contratoAtivoValorTotal = 0;
+				this.contratoAtivoDividaRestante = 0;
+				p.removerEfeito("Contrato de Vida");
+			} else {
+				System.out.println(">>> HUMANO: Falha no Teste. Morte.");
+			}
 			p.setVidaAtual(0);
+		}
+	}
+
+	@Override
+	public void onCombatStart(Personagem personagem, EstadoCombate estado) {
+		if (!isV2)
+			return;
+
+		int totalContratos = getTotalContratosV2();
+		if (totalContratos > 0) {
+			double escudo = personagem.getVidaMaximaBase() * 0.20 * totalContratos;
+			personagem.setEscudoAtual(personagem.getEscudoAtual() + escudo);
+			System.out.println(">>> OVERTIME: Escudo de Contratos +" + (int) escudo + " (" + totalContratos
+					+ " contratos x 20% HP).");
 		}
 	}
 
@@ -291,5 +346,26 @@ public class Humano extends Raça {
 
 	public void setVidaNegativaAcumulada(double valor) {
 		this.vidaNegativada = valor;
+	}
+
+	// Getters/Setters para Persistência Completa
+	public double getContratoAtivoValorTotal() {
+		return this.contratoAtivoValorTotal;
+	}
+
+	public void setContratoAtivoValorTotal(double valor) {
+		this.contratoAtivoValorTotal = valor;
+	}
+
+	public double getContratoAtivoDividaRestante() {
+		return this.contratoAtivoDividaRestante;
+	}
+
+	public void setContratoAtivoDividaRestante(double valor) {
+		this.contratoAtivoDividaRestante = valor;
+	}
+
+	public void setEstadoAtual(EstadoEmprestimo estado) {
+		this.estadoAtual = estado;
 	}
 }
