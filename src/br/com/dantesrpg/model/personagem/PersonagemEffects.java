@@ -90,7 +90,7 @@ public class PersonagemEffects {
 
 		int novosStacks = stacksAtuais + 1;
 
-		if (novosStacks >= 5) {
+		if (novosStacks >= 2) {
 			// ESTOUROU: Vira "Dormindo" (300 TU, acorda com 2 ticks de dano)
 			removerEfeito("Sono");
 
@@ -108,7 +108,7 @@ public class PersonagemEffects {
 				novoSono.setStacks(novosStacks);
 				efeitosAtivos.put("Sono", novoSono);
 			}
-			System.out.println(">>> " + personagem.getNome() + " está sonolento (" + novosStacks + "/5).");
+			System.out.println(">>> " + personagem.getNome() + " está sonolento (" + novosStacks + "/2).");
 		}
 
 		personagem.recalcularAtributosEstatisticas();

@@ -22,6 +22,11 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -358,7 +363,14 @@ public class LojaController {
 			btnComprar.setTooltip(tp);
 		}
 
-		card.getChildren().addAll(lblIcone, nomeBox, lblPreco, btnComprar);
+		if (!modoOverclock) {
+			Button btnBarganhar = new Button("Barganhar");
+			btnBarganhar.getStyleClass().add("loja-btn-barganhar");
+			btnBarganhar.setOnAction(e -> abrirModalBarganha(oferta));
+			card.getChildren().addAll(lblIcone, nomeBox, lblPreco, btnBarganhar, btnComprar);
+		} else {
+			card.getChildren().addAll(lblIcone, nomeBox, lblPreco, btnComprar);
+		}
 
 		// Borda com cor de desconto
 		if (oferta.desconto > 0) {
@@ -740,6 +752,217 @@ public class LojaController {
 			Alert alert = new Alert(Alert.AlertType.WARNING, "Moeda incorreta ou insuficiente!");
 			alert.show();
 		}
+	}
+
+	private void abrirModalBarganha(Oferta oferta) {
+		if (oferta == null || jogadorAtual == null) return;
+
+		Item item = oferta.item;
+		int precoOriginal = oferta.getPrecoFinal();
+		String moedaTipo = item.getTipoMoeda();
+
+		Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setTitle("Barganhar - " + item.getNome());
+		dialog.setHeaderText("Negociando preço para " + jogadorAtual.getNome());
+
+		DialogPane dialogPane = dialog.getDialogPane();
+		dialogPane.setStyle("-fx-background-color: #16161e; -fx-border-color: #e94560; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;");
+		
+		try {
+			String cssPath = getClass().getResource("/br/com/dantesrpg/view/style.css").toExternalForm();
+			dialogPane.getScene().getStylesheets().add(cssPath);
+		} catch (Exception e) {
+			// Fallback silencioso
+		}
+
+		javafx.scene.Node headerPanel = dialogPane.lookup(".header-panel");
+		if (headerPanel != null) {
+			headerPanel.setStyle("-fx-background-color: #0b0914;");
+		}
+
+		VBox content = new VBox(12);
+		content.setPadding(new Insets(15));
+		content.setAlignment(Pos.CENTER);
+		content.setStyle("-fx-background-color: #16161e;");
+
+		Label lblItemNome = new Label(item.getNome());
+		lblItemNome.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: " + getCorRaridadeItem(item) + ";");
+		
+		Label lblPrecoOriginal = new Label("Preço da Loja: " + precoOriginal + " " + traduzirMoeda(moedaTipo));
+		lblPrecoOriginal.setStyle("-fx-text-fill: #808090; -fx-font-size: 13px;");
+
+		Slider slider = new Slider(-100, 100, 0);
+		slider.setShowTickLabels(true);
+		slider.setShowTickMarks(true);
+		slider.setMajorTickUnit(50);
+		slider.setMinorTickCount(4);
+		slider.setBlockIncrement(10);
+		slider.setStyle("-fx-text-fill: white;");
+
+		TextField txtPorcentagem = new TextField("0");
+		txtPorcentagem.setPrefWidth(60);
+		txtPorcentagem.setAlignment(Pos.CENTER);
+		txtPorcentagem.setStyle("-fx-background-color: #0d0c15; -fx-text-fill: white; -fx-border-color: #3a3a4a; -fx-border-radius: 4; -fx-background-radius: 4;");
+
+		HBox sliderBox = new HBox(10, slider, txtPorcentagem);
+		sliderBox.setAlignment(Pos.CENTER);
+
+		Label lblPrecoRecalculado = new Label();
+		lblPrecoRecalculado.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+		Runnable atualizarValores = () -> {
+			try {
+				double pct = slider.getValue();
+				int pctInt = (int) Math.round(pct);
+				
+				double fator = 1.0 + (pctInt / 100.0);
+				int precoFinal = (int) Math.round(precoOriginal * fator);
+				if (precoFinal < 0) precoFinal = 0;
+
+				if (pctInt < 0) {
+					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Desconto de %d%%)", precoFinal, traduzirMoeda(moedaTipo), Math.abs(pctInt)));
+					lblPrecoRecalculado.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2ecc71;");
+				} else if (pctInt > 0) {
+					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Acréscimo de %d%%)", precoFinal, traduzirMoeda(moedaTipo), pctInt));
+					lblPrecoRecalculado.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
+				} else {
+					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Sem alteração)", precoFinal, traduzirMoeda(moedaTipo)));
+					lblPrecoRecalculado.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		};
+
+		slider.valueProperty().addListener((obs, oldVal, newVal) -> {
+			int val = (int) Math.round(newVal.doubleValue());
+			if (!txtPorcentagem.isFocused()) {
+				txtPorcentagem.setText(String.valueOf(val));
+			}
+			atualizarValores.run();
+		});
+
+		txtPorcentagem.textProperty().addListener((obs, oldVal, newVal) -> {
+			if (txtPorcentagem.isFocused()) {
+				if (newVal.isEmpty()) return;
+				try {
+					if (newVal.equals("-")) return;
+					int val = Integer.parseInt(newVal);
+					if (val < -100) val = -100;
+					if (val > 100) val = 100;
+					slider.setValue(val);
+					atualizarValores.run();
+				} catch (NumberFormatException e) {
+					txtPorcentagem.setText(oldVal);
+				}
+			}
+		});
+
+		txtPorcentagem.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+			if (!isFocused) {
+				if (txtPorcentagem.getText().isEmpty() || txtPorcentagem.getText().equals("-")) {
+					txtPorcentagem.setText("0");
+					slider.setValue(0);
+				} else {
+					try {
+						int val = Integer.parseInt(txtPorcentagem.getText());
+						if (val < -100) val = -100;
+						if (val > 100) val = 100;
+						txtPorcentagem.setText(String.valueOf(val));
+						slider.setValue(val);
+					} catch (Exception e) {
+						txtPorcentagem.setText("0");
+						slider.setValue(0);
+					}
+				}
+				atualizarValores.run();
+			}
+		});
+
+		atualizarValores.run();
+
+		content.getChildren().addAll(lblItemNome, lblPrecoOriginal, sliderBox, lblPrecoRecalculado);
+		dialogPane.setContent(content);
+
+		dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+		
+		Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
+		okButton.setText("Confirmar Compra");
+		okButton.setStyle("-fx-background-color: #1a3a1a; -fx-text-fill: #2ecc71; -fx-border-color: #2ecc71; -fx-border-radius: 4; -fx-background-radius: 4; -fx-cursor: hand;");
+		
+		Button cancelButton = (Button) dialogPane.lookupButton(ButtonType.CANCEL);
+		cancelButton.setText("Cancelar");
+		cancelButton.setStyle("-fx-background-color: #2a1a1a; -fx-text-fill: #e67e22; -fx-border-color: #e67e22; -fx-border-radius: 4; -fx-background-radius: 4; -fx-cursor: hand;");
+
+		okButton.setOnMouseEntered(e -> okButton.setStyle("-fx-background-color: #2a5a2a; -fx-text-fill: #2ecc71; -fx-border-color: #2ecc71; -fx-border-radius: 4; -fx-background-radius: 4;"));
+		okButton.setOnMouseExited(e -> okButton.setStyle("-fx-background-color: #1a3a1a; -fx-text-fill: #2ecc71; -fx-border-color: #2ecc71; -fx-border-radius: 4; -fx-background-radius: 4;"));
+		cancelButton.setOnMouseEntered(e -> cancelButton.setStyle("-fx-background-color: #3a2a1a; -fx-text-fill: #e67e22; -fx-border-color: #e67e22; -fx-border-radius: 4; -fx-background-radius: 4;"));
+		cancelButton.setOnMouseExited(e -> cancelButton.setStyle("-fx-background-color: #2a1a1a; -fx-text-fill: #e67e22; -fx-border-color: #e67e22; -fx-border-radius: 4; -fx-background-radius: 4;"));
+
+		Optional<ButtonType> result = dialog.showAndWait();
+		if (result.isPresent() && result.get() == ButtonType.OK) {
+			int pctInt = (int) Math.round(slider.getValue());
+			double fator = 1.0 + (pctInt / 100.0);
+			int precoFinal = (int) Math.round(precoOriginal * fator);
+			if (precoFinal < 0) precoFinal = 0;
+
+			if (verificarPodeComprar(precoFinal, moedaTipo)) {
+				boolean sucesso = false;
+				Inventario inv = jogadorAtual.getInventario();
+
+				if ("OURO".equalsIgnoreCase(moedaTipo)) {
+					if (inv.gastarOuro(precoFinal)) sucesso = true;
+				} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
+					if (inv.gastarPrata(precoFinal)) sucesso = true;
+				} else {
+					if (inv.gastarBronze(precoFinal)) sucesso = true;
+				}
+
+				if (sucesso) {
+					if (item instanceof Consumivel) {
+						Map<String, Double> efeitos = ((Consumivel) item).getEfeitos();
+						if (efeitos != null && efeitos.containsKey("RECEBE_PRATA")) {
+							inv.receberPrata(efeitos.get("RECEBE_PRATA").intValue());
+						} else if (efeitos != null && efeitos.containsKey("RECEBE_OURO")) {
+							inv.receberOuro(efeitos.get("RECEBE_OURO").intValue());
+						} else {
+							inv.adicionarItem(item);
+						}
+					} else {
+						inv.adicionarItem(item);
+					}
+
+					String tipoAlteracao = pctInt < 0 ? "Desconto" : "Acréscimo";
+					String logMsg = String.format("[LOJA] %s barganhou e comprou %s por %d %s (%s de %d%%, preço original: %d %s)",
+							jogadorAtual.getNome(), item.getNome(), precoFinal, traduzirMoeda(moedaTipo),
+							tipoAlteracao, Math.abs(pctInt), precoOriginal, traduzirMoeda(moedaTipo));
+					br.com.dantesrpg.model.util.SessionLogger.log(logMsg);
+
+					mainController.salvarEstadoJogadores();
+					atualizarUI();
+				} else {
+					mostrarAlertaErro("Erro de Compra", "Não foi possível realizar o débito de moedas.");
+				}
+			} else {
+				mostrarAlertaErro("Moedas Insuficientes", "Você não possui moedas suficientes para comprar este item no preço negociado!");
+			}
+		}
+	}
+
+	private String traduzirMoeda(String moedaTipo) {
+		if ("OURO".equalsIgnoreCase(moedaTipo)) return "Ouro";
+		if ("PRATA".equalsIgnoreCase(moedaTipo)) return "Prata";
+		return "Bronze";
+	}
+
+	private void mostrarAlertaErro(String titulo, String mensagem) {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle(titulo);
+		alert.setHeaderText(null);
+		alert.setContentText(mensagem);
+		alert.getDialogPane().setStyle("-fx-background-color: #16161e; -fx-text-fill: white;");
+		alert.getDialogPane().lookup(".label").setStyle("-fx-text-fill: white;");
+		alert.showAndWait();
 	}
 
 	private void venderItemManual(Item item) {

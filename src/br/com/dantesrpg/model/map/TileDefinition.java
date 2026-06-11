@@ -15,7 +15,7 @@ public class TileDefinition {
 	private boolean wall;
 	private String category;
 	private String texturePath;
-	private EffectConfig effect; // Nullable
+	private EffectConfig effect;
 
 	// --- Getters ---
 

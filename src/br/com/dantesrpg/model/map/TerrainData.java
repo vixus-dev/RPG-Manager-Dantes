@@ -5,17 +5,17 @@ import br.com.dantesrpg.model.Personagem;
 public class TerrainData {
 
 	public enum TipoTerreno {
-		PADRAO, PAREDE, CARVAO, OBJETO, SAIDA, LAVA, SANGUE, ACIDO
+		PADRAO, PAREDE, CARVAO, OBJETO, SAIDA, LAVA, SANGUE, ACIDO, AGUA
 	}
 
 	public enum TipoEfeitoSolo {
-		FOGO, ACIDO, GAS, ELETRICIDADE, PORTAL, SANGUE, AREIA
+		FOGO, ACIDO, GAS, ELETRICIDADE, PORTAL, SANGUE, AREIA, AGUAPESADA
 	}
 
 	public static class EfeitoInstance {
 		private TipoEfeitoSolo tipo;
 		private int duracaoTU;
-		private int danoPorTick; // Dano base (ex: 10% da arma do boss)
+		private int danoPorTick;
 		private Personagem criador;
 		private boolean permanente;
 

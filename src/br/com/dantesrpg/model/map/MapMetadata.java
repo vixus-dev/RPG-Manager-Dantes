@@ -49,7 +49,7 @@ public class MapMetadata {
 
 	public static class InimigoSpawn {
 		public int x, y;
-		public String idMonstro; // Ex: "DemonioMenor"
+		public String idMonstro;
 
 		public InimigoSpawn(int x, int y, String id) {
 			this.x = x;
