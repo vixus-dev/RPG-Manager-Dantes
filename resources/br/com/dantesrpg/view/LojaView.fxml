@@ -24,8 +24,7 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <Label text="Comprador:" style="-fx-text-fill: #808090; -fx-font-size: 12px;"/>
-            <ComboBox fx:id="playerSelectorComboBox" onAction="#onPlayerSelected" prefWidth="160.0" styleClass="loja-combo"/>
+            <HBox fx:id="compradoresContainer" spacing="10.0" alignment="CENTER_LEFT" />
 
             <HBox styleClass="moeda-container" spacing="12.0" alignment="CENTER_LEFT">
                <Label fx:id="labelMoedasOuro" text="0" styleClass="moeda-ouro"/>

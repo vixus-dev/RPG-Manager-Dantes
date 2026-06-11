@@ -28,6 +28,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -62,7 +63,7 @@ public class LojaController {
 	@FXML private Label labelMoedasBronze;
 	@FXML private VBox itensVendaContainer;
 	@FXML private VBox inventarioJogadorContainer;
-	@FXML private ComboBox<Personagem> playerSelectorComboBox;
+	@FXML private HBox compradoresContainer;
 	@FXML private ComboBox<String> comboSelecaoLoja;
 	@FXML private TextField txtBusca;
 	@FXML private ComboBox<String> comboFiltroCategoria;
@@ -93,33 +94,6 @@ public class LojaController {
 
 	@FXML
 	public void initialize() {
-		playerSelectorComboBox.setCellFactory(lv -> new ListCell<Personagem>() {
-			@Override
-			protected void updateItem(Personagem p, boolean empty) {
-				super.updateItem(p, empty);
-				if (empty || p == null) {
-					setText(null);
-				} else {
-					String info = p.getNome();
-					if (p.getClasse() != null) info += " (" + p.getClasse().getNome() + ")";
-					setText(info);
-				}
-			}
-		});
-		playerSelectorComboBox.setButtonCell(new ListCell<Personagem>() {
-			@Override
-			protected void updateItem(Personagem p, boolean empty) {
-				super.updateItem(p, empty);
-				if (empty || p == null) {
-					setText(null);
-				} else {
-					String info = p.getNome();
-					if (p.getClasse() != null) info += " (" + p.getClasse().getNome() + ")";
-					setText(info);
-				}
-			}
-		});
-
 		comboSelecaoLoja.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal != null) {
 				carregarLoja(newVal);
@@ -142,17 +116,16 @@ public class LojaController {
 	public void inicializarLoja(CombatController controller, EstadoCombate estado, String idLojaInicial) {
 		this.mainController = controller;
 
-		playerSelectorComboBox.getItems().clear();
 		List<Personagem> players = estado.getCombatentes().stream().filter(p -> p.getFaccao().equals("JOGADOR"))
 				.collect(Collectors.toList());
-		playerSelectorComboBox.getItems().addAll(players);
 
 		if (!players.isEmpty()) {
 			this.jogadorAtual = players.get(0);
-			playerSelectorComboBox.setValue(this.jogadorAtual);
 		}
 
 		carregarListaDeArquivosDeLoja();
+
+		reconstruirRetratosCompradores(players);
 
 		if (idLojaInicial != null && comboSelecaoLoja.getItems().contains(idLojaInicial)) {
 			comboSelecaoLoja.getSelectionModel().select(idLojaInicial);
@@ -181,12 +154,82 @@ public class LojaController {
 		}
 	}
 
-	@FXML
-	private void onPlayerSelected() {
-		Personagem selected = playerSelectorComboBox.getValue();
-		if (selected != null && selected != this.jogadorAtual) {
-			this.jogadorAtual = selected;
-			atualizarUI();
+	private void reconstruirRetratosCompradores(List<Personagem> players) {
+		compradoresContainer.getChildren().clear();
+		for (Personagem p : players) {
+			VBox card = new VBox(2);
+			card.setAlignment(Pos.CENTER);
+			card.setPadding(new Insets(4));
+			card.setCursor(javafx.scene.Cursor.HAND);
+			
+			String nomeBase = p.getNome().toLowerCase().replace(" ", "_");
+			String imagePath = "/portraits/" + nomeBase + ".png";
+			javafx.scene.image.ImageView imgView = new javafx.scene.image.ImageView();
+			imgView.setFitWidth(36);
+			imgView.setFitHeight(36);
+			imgView.setPreserveRatio(true);
+			
+			try {
+				javafx.scene.image.Image portrait = br.com.dantesrpg.model.util.ImageCache.get(imagePath, 36, 36);
+				if (portrait != null && !portrait.isError()) {
+					imgView.setImage(portrait);
+				}
+			} catch (Exception e) {
+				// Fallback
+			}
+			
+			StackPane imgFrame = new StackPane(imgView);
+			imgFrame.setPrefSize(40, 40);
+			imgFrame.setMaxSize(40, 40);
+			imgFrame.setStyle("-fx-border-width: 2; -fx-border-radius: 20; -fx-background-radius: 20; -fx-background-color: #0d0c15; -fx-border-color: #3a3a4a;");
+			
+			Circle clip = new Circle(18, 18, 18);
+			imgView.setClip(clip);
+
+			Label lblNome = new Label(p.getNome());
+			lblNome.setStyle("-fx-text-fill: #808090; -fx-font-size: 10px; -fx-font-weight: bold;");
+
+			card.getChildren().addAll(imgFrame, lblNome);
+
+			String tooltipText = p.getNome() + (p.getClasse() != null ? " (" + p.getClasse().getNome() + ")" : "")
+					+ "\n\u2B50 Ouro: " + p.getInventario().getMoedasOuro()
+					+ "\n\u25C9 Prata: " + p.getInventario().getMoedasPrata()
+					+ "\n\u25CF Bronze: " + p.getInventario().getMoedasBronze();
+			Tooltip tip = new Tooltip(tooltipText);
+			tip.setShowDelay(Duration.millis(150));
+			Tooltip.install(card, tip);
+
+			card.setOnMouseClicked(e -> {
+				this.jogadorAtual = p;
+				atualizarSelecaoRetratos();
+				atualizarUI();
+			});
+
+			card.setUserData(p);
+			compradoresContainer.getChildren().add(card);
+		}
+		atualizarSelecaoRetratos();
+	}
+
+	private void atualizarSelecaoRetratos() {
+		for (javafx.scene.Node node : compradoresContainer.getChildren()) {
+			if (node instanceof VBox) {
+				VBox card = (VBox) node;
+				Personagem p = (Personagem) card.getUserData();
+				
+				if (!card.getChildren().isEmpty() && card.getChildren().get(0) instanceof StackPane) {
+					StackPane imgFrame = (StackPane) card.getChildren().get(0);
+					Label lblNome = (Label) card.getChildren().get(1);
+					
+					if (p == jogadorAtual) {
+						imgFrame.setStyle("-fx-border-width: 2; -fx-border-radius: 20; -fx-background-radius: 20; -fx-background-color: #0d0c15; -fx-border-color: cyan; -fx-effect: dropshadow(gaussian, cyan, 6, 0.4, 0, 0);");
+						lblNome.setStyle("-fx-text-fill: cyan; -fx-font-size: 10px; -fx-font-weight: bold;");
+					} else {
+						imgFrame.setStyle("-fx-border-width: 2; -fx-border-radius: 20; -fx-background-radius: 20; -fx-background-color: #0d0c15; -fx-border-color: #3a3a4a;");
+						lblNome.setStyle("-fx-text-fill: #808090; -fx-font-size: 10px; -fx-font-weight: bold;");
+					}
+				}
+			}
 		}
 	}
 
