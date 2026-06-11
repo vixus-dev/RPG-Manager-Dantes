@@ -412,6 +412,18 @@ public class LojaController {
 
 		java.util.function.Consumer<Integer> atualizarQtd = (novaQtd) -> {
 			int total = precoFinal * novaQtd;
+			
+			// Atualiza o display de moedas no card
+			String icone;
+			if ("OURO".equalsIgnoreCase(moedaTipo)) {
+				icone = "\u2B50";
+			} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
+				icone = "\u25C9";
+			} else {
+				icone = "\u25CF";
+			}
+			lblPreco.setText(icone + " " + total);
+
 			boolean ok = verificarPodeComprar(total, moedaTipo);
 			btnComprar.setDisable(!ok);
 			if (!ok) {
