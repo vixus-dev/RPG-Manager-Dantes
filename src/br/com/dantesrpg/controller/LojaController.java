@@ -64,6 +64,8 @@ public class LojaController {
 	@FXML private VBox inventarioJogadorContainer;
 	@FXML private ComboBox<Personagem> playerSelectorComboBox;
 	@FXML private ComboBox<String> comboSelecaoLoja;
+	@FXML private TextField txtBusca;
+	@FXML private ComboBox<String> comboFiltroCategoria;
 
 	@FXML private Label previewNome;
 	@FXML private Label previewDescricao;
@@ -123,6 +125,17 @@ public class LojaController {
 				carregarLoja(newVal);
 				atualizarUI();
 			}
+		});
+
+		// Configuração de Filtros e Busca
+		comboFiltroCategoria.getItems().addAll("Todas", "Armas ⚔️", "Armaduras 🛡️", "Amuletos 💠", "Consumíveis 🧪", "Outros 📦");
+		comboFiltroCategoria.setValue("Todas");
+		comboFiltroCategoria.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+			atualizarUI();
+		});
+
+		txtBusca.textProperty().addListener((obs, oldVal, newVal) -> {
+			atualizarUI();
 		});
 	}
 
@@ -264,8 +277,35 @@ public class LojaController {
 	// =============================================
 
 	private void atualizarCatalogo() {
-		if (ofertasAtuais.isEmpty()) {
-			Label lblVazio = new Label("Nenhum item disponível nesta loja.");
+		String busca = txtBusca.getText() != null ? txtBusca.getText().trim().toLowerCase() : "";
+		String categoriaSelecionada = comboFiltroCategoria.getValue() != null ? comboFiltroCategoria.getValue() : "Todas";
+
+		List<Oferta> ofertasFiltradas = ofertasAtuais.stream().filter(o -> {
+			boolean matchesBusca = busca.isEmpty() 
+				|| (o.item.getNome() != null && o.item.getNome().toLowerCase().contains(busca))
+				|| (o.item.getDescricao() != null && o.item.getDescricao().toLowerCase().contains(busca));
+
+			if (!matchesBusca) return false;
+
+			if ("Todas".equals(categoriaSelecionada)) {
+				return true;
+			} else if ("Armas ⚔️".equals(categoriaSelecionada)) {
+				return o.item instanceof Arma;
+			} else if ("Armaduras 🛡️".equals(categoriaSelecionada)) {
+				return o.item instanceof Armadura;
+			} else if ("Amuletos 💠".equals(categoriaSelecionada)) {
+				return o.item instanceof Amuleto;
+			} else if ("Consumíveis 🧪".equals(categoriaSelecionada)) {
+				return o.item instanceof Consumivel;
+			} else if ("Outros 📦".equals(categoriaSelecionada)) {
+				return !(o.item instanceof Arma) && !(o.item instanceof Armadura) 
+					&& !(o.item instanceof Amuleto) && !(o.item instanceof Consumivel);
+			}
+			return true;
+		}).collect(Collectors.toList());
+
+		if (ofertasFiltradas.isEmpty()) {
+			Label lblVazio = new Label(ofertasAtuais.isEmpty() ? "Nenhum item disponível nesta loja." : "Nenhum item corresponde aos filtros.");
 			lblVazio.setStyle("-fx-text-fill: #505060; -fx-font-style: italic;");
 			itensVendaContainer.getChildren().add(lblVazio);
 			return;
@@ -278,7 +318,7 @@ public class LojaController {
 		List<Oferta> consumiveis = new ArrayList<>();
 		List<Oferta> outros = new ArrayList<>();
 
-		for (Oferta o : ofertasAtuais) {
+		for (Oferta o : ofertasFiltradas) {
 			if (o.item instanceof Arma) armas.add(o);
 			else if (o.item instanceof Armadura) armaduras.add(o);
 			else if (o.item instanceof Amuleto) amuletos.add(o);
@@ -353,7 +393,53 @@ public class LojaController {
 		// Botão Comprar
 		Button btnComprar = new Button("Comprar");
 		btnComprar.getStyleClass().add("loja-btn-comprar");
-		btnComprar.setOnAction(e -> comprarItem(oferta));
+
+		// Seletor de Quantidade
+		int[] qtdHolder = { 1 };
+		HBox seletorQtdBox = new HBox(4);
+		seletorQtdBox.setAlignment(Pos.CENTER);
+		
+		Button btnMenos = new Button("-");
+		btnMenos.getStyleClass().add("loja-btn-qtd");
+		
+		Label lblQtd = new Label("1");
+		lblQtd.getStyleClass().add("loja-lbl-qtd");
+		
+		Button btnMais = new Button("+");
+		btnMais.getStyleClass().add("loja-btn-qtd");
+		
+		seletorQtdBox.getChildren().addAll(btnMenos, lblQtd, btnMais);
+
+		java.util.function.Consumer<Integer> atualizarQtd = (novaQtd) -> {
+			int total = precoFinal * novaQtd;
+			boolean ok = verificarPodeComprar(total, moedaTipo);
+			btnComprar.setDisable(!ok);
+			if (!ok) {
+				Tooltip tp = new Tooltip("Moedas insuficientes! Exige " + total + " " + traduzirMoeda(moedaTipo));
+				tp.setShowDelay(Duration.millis(300));
+				btnComprar.setTooltip(tp);
+			} else {
+				btnComprar.setTooltip(null);
+			}
+		};
+
+		btnMenos.setOnAction(e -> {
+			if (qtdHolder[0] > 1) {
+				qtdHolder[0]--;
+				lblQtd.setText(String.valueOf(qtdHolder[0]));
+				atualizarQtd.accept(qtdHolder[0]);
+			}
+		});
+
+		btnMais.setOnAction(e -> {
+			if (qtdHolder[0] < 99) {
+				qtdHolder[0]++;
+				lblQtd.setText(String.valueOf(qtdHolder[0]));
+				atualizarQtd.accept(qtdHolder[0]);
+			}
+		});
+
+		btnComprar.setOnAction(e -> comprarItem(oferta, qtdHolder[0]));
 
 		boolean podeComprar = verificarPodeComprar(precoFinal, moedaTipo);
 		btnComprar.setDisable(!podeComprar);
@@ -366,10 +452,10 @@ public class LojaController {
 		if (!modoOverclock) {
 			Button btnBarganhar = new Button("Barganhar");
 			btnBarganhar.getStyleClass().add("loja-btn-barganhar");
-			btnBarganhar.setOnAction(e -> abrirModalBarganha(oferta));
-			card.getChildren().addAll(lblIcone, nomeBox, lblPreco, btnBarganhar, btnComprar);
+			btnBarganhar.setOnAction(e -> abrirModalBarganha(oferta, qtdHolder[0]));
+			card.getChildren().addAll(lblIcone, nomeBox, lblPreco, seletorQtdBox, btnBarganhar, btnComprar);
 		} else {
-			card.getChildren().addAll(lblIcone, nomeBox, lblPreco, btnComprar);
+			card.getChildren().addAll(lblIcone, nomeBox, lblPreco, seletorQtdBox, btnComprar);
 		}
 
 		// Borda com cor de desconto
@@ -717,34 +803,42 @@ public class LojaController {
 	// === COMPRA E VENDA
 	// =============================================
 
-	private void comprarItem(Oferta oferta) {
+	private void comprarItem(Oferta oferta, int quantidade) {
 		Inventario inv = jogadorAtual.getInventario();
-		int preco = oferta.getPrecoFinal();
+		int precoUnitario = oferta.getPrecoFinal();
+		int precoTotal = precoUnitario * quantidade;
 		String moedaTipo = oferta.item.getTipoMoeda();
 
 		boolean sucesso = false;
 
 		if ("OURO".equalsIgnoreCase(moedaTipo)) {
-			if (inv.gastarOuro(preco)) sucesso = true;
+			if (inv.gastarOuro(precoTotal)) sucesso = true;
 		} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
-			if (inv.gastarPrata(preco)) sucesso = true;
+			if (inv.gastarPrata(precoTotal)) sucesso = true;
 		} else {
-			if (inv.gastarBronze(preco)) sucesso = true;
+			if (inv.gastarBronze(precoTotal)) sucesso = true;
 		}
 
 		if (sucesso) {
-			if (oferta.item instanceof Consumivel) {
-				Map<String, Double> efeitos = ((Consumivel) oferta.item).getEfeitos();
-				if (efeitos != null && efeitos.containsKey("RECEBE_PRATA")) {
-					inv.receberPrata(efeitos.get("RECEBE_PRATA").intValue());
-				} else if (efeitos != null && efeitos.containsKey("RECEBE_OURO")) {
-					inv.receberOuro(efeitos.get("RECEBE_OURO").intValue());
+			for (int i = 0; i < quantidade; i++) {
+				if (oferta.item instanceof Consumivel) {
+					Map<String, Double> efeitos = ((Consumivel) oferta.item).getEfeitos();
+					if (efeitos != null && efeitos.containsKey("RECEBE_PRATA")) {
+						inv.receberPrata(efeitos.get("RECEBE_PRATA").intValue());
+					} else if (efeitos != null && efeitos.containsKey("RECEBE_OURO")) {
+						inv.receberOuro(efeitos.get("RECEBE_OURO").intValue());
+					} else {
+						inv.adicionarItem(oferta.item);
+					}
 				} else {
 					inv.adicionarItem(oferta.item);
 				}
-			} else {
-				inv.adicionarItem(oferta.item);
 			}
+
+			// Enviar log de transação normal
+			String logMsg = String.format("[LOJA] %s comprou %dx %s por %d %s",
+					jogadorAtual.getNome(), quantidade, oferta.item.getNome(), precoTotal, traduzirMoeda(moedaTipo));
+			br.com.dantesrpg.model.util.SessionLogger.log(logMsg);
 
 			mainController.salvarEstadoJogadores();
 			atualizarUI();
@@ -754,11 +848,12 @@ public class LojaController {
 		}
 	}
 
-	private void abrirModalBarganha(Oferta oferta) {
+	private void abrirModalBarganha(Oferta oferta, int quantidade) {
 		if (oferta == null || jogadorAtual == null) return;
 
 		Item item = oferta.item;
-		int precoOriginal = oferta.getPrecoFinal();
+		int precoOriginalUnitario = oferta.getPrecoFinal();
+		int precoOriginalTotal = precoOriginalUnitario * quantidade;
 		String moedaTipo = item.getTipoMoeda();
 
 		Dialog<ButtonType> dialog = new Dialog<>();
@@ -785,10 +880,10 @@ public class LojaController {
 		content.setAlignment(Pos.CENTER);
 		content.setStyle("-fx-background-color: #16161e;");
 
-		Label lblItemNome = new Label(item.getNome());
+		Label lblItemNome = new Label(item.getNome() + (quantidade > 1 ? " (x" + quantidade + ")" : ""));
 		lblItemNome.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: " + getCorRaridadeItem(item) + ";");
 		
-		Label lblPrecoOriginal = new Label("Preço da Loja: " + precoOriginal + " " + traduzirMoeda(moedaTipo));
+		Label lblPrecoOriginal = new Label(String.format("Preço da Loja: %d %s (Qtd: %d)", precoOriginalTotal, traduzirMoeda(moedaTipo), quantidade));
 		lblPrecoOriginal.setStyle("-fx-text-fill: #808090; -fx-font-size: 13px;");
 
 		Slider slider = new Slider(-100, 100, 0);
@@ -816,17 +911,18 @@ public class LojaController {
 				int pctInt = (int) Math.round(pct);
 				
 				double fator = 1.0 + (pctInt / 100.0);
-				int precoFinal = (int) Math.round(precoOriginal * fator);
-				if (precoFinal < 0) precoFinal = 0;
+				int precoFinalUnitario = (int) Math.round(precoOriginalUnitario * fator);
+				if (precoFinalUnitario < 0) precoFinalUnitario = 0;
+				int precoFinalTotal = precoFinalUnitario * quantidade;
 
 				if (pctInt < 0) {
-					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Desconto de %d%%)", precoFinal, traduzirMoeda(moedaTipo), Math.abs(pctInt)));
+					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Desconto de %d%%)", precoFinalTotal, traduzirMoeda(moedaTipo), Math.abs(pctInt)));
 					lblPrecoRecalculado.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2ecc71;");
 				} else if (pctInt > 0) {
-					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Acréscimo de %d%%)", precoFinal, traduzirMoeda(moedaTipo), pctInt));
+					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Acréscimo de %d%%)", precoFinalTotal, traduzirMoeda(moedaTipo), pctInt));
 					lblPrecoRecalculado.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
 				} else {
-					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Sem alteração)", precoFinal, traduzirMoeda(moedaTipo)));
+					lblPrecoRecalculado.setText(String.format("Preço Final: %d %s (Sem alteração)", precoFinalTotal, traduzirMoeda(moedaTipo)));
 					lblPrecoRecalculado.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;");
 				}
 			} catch (Exception e) {
@@ -903,39 +999,42 @@ public class LojaController {
 		if (result.isPresent() && result.get() == ButtonType.OK) {
 			int pctInt = (int) Math.round(slider.getValue());
 			double fator = 1.0 + (pctInt / 100.0);
-			int precoFinal = (int) Math.round(precoOriginal * fator);
-			if (precoFinal < 0) precoFinal = 0;
+			int precoFinalUnitario = (int) Math.round(precoOriginalUnitario * fator);
+			if (precoFinalUnitario < 0) precoFinalUnitario = 0;
+			int precoFinalTotal = precoFinalUnitario * quantidade;
 
-			if (verificarPodeComprar(precoFinal, moedaTipo)) {
+			if (verificarPodeComprar(precoFinalTotal, moedaTipo)) {
 				boolean sucesso = false;
 				Inventario inv = jogadorAtual.getInventario();
 
 				if ("OURO".equalsIgnoreCase(moedaTipo)) {
-					if (inv.gastarOuro(precoFinal)) sucesso = true;
+					if (inv.gastarOuro(precoFinalTotal)) sucesso = true;
 				} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
-					if (inv.gastarPrata(precoFinal)) sucesso = true;
+					if (inv.gastarPrata(precoFinalTotal)) sucesso = true;
 				} else {
-					if (inv.gastarBronze(precoFinal)) sucesso = true;
+					if (inv.gastarBronze(precoFinalTotal)) sucesso = true;
 				}
 
 				if (sucesso) {
-					if (item instanceof Consumivel) {
-						Map<String, Double> efeitos = ((Consumivel) item).getEfeitos();
-						if (efeitos != null && efeitos.containsKey("RECEBE_PRATA")) {
-							inv.receberPrata(efeitos.get("RECEBE_PRATA").intValue());
-						} else if (efeitos != null && efeitos.containsKey("RECEBE_OURO")) {
-							inv.receberOuro(efeitos.get("RECEBE_OURO").intValue());
+					for (int i = 0; i < quantidade; i++) {
+						if (item instanceof Consumivel) {
+							Map<String, Double> efeitos = ((Consumivel) item).getEfeitos();
+							if (efeitos != null && efeitos.containsKey("RECEBE_PRATA")) {
+								inv.receberPrata(efeitos.get("RECEBE_PRATA").intValue());
+							} else if (efeitos != null && efeitos.containsKey("RECEBE_OURO")) {
+								inv.receberOuro(efeitos.get("RECEBE_OURO").intValue());
+							} else {
+								inv.adicionarItem(item);
+							}
 						} else {
 							inv.adicionarItem(item);
 						}
-					} else {
-						inv.adicionarItem(item);
 					}
 
 					String tipoAlteracao = pctInt < 0 ? "Desconto" : "Acréscimo";
-					String logMsg = String.format("[LOJA] %s barganhou e comprou %s por %d %s (%s de %d%%, preço original: %d %s)",
-							jogadorAtual.getNome(), item.getNome(), precoFinal, traduzirMoeda(moedaTipo),
-							tipoAlteracao, Math.abs(pctInt), precoOriginal, traduzirMoeda(moedaTipo));
+					String logMsg = String.format("[LOJA] %s barganhou e comprou %dx %s por %d %s (%s de %d%%, preço original: %d %s)",
+							jogadorAtual.getNome(), quantidade, item.getNome(), precoFinalTotal, traduzirMoeda(moedaTipo),
+							tipoAlteracao, Math.abs(pctInt), precoOriginalTotal, traduzirMoeda(moedaTipo));
 					br.com.dantesrpg.model.util.SessionLogger.log(logMsg);
 
 					mainController.salvarEstadoJogadores();

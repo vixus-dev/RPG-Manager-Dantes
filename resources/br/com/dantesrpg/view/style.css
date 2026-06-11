@@ -1239,6 +1239,46 @@
     -fx-effect: dropshadow(gaussian, rgba(155, 89, 182, 0.4), 6, 0, 0, 0);
 }
 
+/* --- SELETOR DE QUANTIDADE --- */
+.loja-btn-qtd {
+    -fx-background-color: #1a1a24;
+    -fx-text-fill: #808090;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #3a3a4a;
+    -fx-border-width: 1;
+    -fx-min-width: 20px;
+    -fx-min-height: 20px;
+    -fx-max-width: 20px;
+    -fx-max-height: 20px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.loja-btn-qtd:hover {
+    -fx-background-color: #2a2a34;
+    -fx-text-fill: white;
+    -fx-border-color: #5a5a6a;
+}
+
+.loja-btn-qtd:disabled {
+    -fx-background-color: #111116;
+    -fx-text-fill: #33333d;
+    -fx-border-color: #22222a;
+    -fx-cursor: default;
+}
+
+.loja-lbl-qtd {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-min-width: 18px;
+    -fx-alignment: center;
+}
+
 
 /* --- BOTÃO VENDER --- */
 .loja-btn-vender {

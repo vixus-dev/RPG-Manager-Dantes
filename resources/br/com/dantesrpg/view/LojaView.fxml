@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -42,6 +43,10 @@
          <!-- Coluna 1: Itens à Venda -->
          <VBox styleClass="loja-section" HBox.hgrow="ALWAYS" prefWidth="400.0" spacing="8.0">
             <Label text="Itens à Venda" styleClass="loja-section-title"/>
+            <HBox spacing="8.0" alignment="CENTER_LEFT" style="-fx-padding: 0 0 5 0;">
+               <TextField fx:id="txtBusca" promptText="Buscar item..." HBox.hgrow="ALWAYS" styleClass="editor-search-field"/>
+               <ComboBox fx:id="comboFiltroCategoria" prefWidth="130.0" styleClass="loja-combo"/>
+            </HBox>
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                <VBox fx:id="itensVendaContainer" spacing="6.0" />
             </ScrollPane>
