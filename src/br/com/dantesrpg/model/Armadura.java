@@ -10,6 +10,10 @@ public class Armadura extends Item {
 
 	private Map<String, Double> modificadoresStatus;
 
+	private String nomeEfeitoOnDamageTaken;
+	private double chanceEfeitoOnDamageTaken;
+	private String alvoEfeitoOnDamageTaken = "ATACANTE"; // "ATACANTE" ou "USUARIO"
+
 	public Armadura(String nome, String descricao, int valor, int armaduraBase, Map<Atributo, Integer> modAtributos,
 			Map<String, Double> modStatus) {
 		super(nome, descricao, valor, false);
@@ -49,5 +53,50 @@ public class Armadura extends Item {
 	@Override
 	public String getTipo() {
 		return this.getNome();
+	}
+
+	public String getNomeEfeitoOnDamageTaken() {
+		return nomeEfeitoOnDamageTaken;
+	}
+
+	public void setNomeEfeitoOnDamageTaken(String nomeEfeitoOnDamageTaken) {
+		this.nomeEfeitoOnDamageTaken = nomeEfeitoOnDamageTaken;
+	}
+
+	public double getChanceEfeitoOnDamageTaken() {
+		return chanceEfeitoOnDamageTaken;
+	}
+
+	public void setChanceEfeitoOnDamageTaken(double chanceEfeitoOnDamageTaken) {
+		this.chanceEfeitoOnDamageTaken = chanceEfeitoOnDamageTaken;
+	}
+
+	public String getAlvoEfeitoOnDamageTaken() {
+		return alvoEfeitoOnDamageTaken;
+	}
+
+	public void setAlvoEfeitoOnDamageTaken(String alvoEfeitoOnDamageTaken) {
+		this.alvoEfeitoOnDamageTaken = alvoEfeitoOnDamageTaken;
+	}
+
+	public void onDamageTaken(Personagem alvo, Personagem atacante, double dano, EstadoCombate estado, br.com.dantesrpg.controller.CombatController controller) {
+		if (nomeEfeitoOnDamageTaken != null && !nomeEfeitoOnDamageTaken.isEmpty()) {
+			if (Math.random() <= chanceEfeitoOnDamageTaken) {
+				Personagem target = "USUARIO".equalsIgnoreCase(alvoEfeitoOnDamageTaken) ? alvo : atacante;
+				if (target != null && target.isVivo()) {
+					int danoDaSource = Math.max(1, (int) dano);
+					// Usando 200 TU como duração padrão para buffs/debuffs gerais
+					Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito(nomeEfeitoOnDamageTaken, 200, danoDaSource);
+					if (efeito != null) {
+						efeito.setStacks(1);
+						if (estado != null && estado.getCombatManager() != null) {
+							estado.getCombatManager().getEffectProcessor().aplicarEfeito(target, efeito);
+						} else {
+							target.adicionarEfeito(efeito);
+						}
+					}
+				}
+			}
+		}
 	}
 }

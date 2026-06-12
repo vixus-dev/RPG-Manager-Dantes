@@ -424,6 +424,9 @@ public class DamageApplicator {
 			if (alvo.getArmaEquipada() != null) {
 				alvo.getArmaEquipada().onDamageTaken(alvo, danoReal, estado, getController());
 			}
+			if (alvo.getArmaduraEquipada() != null) {
+				alvo.getArmaduraEquipada().onDamageTaken(alvo, ator, danoReal, estado, getController());
+			}
 
 			// Falsa Justiça (Justiceiro Cego) — reflexão de dano
 			if (alvo.getEfeitosAtivos().containsKey("Falsa Justiça") && ator != null

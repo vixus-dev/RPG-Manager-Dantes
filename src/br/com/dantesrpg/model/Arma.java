@@ -34,7 +34,6 @@ public abstract class Arma extends Item {
 	private Map<String, Double> modificadoresStatus = new HashMap<>();
 
 	private Habilidade habilidadeDaArma;
-	protected List<String> habilidadesConcedidasNomes = new ArrayList<>();
 
 	private TipoAlvo tipoAlvo = TipoAlvo.INDIVIDUAL;
 	private int tamanhoArea = 0;
@@ -205,16 +204,6 @@ public abstract class Arma extends Item {
 
 	public void setModificadoresStatus(Map<String, Double> modificadoresStatus) {
 		this.modificadoresStatus = modificadoresStatus;
-	}
-
-	public List<String> getHabilidadesConcedidasNomes() {
-		return habilidadesConcedidasNomes;
-	}
-
-	public void addHabilidadeConcedida(String nome) {
-		if (nome != null && !nome.isEmpty()) {
-			this.habilidadesConcedidasNomes.add(nome);
-		}
 	}
 
 	public void recarregar() {

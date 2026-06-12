@@ -543,11 +543,28 @@ public class EditorJogadorController {
 		} else if (item instanceof Armadura) {
 			Armadura a = (Armadura) item;
 			sb.append("Defesa: ").append(a.getArmaduraBase()).append("\n");
+			if (a.getNomeEfeitoOnDamageTaken() != null && !a.getNomeEfeitoOnDamageTaken().isEmpty()) {
+				sb.append("Reação: ").append(a.getNomeEfeitoOnDamageTaken()).append(" (")
+				  .append((int)(a.getChanceEfeitoOnDamageTaken() * 100)).append("% para ")
+				  .append(a.getAlvoEfeitoOnDamageTaken()).append(")\n");
+			}
+			List<String> habs = a.getHabilidadesConcedidasNomes();
+			if (habs != null) {
+				for (String hab : habs) {
+					sb.append("Hab: ").append(hab).append("\n");
+				}
+			}
 			appendModificadoresAtributo(sb, a.getModificadoresDeAtributo());
 			appendModificadoresStatus(sb, a.getModificadoresStatus());
 		} else if (item instanceof Amuleto) {
 			Amuleto a = (Amuleto) item;
 			if (a.getArmaduraBonus() > 0) sb.append("Defesa: +").append(a.getArmaduraBonus()).append("\n");
+			List<String> habs = a.getHabilidadesConcedidasNomes();
+			if (habs != null) {
+				for (String hab : habs) {
+					sb.append("Hab: ").append(hab).append("\n");
+				}
+			}
 			appendModificadoresAtributo(sb, a.getModificadoresDeAtributo());
 			appendModificadoresStatus(sb, a.getModificadoresStatus());
 		}
@@ -1231,11 +1248,28 @@ public class EditorJogadorController {
 		if (item instanceof Armadura) {
 			Armadura a = (Armadura) item;
 			sb.append("Defesa: ").append(a.getArmaduraBase()).append("\n");
+			if (a.getNomeEfeitoOnDamageTaken() != null && !a.getNomeEfeitoOnDamageTaken().isEmpty()) {
+				sb.append("Efeito ao Tomar Dano: ").append(a.getNomeEfeitoOnDamageTaken()).append(" (")
+				  .append((int)(a.getChanceEfeitoOnDamageTaken() * 100)).append("% para ")
+				  .append(a.getAlvoEfeitoOnDamageTaken()).append(")\n");
+			}
+			if (!a.getHabilidadesConcedidasNomes().isEmpty()) {
+				sb.append("\nHabilidades Concedidas:\n");
+				for (String hab : a.getHabilidadesConcedidasNomes()) {
+					sb.append("  * ").append(hab).append("\n");
+				}
+			}
 			modAtr = a.getModificadoresDeAtributo();
 			modStatus = a.getModificadoresStatus();
 		} else if (item instanceof Amuleto) {
 			Amuleto a = (Amuleto) item;
 			if (a.getArmaduraBonus() > 0) sb.append("Defesa: +").append(a.getArmaduraBonus()).append("\n");
+			if (!a.getHabilidadesConcedidasNomes().isEmpty()) {
+				sb.append("\nHabilidades Concedidas:\n");
+				for (String hab : a.getHabilidadesConcedidasNomes()) {
+					sb.append("  * ").append(hab).append("\n");
+				}
+			}
 			modAtr = a.getModificadoresDeAtributo();
 			modStatus = a.getModificadoresStatus();
 		} else if (item instanceof Arma) {

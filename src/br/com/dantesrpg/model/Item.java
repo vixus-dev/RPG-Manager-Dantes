@@ -86,4 +86,16 @@ public abstract class Item {
 
 	public abstract String getTipo();
 
+	protected java.util.List<String> habilidadesConcedidasNomes = new java.util.ArrayList<>();
+
+	public java.util.List<String> getHabilidadesConcedidasNomes() {
+		return habilidadesConcedidasNomes;
+	}
+
+	public void addHabilidadeConcedida(String nome) {
+		if (nome != null && !nome.isEmpty()) {
+			this.habilidadesConcedidasNomes.add(nome);
+		}
+	}
+
 }

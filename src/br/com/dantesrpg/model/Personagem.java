@@ -561,6 +561,27 @@ public class Personagem {
 			}
 		}
 
+		if (this.armaduraEquipada != null && !this.armaduraEquipada.getHabilidadesConcedidasNomes().isEmpty()) {
+			for (String nomeHab : this.armaduraEquipada.getHabilidadesConcedidasNomes()) {
+				Habilidade h = br.com.dantesrpg.model.util.HabilidadeFactory.criarHabilidadePorNome(nomeHab);
+				if (h != null) combinadas.add(h);
+			}
+		}
+
+		if (this.amuleto1 != null && !this.amuleto1.getHabilidadesConcedidasNomes().isEmpty()) {
+			for (String nomeHab : this.amuleto1.getHabilidadesConcedidasNomes()) {
+				Habilidade h = br.com.dantesrpg.model.util.HabilidadeFactory.criarHabilidadePorNome(nomeHab);
+				if (h != null) combinadas.add(h);
+			}
+		}
+
+		if (this.amuleto2 != null && !this.amuleto2.getHabilidadesConcedidasNomes().isEmpty()) {
+			for (String nomeHab : this.amuleto2.getHabilidadesConcedidasNomes()) {
+				Habilidade h = br.com.dantesrpg.model.util.HabilidadeFactory.criarHabilidadePorNome(nomeHab);
+				if (h != null) combinadas.add(h);
+			}
+		}
+
 		return combinadas;
 	}
 

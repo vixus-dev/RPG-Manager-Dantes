@@ -160,17 +160,11 @@ public class CatalogoItensService {
 				}
 
 				if ("Armadura".equalsIgnoreCase(classeItem)) {
-					int armaduraBase = ((Double) data.getOrDefault("armaduraBase", 0.0)).intValue();
-					Map<String, Double> modsJson = (Map<String, Double>) data.get("modificadoresDeAtributo");
-					Map<Atributo, Integer> modsAtr = parseModificadores(modsJson);
-					return new Armadura(nome, descricao, valor, armaduraBase, modsAtr, modStatus);
+					return mapearArmadura(data);
 				}
 
 				if ("Amuleto".equalsIgnoreCase(classeItem)) {
-					int armaduraBonus = ((Double) data.getOrDefault("armaduraBonus", 0.0)).intValue();
-					Map<String, Double> modsJson = (Map<String, Double>) data.get("modificadoresDeAtributo");
-					Map<Atributo, Integer> modsAtr = parseModificadores(modsJson);
-					return new Amuleto(nome, descricao, valor, armaduraBonus, modsAtr, modStatus);
+					return mapearAmuleto(data);
 				}
 			} catch (Exception e) {
 				System.err.println("Erro ao mapear Item da Itempedia: " + tipoItem);
@@ -429,6 +423,26 @@ public class CatalogoItensService {
 					(Map<String, Double>) data.get("modificadoresStatus"));
 			Armadura armadura = new Armadura(nome, descricao, valor, armaduraBase, modificadores, modStatus);
 			armadura.setTipoMoeda(tipoMoeda);
+
+			if (data.containsKey("efeitoAoTomarDano")) {
+				armadura.setNomeEfeitoOnDamageTaken((String) data.get("efeitoAoTomarDano"));
+			}
+			if (data.containsKey("chanceEfeitoAoTomarDano")) {
+				armadura.setChanceEfeitoOnDamageTaken(((Number) data.get("chanceEfeitoAoTomarDano")).doubleValue());
+			}
+			if (data.containsKey("alvoEfeitoAoTomarDano")) {
+				armadura.setAlvoEfeitoOnDamageTaken((String) data.get("alvoEfeitoAoTomarDano"));
+			}
+
+			if (data.containsKey("habilidadesConcedidas")) {
+				List<String> habs = (List<String>) data.get("habilidadesConcedidas");
+				if (habs != null) {
+					for (String h : habs) {
+						armadura.addHabilidadeConcedida(h);
+					}
+				}
+			}
+
 			return armadura;
 		} catch (Exception e) {
 			System.err.println("Erro ao mapear dados da Armadura do JSON:");
@@ -453,6 +467,16 @@ public class CatalogoItensService {
 					(Map<String, Double>) data.get("modificadoresStatus"));
 			Amuleto amuleto = new Amuleto(nome, descricao, valor, armaduraBonus, modificadores, modStatus);
 			amuleto.setTipoMoeda(tipoMoeda);
+
+			if (data.containsKey("habilidadesConcedidas")) {
+				List<String> habs = (List<String>) data.get("habilidadesConcedidas");
+				if (habs != null) {
+					for (String h : habs) {
+						amuleto.addHabilidadeConcedida(h);
+					}
+				}
+			}
+
 			return amuleto;
 		} catch (Exception e) {
 			System.err.println("Erro ao mapear dados do Amuleto do JSON:");
