@@ -556,7 +556,7 @@ public class DetailedTurnHUDController {
 		List<Arma> armasSelecionadas = obterArmasSelecionadasAtaque();
 		Arma arma = armasSelecionadas.isEmpty() ? atorAtual.getArmaEquipada() : armasSelecionadas.get(0);
 		boolean temAtaqueAlternativo = arma != null && arma.hasAtaqueAlternativoBasico();
-		boolean isRanged = (arma instanceof br.com.dantesrpg.model.ArmaRanged);
+		boolean isRanged = armasSelecionadas.stream().anyMatch(a -> a instanceof br.com.dantesrpg.model.ArmaRanged || "Ranged".equalsIgnoreCase(a.getTipo()));
 
 		this.isModoCoronhadaSelecionado = false;
 		btnCoronhada.setText((arma != null) ? arma.getNomeAtaqueAlternativoBasico() : "Coronhada");
@@ -573,13 +573,30 @@ public class DetailedTurnHUDController {
 			btnCoronhada.setVisible(temAtaqueAlternativo);
 			btnCoronhada.setManaged(temAtaqueAlternativo);
 
-			lblActionDesc.setText(arma.getDescricao() + "\nMunição: " + arma.getMunicaoAtual() + "/" + arma.getMunicaoMaxima());
-			if (arma.getMunicaoAtual() <= 0) lblActionDesc.setStyle("-fx-text-fill: red;");
+			StringBuilder desc = new StringBuilder();
+			boolean semMunicao = false;
+			for (Arma a : armasSelecionadas) {
+				if (desc.length() > 0) desc.append("\n");
+				desc.append(a.getNome()).append(": ").append(a.getDescricao());
+				if (a.isRequerMunicao()) {
+					desc.append(" (Munição: ").append(a.getMunicaoAtual()).append("/").append(a.getMunicaoMaxima()).append(")");
+					if (a.getMunicaoAtual() <= 0) semMunicao = true;
+				}
+			}
+			lblActionDesc.setText(desc.toString());
+			if (semMunicao) lblActionDesc.setStyle("-fx-text-fill: red;");
 
-			if (arma.getMunicaoAtual() > 1) {
+			int maxTirosExtras = 0;
+			for (Arma a : armasSelecionadas) {
+				if (a.isRequerMunicao() && (a instanceof br.com.dantesrpg.model.ArmaRanged || "Ranged".equalsIgnoreCase(a.getTipo()))) {
+					maxTirosExtras = Math.max(maxTirosExtras, a.getMunicaoAtual() - 1);
+				}
+			}
+
+			if (maxTirosExtras > 0) {
 				boxRajada.setVisible(true);
 				boxRajada.setManaged(true);
-				sliderRajada.setMax(arma.getMunicaoAtual() - 1);
+				sliderRajada.setMax(maxTirosExtras);
 				sliderRajada.setValue(0);
 				lblInfoRajada.setText("+0 Tiros");
 			} else {
@@ -587,7 +604,8 @@ public class DetailedTurnHUDController {
 				boxRajada.setManaged(false);
 			}
 
-			if (arma.getMunicaoAtual() <= 0) {
+			boolean armaPrincipalSemMunicao = arma != null && arma.isRequerMunicao() && arma.getMunicaoAtual() <= 0;
+			if (armaPrincipalSemMunicao) {
 				toggleNormal.setDisable(true);
 				toggleForte.setDisable(true);
 				if (temAtaqueAlternativo) btnCoronhada.fire();
@@ -613,7 +631,13 @@ public class DetailedTurnHUDController {
 			btnCoronhada.setManaged(temAtaqueAlternativo);
 			boxRajada.setVisible(false);
 			boxRajada.setManaged(false);
-			lblActionDesc.setText(arma != null ? arma.getDescricao() : "Ataque com a arma equipada.");
+
+			StringBuilder desc = new StringBuilder();
+			for (Arma a : armasSelecionadas) {
+				if (desc.length() > 0) desc.append("\n");
+				desc.append(a.getNome()).append(": ").append(a.getDescricao());
+			}
+			lblActionDesc.setText(desc.toString());
 			toggleNormal.setDisable(false);
 			toggleForte.setDisable(false);
 			toggleFraco.setDisable(false);
