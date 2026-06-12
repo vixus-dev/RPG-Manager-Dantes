@@ -1,0 +1,104 @@
+{
+  "itensOfertados": [
+    {
+      "id": "PocaoDeCuraGrande",
+      "desconto": 0.0
+    },
+    {
+      "id": "PocaoDeCuraMuitoGrande",
+      "desconto": 0.0
+    },
+    {
+      "id": "PocaoDeManaGrande",
+      "desconto": 0.0
+    },
+    {
+      "id": "PocaoDeManaMuitoGrande",
+      "desconto": 0.0
+    },
+    {
+      "id": "Pó de Miragem",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoP",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoM",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoG",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoGG",
+      "desconto": 0.0
+    },
+    {
+      "id": "Adaga de Obsidiana Lapidada",
+      "desconto": 0.0
+    },
+    {
+      "id": "Cachiporra de Costela de Camelo",
+      "desconto": 0.0
+    },
+    {
+      "id": "Espada Curta de Bronze Oxidado",
+      "desconto": 0.0
+    },
+    {
+      "id": "Lança de Ponta de Sílex",
+      "desconto": 0.0
+    },
+    {
+      "id": "Foice de Colheita de Junco",
+      "desconto": 0.0
+    },
+    {
+      "id": "Manoplas de Couro de Réptil",
+      "desconto": 0.0
+    },
+    {
+      "id": "Adaga do Escorpião de Areia",
+      "desconto": 0.0
+    },
+    {
+      "id": "Machado de Bronze do Guarda da Tumba",
+      "desconto": 0.0
+    },
+    {
+      "id": "Gládio das Areias Movediças",
+      "desconto": 0.0
+    },
+    {
+      "id": "Espada Larga do Nômade",
+      "desconto": 0.0
+    },
+    {
+      "id": "Chicote de Espinhos de Cacto",
+      "desconto": 0.0
+    },
+    {
+      "id": "Garras do Chacal Faminto",
+      "desconto": 0.0
+    },
+    {
+      "id": "Lança do Oásis Sombrio",
+      "desconto": 0.0
+    },
+    {
+      "id": "Foice do Ceifador de Areia",
+      "desconto": 0.0
+    },
+    {
+      "id": "Presa de Anúbis",
+      "desconto": 0.0
+    },
+    {
+      "id": "Sopro de Apófis",
+      "desconto": 0.0
+    }
+  ]
+}

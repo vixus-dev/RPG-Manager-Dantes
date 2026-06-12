@@ -3870,7 +3870,7 @@
     "andar": "4",
     "valorMoedas": 35000,
     "tipoMoeda": "BRONZE",
-    "danoBase": 24,
+    "danoBase": 6,
     "ticksDeDano": 4,
     "atributoMultiplicador": "SAGACIDADE",
     "custoTU": 140,

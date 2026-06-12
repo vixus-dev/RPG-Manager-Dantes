@@ -1,0 +1,100 @@
+{
+  "itensOfertados": [
+    {
+      "id": "PocaoDeCuraGrande",
+      "desconto": 0.0
+    },
+    {
+      "id": "PocaoDeCuraMuitoGrande",
+      "desconto": 0.0
+    },
+    {
+      "id": "PocaoDeManaGrande",
+      "desconto": 0.0
+    },
+    {
+      "id": "PocaoDeManaMuitoGrande",
+      "desconto": 0.0
+    },
+    {
+      "id": "Bálsamo de Oásis Falso",
+      "desconto": 0.0
+    },
+    {
+      "id": "Essência de Ouro Líquido",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoP",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoM",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoG",
+      "desconto": 0.0
+    },
+    {
+      "id": "CaixaMunicaoGG",
+      "desconto": 0.0
+    },
+    {
+      "id": "Arco de Junco do Oásis",
+      "desconto": 0.0
+    },
+    {
+      "id": "Cajado de Madeira Flutuante",
+      "desconto": 0.0
+    },
+    {
+      "id": "Pistola de Pólvora de Salteador",
+      "desconto": 0.0
+    },
+    {
+      "id": "Estilingue de Tripa de Chacal",
+      "desconto": 0.0
+    },
+    {
+      "id": "Pistola de Sílex com Runas de Vento",
+      "desconto": 0.0
+    },
+    {
+      "id": "Arco Curto do Caçador Noturno",
+      "desconto": 0.0
+    },
+    {
+      "id": "Cajado da Miragem Lunar",
+      "desconto": 0.0
+    },
+    {
+      "id": "Rifle de Precisão do Deserto",
+      "desconto": 0.0
+    },
+    {
+      "id": "Grimório das Constelações Perdidas",
+      "desconto": 0.0
+    },
+    {
+      "id": "Copo Canópico de Malkaresh (Réplica)",
+      "desconto": 0.0
+    },
+    {
+      "id": "Olho de Ra (Corrompido)",
+      "desconto": 0.0
+    },
+    {
+      "id": "Arco Longo do Eclipse",
+      "desconto": 0.0
+    },
+    {
+      "id": "Metralhadora 'Tempestade de Areia'",
+      "desconto": 0.0
+    },
+    {
+      "id": "Cajado do Julgamento de Maat",
+      "desconto": 0.0
+    }
+  ]
+}
