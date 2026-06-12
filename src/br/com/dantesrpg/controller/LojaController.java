@@ -1182,14 +1182,22 @@ public class LojaController {
 		} else if (item instanceof Armadura) {
 			Armadura armadura = (Armadura) item;
 			addPreviewStat("Defesa: " + armadura.getArmaduraBase(), "#2ecc71");
+			if (armadura.getNomeEfeitoOnDamageTaken() != null && !armadura.getNomeEfeitoOnDamageTaken().isEmpty()) {
+				addPreviewSeparator();
+				addPreviewStat("Ao Sofrer Dano: " + armadura.getNomeEfeitoOnDamageTaken(), "cyan");
+				addPreviewStat("Chance: " + (int)(armadura.getChanceEfeitoOnDamageTaken() * 100) + "%", "#2ecc71");
+				addPreviewStat("Alvo: " + armadura.getAlvoEfeitoOnDamageTaken(), "#cccccc");
+			}
 			addPreviewSeparator();
 			exibirModificadoresPreview(armadura.getModificadoresDeAtributo(), armadura.getModificadoresStatus());
+			exibirHabilidadesConcedidasPreview(armadura);
 		} else if (item instanceof Amuleto) {
 			Amuleto amuleto = (Amuleto) item;
 			if (amuleto.getArmaduraBonus() > 0)
 				addPreviewStat("Defesa: +" + amuleto.getArmaduraBonus(), "#2ecc71");
 			addPreviewSeparator();
 			exibirModificadoresPreview(amuleto.getModificadoresDeAtributo(), amuleto.getModificadoresStatus());
+			exibirHabilidadesConcedidasPreview(amuleto);
 		} else if (item instanceof Consumivel) {
 			Consumivel cons = (Consumivel) item;
 			addPreviewStat("Custo TU: " + cons.getCustoTU(), "#f39c12");
@@ -1221,13 +1229,24 @@ public class LojaController {
 		}
 
 		// Habilidades
-		if (!arma.getHabilidadesConcedidasNomes().isEmpty()) {
+		exibirHabilidadesConcedidasPreview(arma);
+
+		// Modificadores
+		if ((arma.getModificadoresDeAtributo() != null && !arma.getModificadoresDeAtributo().isEmpty())
+				|| (arma.getModificadoresStatus() != null && !arma.getModificadoresStatus().isEmpty())) {
 			addPreviewSeparator();
-			Label lblHeader = new Label("Habilidades");
+			exibirModificadoresPreview(arma.getModificadoresDeAtributo(), arma.getModificadoresStatus());
+		}
+	}
+
+	private void exibirHabilidadesConcedidasPreview(Item item) {
+		if (item.getHabilidadesConcedidasNomes() != null && !item.getHabilidadesConcedidasNomes().isEmpty()) {
+			addPreviewSeparator();
+			Label lblHeader = new Label("Habilidades Concedidas");
 			lblHeader.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold; -fx-font-size: 12px; -fx-underline: true;");
 			previewStatsPane.getChildren().add(lblHeader);
 
-			for (String nomeHab : arma.getHabilidadesConcedidasNomes()) {
+			for (String nomeHab : item.getHabilidadesConcedidasNomes()) {
 				Label lblHab = new Label("\u2022 " + nomeHab);
 				lblHab.setStyle("-fx-text-fill: #f39c12; -fx-cursor: hand; -fx-font-size: 12px;");
 
@@ -1266,13 +1285,6 @@ public class LojaController {
 
 				previewStatsPane.getChildren().add(lblHab);
 			}
-		}
-
-		// Modificadores
-		if ((arma.getModificadoresDeAtributo() != null && !arma.getModificadoresDeAtributo().isEmpty())
-				|| (arma.getModificadoresStatus() != null && !arma.getModificadoresStatus().isEmpty())) {
-			addPreviewSeparator();
-			exibirModificadoresPreview(arma.getModificadoresDeAtributo(), arma.getModificadoresStatus());
 		}
 	}
 
