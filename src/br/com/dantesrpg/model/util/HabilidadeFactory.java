@@ -7,7 +7,7 @@ import br.com.dantesrpg.model.habilidades.classe.*;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Supplier; // Para ordem alfabética
+import java.util.function.Supplier;
 
 public class HabilidadeFactory {
 
@@ -82,6 +82,12 @@ public class HabilidadeFactory {
 		registro.put("Quebra-Elmo", QuebraElmo::new);
 		registro.put("Arremesso Divino", ArremessoDivino::new);
 		registro.put("pisarOrb", PisarOrb::new);
+		registro.put("Corte de Punição", CorteDePunicao::new);
+		registro.put("Recarga de Areia", RecargaDeAreia::new);
+		registro.put("Corte de Apófis", CorteDeApofis::new);
+		registro.put("Véu de Sombras", VeuDeSombras::new);
+		registro.put("Bênção de Maat", BencaoDeMaat::new);
+		registro.put("Sacrifício de Maat", SacrificioDeMaat::new);
 
 		// Lua Profana
 		registro.put("sweet dreams", SweetDreams::new);
@@ -135,7 +141,6 @@ public class HabilidadeFactory {
 		return registro.get(nome).get();
 	}
 
-	// Método novo para a UI do Editor
 	public static Set<String> getNomesDisponiveis() {
 		return registro.keySet();
 	}

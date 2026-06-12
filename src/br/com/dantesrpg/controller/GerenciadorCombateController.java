@@ -1153,7 +1153,8 @@ public class GerenciadorCombateController {
 
 	private void configurarEfeitosAndar() {
 		comboEfeitoAndar.getItems().addAll("Nenhum", "2º Andar - Arremesso", "3º Andar - O Olho", "4º Andar - Dia",
-				"4º Andar - Noite", "5º Andar - Tempestade", "7º Andar - Holofotes", "8.1º Andar - Cruzes");
+				"4º Andar - Noite", "4º andar - Eclipse", "5º Andar - Tempestade", "7º Andar - Holofotes",
+				"8.1º Andar - Cruzes", "9º Andar - A Sala dos Trovões");
 		comboEfeitoAndar.getSelectionModel().selectFirst();
 
 		comboEfeitoAndar.valueProperty().addListener((o, old, newVal) -> {

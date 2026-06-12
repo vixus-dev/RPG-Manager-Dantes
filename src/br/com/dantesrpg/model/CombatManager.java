@@ -413,6 +413,15 @@ public class CombatManager {
 					}
 				}
 
+				// 4º ANDAR: Dia (Vento Escaldante)
+				else if (efeito.contains("Eclipse") && tempoGlobalAtual % 30 == 0) {
+					for (Personagem p : estado.getCombatentes()) {
+						if (p.isAtivoNoCombate() && !p.isProtagonista()) {
+							damageApplicator.aplicarDanoAoAlvo(null, p, 1.3, true, TipoAcao.AMBIENTE, estado);
+						}
+					}
+				}
+
 				// 4º ANDAR: Noite (Vento Congelante)
 				else if (efeito.contains("Noite") && tempoGlobalAtual % 100 == 0) {
 					br.com.dantesrpg.model.util.SessionLogger.log("❄️ Vento Congelante! Habilidades custam +20 TU.");
