@@ -5,15 +5,15 @@
     "descricao": "Punhos puros",
     "raridade": "COMUM",
     "andar": "0",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 3,
-    "ticksDeDano": 1,
+    "danoBase": 3.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 120,
+    "custoTU": 120.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "cadete Estelar": {
     "nome": "cadete Estelar",
@@ -21,27 +21,27 @@
     "descricao": "Uma arma mágica estelar da Lua Profana.",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 45,
-    "ticksDeDano": 1,
+    "danoBase": 45.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Magico",
-    "alcance": 7,
+    "alcance": 7.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 30,
+    "tamanhoArea": 30.0,
     "efeitoAoAcertar": "Dormindo",
-    "chanceEfeito": 1,
+    "chanceEfeito": 1.0,
     "modificadoresDeAtributo": {
-      "INSPIRACAO": 14
+      "INSPIRACAO": 14.0
     },
     "habilidadesConcedidas": [
       "sweet dreams",
       "bitter Hunt",
       "moonshine"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Mandibula": {
     "nome": "Mandibula",
@@ -49,16 +49,16 @@
     "descricao": "Dentes que mordem",
     "raridade": "COMUM",
     "andar": "0",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "habilidadeConcedida": "Mordida",
-    "wielding": 1
+    "wielding": 1.0
   },
   "Mandibula2": {
     "nome": "Mandibula2",
@@ -66,16 +66,16 @@
     "descricao": "Dentes que mordem mais forte",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "OURO",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "habilidadeConcedida": "Mordida",
-    "wielding": 1
+    "wielding": 1.0
   },
   "Mandibula3": {
     "nome": "Mandibula3",
@@ -83,18 +83,18 @@
     "descricao": "Dentes que mordem mais forte e mais quente",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 5,
-    "ticksDeDano": 1,
+    "danoBase": 5.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "habilidadeConcedida": "MordidaQuente",
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.5,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Mandibula4": {
     "nome": "Mandibula4",
@@ -102,21 +102,21 @@
     "descricao": "Dentes que mordem mais forte e mais quente",
     "raridade": "COMUM",
     "andar": "3",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 1,
-    "ticksDeDano": 1,
+    "danoBase": 1.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 8,
+    "alcance": 8.0,
     "habilidadeConcedida": "Tecnica de Amplificação",
     "modificadoresDeAtributo": {
-      "CARISMA": 10
+      "CARISMA": 10.0
     },
     "efeitoAoAcertar": "Charm",
-    "chanceEfeito": 1,
-    "wielding": 1
+    "chanceEfeito": 1.0,
+    "wielding": 1.0
   },
   "MandibulaSeca": {
     "nome": "MandibulaSeca",
@@ -124,18 +124,18 @@
     "descricao": "Dentes que mordem mais forte e mais quente",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 5,
-    "ticksDeDano": 1,
+    "danoBase": 5.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "habilidadeConcedida": "MordidaQuente",
     "efeitoAoAcertar": "Corta cura",
     "chanceEfeito": 0.5,
-    "wielding": 1
+    "wielding": 1.0
   },
   "MandibulaSangue": {
     "nome": "MandibulaSangue",
@@ -143,18 +143,18 @@
     "descricao": "Dentes que machucam bastante",
     "raridade": "COMUM",
     "andar": "3",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
     "modificadoresDeAtributo": {
-      "FORCA": 4
+      "FORCA": 4.0
     },
     "habilidadeConcedida": "Mordida",
-    "wielding": 1
+    "wielding": 1.0
   },
   "Punhos3x": {
     "nome": "Punhos",
@@ -162,15 +162,15 @@
     "descricao": "Punhos puros tres vezes",
     "raridade": "COMUM",
     "andar": "0",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 2,
-    "ticksDeDano": 3,
+    "danoBase": 2.0,
+    "ticksDeDano": 3.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 120,
+    "custoTU": 120.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Espada Curta": {
     "nome": "Espada Curta",
@@ -178,15 +178,15 @@
     "descricao": "uma espada padrão",
     "raridade": "COMUM",
     "andar": "0",
-    "valorMoedas": 100,
+    "valorMoedas": 100.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 3,
-    "ticksDeDano": 1,
+    "danoBase": 3.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Espada Longa": {
     "nome": "Espada Longa",
@@ -194,15 +194,15 @@
     "descricao": "Uma espada um pouco mais longa que o normal",
     "raridade": "COMUM",
     "andar": "1",
-    "valorMoedas": 120,
+    "valorMoedas": 120.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Espada GPC": {
     "nome": "Espada GPC",
@@ -210,15 +210,15 @@
     "descricao": "GPC é a abreviação de GRANDE PRA CARALHO",
     "raridade": "COMUM",
     "andar": "1.5",
-    "valorMoedas": 4200,
+    "valorMoedas": 4200.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 175,
+    "custoTU": 175.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 2
+    "alcance": 1.0,
+    "wielding": 2.0
   },
   "Lança Cesariana": {
     "nome": "Lança Cesariana",
@@ -226,20 +226,20 @@
     "descricao": "A lança que uma vez foi utilizada por julius cesarianus",
     "raridade": "COMUM",
     "andar": "1",
-    "valorMoedas": 10,
+    "valorMoedas": 10.0,
     "tipoMoeda": "OURO",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "habilidadesConcedidas": [
       "Auto-Guarda"
     ],
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
-    "wielding": 2
+    "tamanhoArea": 1.0,
+    "wielding": 2.0
   },
   "Lança Cesariana V2": {
     "nome": "Lança Cesariana V2",
@@ -247,36 +247,36 @@
     "descricao": "A lança que uma vez foi utilizada por julius cesarianus",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 10,
+    "valorMoedas": 10.0,
     "tipoMoeda": "OURO",
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "habilidadesConcedidas": [
       "Auto-Guarda"
     ],
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
-    "wielding": 1
+    "tamanhoArea": 1.0,
+    "wielding": 1.0
   },
   "Pá de Metal": {
     "nome": "Pá de Metal",
     "categoria": "Exotica",
-    "descricao": "Uma ferramente que 'dá pro gasto'",
+    "descricao": "Uma ferramente que \u0027dá pro gasto\u0027",
     "raridade": "COMUM",
     "andar": "1",
-    "valorMoedas": 200,
+    "valorMoedas": 200.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 5,
-    "ticksDeDano": 1,
+    "danoBase": 5.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Machado": {
     "nome": "Machado",
@@ -284,17 +284,17 @@
     "descricao": "Um bom e velho machado",
     "raridade": "COMUM",
     "andar": "1",
-    "valorMoedas": 120,
+    "valorMoedas": 120.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 7,
-    "ticksDeDano": 1,
+    "danoBase": 7.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 130,
+    "custoTU": 130.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 60,
-    "wielding": 2
+    "tamanhoArea": 60.0,
+    "wielding": 2.0
   },
   "Machado Abominação": {
     "nome": "Machado da Abominação",
@@ -302,17 +302,17 @@
     "descricao": "Um machado feito de carne, ele se extende baseado na carne consumida",
     "raridade": "COMUM",
     "andar": "0",
-    "valorMoedas": 400,
+    "valorMoedas": 400.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 150,
+    "custoTU": 150.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 135,
-    "wielding": 2
+    "tamanhoArea": 135.0,
+    "wielding": 2.0
   },
   "Machado Abominação2": {
     "nome": "Machado da Abominação2",
@@ -320,24 +320,24 @@
     "descricao": "Um machado feito de carne, ele se extende baseado na carne consumida",
     "raridade": "COMUM",
     "andar": "3",
-    "valorMoedas": 400,
+    "valorMoedas": 400.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 22,
-    "ticksDeDano": 1,
+    "danoBase": 22.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 150,
+    "custoTU": 150.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 135,
+    "tamanhoArea": 135.0,
     "habilidadesConcedidas": [
       "Auto-Guarda",
       "Bash Strike"
     ],
     "modificadoresDeAtributo": {
-      "FORCA": 12
+      "FORCA": 12.0
     },
-    "wielding": 2
+    "wielding": 2.0
   },
   "EspadaFalsoSentinela": {
     "nome": "EspadaFalsoSentinela",
@@ -345,21 +345,21 @@
     "descricao": "espada de um falso crente",
     "raridade": "COMUM",
     "andar": "3",
-    "valorMoedas": 4200,
+    "valorMoedas": 4200.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "habilidadesConcedidas": [
       "Bash Strike"
     ],
     "modificadoresDeAtributo": {
-      "FORCA": 12
+      "FORCA": 12.0
     },
-    "wielding": 2
+    "wielding": 2.0
   },
   "Chicote": {
     "nome": "Chicote",
@@ -367,17 +367,17 @@
     "descricao": "Run nigga run",
     "raridade": "COMUM",
     "andar": "1",
-    "valorMoedas": 1800,
+    "valorMoedas": 1800.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INTELIGENCIA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
-    "wielding": 1
+    "tamanhoArea": 1.0,
+    "wielding": 1.0
   },
   "Cano de Metal": {
     "nome": "Cano de Metal",
@@ -385,18 +385,18 @@
     "descricao": "TENG TENG TENG",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 20,
+    "valorMoedas": 20.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SORTE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.05
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "Manoplas de Combate": {
     "nome": "Manoplas de Combate",
@@ -404,32 +404,32 @@
     "descricao": "Luvas padrão, geralmente usadas na hora de trocar socos",
     "raridade": "COMUM",
     "andar": "1",
-    "valorMoedas": 1500,
+    "valorMoedas": 1500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 5,
-    "ticksDeDano": 2,
+    "danoBase": 5.0,
+    "ticksDeDano": 2.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Estilingue": {
     "nome": "Estilingue",
     "categoria": "Arco",
-    "descricao": "um objeto usado para o disparo de projéteis, impulsionado por força mecânica manual, com auxílio de elásticos. As formas clássicas de estilingue são construídas com um galho de árvore forquilhado, em forma de 'Y', munido de tiras elásticas. Sua história, portanto, não remonta a épocas anteriores à invenção da borracha. Estilingues, em boa parte de sua história inicial, eram artesanais, feitos pelo próprio dono; todavia, a partir do início do século XX começou-se a produção em grande escala para venda, o que contribuiu para surgirem estilingues de outros formatos e de outras matérias primas como madeira entalhada, plástico ou metal.",
+    "descricao": "um objeto usado para o disparo de projéteis, impulsionado por força mecânica manual, com auxílio de elásticos. As formas clássicas de estilingue são construídas com um galho de árvore forquilhado, em forma de \u0027Y\u0027, munido de tiras elásticas. Sua história, portanto, não remonta a épocas anteriores à invenção da borracha. Estilingues, em boa parte de sua história inicial, eram artesanais, feitos pelo próprio dono; todavia, a partir do início do século XX começou-se a produção em grande escala para venda, o que contribuiu para surgirem estilingues de outros formatos e de outras matérias primas como madeira entalhada, plástico ou metal.",
     "raridade": "COMUM",
     "andar": "1",
-    "valorMoedas": 3000,
+    "valorMoedas": 3000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INTELIGENCIA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Ranged",
-    "alcance": 3,
-    "municaoMaxima": 5,
-    "wielding": 1
+    "alcance": 3.0,
+    "municaoMaxima": 5.0,
+    "wielding": 1.0
   },
   "Arco Curto": {
     "nome": "Arco Curto",
@@ -437,16 +437,16 @@
     "descricao": "Um arco menor para uma maior facilidade de movimentação",
     "raridade": "COMUM",
     "andar": "0",
-    "valorMoedas": 120,
+    "valorMoedas": 120.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 3,
-    "municaoMaxima": 6,
-    "wielding": 1
+    "alcance": 3.0,
+    "municaoMaxima": 6.0,
+    "wielding": 1.0
   },
   "Besta Pesada": {
     "nome": "Besta Pesada",
@@ -454,16 +454,16 @@
     "descricao": "Uma besta que atira igual uma shotgun, uma pena que tem apenas duas balas ",
     "raridade": "COMUM",
     "andar": "0",
-    "valorMoedas": 2000,
+    "valorMoedas": 2000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 150,
+    "custoTU": 150.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 3,
-    "wielding": 2
+    "alcance": 4.0,
+    "municaoMaxima": 3.0,
+    "wielding": 2.0
   },
   "Pistola de Duelo": {
     "nome": "Pistola de Duelo",
@@ -471,16 +471,16 @@
     "descricao": "Uma pistola customizada para disparos mais poderosos",
     "raridade": "COMUM",
     "andar": "1.5",
-    "valorMoedas": 1000,
+    "valorMoedas": 1000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 5,
-    "ticksDeDano": 1,
+    "danoBase": 5.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 5,
-    "wielding": 1
+    "alcance": 4.0,
+    "municaoMaxima": 5.0,
+    "wielding": 1.0
   },
   "Pacificadora de Mármore": {
     "nome": "Pacificadora de Mármore",
@@ -488,32 +488,32 @@
     "descricao": "Uma pistola de marmore, tende a ter um recuo gigantesco",
     "raridade": "COMUM",
     "andar": "1.5",
-    "valorMoedas": 1000,
+    "valorMoedas": 1000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 85,
+    "custoTU": 85.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 6,
-    "wielding": 1
+    "alcance": 4.0,
+    "municaoMaxima": 6.0,
+    "wielding": 1.0
   },
   "Cajado Basico": {
     "nome": "Cajado Básico",
     "categoria": "Catalisador",
-    "descricao": "um teco de madeira que foi achado no chão, você ainda tem coragem de falar que isso é uma especie de 'arma' para magos???? isso explica o por que deles serem fracos no combate corpo a corpo",
+    "descricao": "um teco de madeira que foi achado no chão, você ainda tem coragem de falar que isso é uma especie de \u0027arma\u0027 para magos???? isso explica o por que deles serem fracos no combate corpo a corpo",
     "raridade": "COMUM",
     "andar": "0",
-    "valorMoedas": 800,
+    "valorMoedas": 800.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 3,
-    "ticksDeDano": 1,
+    "danoBase": 3.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Magico",
-    "alcance": 2,
-    "wielding": 1
+    "alcance": 2.0,
+    "wielding": 1.0
   },
   "Lâmina Neon": {
     "nome": "Lâmina Neon",
@@ -521,18 +521,18 @@
     "descricao": "uma espada com uma aura rosa em volta",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 3000,
+    "valorMoedas": 3000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Pistola Ventus-9": {
     "nome": "Pistola Ventus-9",
@@ -540,19 +540,19 @@
     "descricao": "uma pistola personalizada, tem desenhos de vento em seu cano",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 3500,
+    "valorMoedas": 3500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 6,
-    "municaoMaxima": 6,
+    "alcance": 6.0,
+    "municaoMaxima": 6.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Arco de Fios de Luz": {
     "nome": "Arco de Fios de Luz",
@@ -560,19 +560,19 @@
     "descricao": "um arco no qual a corda é feita de energia",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 4000,
+    "valorMoedas": 4000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 1,
-    "municaoMaxima": 10,
+    "alcance": 1.0,
+    "municaoMaxima": 10.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Lança": {
     "nome": "Lança",
@@ -580,20 +580,20 @@
     "descricao": "uma lança com a ponta de metal",
     "raridade": "COMUM",
     "andar": "1",
-    "valorMoedas": 600,
+    "valorMoedas": 600.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Faca de Vibração Íntima": {
     "nome": "Faca de Vibração Íntima",
@@ -601,18 +601,18 @@
     "descricao": "Vibra levemente ao acertar um alvo vivo (você sabe muito bem onde ela é utilizada)",
     "raridade": "COMUM",
     "andar": "2",
-    "valorMoedas": 3000,
+    "valorMoedas": 3000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 7,
-    "ticksDeDano": 1,
+    "danoBase": 7.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 85,
+    "custoTU": 85.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Bazooka": {
     "nome": "Bazooka",
@@ -620,20 +620,20 @@
     "descricao": "Um bom e velho lança foguetes",
     "raridade": "INCOMUM",
     "andar": "1",
-    "valorMoedas": 2500,
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "valorMoedas": 2500.0,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 200,
+    "custoTU": 200.0,
     "tipo": "Melee",
-    "alcance": 5,
+    "alcance": 5.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "tipoMoeda": "BRONZE",
     "habilidadesConcedidas": [
       "Nano-Guarda"
     ],
-    "wielding": 2
+    "wielding": 2.0
   },
   "Broca": {
     "nome": "Broca",
@@ -641,22 +641,22 @@
     "descricao": "Capáz de minerar materiais extremamente resistentes",
     "raridade": "INCOMUM",
     "andar": "0",
-    "valorMoedas": 1200,
-    "danoBase": 5,
-    "ticksDeDano": 3,
+    "valorMoedas": 1200.0,
+    "danoBase": 5.0,
+    "ticksDeDano": 3.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 110,
+    "custoTU": 110.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.2,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "tipoMoeda": "BRONZE",
     "habilidadesConcedidas": [
       "Campo de Força"
     ],
-    "wielding": 2
+    "wielding": 2.0
   },
   "Faca de Brinquedo": {
     "nome": "Faca de Brinquedo",
@@ -664,15 +664,15 @@
     "descricao": "uma faca de brinquedo... isso te enche de determinação",
     "raridade": "INCOMUM",
     "andar": "0",
-    "valorMoedas": 10,
+    "valorMoedas": 10.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 2147483646,
-    "ticksDeDano": 1,
+    "danoBase": 2.147483646E9,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 1,
+    "custoTU": 1.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Espada de Prata": {
     "nome": "Espada de Prata",
@@ -680,15 +680,15 @@
     "descricao": "uma espada feita de prata, não coloque uma dessas contra a luz por favor",
     "raridade": "INCOMUM",
     "andar": "0",
-    "valorMoedas": 10,
+    "valorMoedas": 10.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Rapieira Basica": {
     "nome": "Rapieira Basica",
@@ -696,15 +696,15 @@
     "descricao": "gosta de furar os outros? ASSIM NÃO EVERNTON",
     "raridade": "INCOMUM",
     "andar": "1",
-    "valorMoedas": 850,
+    "valorMoedas": 850.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 75,
+    "custoTU": 75.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Foice": {
     "nome": "Foice",
@@ -712,17 +712,17 @@
     "descricao": "Geralmente eram fazendeiros que utilizavam esse tipo de coisa, mas se vc quiser quem sou eu pra falar né",
     "raridade": "INCOMUM",
     "andar": "0",
-    "valorMoedas": 250,
+    "valorMoedas": 250.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 120,
+    "custoTU": 120.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 45,
-    "wielding": 1
+    "tamanhoArea": 45.0,
+    "wielding": 1.0
   },
   "Arco Longo": {
     "nome": "Arco Longo",
@@ -730,16 +730,16 @@
     "descricao": "Um arco padrão",
     "raridade": "INCOMUM",
     "andar": "0",
-    "valorMoedas": 250,
+    "valorMoedas": 250.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 7,
-    "ticksDeDano": 1,
+    "danoBase": 7.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Ranged",
-    "alcance": 5,
-    "municaoMaxima": 8,
-    "wielding": 1
+    "alcance": 5.0,
+    "municaoMaxima": 8.0,
+    "wielding": 1.0
   },
   "Catalisador Básico": {
     "nome": "Catalisador Básico",
@@ -747,15 +747,15 @@
     "descricao": "Um disco com um cristal magico no meio",
     "raridade": "INCOMUM",
     "andar": "1",
-    "valorMoedas": 300,
+    "valorMoedas": 300.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Magico",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Orbe de Esmeralda": {
     "nome": "Orbe de Esmeralda",
@@ -763,15 +763,15 @@
     "descricao": "Um disco revestido de esmeralda com um cristal magico no meio",
     "raridade": "INCOMUM",
     "andar": "1",
-    "valorMoedas": 150,
+    "valorMoedas": 150.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Magico",
-    "alcance": 2,
-    "wielding": 1
+    "alcance": 2.0,
+    "wielding": 1.0
   },
   "Adaga da Serpente": {
     "nome": "Adaga da Serpente",
@@ -779,17 +779,17 @@
     "descricao": "Uma adaga no qual a lamina ondulada lembra uma serpente",
     "raridade": "INCOMUM",
     "andar": "1",
-    "valorMoedas": 40,
+    "valorMoedas": 40.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 5,
-    "ticksDeDano": 2,
+    "danoBase": 5.0,
+    "ticksDeDano": 2.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 60,
+    "custoTU": 60.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Veneno",
     "chanceEfeito": 0.25,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Grimório do Aprendiz": {
     "nome": "Grimório do Aprendiz",
@@ -798,16 +798,16 @@
     "raridade": "INCOMUM",
     "andar": "1",
     "tipoMoeda": "PRATA",
-    "danoBase": 2,
-    "ticksDeDano": 1,
+    "danoBase": 2.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Grimorio",
-    "alcance": 4,
-    "valorMoedas": 1,
-    "maxSlots": 3,
+    "alcance": 4.0,
+    "valorMoedas": 1.0,
+    "maxSlots": 3.0,
     "magias": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Grimório do Estudioso": {
     "nome": "Grimório do Estudioso",
@@ -815,17 +815,17 @@
     "descricao": "Um livro escrito por um estudante médio de magia, a letra não é das melhores, mas você já viu piores",
     "raridade": "INCOMUM",
     "andar": "1",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Grimorio",
-    "alcance": 4,
-    "valorMoedas": 10,
+    "alcance": 4.0,
+    "valorMoedas": 10.0,
     "tipoMoeda": "PRATA",
-    "maxSlots": 4,
+    "maxSlots": 4.0,
     "magias": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Chicote da Submissão": {
     "nome": "Chicote da Submissão",
@@ -833,22 +833,22 @@
     "descricao": "um chicote com pequenos espinhos em sua corda",
     "raridade": "INCOMUM",
     "andar": "2",
-    "valorMoedas": 5000,
+    "valorMoedas": 5000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Charm",
     "chanceEfeito": 0.25,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Chicote da Submissão SHINY": {
     "nome": "Chicote da Submissão SHINY",
@@ -856,22 +856,22 @@
     "descricao": "um chicote com um simbolo de gatinho e pequenos espinhos em sua corda",
     "raridade": "INCOMUM",
     "andar": "2",
-    "valorMoedas": 9000,
+    "valorMoedas": 9000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Charm",
     "chanceEfeito": 0.6,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Grimório dos escritor punhetico": {
     "nome": "Grimório dos escritor punhetico",
@@ -879,17 +879,17 @@
     "descricao": "um livro com imagens pornográficas na capa",
     "raridade": "INCOMUM",
     "andar": "2",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Grimorio",
-    "alcance": 4,
-    "valorMoedas": 8000,
+    "alcance": 4.0,
+    "valorMoedas": 8000.0,
     "tipoMoeda": "BRONZE",
-    "maxSlots": 4,
+    "maxSlots": 4.0,
     "magias": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Machado Turbulento": {
     "nome": "Machado Turbulento",
@@ -897,20 +897,20 @@
     "descricao": "um machado que estranhamente tem uma aura de vento em seu contorno",
     "raridade": "INCOMUM",
     "andar": "2",
-    "valorMoedas": 7000,
+    "valorMoedas": 7000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 110,
+    "custoTU": 110.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 60,
+    "tamanhoArea": 60.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Lança-Chamas": {
     "nome": "Lança-Chamas",
@@ -918,16 +918,16 @@
     "descricao": "Acoplada a um tanque de combustivel, gera um calor intenso e controlavel",
     "raridade": "RARO",
     "andar": "0",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 120,
+    "custoTU": 120.0,
     "tipo": "Magico",
-    "alcance": 1,
-    "valorMoedas": 800,
+    "alcance": 1.0,
+    "valorMoedas": 800.0,
     "tipoMoeda": "BRONZE",
     "habilidadeConcedida": "Investida Flamejante",
-    "wielding": 1
+    "wielding": 1.0
   },
   "Canhão Drone": {
     "nome": "Canhão Drone",
@@ -935,16 +935,16 @@
     "descricao": "Um canhão versatil que pode virar uma metralhadora",
     "raridade": "RARO",
     "andar": "0",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "valorMoedas": 800,
+    "alcance": 4.0,
+    "valorMoedas": 800.0,
     "tipoMoeda": "BRONZE",
     "habilidadeConcedida": "Rajada de Drone",
-    "wielding": 1
+    "wielding": 1.0
   },
   "Cajado SUCCUBUS": {
     "nome": "Cajado SUCCUBUS",
@@ -952,25 +952,25 @@
     "descricao": "um cajado de metal, ele brilha por dentro, seria led ou magia?",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 100,
+    "valorMoedas": 100.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Magico",
-    "alcance": 5,
+    "alcance": 5.0,
     "efeitoAoAcertar": "Charm",
-    "chanceEfeito": 1,
+    "chanceEfeito": 1.0,
     "modificadoresDeAtributo": {
-      "INSPIRACAO": 10,
-      "CARISMA": 19
+      "INSPIRACAO": 10.0,
+      "CARISMA": 19.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Invocar Imp"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Orbe Cerberus": {
     "nome": "Orbe Cerberus",
@@ -978,19 +978,19 @@
     "descricao": "uma orbe de energia infernal",
     "raridade": "RARO",
     "andar": "0",
-    "valorMoedas": 2500,
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "valorMoedas": 2500.0,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 200,
+    "custoTU": 200.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoMoeda": "BRONZE",
     "habilidadesConcedidas": [
       "Arremesso de Orb",
       "Pisotear"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Orbe Cerberus2": {
     "nome": "Orbe Cerberus2",
@@ -998,23 +998,23 @@
     "descricao": "uma orbe de energia sangrenta",
     "raridade": "RARO",
     "andar": "3",
-    "valorMoedas": 1700,
-    "danoBase": 14,
-    "ticksDeDano": 1,
+    "valorMoedas": 1700.0,
+    "danoBase": 14.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 120,
+    "custoTU": 120.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "tipoMoeda": "BRONZE",
     "modificadoresDeAtributo": {
-      "FORCA": 10
+      "FORCA": 10.0
     },
     "habilidadesConcedidas": [
       "Bash Strike",
       "Arremesso de Orb",
       "Pisotear"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Orbe Sangrenta": {
     "nome": "Orbe Sangrenta",
@@ -1022,22 +1022,22 @@
     "descricao": "uma esfera de carne revestida de sangue",
     "raridade": "INCOMUM",
     "andar": "3",
-    "valorMoedas": 150,
+    "valorMoedas": 150.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 126,
+    "custoTU": 126.0,
     "tipo": "Magico",
-    "alcance": 6,
+    "alcance": 6.0,
     "modificadoresDeAtributo": {
-      "INSPIRACAO": 10
+      "INSPIRACAO": 10.0
     },
     "habilidadesConcedidas": [
       "Fome...",
       "Invocar Filth de Sangue"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Espada de Fogo": {
     "nome": "Espada de Fogo",
@@ -1045,17 +1045,17 @@
     "descricao": "Uma espada com runas cravadas em sua lamina, ao balançar parece que ela começa a se incendiar",
     "raridade": "RARO",
     "andar": "1",
-    "valorMoedas": 20,
+    "valorMoedas": 20.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 110,
+    "custoTU": 110.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.3,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Espada de Cristal": {
     "nome": "Espada de Cristal",
@@ -1063,19 +1063,19 @@
     "descricao": "Uma espada com a lamina extremamente fragil",
     "raridade": "RARO",
     "andar": "1",
-    "valorMoedas": 50,
+    "valorMoedas": 50.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 6,
-    "ticksDeDano": 1,
+    "danoBase": 6.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 110,
+    "custoTU": 110.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.05,
       "DANO_CRITICO": 0.1
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "Adaga da Alma": {
     "nome": "Adaga da Alma",
@@ -1083,18 +1083,18 @@
     "descricao": "Uma adaga antiga e especial, tem chance de matar um inimigo que ainda está vivo (1%, caso seja chefe 0.001%)",
     "raridade": "RARO",
     "andar": "1.5",
-    "valorMoedas": 18,
+    "valorMoedas": 18.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INTELIGENCIA",
-    "custoTU": 145,
+    "custoTU": 145.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "modificadoresDeAtributo": {
-      "INTELIGENCIA": 4
+      "INTELIGENCIA": 4.0
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "Ataduras de Ferro": {
     "nome": "Ataduras de Ferro",
@@ -1102,15 +1102,15 @@
     "descricao": "duas luvas revestidas com metal em seu exterior",
     "raridade": "RARO",
     "andar": "1",
-    "valorMoedas": 450,
+    "valorMoedas": 450.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 2,
-    "wielding": 1
+    "alcance": 2.0,
+    "wielding": 1.0
   },
   "Chicote de Toxina": {
     "nome": "Chicote de Toxina",
@@ -1118,19 +1118,19 @@
     "descricao": "um chicote no qual a corda é revestida com veneno de cobra... pra que brutalizar a bixinha assim?",
     "raridade": "RARO",
     "andar": "1",
-    "valorMoedas": 2600,
+    "valorMoedas": 2600.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 7,
-    "ticksDeDano": 1,
+    "danoBase": 7.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Veneno",
     "chanceEfeito": 0.3,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Colt M1911": {
     "nome": "Colt M1911",
@@ -1138,16 +1138,16 @@
     "descricao": "uma pistola semiautomática de ação simples",
     "raridade": "RARO",
     "andar": "0",
-    "valorMoedas": 400,
+    "valorMoedas": 400.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 85,
+    "custoTU": 85.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 7,
-    "wielding": 1
+    "alcance": 4.0,
+    "municaoMaxima": 7.0,
+    "wielding": 1.0
   },
   "Espingarda": {
     "nome": "Espingarda",
@@ -1155,18 +1155,18 @@
     "descricao": "TOMA SEU MARDIDO. TOMA SEU MARDIDO.",
     "raridade": "RARO",
     "andar": "0",
-    "valorMoedas": 5000,
+    "valorMoedas": 5000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 85,
+    "custoTU": 85.0,
     "tipo": "Ranged",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 90,
-    "municaoMaxima": 2,
-    "wielding": 1
+    "tamanhoArea": 90.0,
+    "municaoMaxima": 2.0,
+    "wielding": 1.0
   },
   "Glock 17": {
     "nome": "Glock 17",
@@ -1174,16 +1174,16 @@
     "descricao": "Uma pistola semiautomática com armação de polímero",
     "raridade": "RARO",
     "andar": "0",
-    "valorMoedas": 550,
+    "valorMoedas": 550.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 5,
-    "ticksDeDano": 1,
+    "danoBase": 5.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Ranged",
-    "alcance": 6,
-    "municaoMaxima": 7,
-    "wielding": 1
+    "alcance": 6.0,
+    "municaoMaxima": 7.0,
+    "wielding": 1.0
   },
   "Espada-Livro": {
     "nome": "Espada-Livro",
@@ -1191,18 +1191,18 @@
     "descricao": "Uma espada em que a guarda foi substituida por UM LIVRO???? QUEM FOI O MANIACO QUE FEZ ISSO???",
     "raridade": "RARO",
     "andar": "1.5",
-    "valorMoedas": 2,
+    "valorMoedas": 2.0,
     "tipoMoeda": "OURO",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.1
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "Espada-Livro da Serpente": {
     "nome": "Espada-Livro da Serpente",
@@ -1210,14 +1210,14 @@
     "descricao": "Uma espada em que a guarda foi substituida por UM LIVRO???? QUEM FOI O MANIACO QUE FEZ ISSO??? enfim, a lamina relembra uma serpente",
     "raridade": "RARO",
     "andar": "1.5",
-    "valorMoedas": 40,
+    "valorMoedas": 40.0,
     "tipoMoeda": "OURO",
-    "danoBase": 10,
-    "ticksDeDano": 2,
+    "danoBase": 10.0,
+    "ticksDeDano": 2.0,
     "atributoMultiplicador": "TOPOR",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.3,
     "habilidadesConcedidas": [
@@ -1226,7 +1226,7 @@
       "Ceifa Ampla",
       "Campo de Força"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "O Veredito": {
     "nome": "O Veredito",
@@ -1234,35 +1234,35 @@
     "descricao": "Um martelo de guerra que em seu lado tem escrito o seu nome",
     "raridade": "RARO",
     "andar": "1.5",
-    "valorMoedas": 2500,
+    "valorMoedas": 2500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 135,
+    "custoTU": 135.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 2,
-    "wielding": 1
+    "tamanhoArea": 2.0,
+    "wielding": 1.0
   },
-  "Pena-Estilete 'Sentença Final'": {
-    "nome": "Pena-Estilete 'Sentença Final'",
+  "Pena-Estilete \u0027Sentença Final\u0027": {
+    "nome": "Pena-Estilete \u0027Sentença Final\u0027",
     "categoria": "Exotica",
     "descricao": "uma pena e um caderno... você só pode estar brincando comigo, demite o estagiario agora ████ O QUE VOCÊ ACHA QUE ELES VÃO FAZER COM A █████ DE UMA PENA E UM CADERNO SEU █████ ██ ████",
     "raridade": "RARO",
     "andar": "1.5",
-    "valorMoedas": 30,
+    "valorMoedas": 30.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 7,
-    "ticksDeDano": 1,
+    "danoBase": 7.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Sangramento",
     "chanceEfeito": 0.5,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Correntes da Custódia": {
     "nome": "Correntes da Custódia",
@@ -1270,17 +1270,17 @@
     "descricao": "Um mangual curioso, ao invés de ser feito de metal ele usa marmore, será que tem a mesma resistencia?",
     "raridade": "RARO",
     "andar": "1.5",
-    "valorMoedas": 20,
+    "valorMoedas": 20.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Lento",
     "chanceEfeito": 0.5,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Correntes do Prazer": {
     "nome": "Correntes do Prazer",
@@ -1288,23 +1288,23 @@
     "descricao": "Um mangual em formato de disco. parece uma lua minguante",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 10,
+    "valorMoedas": 10.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 22,
-    "ticksDeDano": 1,
+    "danoBase": 22.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Lento",
     "chanceEfeito": 0.5,
     "modificadoresDeAtributo": {
-      "FORCA": 10
+      "FORCA": 10.0
     },
     "habilidadesConcedidas": [
       "Pulo Pesado"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Correntes eletricas": {
     "nome": "Correntes do Prazer",
@@ -1312,23 +1312,23 @@
     "descricao": "Correntes com uma descarga eletrica constante",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 10,
+    "valorMoedas": 10.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Choque",
     "chanceEfeito": 0.5,
     "modificadoresDeAtributo": {
-      "FORCA": 10
+      "FORCA": 10.0
     },
     "habilidadesConcedidas": [
       "Descarga eletrica"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Neo Espada de Plasma": {
     "nome": "Neo Espada de Plasma",
@@ -1336,20 +1336,20 @@
     "descricao": "uma espada feita de plasma rosa",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 9000,
+    "valorMoedas": 9000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Corta cura",
     "chanceEfeito": 0.3,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Espada de Carne": {
     "nome": "Espada de Carne",
@@ -1357,20 +1357,20 @@
     "descricao": "uma espada feita de carne e ossos",
     "raridade": "RARO",
     "andar": "3",
-    "valorMoedas": 9000,
+    "valorMoedas": 9000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Corta cura",
     "chanceEfeito": 0.3,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Neo MagnaEspada de Plasma": {
     "nome": "Neo MagnaEspada de Plasma",
@@ -1378,18 +1378,18 @@
     "descricao": "uma espada feita de plasma AZUL",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 8000,
+    "valorMoedas": 8000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "STUN",
     "chanceEfeito": 0.4,
     "modificadoresDeAtributo": {
-      "FORCA": 10
+      "FORCA": 10.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
@@ -1397,7 +1397,7 @@
       "Campo de Força II",
       "Nano-Guarda"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Neo Espada de Plasma SHINY": {
     "nome": "Neo Espada de Plasma SHINY",
@@ -1405,20 +1405,20 @@
     "descricao": "uma espada feita de plasma dourado",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 13500,
+    "valorMoedas": 13500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 14,
-    "ticksDeDano": 1,
+    "danoBase": 14.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Corta cura+",
     "chanceEfeito": 0.3,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Neo Machado de Plasma": {
     "nome": "Neo Machado de Plasma",
@@ -1426,22 +1426,22 @@
     "descricao": "um machado que a lamina é feita de plasma rosa",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 9500,
+    "valorMoedas": 9500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 11,
-    "ticksDeDano": 1,
+    "danoBase": 11.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 90,
+    "tamanhoArea": 90.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Arremesso de Machado"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Neo Machado de Plasma SHINY": {
     "nome": "Neo Machado de Plasma SHINY",
@@ -1449,22 +1449,22 @@
     "descricao": "um machado que a lamina é feita de plasma dourado",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 15000,
+    "valorMoedas": 15000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 110,
+    "custoTU": 110.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 135,
+    "tamanhoArea": 135.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Arremesso de Machado"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Pistola Carmesim do Vício": {
     "nome": "Pistola Carmesim do Vício",
@@ -1472,21 +1472,21 @@
     "descricao": "uma pistola vermelha com chifres",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 10000,
+    "valorMoedas": 10000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 5,
+    "alcance": 4.0,
+    "municaoMaxima": 5.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.1
     },
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Pistola Carmesim do VícioEX": {
     "nome": "Pistola Carmesim do Vício",
@@ -1494,17 +1494,17 @@
     "descricao": "uma pistola vermelha com chifres",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 10000,
+    "valorMoedas": 10000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 6,
+    "alcance": 4.0,
+    "municaoMaxima": 6.0,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 10
+      "SAGACIDADE": 10.0
     },
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.2,
@@ -1513,7 +1513,7 @@
     "habilidadesConcedidas": [
       "Projetil Explosivo"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Cajado Eólico da Luxúria": {
     "nome": "Cajado Eólico da Luxúria",
@@ -1521,20 +1521,20 @@
     "descricao": "um cajado de metal, ele brilha por dentro, seria led ou magia?",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 100,
+    "valorMoedas": 100.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Magico",
-    "alcance": 5,
+    "alcance": 5.0,
     "modificadoresDeAtributo": {
-      "INSPIRACAO": 2
+      "INSPIRACAO": 2.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Grimório das Confissões Proibidas": {
     "nome": "Grimório das Confissões Proibidas",
@@ -1542,20 +1542,20 @@
     "descricao": "Vibra levemente ao acertar um alvo vivo (você sabe muito bem onde ela é utilizada)",
     "raridade": "RARO",
     "andar": "2",
-    "valorMoedas": 8500,
+    "valorMoedas": 8500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 85,
+    "custoTU": 85.0,
     "tipo": "Grimorio",
-    "alcance": 1,
-    "maxSlots": 2,
+    "alcance": 1.0,
+    "maxSlots": 2.0,
     "magias": [],
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Espada de QuimioPlasma": {
     "nome": "Espada de QuimioPlasma",
@@ -1563,20 +1563,20 @@
     "descricao": "uma espada feita de plasma verde, ela fede bastante quando se está perto da lamina, como se estivesse viva",
     "raridade": "RARO",
     "andar": "3",
-    "valorMoedas": 100,
+    "valorMoedas": 100.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 11,
-    "ticksDeDano": 1,
+    "danoBase": 11.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Corta cura+",
     "chanceEfeito": 0.25,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Aurela-Sagrada": {
     "nome": "Aurela-Sagrada",
@@ -1584,22 +1584,22 @@
     "descricao": "CONSUMIR, ADAPTAR",
     "raridade": "RARO",
     "andar": "3",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "modificadoresDeAtributo": {
-      "FORCA": 10
+      "FORCA": 10.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "SANGUE..."
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Grimório do Semi-deus": {
     "nome": "Grimório do Semi-deus",
@@ -1607,17 +1607,17 @@
     "descricao": "Um livro foda pra caralho",
     "raridade": "EPICO",
     "andar": "2",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Grimorio",
-    "alcance": 4,
-    "valorMoedas": 2500,
+    "alcance": 4.0,
+    "valorMoedas": 2500.0,
     "tipoMoeda": "BRONZE",
-    "maxSlots": 5,
+    "maxSlots": 5.0,
     "magias": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Lança do Prazer Absoluto": {
     "nome": "Lança do Prazer Absoluto",
@@ -1625,22 +1625,22 @@
     "descricao": "uma lança que a ponta tem um formato de coração",
     "raridade": "EPICO",
     "andar": "2",
-    "valorMoedas": 120,
+    "valorMoedas": 120.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Charm",
     "chanceEfeito": 0.75,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Balista Portátil dos Amantes Caídos": {
     "nome": "Balista Portátil dos Amantes Caídos",
@@ -1648,15 +1648,15 @@
     "descricao": "uma besta que dispara projeteis de energia com formato de pixel art de coração",
     "raridade": "EPICO",
     "andar": "2",
-    "valorMoedas": 13000,
+    "valorMoedas": 13000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 13,
-    "ticksDeDano": 1,
+    "danoBase": 13.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 4,
+    "alcance": 4.0,
+    "municaoMaxima": 4.0,
     "efeitoAoAcertar": "Charm",
     "chanceEfeito": 0.8,
     "modificadoresDeAtributo": {},
@@ -1664,7 +1664,7 @@
       "DANO_CRITICO": 0.25
     },
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Thompson": {
     "nome": "Thompson",
@@ -1672,22 +1672,22 @@
     "descricao": "Metralhadora de jericó TURURUTURUTUR",
     "raridade": "EPICO",
     "andar": "2",
-    "valorMoedas": 12500,
+    "valorMoedas": 12500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 3,
-    "ticksDeDano": 1,
+    "danoBase": 3.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 10,
+    "custoTU": 10.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 20,
+    "alcance": 4.0,
+    "municaoMaxima": 20.0,
     "efeitoAoAcertar": "Sangramento",
     "chanceEfeito": 0.05,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 2
+      "SAGACIDADE": 2.0
     },
     "modificadoresStatus": {},
-    "wielding": 1
+    "wielding": 1.0
   },
   "Thompson da Madame": {
     "nome": "Thompson da Madame",
@@ -1695,25 +1695,25 @@
     "descricao": "Metralhadora de jericó TURURUTURUTUR",
     "raridade": "EPICO",
     "andar": "2",
-    "valorMoedas": 13000,
+    "valorMoedas": 13000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 4,
-    "ticksDeDano": 1,
+    "danoBase": 4.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 10,
+    "custoTU": 10.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 40,
+    "alcance": 4.0,
+    "municaoMaxima": 40.0,
     "efeitoAoAcertar": "Sangramento",
     "chanceEfeito": 0.3,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 6
+      "SAGACIDADE": 6.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Projetil Explosivo"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Grimório da Carne e do Vento": {
     "nome": "Grimório da Carne e do Vento",
@@ -1721,17 +1721,17 @@
     "descricao": "um livro de capa vermelho. (tem uma hq de sexo no verso)",
     "raridade": "EPICO",
     "andar": "2",
-    "danoBase": 11,
-    "ticksDeDano": 1,
+    "danoBase": 11.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Grimorio",
-    "alcance": 4,
-    "valorMoedas": 15000,
+    "alcance": 4.0,
+    "valorMoedas": 15000.0,
     "tipoMoeda": "BRONZE",
-    "maxSlots": 5,
+    "maxSlots": 5.0,
     "magias": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Super-Bazooka": {
     "nome": "Super-Bazooka",
@@ -1739,25 +1739,25 @@
     "descricao": "um lança foguetes com esteroides",
     "raridade": "LENDARIO",
     "andar": "0",
-    "valorMoedas": 25000,
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "valorMoedas": 25000.0,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INTELIGENCIA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 5,
+    "alcance": 5.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "tipoMoeda": "BRONZE",
     "modificadoresDeAtributo": {
-      "INTELIGENCIA": 14
+      "INTELIGENCIA": 14.0
     },
     "habilidadesConcedidas": [
       "Rajada de Drone",
       "Bombardeio",
       "Roubo de Essência"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "MassaSobreEscrita": {
     "nome": "MassaSobreEscrita",
@@ -1765,25 +1765,25 @@
     "descricao": "Carne.",
     "raridade": "LENDARIO",
     "andar": "1",
-    "valorMoedas": 25000,
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "valorMoedas": 25000.0,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 115,
+    "custoTU": 115.0,
     "tipo": "Melee",
-    "alcance": 5,
+    "alcance": 5.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "tipoMoeda": "BRONZE",
     "modificadoresDeAtributo": {
-      "FORCA": 10
+      "FORCA": 10.0
     },
     "habilidadesConcedidas": [
       "SLAM",
       "SLAP",
       "HOOK"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "MassaSobreEscrita2": {
     "nome": "MassaSobreEscrita2",
@@ -1791,25 +1791,25 @@
     "descricao": "Mais Carne.",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 25000,
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "valorMoedas": 25000.0,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 5,
+    "alcance": 5.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "tipoMoeda": "BRONZE",
     "modificadoresDeAtributo": {
-      "FORCA": 12
+      "FORCA": 12.0
     },
     "habilidadesConcedidas": [
       "SLAM",
       "SLAP",
       "HOOK"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Gadanha da Tolice": {
     "nome": "Gadanha da Tolice",
@@ -1817,15 +1817,15 @@
     "descricao": "Todos os seus pecados reunidos em uma só arma, quem diria que vai haver uma especia de surpresa no final?",
     "raridade": "LENDARIO",
     "andar": "9",
-    "valorMoedas": 999999,
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "valorMoedas": 999999.0,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "TOPOR",
-    "custoTU": 115,
+    "custoTU": 115.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 90,
+    "tamanhoArea": 90.0,
     "tipoMoeda": "BRONZE",
     "habilidadesConcedidas": [
       "Invocar Tentáculo",
@@ -1834,7 +1834,7 @@
       "Ceifa Ampla",
       "Presença do Zero"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Master Katana": {
     "nome": "Master Katana",
@@ -1842,13 +1842,13 @@
     "descricao": "Uma katana evoluida, mais forte do que antes",
     "raridade": "LENDARIO",
     "andar": "9",
-    "valorMoedas": 0,
-    "danoBase": 50,
-    "ticksDeDano": 1,
+    "valorMoedas": 0.0,
+    "danoBase": 50.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 175,
+    "custoTU": 175.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoMoeda": "BRONZE",
     "habilidadesConcedidas": [
       "Ceifa Ampla",
@@ -1856,7 +1856,7 @@
       "Lightning Strike",
       "Corte Temporal"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Souna, o Chicote do Primeiro Desejo": {
     "nome": "Souna, o Chicote do Primeiro Desejo",
@@ -1864,25 +1864,25 @@
     "descricao": "um chicote preto, sua corda brilha com uma energia rosa",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 25000,
+    "valorMoedas": 25000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Charm",
-    "chanceEfeito": 1,
+    "chanceEfeito": 1.0,
     "tipoAlvo": "LINHA",
     "modificadoresDeAtributo": {
-      "CARISMA": 2
+      "CARISMA": 2.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Sex in the air"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Semenin, A espada da submissão": {
     "nome": "Souna, o Chicote do Primeiro Desejo",
@@ -1890,21 +1890,21 @@
     "descricao": "uma espada preta, sua lamina brilha com uma energia rosa",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 25000,
+    "valorMoedas": 25000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Sangramento",
     "chanceEfeito": 0.5,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 135,
+    "tamanhoArea": 135.0,
     "modificadoresDeAtributo": {
-      "CARISMA": 20,
-      "DESTREZA": 19
+      "CARISMA": 20.0,
+      "DESTREZA": 19.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
@@ -1913,7 +1913,7 @@
       "Pisotear",
       "Campo de Força"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Sussurro da Cidade Eterna": {
     "nome": "Sussurro da Cidade Eterna",
@@ -1921,24 +1921,24 @@
     "descricao": "uma esfera de dyson com um coração no meio",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 25000,
+    "valorMoedas": 25000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 17,
-    "ticksDeDano": 1,
+    "danoBase": 17.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Magico",
-    "alcance": 4,
+    "alcance": 4.0,
     "efeitoAoAcertar": "Charm",
-    "chanceEfeito": 1,
+    "chanceEfeito": 1.0,
     "modificadoresDeAtributo": {
-      "CARISMA": 2
+      "CARISMA": 2.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "True love!"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Arco de Eros": {
     "nome": "Arco de Eros",
@@ -1946,25 +1946,25 @@
     "descricao": "um arco branco, suas cordas lembram que um dia um anjo o tocou",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 25000,
+    "valorMoedas": 25000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 6,
-    "ticksDeDano": 3,
+    "danoBase": 6.0,
+    "ticksDeDano": 3.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Ranged",
-    "alcance": 6,
+    "alcance": 6.0,
     "efeitoAoAcertar": "Charm",
-    "chanceEfeito": 1,
-    "municaoMaxima": 10,
+    "chanceEfeito": 1.0,
+    "municaoMaxima": 10.0,
     "modificadoresDeAtributo": {
-      "CARISMA": 2
+      "CARISMA": 2.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Eternal Love!"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Lança de Eros": {
     "nome": "Lança de Eros",
@@ -1972,19 +1972,19 @@
     "descricao": "um arco branco, suas cordas lembram que um dia um anjo o tocou",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 250000,
+    "valorMoedas": 250000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 6,
+    "alcance": 6.0,
     "efeitoAoAcertar": "Charm",
-    "chanceEfeito": 1,
+    "chanceEfeito": 1.0,
     "modificadoresDeAtributo": {
-      "CARISMA": 39,
-      "INSPIRACAO": 14
+      "CARISMA": 39.0,
+      "INSPIRACAO": 14.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
@@ -1993,7 +1993,7 @@
       "Invocar Imp",
       "Sex in the air"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Neo Katana": {
     "nome": "Neo Katana",
@@ -2001,18 +2001,18 @@
     "descricao": "Uma katana com sua lamina feita de plasma. pode ser regulada para gerar eletricidade",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 50,
-    "danoBase": 25,
-    "ticksDeDano": 1,
+    "valorMoedas": 50.0,
+    "danoBase": 25.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 115,
+    "custoTU": 115.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoMoeda": "OURO",
     "efeitoAoAcertar": "Choque",
     "chanceEfeito": 0.5,
     "modificadoresDeAtributo": {
-      "FORCA": 2
+      "FORCA": 2.0
     },
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.25,
@@ -2021,7 +2021,7 @@
     "habilidadesConcedidas": [
       "Lightning Strike"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Canhão SwordsMachine": {
     "nome": "Canhão SwordsMachine",
@@ -2029,23 +2029,23 @@
     "descricao": "Um canhão de alta tecnologia utilizado por swordsmachine. consomem uma quantia absura de energina por projetil",
     "raridade": "LENDARIO",
     "andar": "0",
-    "valorMoedas": 37500,
+    "valorMoedas": 37500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 50,
-    "ticksDeDano": 1,
+    "danoBase": 50.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 10,
+    "custoTU": 10.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 1,
+    "alcance": 4.0,
+    "municaoMaxima": 1.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {
-      "MOVIMENTO": -2,
-      "MP_MAXIMO": -2
+      "MOVIMENTO": -2.0,
+      "MP_MAXIMO": -2.0
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "Torre": {
     "nome": "Torre",
@@ -2053,21 +2053,21 @@
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 12000000,
+    "valorMoedas": 1.2E7,
     "tipoMoeda": "BRONZE",
-    "danoBase": 50,
-    "ticksDeDano": 1,
+    "danoBase": 50.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 150,
+    "custoTU": 150.0,
     "tipo": "Melee",
-    "alcance": 99,
+    "alcance": 99.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "modificadoresDeAtributo": {
-      "FORCA": 15
+      "FORCA": 15.0
     },
     "modificadoresStatus": {},
-    "wielding": 1
+    "wielding": 1.0
   },
   "Torre2": {
     "nome": "Torre2",
@@ -2075,21 +2075,21 @@
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 12000000,
+    "valorMoedas": 1.2E7,
     "tipoMoeda": "BRONZE",
-    "danoBase": 75,
-    "ticksDeDano": 1,
+    "danoBase": 75.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 125,
+    "custoTU": 125.0,
     "tipo": "Melee",
-    "alcance": 99,
+    "alcance": 99.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 5,
+    "tamanhoArea": 5.0,
     "modificadoresDeAtributo": {
-      "FORCA": 39
+      "FORCA": 39.0
     },
     "modificadoresStatus": {},
-    "wielding": 1
+    "wielding": 1.0
   },
   "Torre3": {
     "nome": "Torre3",
@@ -2097,21 +2097,21 @@
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "andar": "2",
-    "valorMoedas": 12000000,
+    "valorMoedas": 1.2E7,
     "tipoMoeda": "BRONZE",
-    "danoBase": 75,
-    "ticksDeDano": 1,
+    "danoBase": 75.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 125,
+    "custoTU": 125.0,
     "tipo": "Melee",
-    "alcance": 99,
+    "alcance": 99.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 7,
+    "tamanhoArea": 7.0,
     "modificadoresDeAtributo": {
-      "FORCA": 39
+      "FORCA": 39.0
     },
     "modificadoresStatus": {},
-    "wielding": 1
+    "wielding": 1.0
   },
   "Devoradora Primaria": {
     "nome": "Devoradora Primaria",
@@ -2119,25 +2119,25 @@
     "descricao": "uma espada feita de Obsidiana, em toda a sua lâmina existem escritas runicas que emanam um fogo roxo",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 50,
+    "valorMoedas": 50.0,
     "tipoMoeda": "OURO",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "ruptura",
     "chanceEfeito": 0.5,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {
       "DANO_CRITICO": 0.5,
-      "HP_MAXIMO": 25
+      "HP_MAXIMO": 25.0
     },
     "habilidadesConcedidas": [
       "Dilacerar"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Devoradora Primordial": {
     "nome": "Devoradora Primordial",
@@ -2145,25 +2145,25 @@
     "descricao": "uma espada feita de Obsidiana, em toda a sua lâmina existem escritas runicas que emanam um fogo roxo",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 125,
+    "valorMoedas": 125.0,
     "tipoMoeda": "OURO",
-    "danoBase": 30,
-    "ticksDeDano": 1,
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "ruptura",
     "chanceEfeito": 0.5,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {
-      "DANO_CRITICO": 1,
-      "HP_MAXIMO": 25
+      "DANO_CRITICO": 1.0,
+      "HP_MAXIMO": 25.0
     },
     "habilidadesConcedidas": [
       "Dilacerar"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "LivroDeMorghul": {
     "nome": "LivroDeMorghul",
@@ -2171,16 +2171,16 @@
     "descricao": "Um livro de um mago magro",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 30,
-    "ticksDeDano": 1,
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Ranged",
-    "alcance": 5,
+    "alcance": 5.0,
     "modificadoresDeAtributo": {
-      "INSPIRACAO": 14
+      "INSPIRACAO": 14.0
     },
     "habilidadesConcedidas": [
       "Cardial",
@@ -2188,7 +2188,7 @@
       "Destructa",
       "Sanctum"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Faca de Vértebra Serrilhada": {
     "nome": "Faca de Vértebra Serrilhada",
@@ -2196,15 +2196,15 @@
     "descricao": "Feita de uma vértebra afiada, ainda pulsa levemente",
     "raridade": "COMUM",
     "andar": "3",
-    "valorMoedas": 42000,
+    "valorMoedas": 42000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 85,
+    "custoTU": 85.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Pistola de Hemopressão": {
     "nome": "Pistola de Hemopressão",
@@ -2212,18 +2212,18 @@
     "descricao": "Dispara projéteis de sangue coagulado",
     "raridade": "COMUM",
     "andar": "3",
-    "valorMoedas": 4500,
+    "valorMoedas": 4500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Ranged",
-    "alcance": 1,
-    "municaoMaxima": 6,
+    "alcance": 1.0,
+    "municaoMaxima": 6.0,
     "efeitoAoAcertar": "Sangramento",
     "chanceEfeito": 0.02,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Bastão de Tendão Enrijecido": {
     "nome": "Bastão de Tendão Enrijecido",
@@ -2231,15 +2231,15 @@
     "descricao": "Um feixe de tendões endurecidos com vapor",
     "raridade": "COMUM",
     "andar": "3",
-    "valorMoedas": 4000,
+    "valorMoedas": 4000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 9,
-    "ticksDeDano": 1,
+    "danoBase": 9.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Serra Esofágica a Vapor": {
     "nome": "Serra Esofágica a Vapor",
@@ -2247,17 +2247,17 @@
     "descricao": "Lâmina gira lentamente quando ataca",
     "raridade": "INCOMUM",
     "andar": "3",
-    "valorMoedas": 6500,
+    "valorMoedas": 6500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.1,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Arco Pulmonar de Compressão": {
     "nome": "Arco Pulmonar de Compressão",
@@ -2265,16 +2265,16 @@
     "descricao": "Usa pressão de ar orgânico para disparar",
     "raridade": "INCOMUM",
     "andar": "3",
-    "valorMoedas": 6800,
+    "valorMoedas": 6800.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 1,
-    "municaoMaxima": 8,
-    "wielding": 1
+    "alcance": 1.0,
+    "municaoMaxima": 8.0,
+    "wielding": 1.0
   },
   "Chicote de Intestino Trançado": {
     "nome": "Chicote de Intestino Trançado",
@@ -2282,17 +2282,17 @@
     "descricao": "Extremamente flexível e pegajoso",
     "raridade": "INCOMUM",
     "andar": "3",
-    "valorMoedas": 7200,
+    "valorMoedas": 7200.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 11,
-    "ticksDeDano": 1,
+    "danoBase": 11.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
+    "alcance": 1.0,
     "efeitoAoAcertar": "Lento",
     "chanceEfeito": 0.2,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Machado de Mandíbula Hidráulica": {
     "nome": "Machado de Mandíbula Hidráulica",
@@ -2300,15 +2300,15 @@
     "descricao": "A lâmina se fecha ao atingir o alvo",
     "raridade": "RARO",
     "andar": "3",
-    "valorMoedas": 9500,
+    "valorMoedas": 9500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 110,
+    "custoTU": 110.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 2
+    "alcance": 1.0,
+    "wielding": 2.0
   },
   "Rifle de Vasos Rompidos": {
     "nome": "Rifle de Vasos Rompidos",
@@ -2316,19 +2316,19 @@
     "descricao": "Dispara agulhas feitas de ossos ocos",
     "raridade": "RARO",
     "andar": "3",
-    "valorMoedas": 9800,
+    "valorMoedas": 9800.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 11,
-    "ticksDeDano": 1,
+    "danoBase": 11.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 1,
-    "municaoMaxima": 5,
+    "alcance": 1.0,
+    "municaoMaxima": 5.0,
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.05
     },
-    "wielding": 2
+    "wielding": 2.0
   },
   "Lança Esofágica de Deglutição": {
     "nome": "Lança Esofágica de Deglutição",
@@ -2336,17 +2336,17 @@
     "descricao": "Uma lança feita de esôfago retorcido que parece engolir o que toca",
     "raridade": "RARO",
     "andar": "3",
-    "valorMoedas": 102,
+    "valorMoedas": 102.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 13,
-    "ticksDeDano": 1,
+    "danoBase": 13.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 2,
-    "wielding": 2
+    "tamanhoArea": 2.0,
+    "wielding": 2.0
   },
   "Martelo Cardíaco de Pressão": {
     "nome": "Martelo Cardíaco de Pressão",
@@ -2354,18 +2354,18 @@
     "descricao": "Um martelo pulsante movido por pressão cardíaca",
     "raridade": "EPICO",
     "andar": "3",
-    "valorMoedas": 15000,
+    "valorMoedas": 15000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 120,
+    "custoTU": 120.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 2,
+    "tamanhoArea": 2.0,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 1
+      "SAGACIDADE": 1.0
     },
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.025
@@ -2373,7 +2373,7 @@
     "habilidadesConcedidas": [
       "Parada Cardíaca"
     ],
-    "wielding": 2
+    "wielding": 2.0
   },
   "Canhão de Ácido Biliar": {
     "nome": "Canhão de Ácido Biliar",
@@ -2381,25 +2381,25 @@
     "descricao": "Dispara jatos de ácido biliar concentrado",
     "raridade": "EPICO",
     "andar": "3",
-    "valorMoedas": 16500,
+    "valorMoedas": 16500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 16,
-    "ticksDeDano": 1,
+    "danoBase": 16.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 115,
+    "custoTU": 115.0,
     "tipo": "Ranged",
-    "alcance": 3,
-    "municaoMaxima": 3,
+    "alcance": 3.0,
+    "municaoMaxima": 3.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 1
+      "SAGACIDADE": 1.0
     },
     "modificadoresStatus": {
       "TAXA_CRITICA": 0.05,
       "DANO_CRITICO": 0.1
     },
-    "wielding": 2
+    "wielding": 2.0
   },
   "Foice do Metabolismo Voraz": {
     "nome": "Foice do Metabolismo Voraz",
@@ -2407,23 +2407,23 @@
     "descricao": "Uma foice que devora a energia vital do que ceifa",
     "raridade": "EPICO",
     "andar": "3",
-    "valorMoedas": 18000,
+    "valorMoedas": 18000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 110,
+    "custoTU": 110.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 135,
+    "tamanhoArea": 135.0,
     "modificadoresDeAtributo": {
-      "DESTREZA": 1
+      "DESTREZA": 1.0
     },
     "modificadoresStatus": {
       "DANO_CRITICO": 0.2
     },
-    "wielding": 2
+    "wielding": 2.0
   },
   "Pulmão de Deus-Máquina": {
     "nome": "Pulmão de Deus-Máquina",
@@ -2431,24 +2431,24 @@
     "descricao": "Um canhão orgânico que respira como um pulmão vivo",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 30,
+    "valorMoedas": 30.0,
     "tipoMoeda": "OURO",
-    "danoBase": 25,
-    "ticksDeDano": 1,
+    "danoBase": 25.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 125,
+    "custoTU": 125.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "municaoMaxima": 2,
+    "alcance": 4.0,
+    "municaoMaxima": 2.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 2
+      "SAGACIDADE": 2.0
     },
     "habilidadesConcedidas": [
       "Respirar"
     ],
-    "wielding": 2
+    "wielding": 2.0
   },
   "Cajado da Imperatriz": {
     "nome": "Cajado da Imperatriz",
@@ -2456,24 +2456,24 @@
     "descricao": "Um cajado retorcido carregado de sangue negro coagulado. Pulsa com memórias de uma corte que já não existe.",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 25000,
+    "valorMoedas": 25000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Magico",
-    "alcance": 5,
+    "alcance": 5.0,
     "modificadoresDeAtributo": {
-      "INSPIRACAO": 6,
-      "CARISMA": 3
+      "INSPIRACAO": 6.0,
+      "CARISMA": 3.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Drenagem de Efeitos",
       "Sacrifício Sangrento"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Cajado da Imperatriz (Boss)": {
     "nome": "Cajado da Imperatriz (Boss)",
@@ -2481,17 +2481,17 @@
     "descricao": "A versão intacta carregada por Lillith — A Terceira. Sangue negro coagulado escorre pelas runas sem nunca cair no chão.",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 35,
-    "ticksDeDano": 1,
+    "danoBase": 35.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Magico",
-    "alcance": 6,
+    "alcance": 6.0,
     "modificadoresDeAtributo": {
-      "INSPIRACAO": 14,
-      "CARISMA": 8
+      "INSPIRACAO": 14.0,
+      "CARISMA": 8.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
@@ -2500,7 +2500,7 @@
       "Mergulho",
       "Sacrifício Sangrento"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "tentaculoSangue": {
     "nome": "tentaculoSangue",
@@ -2508,25 +2508,25 @@
     "descricao": "Tentáculo de sangue coagulado que se ergue do chão como uma serpente cega.",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "TOPOR",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 4,
+    "alcance": 4.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 4,
+    "tamanhoArea": 4.0,
     "modificadoresDeAtributo": {
-      "TOPOR": 4
+      "TOPOR": 4.0
     },
     "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Arremesso",
       "Enraizar"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Livro de Malkaresh": {
     "nome": "Livro de Malkaresh",
@@ -2534,20 +2534,20 @@
     "descricao": "Um grimório profano que emana uma aura de falsa justiça divina",
     "raridade": "LENDARIO",
     "andar": "3",
-    "valorMoedas": 250,
+    "valorMoedas": 250.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 20,
-    "ticksDeDano": 1,
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Grimorio",
-    "maxSlots": 5,
-    "alcance": 4,
+    "maxSlots": 5.0,
+    "alcance": 4.0,
     "magias": [],
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 1
+    "wielding": 1.0
   },
   "pistola do deserto[inimigo]": {
     "nome": "pistola do deserto[inimigo]",
@@ -2555,21 +2555,21 @@
     "descricao": "Arma ranged do pistoleiro inimigo",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 2,
+    "danoBase": 15.0,
+    "ticksDeDano": 2.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 6,
+    "alcance": 6.0,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 10
+      "SAGACIDADE": 10.0
     },
     "habilidadesConcedidas": [
       "Quick Shot"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Espada Curva[inimigo]": {
     "nome": "Espada Curva[inimigo]",
@@ -2577,23 +2577,23 @@
     "descricao": "Espada curva letal do guardião dessecado",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Veneno",
     "chanceEfeito": 0.3,
     "modificadoresDeAtributo": {
-      "FORCA": 14
+      "FORCA": 14.0
     },
     "habilidadesConcedidas": [
       "Bash Strike"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Espada Longa[inimigo]": {
     "nome": "Espada Longa[inimigo]",
@@ -2601,21 +2601,21 @@
     "descricao": "Espada usada pelos batedores de areia",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "modificadoresDeAtributo": {
-      "FORCA": 10
+      "FORCA": 10.0
     },
     "habilidadesConcedidas": [
       "Auto-Guarda"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Virtude[inimigo]": {
     "nome": "Virtude[inimigo]",
@@ -2623,23 +2623,23 @@
     "descricao": "Arma da Virtude",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 25,
-    "ticksDeDano": 1,
+    "danoBase": 25.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 150,
+    "custoTU": 150.0,
     "tipo": "Magico",
-    "alcance": 10,
+    "alcance": 10.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 3,
+    "tamanhoArea": 3.0,
     "modificadoresDeAtributo": {
-      "INSPIRACAO": 10
+      "INSPIRACAO": 10.0
     },
     "habilidadesConcedidas": [
       "Double Down"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "Scimitar de Bronze Oxidado": {
     "nome": "Scimitar de Bronze Oxidado",
@@ -2647,17 +2647,17 @@
     "descricao": "Uma lâmina curva gasta, mas ainda afiada o suficiente para cortar carne",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 15000,
+    "valorMoedas": 15000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 14,
-    "ticksDeDano": 1,
+    "danoBase": 14.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 45,
-    "wielding": 1
+    "tamanhoArea": 45.0,
+    "wielding": 1.0
   },
   "Pistola de Pederneira da Areia": {
     "nome": "Pistola de Pederneira da Areia",
@@ -2665,16 +2665,16 @@
     "descricao": "Uma arma de fogo rústica que frequentemente engasga com a poeira",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 15500,
+    "valorMoedas": 15500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 85,
+    "custoTU": 85.0,
     "tipo": "Ranged",
-    "alcance": 6,
-    "municaoMaxima": 8,
-    "wielding": 1
+    "alcance": 6.0,
+    "municaoMaxima": 8.0,
+    "wielding": 1.0
   },
   "Machado de Escavação": {
     "nome": "Machado de Escavação",
@@ -2682,17 +2682,17 @@
     "descricao": "Originalmente uma ferramenta de arqueologia, adaptada para o combate",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 16000,
+    "valorMoedas": 16000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 125,
+    "custoTU": 125.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 160,
-    "wielding": 2
+    "tamanhoArea": 160.0,
+    "wielding": 2.0
   },
   "Lança de Bambu do Oásis": {
     "nome": "Lança de Bambu do Oásis",
@@ -2700,17 +2700,17 @@
     "descricao": "Leve e flexível, usada pelos nômades das bordas do deserto",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 15200,
+    "valorMoedas": 15200.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 13,
-    "ticksDeDano": 1,
+    "danoBase": 13.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
-    "wielding": 2
+    "tamanhoArea": 1.0,
+    "wielding": 2.0
   },
   "Funda de Pedras de Obsidiana": {
     "nome": "Funda de Pedras de Obsidiana",
@@ -2718,17 +2718,17 @@
     "descricao": "Simples, mas dispara pedras vulcânicas cortantes",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 15000,
+    "valorMoedas": 15000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Magico",
-    "alcance": 5,
+    "alcance": 5.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 1,
-    "wielding": 2
+    "tamanhoArea": 1.0,
+    "wielding": 2.0
   },
   "Adaga de Ritual Simples": {
     "nome": "Adaga de Ritual Simples",
@@ -2736,17 +2736,17 @@
     "descricao": "Uma faca de bronze usada em embalsamamentos menores",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 16000,
+    "valorMoedas": 16000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Corta cura",
     "chanceEfeito": 0.2,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Adaga de Ritual Complexo": {
     "nome": "Adaga de Ritual Complexo",
@@ -2754,17 +2754,17 @@
     "descricao": "Uma faca de bronze usada em embalsamamentos maiores",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 18000,
+    "valorMoedas": 18000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Veneno",
     "chanceEfeito": 0.6,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Adaga de Ritual Complexo2": {
     "nome": "Adaga de Ritual Complexo2",
@@ -2772,17 +2772,17 @@
     "descricao": "Uma faca de bronze usada em embalsamamentos maiores",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 18000,
+    "valorMoedas": 18000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Veneno",
     "chanceEfeito": 0.3,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Arco de Madeira de Acácia": {
     "nome": "Arco de Madeira de Acácia",
@@ -2790,16 +2790,16 @@
     "descricao": "Um arco curto feito da única árvore que cresce no calor infernal",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 16500,
+    "valorMoedas": 16500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Ranged",
-    "alcance": 6,
-    "municaoMaxima": 10,
-    "wielding": 1
+    "alcance": 6.0,
+    "municaoMaxima": 10.0,
+    "wielding": 1.0
   },
   "Clava de Arenito": {
     "nome": "Clava de Arenito",
@@ -2807,16 +2807,16 @@
     "descricao": "Pesada e bruta, tende a se esfarelar após muitos impactos.",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 17000,
+    "valorMoedas": 17000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 30,
-    "ticksDeDano": 1,
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 3,
-    "municaoMaxima": 10,
-    "wielding": 2
+    "alcance": 3.0,
+    "municaoMaxima": 10.0,
+    "wielding": 2.0
   },
   "Martelo das Pirâmides": {
     "nome": "Martelo das Pirâmides",
@@ -2824,17 +2824,17 @@
     "descricao": "Pesada e bruta, tende a se esfarelar após muitos impactos.",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 15000,
+    "valorMoedas": 15000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 14,
-    "ticksDeDano": 1,
+    "danoBase": 14.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 120,
+    "custoTU": 120.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 1,
-    "wielding": 1
+    "tamanhoArea": 1.0,
+    "wielding": 1.0
   },
   "Mosquete de Vigilante": {
     "nome": "Mosquete de Vigilante",
@@ -2842,16 +2842,16 @@
     "descricao": "Arma de longo alcance padrão para guardas das docas.",
     "raridade": "COMUM",
     "andar": "4",
-    "valorMoedas": 15500,
+    "valorMoedas": 15500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Ranged",
-    "alcance": 8,
-    "municaoMaxima": 2,
-    "wielding": 1
+    "alcance": 8.0,
+    "municaoMaxima": 2.0,
+    "wielding": 1.0
   },
   "Cimitarra dos Guardiões": {
     "nome": "Cimitarra dos Guardiões",
@@ -2859,15 +2859,15 @@
     "descricao": "Lâmina encantada que causa dano extra contra seres de carne",
     "raridade": "INCOMUM",
     "andar": "4",
-    "valorMoedas": 22000,
+    "valorMoedas": 22000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "alcance": 1.0,
+    "wielding": 1.0
   },
   "Lança Solar Estilhaçada": {
     "nome": "Lança Solar Estilhaçada",
@@ -2875,19 +2875,19 @@
     "descricao": "Uma lança curta que emite um calor constante na ponta",
     "raridade": "INCOMUM",
     "andar": "4",
-    "valorMoedas": 22500,
+    "valorMoedas": 22500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.2,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Alabarda da Sentinela": {
     "nome": "Alabarda da Sentinela",
@@ -2895,17 +2895,17 @@
     "descricao": "Arma de haste longa usada para manter intrusos longe dos sarcófagos",
     "raridade": "INCOMUM",
     "andar": "4",
-    "valorMoedas": 23000,
+    "valorMoedas": 23000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 16,
-    "ticksDeDano": 1,
+    "danoBase": 16.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 115,
+    "custoTU": 115.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 90,
-    "wielding": 2
+    "tamanhoArea": 90.0,
+    "wielding": 2.0
   },
   "Adaga Serrilhada de Chacal": {
     "nome": "Adaga Serrilhada de Chacal",
@@ -2913,17 +2913,17 @@
     "descricao": "fuck adaga",
     "raridade": "INCOMUM",
     "andar": "4",
-    "valorMoedas": 22000,
+    "valorMoedas": 22000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 14,
-    "ticksDeDano": 1,
+    "danoBase": 14.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Veneno",
     "chanceEfeito": 0.3,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Carabina de Precisão das Dunas": {
     "nome": "Carabina de Precisão das Dunas",
@@ -2931,16 +2931,16 @@
     "descricao": "Possui uma luneta feita de cristal polido para tiros distantes",
     "raridade": "INCOMUM",
     "andar": "4",
-    "valorMoedas": 23500,
+    "valorMoedas": 23500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 14,
-    "ticksDeDano": 1,
+    "danoBase": 14.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Ranged",
-    "alcance": 6,
-    "municaoMaxima": 8,
-    "wielding": 1
+    "alcance": 6.0,
+    "municaoMaxima": 8.0,
+    "wielding": 1.0
   },
   "Lâmina da Miragem": {
     "nome": "Lâmina da Miragem",
@@ -2948,17 +2948,17 @@
     "descricao": "Uma espada que parece \"tremular\" como o calor, tornando seus ataques difíceis de bloquear",
     "raridade": "RARO",
     "andar": "4",
-    "valorMoedas": 28000,
+    "valorMoedas": 28000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 16,
-    "ticksDeDano": 1,
+    "danoBase": 16.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.67,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Lâmina da Miragem Etérea": {
     "nome": "Lâmina da Miragem Etérea",
@@ -2966,20 +2966,20 @@
     "descricao": "Uma espada MUITO tremula como o calor, tornando seus ataques difíceis de bloquear",
     "raridade": "RARO",
     "andar": "4",
-    "valorMoedas": 32000,
+    "valorMoedas": 32000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "efeitoAoAcertar": "Queimadura",
-    "chanceEfeito": 1,
+    "chanceEfeito": 1.0,
     "modificadoresStatus": {
       "DANO_CRITICO": 0.25
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "Pistola Sede de Sangue": {
     "nome": "Pistola \"Sede de Sangue\"",
@@ -2987,19 +2987,19 @@
     "descricao": "cada acerto dá um gostinho de quero mais",
     "raridade": "RARO",
     "andar": "4",
-    "valorMoedas": 29000,
+    "valorMoedas": 29000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 15,
-    "ticksDeDano": 1,
+    "danoBase": 15.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Ranged",
-    "alcance": 6,
-    "municaoMaxima": 8,
+    "alcance": 6.0,
+    "municaoMaxima": 8.0,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 1
+      "SAGACIDADE": 1.0
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "Chicote de Escorpião do Deserto": {
     "nome": "Chicote de Escorpião do Deserto",
@@ -3007,22 +3007,22 @@
     "descricao": "Feito com o ferrão de um monstro, injeta veneno paralisante.",
     "raridade": "RARO",
     "andar": "4",
-    "valorMoedas": 28500,
+    "valorMoedas": 28500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 16,
-    "ticksDeDano": 1,
+    "danoBase": 16.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "DESTREZA",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "tipoAlvo": "LINHA",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Veneno",
     "chanceEfeito": 0.25,
     "modificadoresDeAtributo": {
-      "DESTREZA": 1
+      "DESTREZA": 1.0
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "Sabre de Alabastro Sagrado": {
     "nome": "Sabre de Alabastro Sagrado",
@@ -3030,19 +3030,19 @@
     "descricao": "A arma preferida dos batedores, causa dano de luz puro.",
     "raridade": "RARO",
     "andar": "4",
-    "valorMoedas": 30000,
+    "valorMoedas": 30000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 17,
-    "ticksDeDano": 1,
+    "danoBase": 17.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "efeitoAoAcertar": "STUN",
     "chanceEfeito": 0.25,
-    "wielding": 1
+    "wielding": 1.0
   },
   "Foice da Colheita Dessecada": {
     "nome": "Foice da Colheita Dessecada",
@@ -3050,22 +3050,22 @@
     "descricao": "Uma foice longa que drena a umidade (vida) dos inimigos a cada golpe",
     "raridade": "EPICO",
     "andar": "4",
-    "valorMoedas": 32,
+    "valorMoedas": 32.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 135,
+    "tamanhoArea": 135.0,
     "efeitoAoAcertar": "Corta cura",
     "chanceEfeito": 0.25,
     "modificadoresStatus": {
-      "HP_MAXIMO": 15
+      "HP_MAXIMO": 15.0
     },
-    "wielding": 2
+    "wielding": 2.0
   },
   "Arco Suspiro do Vento Quente": {
     "nome": "Arco \"Suspiro do Vento Quente\"",
@@ -3073,21 +3073,21 @@
     "descricao": "Flechas disparadas por este arco se transformam em areia",
     "raridade": "EPICO",
     "andar": "4",
-    "valorMoedas": 35,
+    "valorMoedas": 35.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 16,
-    "ticksDeDano": 1,
+    "danoBase": 16.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Ranged",
-    "alcance": 5,
-    "municaoMaxima": 8,
+    "alcance": 5.0,
+    "municaoMaxima": 8.0,
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.35,
     "modificadoresDeAtributo": {
-      "SAGACIDADE": 2
+      "SAGACIDADE": 2.0
     },
-    "wielding": 1
+    "wielding": 1.0
   },
   "khopesh Eclipse de Rá": {
     "nome": "khopesh Eclipse de Rá",
@@ -3095,22 +3095,22 @@
     "descricao": "Uma arma que muda de forma e dano dependendo se é Dia ou Noite na sessão.",
     "raridade": "EPICO",
     "andar": "4",
-    "valorMoedas": 40,
+    "valorMoedas": 40.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Ranged",
-    "alcance": 5,
-    "municaoMaxima": 8,
+    "alcance": 5.0,
+    "municaoMaxima": 8.0,
     "efeitoAoAcertar": "Corta cura+",
     "chanceEfeito": 0.25,
     "modificadoresStatus": {
       "DANO_CRITICO": 0.4,
-      "HP_MAXIMO": -10
+      "HP_MAXIMO": -10.0
     },
-    "wielding": 2
+    "wielding": 2.0
   },
   "Escopeta de Maldição": {
     "nome": "Escopeta de Maldição",
@@ -3118,18 +3118,18 @@
     "descricao": "Arma de longo alcance padrão para guardas das docas.",
     "raridade": "EPICO",
     "andar": "4",
-    "valorMoedas": 34,
+    "valorMoedas": 34.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 5,
-    "ticksDeDano": 4,
+    "danoBase": 5.0,
+    "ticksDeDano": 4.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Ranged",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 60,
-    "municaoMaxima": 2,
-    "wielding": 2
+    "tamanhoArea": 60.0,
+    "municaoMaxima": 2.0,
+    "wielding": 2.0
   },
   "A Thousand Blazing Suns": {
     "nome": "A Thousand Blazing Suns",
@@ -3137,23 +3137,23 @@
     "descricao": "Talvez até o sol não passe de uma estrela tênue diante da noite profunda e longa.",
     "raridade": "LENDARIO",
     "andar": "4",
-    "valorMoedas": 50,
+    "valorMoedas": 50.0,
     "tipoMoeda": "OURO",
-    "danoBase": 35,
-    "ticksDeDano": 1,
+    "danoBase": 35.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 125,
+    "custoTU": 125.0,
     "tipo": "Melee",
-    "alcance": 2,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 90,
+    "tamanhoArea": 90.0,
     "efeitoAoAcertar": "HellFire",
     "chanceEfeito": 0.2,
     "modificadoresStatus": {
       "DANO_CRITICO": 0.4,
       "TAXA_CRITICA": 0.1
     },
-    "wielding": 2
+    "wielding": 2.0
   },
   "Morte Solar": {
     "nome": "Morte Solar",
@@ -3161,19 +3161,19 @@
     "descricao": "Uma maça que carrega o brilho do sol original; pode cegar um andar inteiro ou incinerar um exército",
     "raridade": "LENDARIO",
     "andar": "4",
-    "valorMoedas": 50,
+    "valorMoedas": 50.0,
     "tipoMoeda": "OURO",
-    "danoBase": 30,
-    "ticksDeDano": 1,
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "INSPIRACAO",
-    "custoTU": 105,
+    "custoTU": 105.0,
     "tipo": "Melee",
-    "alcance": 4,
+    "alcance": 4.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 1,
+    "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Queimadura",
-    "chanceEfeito": 1,
-    "wielding": 2
+    "chanceEfeito": 1.0,
+    "wielding": 2.0
   },
   "prisão": {
     "nome": "prisão",
@@ -3181,22 +3181,22 @@
     "descricao": "Arma da Prisão de Carne",
     "raridade": "LENDARIO",
     "andar": "P1",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 50,
-    "ticksDeDano": 1,
+    "danoBase": 50.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 15,
+    "alcance": 15.0,
     "tipoAlvo": "AREA_CIRCULAR",
-    "tamanhoArea": 5,
+    "tamanhoArea": 5.0,
     "habilidadesConcedidas": [
       "Bombardeio",
       "Cardial",
       "SLAM"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "salvação": {
     "nome": "salvação",
@@ -3204,16 +3204,16 @@
     "descricao": "Arma da salvação do Minos Prime",
     "raridade": "LENDARIO",
     "andar": "P1",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 30,
-    "ticksDeDano": 1,
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 65,
+    "custoTU": 65.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "modificadoresDeAtributo": {
-      "FORCA": 20
+      "FORCA": 20.0
     },
     "habilidadesConcedidas": [
       "Julgamento",
@@ -3221,7 +3221,7 @@
       "thy end this now",
       "Serpent"
     ],
-    "wielding": 1
+    "wielding": 1.0
   },
   "espada de elion": {
     "nome": "espada de elion",
@@ -3229,22 +3229,22 @@
     "descricao": "insira qualquer coisa",
     "raridade": "LENDARIO",
     "andar": "4",
-    "valorMoedas": 42000,
+    "valorMoedas": 42000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 25,
-    "ticksDeDano": 1,
+    "danoBase": 25.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 95,
+    "custoTU": 95.0,
     "tipo": "Melee",
-    "alcance": 3,
+    "alcance": 3.0,
     "modificadoresDeAtributo": {
-      "FORCA": 14
+      "FORCA": 14.0
     },
     "habilidadesConcedidas": [
       "lighting thunder",
       "lighting vegeance"
     ],
-    "wielding": 2
+    "wielding": 2.0
   },
   "Espada Atômica": {
     "nome": "Espada Atômica",
@@ -3252,20 +3252,20 @@
     "descricao": "Uma espada que causa explode em radiação",
     "raridade": "LENDARIO",
     "andar": "4",
-    "valorMoedas": 150000,
+    "valorMoedas": 150000.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 430,
-    "ticksDeDano": 1,
+    "danoBase": 430.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SORTE",
-    "custoTU": 2000,
+    "custoTU": 2000.0,
     "tipo": "Melee",
-    "alcance": 99,
+    "alcance": 99.0,
     "tipoAlvo": "AREA_QUADRADA",
-    "tamanhoArea": 99,
+    "tamanhoArea": 99.0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {},
     "habilidadesConcedidas": [],
-    "wielding": 2
+    "wielding": 2.0
   },
   "Colt .45": {
     "nome": "Colt .45",
@@ -3273,16 +3273,16 @@
     "descricao": "uma pistola de ação simples",
     "raridade": "RARO",
     "andar": "0",
-    "valorMoedas": 1500,
+    "valorMoedas": 1500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 12,
-    "ticksDeDano": 1,
+    "danoBase": 12.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 5,
-    "municaoMaxima": 6,
-    "wielding": 1
+    "alcance": 5.0,
+    "municaoMaxima": 6.0,
+    "wielding": 1.0
   },
   "Winchester .22": {
     "nome": "Winchester .22",
@@ -3290,16 +3290,16 @@
     "descricao": "uma pistola de ação simples",
     "raridade": "RARO",
     "andar": "0",
-    "valorMoedas": 2500,
+    "valorMoedas": 2500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 18,
-    "ticksDeDano": 1,
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 125,
+    "custoTU": 125.0,
     "tipo": "Ranged",
-    "alcance": 10,
-    "municaoMaxima": 10,
-    "wielding": 2
+    "alcance": 10.0,
+    "municaoMaxima": 10.0,
+    "wielding": 2.0
   },
   "Faca Baioneta": {
     "nome": "Faca Baioneta",
@@ -3307,14 +3307,33 @@
     "descricao": "uma faca baioneta para ser acoplada em rifles",
     "raridade": "RARO",
     "andar": "0",
-    "valorMoedas": 500,
+    "valorMoedas": 500.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 8,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 55.0,
+    "tipo": "Melee",
+    "alcance": 1.0,
+    "wielding": 1.0
+  },
+  "Shotgun": {
+    "nome": "Shotgun",
+    "categoria": "Custom",
+    "descricao": "Uma bela shotgun de carga unica, ótima para massacrar alvos no corpo a corpo",
+    "raridade": "RARO",
+    "andar": "4",
+    "valorMoedas": 5000,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 18,
     "ticksDeDano": 1,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 55,
-    "tipo": "Melee",
-    "alcance": 1,
-    "wielding": 1
+    "custoTU": 100,
+    "tipo": "Ranged",
+    "alcance": 2,
+    "wielding": 1,
+    "tipoAlvo": "CONE",
+    "tamanhoArea": 60,
+    "municaoMaxima": 6
   }
 }
