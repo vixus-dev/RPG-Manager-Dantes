@@ -28,7 +28,7 @@ public class LaminasDoExterminio extends ArmaMelee {
 
 	@Override
 	public String getNomeAtaqueAlternativoBasico() {
-		return "Golpe do Exterm\u00EDnio";
+		return "Golpe do Exterminio";
 	}
 
 	@Override

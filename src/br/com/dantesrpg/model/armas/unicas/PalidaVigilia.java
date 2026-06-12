@@ -30,7 +30,7 @@ public class PalidaVigilia extends ArmaMelee {
 
 	@Override
 	public boolean isDanoHibrido(Personagem ator) {
-		return false; // Ignora redução de armadura física
+		return false;
 	}
 
 	@Override
@@ -45,7 +45,6 @@ public class PalidaVigilia extends ArmaMelee {
 			return;
 		double escudo = ator.getVidaMaxima() * 0.025;
 		ator.adicionarEscudoSangue(escudo);
-		System.out.println(">>> PÁLIDA VIGÍLIA (On-Hit): +" + String.format("%.1f", escudo) + " Escudo de Sangue.");
 	}
 
 	// === Ataque Alternativo: Ceifa Divina ===
@@ -82,7 +81,6 @@ public class PalidaVigilia extends ArmaMelee {
 	@Override
 	public void onDamageTaken(Personagem ator, double danoRecebido, EstadoCombate estado,
 			br.com.dantesrpg.controller.CombatController controller) {
-		// Verifica Cooldown
 		if (ator.getEfeitosAtivos().containsKey("CD: Pálida Vigília")) {
 			return;
 		}
@@ -99,22 +97,17 @@ public class PalidaVigilia extends ArmaMelee {
 			System.out.println(">>> Ativando Cura em Área de " + cura + " HP!");
 
 			for (Personagem p : estado.getCombatentes()) {
-				// Verifica se é aliado (mesma facção) e está vivo
 				if (p.isAtivoNoCombate() && p.getFaccao().equals(ator.getFaccao())) {
-					// Verifica Distância
 					int dist = Math.max(Math.abs(p.getPosX() - ator.getPosX()), Math.abs(p.getPosY() - ator.getPosY()));
 					if (dist <= raio) {
-						// Cura
 						if (p.getVidaAtual() < p.getVidaMaxima()) {
 							p.setVidaAtual(p.getVidaAtual() + cura, estado, controller);
-							System.out.println(">>> " + p.getNome() + " foi curado pela Vigília.");
 						}
 					}
 				}
 			}
 
-			// Aplica Cooldown (220 TU)
-			// Usamos um efeito invisível/debuff para controlar o CD
+			// Aplica Cooldown (200 TU)
 			Efeito cooldown = new Efeito("CD: Pálida Vigília", TipoEfeito.DEBUFF, 200, Map.of(), 0, 0);
 			ator.adicionarEfeito(cooldown);
 			ator.recalcularAtributosEstatisticas(); // Para atualizar ícone de CD

@@ -13,9 +13,9 @@ public class BastaoPrimordialBehemoth extends ArmaMelee {
 
 	public BastaoPrimordialBehemoth() {
 		super("Bastão Primordial Behemoth", "Bastão",
-				"Um bastão ancestral imbuído com a essência de um Behemoth primordial. "
-						+ "Quando seu portador assume a forma lupina, o bastão se transforma em um martelo colossal "
-						+ "capaz de devastar uma área inteira com cada golpe.",
+				  "Um bastão ancestral imbuído com a essência de um Behemoth primordial. "
+				+ "Quando seu portador assume a forma lupina, o bastão se transforma em um martelo colossal "
+				+ "capaz de devastar uma área inteira com cada golpe.",
 				Raridade.UNICO, 0, 29, 1, Atributo.FORCA, 100, 2);
 				this.setWielding(2); 
 	}

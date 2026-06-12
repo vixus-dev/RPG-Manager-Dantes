@@ -3,13 +3,7 @@ package br.com.dantesrpg.model.armas.unicas;
 import br.com.dantesrpg.model.ArmaMelee;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.Raridade;
-import br.com.dantesrpg.model.EstadoCombate;
-import br.com.dantesrpg.model.Personagem;
-import br.com.dantesrpg.model.Efeito;
-import br.com.dantesrpg.model.enums.TipoEfeito;
-import java.util.Map;
 
-// Stub (placeholder) para a arma da Ayame
 public class Rubrum extends ArmaMelee {
 	public Rubrum() {
 		super("Rubrum", "Cajado",

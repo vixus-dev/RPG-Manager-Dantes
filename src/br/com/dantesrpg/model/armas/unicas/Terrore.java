@@ -28,6 +28,8 @@ public class Terrore extends ArmaRanged {
 		this.setWielding(1); 
 	}
 
+	// TODO aprimorar essa função para que as marcas sejam re-aplicadas toda vez que um novo inimigo for adicionando no combate
+	// ou um inimigo marcado morrer 
 	@Override
 	public void onCombatStart(Personagem ator, EstadoCombate estado) {
 		this.marcasDoMedo.clear();

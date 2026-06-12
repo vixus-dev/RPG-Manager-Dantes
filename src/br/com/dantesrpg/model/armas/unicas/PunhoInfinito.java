@@ -10,7 +10,7 @@ import br.com.dantesrpg.model.enums.Raridade;
 public class PunhoInfinito extends ArmaMelee {
 
 	public PunhoInfinito() {
-		super("Punho Infinito", "Manoplas", "manoplas espectrais que cobrem os punhos de Alexei", Raridade.UNICO, 0, 29,
+		super("Punho Infinito", "Manoplas", "manoplas espectrais que cobrem os punhos de Alexei", Raridade.UNICO, 0, 25,
 				1, Atributo.FORCA, 85, 1);
 				this.setWielding(2); 
 	}
@@ -60,7 +60,7 @@ public class PunhoInfinito extends ArmaMelee {
 				int forca = ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0);
 				alvo.setContadorTU(alvo.getContadorTU() + forca);
 				System.out.println(
-						">>> Punho Infinito (Berserk): Aumentou o TU de " + alvo.getNome() + " em +" + forca + "!");
+						">>> Punho Infinito: Aumentou o TU de " + alvo.getNome() + " em +" + forca + "!");
 			}
 		}
 	}
