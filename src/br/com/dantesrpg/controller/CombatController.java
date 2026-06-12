@@ -114,6 +114,8 @@ public class CombatController {
 	private LojaController lojaController;
 	private BorderPane editorViewNode;
 	private EditorJogadorController editorJogadorController;
+	private BorderPane criarViewNode;
+	private CriarController criarController;
 
 	private Map<String, Map<String, Object>> armoryDatabase;
 	private Map<String, Map<String, Object>> itempediaDatabase;
@@ -1150,6 +1152,29 @@ public class CombatController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@FXML
+	private void onAbaCriarClick() {
+		System.out.println("Botão 'Criar' clicado.");
+		try {
+			if (criarViewNode == null) {
+				FXMLLoader loader = new FXMLLoader(
+						getClass().getResource("/br/com/dantesrpg/view/CriarView.fxml"));
+				criarViewNode = loader.load();
+				criarController = loader.getController();
+			}
+			criarController.inicializar(this);
+			rootPane.setCenter(criarViewNode);
+		} catch (IOException e) {
+			System.err.println("Erro ao carregar CriarView.fxml:");
+			e.printStackTrace();
+		}
+	}
+
+	public void recarregarBancosDeDados() {
+		loadArmoryDatabase();
+		loadItempediaDatabase();
 	}
 
 }
