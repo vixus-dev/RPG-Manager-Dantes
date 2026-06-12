@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import java.net.URL?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="br.com.dantesrpg.controller.CriarController"
+            prefHeight="700.0" prefWidth="1100.0" styleClass="editor-background">
+
+    <!-- SIDEBAR ESQUERDA: Opções de Criação -->
+    <left>
+        <VBox styleClass="editor-sidebar" prefWidth="180.0" spacing="10.0">
+            <Label text="Criação" styleClass="header-label" maxWidth="Infinity"/>
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
+                <VBox spacing="6.0">
+                    <Button text="Criar Item 📦" fx:id="btnAbaCriarItem" maxWidth="Infinity" styleClass="player-select-button, player-select-button-selected"/>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </left>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 15;">
+            <VBox spacing="15.0">
+                <!-- Bento Card 1: Informações Gerais -->
+                <VBox styleClass="bento-card" spacing="12.0">
+                    <Label text="Informações Gerais" styleClass="header-label"/>
+                    
+                    <GridPane vgap="10.0" hgap="15.0">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50" />
+                            <ColumnConstraints percentWidth="50" />
+                        </columnConstraints>
+                        <children>
+                            <!-- Nome -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Nome do Item" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtNome" promptText="Ex: Espada de Fogo" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Categoria -->
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Categoria" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboCategoria" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Descrição -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                                <Label text="Descrição" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtDescricao" promptText="Descreva o item..." styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Custo em Moedas -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <Label text="Custo em Moedas" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtValorMoedas" promptText="Ex: 500" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Tipo Moeda -->
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <Label text="Tipo de Moeda" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboTipoMoeda" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Raridade -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                                <Label text="Raridade" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboRaridade" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Andar -->
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                <Label text="Andar" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtAndar" promptText="Ex: 1" styleClass="editor-search-field" />
+                            </VBox>
+                        </children>
+                    </GridPane>
+                </VBox>
+                
+                <!-- Bento Card 2: Armas (Especificidades) -->
+                <VBox fx:id="paneArma" styleClass="bento-card" spacing="12.0" visible="false" managed="false">
+                    <Label text="Propriedades de Arma ⚔️" styleClass="header-label"/>
+                    
+                    <GridPane vgap="10.0" hgap="15.0">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33" />
+                            <ColumnConstraints percentWidth="33" />
+                            <ColumnConstraints percentWidth="34" />
+                        </columnConstraints>
+                        <children>
+                            <!-- Tipo de Arma -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Tipo de Arma" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboArmaTipo" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Atributo Multiplicador -->
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Atributo Multiplicador" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboArmaAtributo" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Wielding -->
+                            <VBox spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <Label text="Mãos Requeridas" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboArmaWielding" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Dano Base -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="Dano Base" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaDano" promptText="Ex: 10" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Ticks de Dano -->
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <Label text="Ticks de Dano" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaTicks" promptText="Ex: 1" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Custo TU -->
+                            <VBox spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                <Label text="Custo TU" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaTU" promptText="Ex: 100" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Alcance -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <Label text="Alcance" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaAlcance" promptText="Ex: 1" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Tipo de Alvo (AOE) -->
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <Label text="Tipo de Alvo (AoE)" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboArmaAlvo" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Tamanho da Área -->
+                            <VBox spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                <Label text="Tamanho Área / Ângulo" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaTamanhoArea" promptText="Ex: 0 ou 45" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Efeito ao Acertar -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                                <Label text="Efeito ao Acertar (On-Hit)" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboArmaEfeito" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Chance do Efeito -->
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                <Label text="Chance do Efeito (0.0 - 1.0)" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaEfeitoChance" promptText="Ex: 0.5" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Munição Máxima -->
+                            <VBox fx:id="boxArmaMunicao" spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                <Label text="Munição Máxima" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaMunicao" promptText="Ex: 6" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Grimorio Max Slots -->
+                            <VBox fx:id="boxArmaSlots" spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="3" visible="false" managed="false">
+                                <Label text="Slots do Grimório" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaSlots" promptText="Ex: 3" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Habilidades Concedidas -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="3">
+                                <Label text="Habilidades Concedidas (separadas por vírgula)" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaHabilidades" promptText="Ex: Auto-Guarda, Bash Strike" styleClass="editor-search-field" />
+                            </VBox>
+                        </children>
+                    </GridPane>
+                </VBox>
+                
+                <!-- Bento Card 3: Defesas (Armadura/Amuleto) -->
+                <VBox fx:id="paneArmaduraAmuleto" styleClass="bento-card" spacing="12.0" visible="false" managed="false">
+                    <Label text="Propriedades de Defesa 🛡️" styleClass="header-label"/>
+                    
+                    <GridPane vgap="12.0" hgap="20.0">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50" />
+                            <ColumnConstraints percentWidth="50" />
+                        </columnConstraints>
+                        <children>
+                            <!-- Defesa Base -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                                <Label text="Valor de Defesa Base / Bônus" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtDefesaBase" promptText="Ex: 30" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Modificadores de Atributo -->
+                            <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="Modificadores de Atributo" style="-fx-text-fill: #e94560; -fx-font-size: 12px; -fx-font-weight: bold;" />
+                                <ScrollPane fitToWidth="true" prefHeight="220.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+                                    <VBox fx:id="containerModsAtributo" spacing="6.0" style="-fx-padding: 5;" />
+                                </ScrollPane>
+                            </VBox>
+                            
+                            <!-- Modificadores de Status -->
+                            <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <Label text="Modificadores de Status" style="-fx-text-fill: #00f0ff; -fx-font-size: 12px; -fx-font-weight: bold;" />
+                                <ScrollPane fitToWidth="true" prefHeight="220.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+                                    <VBox fx:id="containerModsStatus" spacing="6.0" style="-fx-padding: 5;" />
+                                </ScrollPane>
+                            </VBox>
+
+                            <!-- Habilidades Concedidas -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                                <Label text="Habilidades Concedidas (separadas por vírgula)" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtDefesaHabilidades" promptText="Ex: Auto-Guarda, sweet dreams" styleClass="editor-search-field" />
+                            </VBox>
+
+                            <!-- Efeitos ao Tomar Dano (Apenas Armadura) -->
+                            <VBox fx:id="boxArmaduraEfeitos" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2" visible="false" managed="false">
+                                <Label text="Reação ao Tomar Dano (Armadura)" style="-fx-text-fill: #00f0ff; -fx-font-size: 12px; -fx-font-weight: bold;" />
+                                <GridPane hgap="15.0" vgap="8.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints percentWidth="33" />
+                                        <ColumnConstraints percentWidth="33" />
+                                        <ColumnConstraints percentWidth="34" />
+                                    </columnConstraints>
+                                    <children>
+                                        <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                            <Label text="Efeito Aplicado" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                            <ComboBox fx:id="comboArmaduraEfeito" maxWidth="Infinity" styleClass="loja-combo" />
+                                        </VBox>
+                                        <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                            <Label text="Chance (0.0 - 1.0)" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                            <TextField fx:id="txtArmaduraEfeitoChance" promptText="Ex: 0.5" styleClass="editor-search-field" />
+                                        </VBox>
+                                        <VBox spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                            <Label text="Alvo da Reação" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                            <ComboBox fx:id="comboArmaduraEfeitoAlvo" maxWidth="Infinity" styleClass="loja-combo" />
+                                        </VBox>
+                                    </children>
+                                </GridPane>
+                            </VBox>
+                        </children>
+                    </GridPane>
+                </VBox>
+                
+                <!-- Bento Card 4: Consumíveis -->
+                <VBox fx:id="paneConsumivel" styleClass="bento-card" spacing="12.0" visible="false" managed="false">
+                    <Label text="Propriedades de Consumível 🧪" styleClass="header-label"/>
+                    
+                    <GridPane vgap="12.0" hgap="20.0">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50" />
+                            <ColumnConstraints percentWidth="50" />
+                        </columnConstraints>
+                        <children>
+                            <!-- Custo TU -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Custo TU para Usar" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtConsumivelTU" promptText="Ex: 50" styleClass="editor-search-field" />
+                            </VBox>
+                            
+                            <!-- Usável em Combate -->
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Usável em Combate?" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <ComboBox fx:id="comboConsumivelUsavel" maxWidth="Infinity" styleClass="loja-combo" />
+                            </VBox>
+                            
+                            <!-- Efeitos do Consumível -->
+                            <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                                <Label text="Efeitos do Item" style="-fx-text-fill: #e94560; -fx-font-size: 12px; -fx-font-weight: bold;" />
+                                <ScrollPane fitToWidth="true" prefHeight="200.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+                                    <VBox fx:id="containerEfeitosConsumivel" spacing="6.0" style="-fx-padding: 5;" />
+                                </ScrollPane>
+                            </VBox>
+                        </children>
+                    </GridPane>
+                </VBox>
+                
+                <!-- Ações -->
+                <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 0 0 10 0;">
+                    <Button text="Resetar Campos" fx:id="btnResetarForm" onAction="#onResetarFormClick" styleClass="editor-btn-reset"/>
+                    <Button text="Criar Item 📦" fx:id="btnConfirmarCriar" onAction="#onConfirmarCriarClick" styleClass="editor-btn-save"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <stylesheets>
+        <URL value="@style.css" />
+    </stylesheets>
+</BorderPane>

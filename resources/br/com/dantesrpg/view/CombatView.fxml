@@ -23,6 +23,7 @@
             <Button fx:id="btnAbaLojas" mnemonicParsing="false" onAction="#onAbaLojasClick" prefHeight="80.0" prefWidth="80.0" text="Lojas" />
             <Button fx:id="btnAbaEditor" mnemonicParsing="false" onAction="#onAbaEditorClick" prefHeight="80.0" prefWidth="80.0" text="Editor" />
             <Button fx:id="btnAbaLog" mnemonicParsing="false" onAction="#onAbaLogClick" prefHeight="80.0" prefWidth="80.0" text="Log" />
+            <Button fx:id="btnAbaCriar" mnemonicParsing="false" onAction="#onAbaCriarClick" prefHeight="80.0" prefWidth="80.0" text="Criar" />
          </children>
       </VBox>
    </left>
