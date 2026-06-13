@@ -1,16 +1,16 @@
 {
-  "iniciativaBase": -2,
+  "iniciativaBase": 30,
   "atributosBase": {
-    "SAGACIDADE": 5,
-    "TOPOR": 2,
-    "FORCA": 13,
-    "INSPIRACAO": 11,
-    "INTELIGENCIA": 4,
-    "SORTE": 3,
-    "CARISMA": 4,
     "DESTREZA": 8,
+    "PERCEPCAO": 7,
+    "INSPIRACAO": 12,
+    "FORCA": 13,
     "ENDURANCE": 11,
-    "PERCEPCAO": 6
+    "CARISMA": 4,
+    "SORTE": 3,
+    "SAGACIDADE": 5,
+    "INTELIGENCIA": 4,
+    "TOPOR": 2
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
@@ -18,26 +18,21 @@
   "carteira": {
     "prata": 147,
     "ouro": 0,
-    "bronze": 17935
+    "bronze": 35935
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 203.0,
-  "contadorTU": 4,
+  "vidaAtual": 228.0,
+  "contadorTU": 2,
   "fantasmaNobre": "VigiliaEterna",
   "armaduraEquipada": "Armadura do Mestre",
   "armaEquipada": "Devoradora Primordial",
   "inventario": {
-    "BebidaAlcolica": 10,
-    "PocaoDeCuraPequena": 1,
     "Lança Cesariana": 1,
     "PocaoDeCuraMédia": 1,
-    "Anel de couro": 1,
-    "Machado": 1,
-    "Colar de Tinta Seca": 1,
     "PocaoDeCuraGrande": 1,
     "Pálida Vigília": 1
   },
-  "xpAtual": 1057,
+  "xpAtual": 1607,
   "vidaMaximaBase": 128.0,
   "classe": "Paladino",
   "armasEquipadas": [
@@ -50,7 +45,7 @@
   "posY": 4,
   "amuleto2": "Nódulo de Carne Viva",
   "amuleto1": "Cranio de esqueleto shiny",
-  "manaAtual": 13.0,
+  "manaAtual": 13.5,
   "raca": "Half-Angel",
   "nivel": 8,
   "wieldingMaximo": 2

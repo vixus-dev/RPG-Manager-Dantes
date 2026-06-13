@@ -1,16 +1,16 @@
 {
   "iniciativaBase": 27,
   "atributosBase": {
-    "SAGACIDADE": 2,
-    "TOPOR": 5,
-    "FORCA": 20,
-    "INSPIRACAO": 2,
-    "INTELIGENCIA": 3,
     "SORTE": 3,
-    "CARISMA": 3,
-    "DESTREZA": 11,
+    "DESTREZA": 12,
     "ENDURANCE": 8,
-    "PERCEPCAO": 12
+    "INTELIGENCIA": 3,
+    "PERCEPCAO": 14,
+    "INSPIRACAO": 2,
+    "FORCA": 20,
+    "CARISMA": 3,
+    "TOPOR": 5,
+    "SAGACIDADE": 2
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
@@ -19,23 +19,22 @@
   "carteira": {
     "prata": 0,
     "ouro": 0,
-    "bronze": 14808
+    "bronze": 17308
   },
   "faccao": "JOGADOR",
   "vidaAtual": 124.0,
-  "contadorTU": 2,
+  "contadorTU": 3,
   "fantasmaNobre": "RingOfTheUndyingWill",
   "armaduraEquipada": "Peitoral da Guarda de Marfim",
   "armaEquipada": "Punho Infinito",
   "inventario": {
-    "PocaoDeManaGrande": 2,
+    "PocaoDeManaGrande": 1,
     "PocaoDeCuraMédia": 1,
-    "Espada Atômica": 1,
-    "Pistola de Hemopressão": 1,
-    "Colar de Tinta Seca": 2,
-    "Medalhão da Promessa": 1
+    "Colar de Tinta Seca": 1,
+    "Medalhão da Promessa": 1,
+    "MoedaDeAjuda": 1
   },
-  "xpAtual": 1071,
+  "xpAtual": 1621,
   "vidaMaximaBase": 104.0,
   "classe": "Pugilista",
   "armasEquipadas": [
@@ -51,7 +50,7 @@
   "posY": 4,
   "amuleto2": "Anel Esofágico",
   "amuleto1": "Medalhão da Promessa SHINY",
-  "manaAtual": 6.0,
+  "manaAtual": 4.0,
   "raca": "Humano",
   "nivel": 8,
   "racaData": {

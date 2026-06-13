@@ -1,16 +1,16 @@
 {
   "iniciativaBase": 34,
   "atributosBase": {
-    "SAGACIDADE": 1,
-    "TOPOR": 8,
-    "FORCA": 14,
-    "INSPIRACAO": 5,
-    "INTELIGENCIA": 4,
-    "SORTE": 3,
-    "CARISMA": 1,
     "DESTREZA": 5,
+    "PERCEPCAO": 5,
+    "INSPIRACAO": 5,
+    "FORCA": 14,
     "ENDURANCE": 11,
-    "PERCEPCAO": 5
+    "CARISMA": 1,
+    "SORTE": 3,
+    "SAGACIDADE": 1,
+    "INTELIGENCIA": 4,
+    "TOPOR": 8
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
@@ -22,14 +22,14 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": 127.0,
-  "contadorTU": 3,
+  "contadorTU": 4,
   "fantasmaNobre": "ProfetaDeBehemoth",
   "armaduraEquipada": "Colete Militar",
   "armaEquipada": "Bastão Primordial Behemoth",
   "inventario": {
     "PocaoDeCuraMédia": 1
   },
-  "xpAtual": 1100,
+  "xpAtual": 1600,
   "vidaMaximaBase": 82.0,
   "classe": "Campeão",
   "armasEquipadas": [

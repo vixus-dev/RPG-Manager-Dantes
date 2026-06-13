@@ -649,5 +649,28 @@
     "armaduraBonus": 0,
     "modificadoresDeAtributo": {},
     "modificadoresStatus": {}
+  },
+  "Amuleto do coração do jure supremo acordado": {
+    "classeItem": "Amuleto",
+    "nome": "Amuleto do coração do jure supremo acordado",
+    "descricao": "Um amuleto poderoso que brilha intensamente com energia divina, capaz de restaurar a força vital de quem o toca.",
+    "raridade": "Mitico",
+    "andar": "4",
+    "valorMoedas": 0,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {
+      "FORCA": 2,
+      "DESTREZA": 1,
+      "ENDURANCE": 1,
+      "PERCEPCAO": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 50.0,
+      "MOVIMENTO": 2.0,
+      "MANA_MAXIMO": 2.0,
+      "REDUCAO_DANO_MODIFICADOR": 0.15,
+      "DANO_BONUS_PERCENTUAL": 0.15
+    }
   }
 }

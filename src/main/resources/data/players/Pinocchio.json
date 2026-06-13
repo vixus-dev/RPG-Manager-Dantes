@@ -1,16 +1,16 @@
 {
   "iniciativaBase": 41,
   "atributosBase": {
+    "DESTREZA": 10,
+    "PERCEPCAO": 14,
+    "INSPIRACAO": 1,
+    "FORCA": 1,
+    "ENDURANCE": 5,
     "CARISMA": 1,
+    "SORTE": 1,
     "SAGACIDADE": 16,
     "INTELIGENCIA": 10,
-    "ENDURANCE": 5,
-    "TOPOR": 1,
-    "FORCA": 1,
-    "INSPIRACAO": 1,
-    "SORTE": 1,
-    "PERCEPCAO": 14,
-    "DESTREZA": 10
+    "TOPOR": 1
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
@@ -18,22 +18,24 @@
   "carteira": {
     "prata": 0,
     "ouro": 0,
-    "bronze": 2000
+    "bronze": 8
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 46.0,
-  "contadorTU": 0,
+  "vidaAtual": 15.455645089285708,
+  "contadorTU": 100,
   "fantasmaNobre": "TheMastersCall",
   "armaduraEquipada": "Couraça de Obsidiana Vulcânica",
   "armaEquipada": "Colt .45",
   "inventario": {
     "Winchester .22": 1,
-    "CaixaMunicaoP": 14,
+    "CaixaMunicaoGG": 1,
+    "CaixaMunicaoP": 12,
     "Escopeta de Maldição": 1,
     "Amuleto do coração do jure supremo": 1,
+    "Pistola de Hemopressão": 1,
     "Faca Baioneta": 1
   },
-  "xpAtual": 0,
+  "xpAtual": 550,
   "vidaMaximaBase": 46.0,
   "classe": "Pistoleiro",
   "armasEquipadas": [

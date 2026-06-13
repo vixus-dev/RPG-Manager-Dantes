@@ -1,16 +1,16 @@
 {
   "iniciativaBase": 30,
   "atributosBase": {
-    "SAGACIDADE": 6,
-    "TOPOR": 5,
-    "FORCA": 6,
-    "INSPIRACAO": 13,
-    "INTELIGENCIA": 8,
-    "SORTE": 2,
-    "CARISMA": 7,
     "DESTREZA": 10,
+    "PERCEPCAO": 6,
+    "INSPIRACAO": 13,
+    "FORCA": 6,
     "ENDURANCE": 8,
-    "PERCEPCAO": 6
+    "CARISMA": 7,
+    "SORTE": 2,
+    "SAGACIDADE": 6,
+    "INTELIGENCIA": 8,
+    "TOPOR": 5
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
@@ -30,11 +30,12 @@
     "PocaoDeManaMédia": 2,
     "PocaoDeCuraPequena": 2,
     "OssoDeReparo": 2,
+    "Adaga do Escorpião de Areia": 1,
     "Grimório da Carne e do Vento": 1,
     "TokenDeOverclock": 1,
     "Canhão de Ácido Biliar": 1
   },
-  "xpAtual": 800,
+  "xpAtual": 1350,
   "vidaMaximaBase": 58.0,
   "classe": "Invocador",
   "armasEquipadas": [
@@ -47,7 +48,7 @@
   "posY": 5,
   "amuleto2": "Pingente de Cruz",
   "amuleto1": "Anel de Rei",
-  "manaAtual": 12.5,
+  "manaAtual": 11.5,
   "raca": "Half-Demon",
   "nivel": 7,
   "wieldingMaximo": 2
