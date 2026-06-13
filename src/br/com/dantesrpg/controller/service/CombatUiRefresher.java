@@ -105,7 +105,9 @@ public class CombatUiRefresher {
 		timelineContainer.getChildren().clear();
 
 		List<Personagem> ordenadosPorTU = new ArrayList<>(estado.getCombatentes());
-		ordenadosPorTU.sort(Comparator.comparingInt(Personagem::getContadorTU));
+		ordenadosPorTU.sort(Comparator.comparingInt(Personagem::getContadorTU)
+				.thenComparing((p1, p2) -> Boolean.compare(p2.isProtagonista(), p1.isProtagonista()))
+				.thenComparing((p1, p2) -> Integer.compare(p2.getPlacarIniciativa(), p1.getPlacarIniciativa())));
 		Set<Personagem> mestresComCloneExibido = new HashSet<>();
 
 		for (Personagem personagem : ordenadosPorTU) {
@@ -193,7 +195,9 @@ public class CombatUiRefresher {
 		}
 		return estado.getCombatentes().stream()
 				.filter(Personagem::isAtivoNoCombate)
-				.min(Comparator.comparingInt(Personagem::getContadorTU))
+				.min(Comparator.comparingInt(Personagem::getContadorTU)
+						.thenComparing((p1, p2) -> Boolean.compare(p2.isProtagonista(), p1.isProtagonista()))
+						.thenComparing((p1, p2) -> Integer.compare(p2.getPlacarIniciativa(), p1.getPlacarIniciativa())))
 				.orElse(null);
 	}
 

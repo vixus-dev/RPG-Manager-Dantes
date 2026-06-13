@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: #222;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.SeletorMapaController">
+    <top>
+        <HBox alignment="CENTER" style="-fx-background-color: #333; -fx-padding: 10;">
+            <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text="Painel de Arena Tática" />
+        </HBox>
+    </top>
+    
+    <center>
+        <HBox spacing="10" style="-fx-padding: 10;">
+            <!-- Mapas Salvos (Arquivos Locais) -->
+            <VBox spacing="10" style="-fx-border-color: #555; -fx-border-width: 1; -fx-padding: 10;" HBox.hgrow="ALWAYS">
+                <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Mapas Locais (PNG/JSON)" />
+                <ListView fx:id="listaMapas" style="-fx-background-color: #333;" VBox.vgrow="ALWAYS" />
+                <Button fx:id="btnCarregarArquivo" onAction="#onCarregarArquivoClick" style="-fx-background-color: #225522; -fx-text-fill: white;" text="Carregar Selecionado" maxWidth="Infinity" />
+                <Button fx:id="btnProcurarWindows" onAction="#onProcurarWindowsClick" style="-fx-background-color: #444; -fx-text-fill: white;" text="Procurar no Computador..." maxWidth="Infinity" />
+            </VBox>
+            
+            <!-- Gerador Procedural -->
+            <VBox spacing="10" style="-fx-border-color: #555; -fx-border-width: 1; -fx-padding: 10;" HBox.hgrow="ALWAYS">
+                <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Gerador de Mapa (Procedural)" />
+                
+                <Label style="-fx-text-fill: gray;" text="Tema / Bioma:" />
+                <ComboBox fx:id="comboBioma" maxWidth="Infinity" />
+                
+                <Label style="-fx-text-fill: gray;" text="Tamanho:" />
+                <ComboBox fx:id="comboTamanho" maxWidth="Infinity" />
+                
+                <Label style="-fx-text-fill: gray;" text="Densidade de Obstáculos:" />
+                <ComboBox fx:id="comboDensidade" maxWidth="Infinity" />
+                
+                <Button fx:id="btnGerarMapa" onAction="#onGerarMapaClick" style="-fx-background-color: #552222; -fx-text-fill: white;" text="Gerar Proceduralmente" maxWidth="Infinity" />
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

@@ -34,6 +34,10 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import br.com.dantesrpg.model.map.TileDefinition;
 
 public class MapaCombateCoordinator {
 
@@ -81,24 +85,48 @@ public class MapaCombateCoordinator {
 	}
 
 	public void carregarArenaComSeletor() {
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Abrir Arquivo de Arena Tática");
-		fileChooser.getExtensionFilters()
-				.addAll(new FileChooser.ExtensionFilter("Imagens de Mapa", "*.png", "*.jpg", "*.jpeg"));
-		fileChooser.setInitialDirectory(resolverDiretorioInicialMapas(
-				System.getProperty("user.dir") + File.separator + "resources" + File.separator + "mapas"));
-
-		File selectedFile = fileChooser.showOpenDialog(ownerWindowSupplier.get());
-		if (selectedFile != null) {
-			arquivoMapaAtualSetter.accept(selectedFile);
-			forEachMap.accept(m -> m.carregarMapaDeImagem(selectedFile));
-			carregarMetadadosDoMapa(selectedFile);
-
-			EstadoCombate estado = estadoSupplier.get();
-			if (estado != null) {
-				forEachMap.accept(m -> m.desenharPeoes(estado.getCombatentes()));
-			}
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/com/dantesrpg/view/SeletorMapaView.fxml"));
+			Parent root = loader.load();
+			
+			br.com.dantesrpg.controller.SeletorMapaController controller = loader.getController();
+			controller.initData(this);
+			
+			Stage stage = new Stage();
+			stage.setTitle("Seleção de Arena Tática");
+			stage.initOwner(ownerWindowSupplier.get());
+			stage.initModality(javafx.stage.Modality.WINDOW_MODAL);
+			stage.setScene(new Scene(root));
+			stage.show();
+		} catch (Exception e) {
+			System.err.println("Erro ao abrir SeletorMapaView.fxml:");
+			e.printStackTrace();
 		}
+	}
+
+	public void carregarArenaProcedural(TileDefinition[][] matriz) {
+		SessionLogger.log(">>> Viajando para nova área: MAPA PROCEDURAL");
+		EstadoCombate estado = estadoSupplier.get();
+		encerrarEmprestimosOvertime();
+		encerrarContratosBarbaros();
+		limparClonesDoCombate();
+		estado.getCombatentes().removeIf(p -> !isPlayer.test(p));
+		
+		arquivoMapaAtualSetter.accept(null); // Sem arquivo associado
+		
+		forEachMap.accept(m -> m.carregarMapaProcedural(matriz));
+		
+		estado.resetarIniciativa();
+
+		for (Personagem personagem : estado.getCombatentes()) {
+			personagem.setPosX(0);
+			personagem.setPosY(0);
+			personagem.setMovimentoRestanteTurno(personagem.getMovimento());
+		}
+
+		popularListasDeCombatentes.run();
+		atualizarTimelineTU.run();
+		System.out.println("NOVA ARENA PROCEDURAL CARREGADA COM SUCESSO.");
 	}
 
 	private File resolverDiretorioInicialMapas(String mapPath) {

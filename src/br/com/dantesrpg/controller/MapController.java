@@ -69,7 +69,9 @@ public class MapController {
 	@FXML
 	private Canvas aoeCanvas;
 	@FXML
-	private ScrollPane mapScrollPane;
+	private Pane mapViewport;
+	@FXML
+	private StackPane mapContent;
 	@FXML
 	private ToggleButton btnMovimentoLivre;
 	@FXML
@@ -81,7 +83,6 @@ public class MapController {
 	private static final double ZOOM_MIN = 0.3;
 	private static final double ZOOM_MAX = 3.0;
 	private static final double ZOOM_STEP = 0.1;
-	private Scale zoomScale;
 	private double dragAnchorX;
 	private double dragAnchorY;
 	private double dragAnchorHvalue;
@@ -186,122 +187,78 @@ public class MapController {
 	}
 
 	private void configurarZoomEPan() {
-		if (mapScrollPane == null)
-			return;
-
-		StackPane contentPane = (StackPane) mapScrollPane.getContent();
-		zoomScale = new Scale(1, 1, 0, 0);
-		contentPane.getTransforms().add(zoomScale);
+		if (mapViewport == null || mapContent == null) return;
 
 		// Zoom com Ctrl + Scroll
-		mapScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+		mapViewport.addEventFilter(ScrollEvent.SCROLL, event -> {
 			if (event.isControlDown()) {
 				event.consume();
 				double delta = event.getDeltaY();
+				
 				double oldZoom = zoomLevel;
-
 				if (delta > 0) {
 					zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP);
 				} else {
 					zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP);
 				}
-
-				// Calcula o ponto do mouse relativo ao conteudo para zoom centrado
-				double mouseX = event.getX();
-				double mouseY = event.getY();
-
-				double viewportW = mapScrollPane.getViewportBounds().getWidth();
-				double viewportH = mapScrollPane.getViewportBounds().getHeight();
-
-				double contentW = contentPane.getBoundsInLocal().getWidth() * oldZoom;
-				double contentH = contentPane.getBoundsInLocal().getHeight() * oldZoom;
-
-				// Posicao relativa do mouse no conteudo
-				double relX = (mapScrollPane.getHvalue() * (contentW - viewportW) + mouseX) / contentW;
-				double relY = (mapScrollPane.getVvalue() * (contentH - viewportH) + mouseY) / contentH;
-
-				zoomScale.setX(zoomLevel);
-				zoomScale.setY(zoomLevel);
-
-				// Recalcula scrollbar para manter o ponto sob o cursor
-				contentPane.layout();
-				double newContentW = contentPane.getBoundsInLocal().getWidth() * zoomLevel;
-				double newContentH = contentPane.getBoundsInLocal().getHeight() * zoomLevel;
-
-				double newHvalue = (relX * newContentW - mouseX) / (newContentW - viewportW);
-				double newVvalue = (relY * newContentH - mouseY) / (newContentH - viewportH);
-
-				mapScrollPane.setHvalue(Math.max(0, Math.min(1, newHvalue)));
-				mapScrollPane.setVvalue(Math.max(0, Math.min(1, newVvalue)));
+				
+				double f = (zoomLevel / oldZoom) - 1;
+				
+				double dx = (event.getX() - (mapContent.getBoundsInParent().getWidth() / 2 + mapContent.getBoundsInParent().getMinX()));
+				double dy = (event.getY() - (mapContent.getBoundsInParent().getHeight() / 2 + mapContent.getBoundsInParent().getMinY()));
+				
+				mapContent.setScaleX(zoomLevel);
+				mapContent.setScaleY(zoomLevel);
+				
+				mapContent.setTranslateX(mapContent.getTranslateX() - f * dx);
+				mapContent.setTranslateY(mapContent.getTranslateY() - f * dy);
 			}
 		});
 
 		// Drag com botao do meio para pan
-		mapScrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+		mapViewport.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 			if (event.isMiddleButtonDown()) {
 				dragAnchorX = event.getSceneX();
 				dragAnchorY = event.getSceneY();
-				dragAnchorHvalue = mapScrollPane.getHvalue();
-				dragAnchorVvalue = mapScrollPane.getVvalue();
-				mapScrollPane.setPannable(false);
+				dragAnchorHvalue = mapContent.getTranslateX();
+				dragAnchorVvalue = mapContent.getTranslateY();
 				event.consume();
 			}
 		});
 
-		mapScrollPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
+		mapViewport.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
 			if (event.isMiddleButtonDown()) {
-				double contentW = contentPane.getBoundsInLocal().getWidth() * zoomLevel;
-				double contentH = contentPane.getBoundsInLocal().getHeight() * zoomLevel;
-				double viewportW = mapScrollPane.getViewportBounds().getWidth();
-				double viewportH = mapScrollPane.getViewportBounds().getHeight();
-
 				double deltaX = event.getSceneX() - dragAnchorX;
 				double deltaY = event.getSceneY() - dragAnchorY;
-
-				double hRange = contentW - viewportW;
-				double vRange = contentH - viewportH;
-
-				if (hRange > 0) {
-					mapScrollPane.setHvalue(Math.max(0, Math.min(1,
-							dragAnchorHvalue - deltaX / hRange)));
-				}
-				if (vRange > 0) {
-					mapScrollPane.setVvalue(Math.max(0, Math.min(1,
-							dragAnchorVvalue - deltaY / vRange)));
-				}
+				
+				mapContent.setTranslateX(dragAnchorHvalue + deltaX);
+				mapContent.setTranslateY(dragAnchorVvalue + deltaY);
 				event.consume();
-			}
-		});
-
-		mapScrollPane.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
-			if (event.getButton() == javafx.scene.input.MouseButton.MIDDLE) {
-				mapScrollPane.setPannable(true);
 			}
 		});
 	}
 
 	public void zoomIn() {
-		if (mapScrollPane == null)
-			return;
+		if (mapContent == null) return;
 		zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP);
-		zoomScale.setX(zoomLevel);
-		zoomScale.setY(zoomLevel);
+		mapContent.setScaleX(zoomLevel);
+		mapContent.setScaleY(zoomLevel);
 	}
 
 	public void zoomOut() {
-		if (mapScrollPane == null)
-			return;
+		if (mapContent == null) return;
 		zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP);
-		zoomScale.setX(zoomLevel);
-		zoomScale.setY(zoomLevel);
+		mapContent.setScaleX(zoomLevel);
+		mapContent.setScaleY(zoomLevel);
 	}
 
 	public void resetZoom() {
-		if (mapScrollPane == null)
-			return;
+		if (mapContent == null) return;
 		zoomLevel = 1.0;
-		zoomScale.setX(1.0);
-		zoomScale.setY(1.0);
+		mapContent.setScaleX(1.0);
+		mapContent.setScaleY(1.0);
+		mapContent.setTranslateX(0);
+		mapContent.setTranslateY(0);
 	}
 
 	@FXML
@@ -898,6 +855,68 @@ public class MapController {
 
 		} catch (Exception e) {
 			System.err.println("Erro crítico ao carregar mapa de imagem.");
+			e.printStackTrace();
+			preencherComChaoPadrao();
+		}
+	}
+
+	public void carregarMapaProcedural(TileDefinition[][] matrizTiles) {
+		System.out.println("MAPA: Carregando mapa gerado proceduralmente...");
+
+		try {
+			this.gridLargura = matrizTiles.length;
+			this.gridAltura = matrizTiles[0].length;
+
+			if (aoeCanvas != null) {
+				aoeCanvas.setWidth(gridLargura * CELL_SIZE);
+				aoeCanvas.setHeight(gridAltura * CELL_SIZE);
+			}
+
+			System.out.println("MAPA: Tamanho do mapa procedural: " + gridLargura + "x" + gridAltura);
+
+			paredesGrid = new boolean[gridLargura][gridAltura];
+			celulasDoGrid = new Pane[gridLargura][gridAltura];
+
+			gridTerreno = new TipoTerreno[gridLargura][gridAltura];
+			gridEfeitos = new EfeitoInstance[gridLargura][gridAltura];
+
+			mapGrid.getChildren().clear();
+			mapGrid.getColumnConstraints().clear();
+			mapGrid.getRowConstraints().clear();
+
+			for (int x = 0; x < gridLargura; x++) {
+				mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
+			}
+			for (int y = 0; y < gridAltura; y++) {
+				mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
+			}
+
+			for (int y = 0; y < gridAltura; y++) {
+				for (int x = 0; x < gridLargura; x++) {
+
+					Pane cell = new Pane();
+					TileDefinition tile = matrizTiles[x][y];
+					if (tile == null) {
+						tile = TileRegistry.getInstance().getDefault();
+					}
+
+					final int cellX = x;
+					final int cellY = y;
+
+					aplicarTileNaCelula(cell, tile, x, y);
+
+					cell.getStyleClass().add("map-cell");
+					cell.setOnMouseClicked(event -> onGridCellClicked(cell, cellX, cellY));
+					cell.setOnMouseEntered(event -> onGridCellMouseEntered(cell, cellX, cellY));
+					mapGrid.add(cell, x, y);
+					celulasDoGrid[x][y] = cell;
+				}
+			}
+
+			inicializarHelpers();
+
+		} catch (Exception e) {
+			System.err.println("Erro crítico ao carregar mapa procedural.");
 			e.printStackTrace();
 			preencherComChaoPadrao();
 		}

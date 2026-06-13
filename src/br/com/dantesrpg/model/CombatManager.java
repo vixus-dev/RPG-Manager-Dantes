@@ -167,7 +167,10 @@ public class CombatManager {
 			return;
 
 		Personagem proximoAtor = estado.getCombatentes().stream().filter(p -> p.isAtivoNoCombate())
-				.min(java.util.Comparator.comparingInt(Personagem::getContadorTU)).orElse(null);
+				.min(java.util.Comparator.comparingInt(Personagem::getContadorTU)
+						.thenComparing((p1, p2) -> Boolean.compare(p2.isProtagonista(), p1.isProtagonista()))
+						.thenComparing((p1, p2) -> Integer.compare(p2.getPlacarIniciativa(), p1.getPlacarIniciativa())))
+				.orElse(null);
 
 		if (proximoAtor == null) {
 			System.out.println("Nenhum combatente vivo encontrado.");
