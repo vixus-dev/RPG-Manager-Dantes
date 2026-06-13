@@ -30,6 +30,7 @@ public class Personagem {
 	private int nivel;
 	private int experiencia;
 	private int placarIniciativa;
+	private int iniciativaBase;
 	private double vidaMaximaBase;
 	private int pontosParaDistribuir;
 
@@ -146,6 +147,7 @@ public class Personagem {
 		this.escudoSangueAtual = 0.0;
 		this.escudoSangueMaximo = 0.0;
 		this.vidaMaximaBase = vidaMaximaBase;
+		this.iniciativaBase = iniciativaBase;
 
 		if (this.classe != null && this.classe.getHabilidades(this) != null) {
 			this.habilidadesDeClasse.addAll(this.classe.getHabilidades(this));
@@ -156,8 +158,6 @@ public class Personagem {
 		}
 
 		recalcularAtributosEstatisticas();
-		int des = this.atributosFinais.getOrDefault(Atributo.DESTREZA, 1);
-		this.placarIniciativa = iniciativaBase + des;
 		this.vidaMaxima = (double) vidaMaximaBase;
 		this.vidaAtual = this.vidaMaxima;
 		this.manaMaxima = 6 + (this.atributosFinais.getOrDefault(Atributo.INSPIRACAO, 1) / 2);
@@ -220,6 +220,9 @@ public class Personagem {
 		aplicarModificadoresDeEfeitos();
 		aplicarBonusEspecificos();
 		clampValoresFinais();
+
+		int des = this.atributosFinais.getOrDefault(Atributo.DESTREZA, 1);
+		this.placarIniciativa = this.iniciativaBase + des;
 	}
 
 	private void resetarStats() {
@@ -1240,7 +1243,12 @@ public class Personagem {
 	}
 
 	public void setIniciativaBase(int valor) {
-		this.placarIniciativa = valor;
+		this.iniciativaBase = valor;
+		recalcularAtributosEstatisticas();
+	}
+
+	public int getIniciativaBase() {
+		return iniciativaBase;
 	}
 
 	public void setAtributoBase(Atributo atributo, int valor) {

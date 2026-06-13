@@ -478,8 +478,7 @@ public class PersonagemJsonService {
 			data.put("fantasmaNobre", personagem.getFantasmaNobre().getClass().getSimpleName());
 		}
 
-		int destreza = personagem.getAtributosFinais().getOrDefault(Atributo.DESTREZA, 1);
-		data.put("iniciativaBase", personagem.getPlacarIniciativa() - destreza);
+		data.put("iniciativaBase", personagem.getIniciativaBase());
 
 		data.put("atributosBase", personagem.getAtributosBase());
 		data.put("wieldingMaximo", personagem.getWieldingMaximo());
