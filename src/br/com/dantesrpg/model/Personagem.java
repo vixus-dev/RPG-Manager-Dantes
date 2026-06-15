@@ -239,8 +239,7 @@ public class Personagem {
 	private void aplicarModificadoresDeAtributo() {
 		// Classe
 		if (this.classe != null && this.classe.getModificadoresDeAtributo() != null) {
-			this.classe.getModificadoresDeAtributo()
-					.forEach((atr, mod) -> this.atributosFinais.merge(atr, mod, Integer::sum));
+			this.classe.getModificadoresDeAtributo().forEach((atr, mod) -> this.atributosFinais.merge(atr, mod, Integer::sum));
 		}
 
 		// Raça (Permanente)

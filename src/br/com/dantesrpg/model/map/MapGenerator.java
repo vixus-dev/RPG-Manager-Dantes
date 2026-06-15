@@ -18,7 +18,6 @@ public class MapGenerator {
 		switch (bioma) {
 		case "Laboratório":
 			idChaoBase = "floor9";
-			idChaoSecundario = "floor";
 			idParede = "wall7";
 			idEfeito = "acido";
 			break;
