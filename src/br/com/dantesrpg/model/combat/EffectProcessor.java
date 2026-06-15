@@ -125,9 +125,8 @@ public class EffectProcessor {
 
 	public void aplicarControleMental(Personagem alvo, EstadoCombate estado) {
 		System.out.println(">>> " + alvo.getNome() + " FOI SEDUZIDO! Trocando de lado por 100 TU.");
-		br.com.dantesrpg.model.util.SessionLogger.log("❤ " + alvo.getNome() + " teve a mente controlada! ❤");
 
-		alvo.removerEfeito("Charm");
+alvo.removerEfeito("Charm");
 
 		boolean jaSalvo = alvo.getPropriedades().stream().anyMatch(s -> s.startsWith("ORIGINAL_FACTION:"));
 		if (!jaSalvo) {

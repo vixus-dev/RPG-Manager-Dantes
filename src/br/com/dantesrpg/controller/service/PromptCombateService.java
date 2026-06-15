@@ -11,7 +11,6 @@ import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.util.DiceRoller;
-import br.com.dantesrpg.model.util.SessionLogger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -62,9 +61,8 @@ public class PromptCombateService {
 				boolean sucesso = valor >= dificuldadeNA;
 				String msg = sucesso ? "SUCESSO" : "FALHA";
 				System.out.println(">>> TESTE (" + valor + " vs NA " + dificuldadeNA + "): " + msg);
-				SessionLogger.log(personagem.getNome() + " rolou " + valor + " no teste de "
-						+ atributo.name() + " (NA " + dificuldadeNA + "): " + msg);
-				return sucesso;
+
+return sucesso;
 			} catch (NumberFormatException e) {
 				System.out.println(">>> Entrada inválida. Considerando Falha.");
 				return false;
@@ -99,9 +97,8 @@ public class PromptCombateService {
 				boolean sucesso = total >= na;
 
 				humano.resolverResultadoTeste(personagem, sucesso, total);
-				SessionLogger.log(personagem.getNome() + " Rolagem: " + rolagem + " + END(" + atributoEndurance
-						+ ") = " + total + " vs NA " + na + " -> " + (sucesso ? "SUCESSO" : "FALHA"));
-				atualizarInterfaceTotal.run();
+
+atualizarInterfaceTotal.run();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -136,9 +133,8 @@ public class PromptCombateService {
 
 			int rolagem = controller.getResultadoRolagem();
 			boolean sucesso = rolagem > dificuldade;
-			SessionLogger.log(pistoleiro.getNome() + " testou Gatilho Veloz: "
-					+ rolagem + " vs " + dificuldade + " -> " + (sucesso ? "SUCESSO" : "FALHA"));
-			return sucesso;
+
+return sucesso;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

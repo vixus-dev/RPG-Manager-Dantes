@@ -32,8 +32,6 @@ import br.com.dantesrpg.model.fantasmasnobres.Ritual;
 import br.com.dantesrpg.model.fantasmasnobres.TheMastersCall;
 import br.com.dantesrpg.model.fantasmasnobres.VigiliaEterna;
 import br.com.dantesrpg.model.items.EssenciaInimigo;
-import br.com.dantesrpg.model.util.SessionLogger;
-
 public class FantasmaNobreActionService {
 
 	private final Supplier<EstadoCombate> estadoSupplier;
@@ -101,8 +99,8 @@ public class FantasmaNobreActionService {
 		}
 
 		System.out.println(">>> " + ator.getNome() + " está invocando " + essencia.getNome() + "!");
-		SessionLogger.log(ator.getNome() + " invocou " + essencia.getNome() + "!");
-		ator.getInventario().removerItem(essencia);
+
+ator.getInventario().removerItem(essencia);
 
 		Personagem servoInvocado = criarServo(ator, essencia);
 		adicionarInvocacaoAoCombate(servoInvocado, ator);

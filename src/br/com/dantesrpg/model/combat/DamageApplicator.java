@@ -277,9 +277,8 @@ public class DamageApplicator {
 				vidaNova = 0;
 				System.out.println(">>> CONTRATO LETAL: " + alvo.getNome()
 						+ " tem 100% da vida comprometida em contratos — dano letal!");
-				br.com.dantesrpg.model.util.SessionLogger
-						.log("☠ " + alvo.getNome() + " sucumbiu ao peso dos Contratos de Vida.");
-			} else {
+
+} else {
 				vidaNova = vidaPre - danoRestante;
 			}
 
@@ -290,10 +289,8 @@ public class DamageApplicator {
 
 			System.out.println(
 					">>> DANO APLICADO: " + alvo.getNome() + " -" + String.format("%.1f", danoReal) + " HP.");
-			br.com.dantesrpg.model.util.SessionLogger
-					.log(alvo.getNome() + " sofreu " + String.format("%.1f", danoReal) + " de dano.");
 
-			// ========== EMPUXO (KNOCKBACK) ==========
+// ========== EMPUXO (KNOCKBACK) ==========
 			// Executado após o dano ser registrado, mas antes da checagem de morte,
 			// para que a posição final do alvo reflita o combate mesmo se ele morrer.
 			if (ator != null && alvo.isVivo()) {
@@ -356,10 +353,8 @@ public class DamageApplicator {
 				// Explosivo
 				if (alvo.getPropriedades().contains("EXPLOSIVO")) {
 					System.out.println(">>> PROPRIEDADE ATIVADA: " + alvo.getNome() + " EXPLODIU!");
-					br.com.dantesrpg.model.util.SessionLogger
-							.log("💥 " + alvo.getNome() + " explode ao morrer!");
 
-					int danoExplosao = (int) (alvo.getVidaMaximaBase() * 0.50);
+int danoExplosao = (int) (alvo.getVidaMaximaBase() * 0.50);
 
 					Habilidade explosaoDummy = new Habilidade("Explosão", "Dano ao morrer", null, 0, 0, 0,
 							TipoAlvo.AREA_QUADRADA, 3, 0, 0, null) {
@@ -382,10 +377,8 @@ public class DamageApplicator {
 				// Explodir em Chamas
 				if (alvo.getPropriedades().contains("EXPLODIR") || alvo.getNome().contains("Larva")) {
 					System.out.println(">>> " + alvo.getNome() + " EXPLODIU EM CHAMAS!");
-					br.com.dantesrpg.model.util.SessionLogger
-							.log("💥 " + alvo.getNome() + " deixou um rastro de magma!");
 
-					if (getController() != null && getController().getMapController() != null) {
+if (getController() != null && getController().getMapController() != null) {
 						getController().getMapController().criarAreaDeFogo(alvo.getPosX(), alvo.getPosY(), 1, 8, alvo);
 					}
 				}
@@ -394,9 +387,8 @@ public class DamageApplicator {
 				if (ator != null && ator.possuiArmaEquipada("Murasame")) {
 					System.out.println(">>> MURASAME (KILL): Alma capturada!");
 					ator.getInventario().adicionarItem(new br.com.dantesrpg.model.items.EssenciaInimigo(alvo));
-					br.com.dantesrpg.model.util.SessionLogger
-							.log(ator.getNome() + " capturou a alma de " + alvo.getNome());
-					if (getController() != null)
+
+if (getController() != null)
 						getController().atualizarInterfaceTotal();
 				}
 
