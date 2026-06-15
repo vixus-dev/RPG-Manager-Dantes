@@ -1,46 +1,46 @@
 {
   "iniciativaBase": 20,
   "atributosBase": {
-    "INTELIGENCIA": 20,
-    "INSPIRACAO": 20,
-    "TOPOR": 20,
-    "SORTE": 20,
-    "PERCEPCAO": 20,
-    "SAGACIDADE": 20,
-    "DESTREZA": 20,
-    "ENDURANCE": 20,
+    "CARISMA": 20,
     "FORCA": 20,
-    "CARISMA": 20
+    "DESTREZA": 20,
+    "SORTE": 20,
+    "TOPOR": 20,
+    "ENDURANCE": 20,
+    "PERCEPCAO": 20,
+    "INTELIGENCIA": 20,
+    "SAGACIDADE": 20,
+    "INSPIRACAO": 20
   },
-  "escudoSangueAtual": 0,
+  "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
-  "escudoNormalAtual": 0,
+  "escudoNormalAtual": 0.0,
   "carteira": {
     "prata": 16,
     "ouro": 2,
     "bronze": 318
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 20000,
-  "contadorTU": 0,
+  "vidaAtual": 20000.0,
+  "contadorTU": 175,
   "armaEquipada": "Master Katana",
   "inventario": {},
   "xpAtual": 1300,
-  "vidaMaximaBase": 20000,
+  "vidaMaximaBase": 20000.0,
   "classe": "Ladino",
+  "armasEquipadas": [
+    "Master Katana"
+  ],
   "nome": "Virgilio",
   "RaçaV2": true,
   "segmentos": 0,
   "grau": 0,
-  "posX": 5,
-  "posY": 6,
+  "posX": 4,
+  "posY": 5,
   "amuleto2": "Medalhão da Virgilio",
   "amuleto1": "Medalhão da Virgilio",
-  "manaAtual": 20,
+  "manaAtual": 20.0,
   "raca": "Half-Demon",
   "nivel": 20,
-  "wieldingMaximo": 2,
-  "armasEquipadas": [
-    "Master Katana"
-  ]
+  "wieldingMaximo": 2
 }

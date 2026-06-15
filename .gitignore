@@ -50,4 +50,5 @@ desktop.ini
 ui-ux-pro-max-skill-2.5.0/
 *-skill-*/
 
-
+# Maven Build
+target/
