@@ -130,8 +130,8 @@ public class PersonagemEffects {
 					double tuExtra = removido.getModificadores().get("TU_ADICIONADO");
 					personagem.setContadorTU(personagem.getContadorTU() + (int) tuExtra);
 					System.out.println(">>> CHOQUE PROCOU! +" + (int) tuExtra + " TU em " + personagem.getNome());
-					br.com.dantesrpg.model.util.SessionLogger.log("⚡ " + personagem.getNome() + " sofreu Choque: +" + (int) tuExtra + " TU!");
-				}
+
+}
 			}
 
 			if ("Fortificar".equals(nomeEfeito)) {
@@ -144,8 +144,8 @@ public class PersonagemEffects {
 						if (personagem.isVivo()) {
 							double cura = restante / 2.0;
 							personagem.setVidaAtual(personagem.getVidaAtual() + cura);
-							br.com.dantesrpg.model.util.SessionLogger.log(personagem.getNome() + " - Escudo de Sangue [Fortificar] expirou. " + (int) restante + " de escudo convertido em " + (int) cura + " de Cura.");
-						}
+
+}
 					}
 				}
 			}

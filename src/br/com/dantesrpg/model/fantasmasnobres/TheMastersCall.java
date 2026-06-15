@@ -9,8 +9,6 @@ import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
-import br.com.dantesrpg.model.util.SessionLogger;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -113,8 +111,8 @@ public class TheMastersCall extends FantasmaNobre {
 		String mensagem = conjurador.getNome() + " ativou The Master's Call: Ecstasy of Gold. Cura base: "
 				+ formatarValor(curaBase) + ".";
 		System.out.println(">>> " + mensagem);
-		SessionLogger.log(mensagem);
-	}
+
+}
 
 	private void ativarCrashOfWorlds(Personagem conjurador, EstadoCombate estado, CombatManager manager) {
 		Efeito aura = new Efeito(EFEITO_CRASH, TipoEfeito.BUFF, DURACAO_TU, Map.of(), 0, 0);
@@ -125,8 +123,8 @@ public class TheMastersCall extends FantasmaNobre {
 
 		String mensagem = conjurador.getNome() + " ativou The Master's Call: Crash of Worlds.";
 		System.out.println(">>> " + mensagem);
-		SessionLogger.log(mensagem);
-	}
+
+}
 
 	private double solicitarValorCuraBase(Personagem conjurador) {
 		javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog("0");

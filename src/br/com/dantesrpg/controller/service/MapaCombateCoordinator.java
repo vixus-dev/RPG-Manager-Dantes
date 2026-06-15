@@ -27,7 +27,6 @@ import br.com.dantesrpg.model.map.MapMetadata;
 import br.com.dantesrpg.model.racas.Anao;
 import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.util.ContratoDeVidaUtils;
-import br.com.dantesrpg.model.util.SessionLogger;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -105,8 +104,8 @@ public class MapaCombateCoordinator {
 	}
 
 	public void carregarArenaProcedural(TileDefinition[][] matriz) {
-		SessionLogger.log(">>> Viajando para nova área: MAPA PROCEDURAL");
-		EstadoCombate estado = estadoSupplier.get();
+
+EstadoCombate estado = estadoSupplier.get();
 		encerrarEmprestimosOvertime();
 		encerrarContratosBarbaros();
 		limparClonesDoCombate();
@@ -156,8 +155,8 @@ public class MapaCombateCoordinator {
 	}
 
 	public void carregarNovaArenaLogic(File mapaFile) {
-		SessionLogger.log(">>> Viajando para nova área: " + mapaFile.getName());
-		EstadoCombate estado = estadoSupplier.get();
+
+EstadoCombate estado = estadoSupplier.get();
 		encerrarEmprestimosOvertime();
 		encerrarContratosBarbaros();
 		limparClonesDoCombate();
@@ -326,8 +325,8 @@ public class MapaCombateCoordinator {
 
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.isPresent() && result.get() == ButtonType.OK) {
-			SessionLogger.log("--- FIM DO COMBATE (Transição) ---");
-			combatManagerSupplier.get().distribuirXpAposCombate(estadoSupplier.get());
+
+combatManagerSupplier.get().distribuirXpAposCombate(estadoSupplier.get());
 
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Selecione a Próxima Arena");

@@ -38,6 +38,6 @@ public class VeuDeSombras extends Habilidade {
 		Efeito stealth = EffectFactory.criarEfeito("Stealth", 250, 0); // 150 TU de duração
 		conjurador.adicionarEfeito(stealth);
 		
-		br.com.dantesrpg.model.util.SessionLogger.log("👤 " + conjurador.getNome() + " sacrificou " + (int)custoVida + " HP e desapareceu nas sombras!");
-	}
+
+}
 }

@@ -321,8 +321,8 @@ public class CombatManager {
 			String msg = "⚔️ CONTRA-ATAQUE #" + (i + 1) + ": " + p.getNome()
 					+ " agirá imediatamente (TU=" + novoTU + ").";
 			System.out.println(">>> " + msg);
-			br.com.dantesrpg.model.util.SessionLogger.log(msg);
-		}
+
+}
 	}
 
 	// ========== AVANÇO DE TEMPO ==========
@@ -342,9 +342,8 @@ public class CombatManager {
 			if (mainController != null && mainController.isEfeitoAndarAtivo()) {
 				String efeito = mainController.getEfeitoAndarAtual();
 				if (efeito.startsWith("2º Andar") && tempoGlobalAtual % 200 == 0) {
-					br.com.dantesrpg.model.util.SessionLogger
-							.log("⚠️ 2º ANDAR: Turbulência! Todos devem rodar TOPOR para não serem arremessados!");
-				} else if (efeito.startsWith("3º Andar") && tempoGlobalAtual % 300 == 0) {
+
+} else if (efeito.startsWith("3º Andar") && tempoGlobalAtual % 300 == 0) {
 					// Popup para selecionar alvos do Olho da Gula
 					List<Personagem> combatentesAtivos = estado.getCombatentes().stream()
 							.filter(Personagem::isAtivoNoCombate)
@@ -395,9 +394,8 @@ public class CombatManager {
 						Optional<List<Personagem>> resultado = dialog.showAndWait();
 						if (resultado.isPresent() && resultado.get() != null && !resultado.get().isEmpty()) {
 							for (Personagem alvo : resultado.get()) {
-								br.com.dantesrpg.model.util.SessionLogger
-										.log("👁️ O OLHO DA GULA observou " + alvo.getNome() + "!");
-								damageApplicator.aplicarDanoAoAlvo(null, alvo, 50.0, true, TipoAcao.AMBIENTE, estado);
+
+damageApplicator.aplicarDanoAoAlvo(null, alvo, 50.0, true, TipoAcao.AMBIENTE, estado);
 								Efeito stun = new Efeito("STUN", TipoEfeito.DEBUFF, 100, null, 0, 0);
 								alvo.adicionarEfeito(stun);
 								alvo.recalcularAtributosEstatisticas();
@@ -408,8 +406,8 @@ public class CombatManager {
 
 				// 4º ANDAR: Dia (Vento Escaldante)
 				else if (efeito.contains("Dia") && tempoGlobalAtual % 35 == 0) {
-					br.com.dantesrpg.model.util.SessionLogger.log("☀️ Vento Escaldante queimou a arena!");
-					for (Personagem p : estado.getCombatentes()) {
+
+for (Personagem p : estado.getCombatentes()) {
 						if (p.isAtivoNoCombate() && !p.isProtagonista()) {
 							damageApplicator.aplicarDanoAoAlvo(null, p, 2.5, true, TipoAcao.AMBIENTE, estado);
 						}
@@ -427,8 +425,8 @@ public class CombatManager {
 
 				// 4º ANDAR: Noite (Vento Congelante)
 				else if (efeito.contains("Noite") && tempoGlobalAtual % 100 == 0) {
-					br.com.dantesrpg.model.util.SessionLogger.log("❄️ Vento Congelante! Habilidades custam +20 TU.");
-					Efeito congelante = new Efeito("Vento Congelante", TipoEfeito.DEBUFF, 100, null, 0, 0);
+
+Efeito congelante = new Efeito("Vento Congelante", TipoEfeito.DEBUFF, 100, null, 0, 0);
 					for (Personagem p : estado.getCombatentes()) {
 						if (p.isAtivoNoCombate() && !p.isProtagonista())
 							p.adicionarEfeito(congelante);
@@ -440,8 +438,8 @@ public class CombatManager {
 					if (tempoGlobalAtual % 100 == 0 && duracaoChuvaRestante <= 0) {
 						if (Math.random() < 0.20) {
 							duracaoChuvaRestante = 300;
-							br.com.dantesrpg.model.util.SessionLogger.log("⛈️ Começou a chover torrencialmente!");
-						}
+
+}
 					}
 					if (duracaoChuvaRestante > 0) {
 						duracaoChuvaRestante--;
@@ -451,9 +449,8 @@ public class CombatManager {
 							if (!vivos.isEmpty()) {
 								Personagem alvoRaio = vivos.get(random.nextInt(vivos.size()));
 								if (!alvoRaio.isProtagonista()) {
-									br.com.dantesrpg.model.util.SessionLogger
-											.log("⚡ RAIO atingiu " + alvoRaio.getNome() + "!");
-									Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 20);
+
+Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 20);
 									Efeito queimacao = br.com.dantesrpg.model.util.EffectFactory
 											.criarEfeito("Queimação", 0, 15);
 									alvoRaio.adicionarEfeito(choque);
@@ -462,9 +459,8 @@ public class CombatManager {
 								}
 							}
 						}
-						if (duracaoChuvaRestante == 0)
-							br.com.dantesrpg.model.util.SessionLogger.log("☁️ A chuva parou.");
-					}
+						if (duracaoChuvaRestante == 0) {}
+}
 				}
 			}
 
@@ -495,8 +491,8 @@ public class CombatManager {
 						p.setVidaAtual(vidaAntes - 2, estado, mainController);
 						p.registrarDanoSofrido(2, tempoGlobalAtual);
 						if (p.getVidaAtual() <= 0 && !p.isVivo()) {
-							br.com.dantesrpg.model.util.SessionLogger.log("💀 " + p.getNome() + " sucumbiu na Areia!");
-							if (mainController != null) mainController.atualizarInterfaceAposMorte();
+
+if (mainController != null) mainController.atualizarInterfaceAposMorte();
 						}
 					}
 				}
@@ -605,9 +601,8 @@ public class CombatManager {
 
 								if (hitsRecebidos >= 2) {
 									System.out.println(">>> " + p.getNome() + " ACORDOU após 2 ticks de dano!");
-									br.com.dantesrpg.model.util.SessionLogger
-											.log(p.getNome() + " acordou com a dor (" + efeitoObj.getNome() + ").");
-									p.removerEfeito("Dormindo");
+
+p.removerEfeito("Dormindo");
 								} else {
 									System.out.println(">>> " + p.getNome() + " recebeu dano dormindo ("
 											+ hitsRecebidos + "/2 para acordar).");
@@ -625,9 +620,8 @@ public class CombatManager {
 						if (vidaAntes > 0 && !p.isAtivoNoCombate() && !p.isVivo()) {
 							String msgMorte = "💀 " + p.getNome() + " morreu por " + efeitoObj.getNome() + "!";
 							System.out.println(">>> " + p.getNome() + " morreu por DoT.");
-							br.com.dantesrpg.model.util.SessionLogger.log(msgMorte);
 
-							// XP
+// XP
 							if (p.getXpReward() > 0) {
 								System.out.println(">>> XP por DoT: " + p.getXpReward());
 								estado.adicionarXpAoPool(p.getXpReward());
@@ -638,9 +632,8 @@ public class CombatManager {
 								for (Personagem combatente : estado.getCombatentes()) {
 									if (combatente.possuiArmaEquipada("Murasame")) {
 										System.out.println(">>> MURASAME: Capturando Essência (DoT)...");
-										br.com.dantesrpg.model.util.SessionLogger
-												.log("Murasame absorveu a alma de " + p.getNome());
-										combatente.getInventario()
+
+combatente.getInventario()
 												.adicionarItem(new br.com.dantesrpg.model.items.EssenciaInimigo(p));
 										break;
 									}
@@ -754,16 +747,14 @@ public class CombatManager {
 			String cdKey = "CD:" + nomeAcao;
 			if (ator.getEfeitosAtivos().containsKey(cdKey)) {
 				System.out.println(">>> AÇÃO BLOQUEADA: " + nomeAcao + " está em Cooldown!");
-				br.com.dantesrpg.model.util.SessionLogger
-						.log(ator.getNome() + " tentou usar " + nomeAcao + " mas está em recarga.");
-				return;
+
+return;
 			}
 		}
 
 		String acaoNome = (input.getHabilidade() != null) ? input.getHabilidade().getNome() : "Ataque Básico";
-		br.com.dantesrpg.model.util.SessionLogger.log(input.getAtor().getNome() + " usou [" + acaoNome + "]");
 
-		List<Personagem> alvos = input.getAlvos();
+List<Personagem> alvos = input.getAlvos();
 		Habilidade habilidade = input.getHabilidade();
 		String tipoParaVerificacao = (habilidade == null) ? "ATAQUE" : "HABILIDADE";
 
@@ -1123,8 +1114,8 @@ public class CombatManager {
 				+ arma.getNome() + " (" + arma.getMunicaoAtual() + "/" + arma.getMunicaoMaxima()
 				+ "). Custo: " + custoRecarga + " TU.";
 		System.out.println(mensagem);
-		br.com.dantesrpg.model.util.SessionLogger.log(mensagem.replace(">>> ", ""));
-		if (excedente > 0) {
+
+if (excedente > 0) {
 			System.out.println(">>> " + excedente + " bala(s) excedente(s) foram perdidas no abismo.");
 		}
 
@@ -1346,8 +1337,8 @@ public class CombatManager {
 		System.out.println("DEBUG XP: Tentando distribuir. Pool: " + xpTotal);
 
 		if (xpTotal <= 0) {
-			br.com.dantesrpg.model.util.SessionLogger.log("Fim de combate. Nenhum XP acumulado.");
-			return;
+
+return;
 		}
 
 		List<Personagem> jogadoresVivos = estado.getCombatentes().stream()
@@ -1359,9 +1350,8 @@ public class CombatManager {
 		int xpPorCabeca = xpTotal;
 
 		System.out.println("\n=== DISTRIBUIÇÃO DE XP (" + xpTotal + " XP para CADA jogador) ===");
-		br.com.dantesrpg.model.util.SessionLogger.log("Cada jogador recebeu " + xpPorCabeca + " XP.");
 
-		for (Personagem p : jogadoresVivos) {
+for (Personagem p : jogadoresVivos) {
 			p.ganharExperiencia(xpPorCabeca);
 		}
 	}

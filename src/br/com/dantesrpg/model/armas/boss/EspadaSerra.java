@@ -38,9 +38,8 @@ public class EspadaSerra extends br.com.dantesrpg.model.ArmaMelee {
 		this.modoEngagedAtivo = true;
 
 		System.out.println(">>> SWORDSMACHINE: MODO ENGAGED ATIVADO! <<<");
-		br.com.dantesrpg.model.util.SessionLogger.log("⚠️ " + p.getNome() + " entra em fúria mecânica!");
 
-		Map<String, Double> mods = new HashMap<>();
+Map<String, Double> mods = new HashMap<>();
 		mods.put("ARMADURA_TOTAL", 20.0);
 
 		Efeito engagedBuff = new Efeito("Modo Engaged", TipoEfeito.BUFF, 9999, mods, 0, 0);
