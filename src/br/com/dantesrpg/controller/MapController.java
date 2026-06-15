@@ -638,9 +638,8 @@ public class MapController {
 				if (custoMovimento > atorAtual.getMovimentoRestanteTurno())
 					return;
 
-				br.com.dantesrpg.model.util.SessionLogger
-						.log(atorAtual.getNome() + " moveu-se para (" + x + "," + y + ").");
-				atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - custoMovimento);
+
+atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - custoMovimento);
 				atorAtual.setPosX(x);
 				atorAtual.setPosY(y);
 

@@ -352,8 +352,8 @@ public class CombatController {
 
 			// Distribui XP
 			combatManager.distribuirXpAposCombate(estadoCombate);
-			br.com.dantesrpg.model.util.SessionLogger.log("--- Combate Finalizado pelo Mestre ---");
-			mapaCombateCoordinator.encerrarEmprestimosOvertime();
+
+mapaCombateCoordinator.encerrarEmprestimosOvertime();
 			mapaCombateCoordinator.encerrarContratosBarbaros();
 			mapaCombateCoordinator.encerrarPosturasAnao();
 			limparClonesDoCombate();
@@ -1143,16 +1143,6 @@ public class CombatController {
 		janelasCombateCoordinator.abrirJanelaBestiario();
 	}
 
-	@FXML
-	private void onAbaLogClick() {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/com/dantesrpg/view/SessionLogView.fxml"));
-			Parent logRoot = loader.load();
-			rootPane.setCenter(logRoot);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	@FXML
 	private void onAbaCriarClick() {

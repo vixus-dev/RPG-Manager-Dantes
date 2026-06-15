@@ -893,9 +893,8 @@ public class LojaController {
 			// Enviar log de transação normal
 			String logMsg = String.format("[LOJA] %s comprou %dx %s por %d %s",
 					jogadorAtual.getNome(), quantidade, oferta.item.getNome(), precoTotal, traduzirMoeda(moedaTipo));
-			br.com.dantesrpg.model.util.SessionLogger.log(logMsg);
 
-			mainController.salvarEstadoJogadores();
+mainController.salvarEstadoJogadores();
 			atualizarUI();
 		} else {
 			Alert alert = new Alert(Alert.AlertType.WARNING, "Moeda incorreta ou insuficiente!");
@@ -1090,9 +1089,8 @@ public class LojaController {
 					String logMsg = String.format("[LOJA] %s barganhou e comprou %dx %s por %d %s (%s de %d%%, preço original: %d %s)",
 							jogadorAtual.getNome(), quantidade, item.getNome(), precoFinalTotal, traduzirMoeda(moedaTipo),
 							tipoAlteracao, Math.abs(pctInt), precoOriginalTotal, traduzirMoeda(moedaTipo));
-					br.com.dantesrpg.model.util.SessionLogger.log(logMsg);
 
-					mainController.salvarEstadoJogadores();
+mainController.salvarEstadoJogadores();
 					atualizarUI();
 				} else {
 					mostrarAlertaErro("Erro de Compra", "Não foi possível realizar o débito de moedas.");
