@@ -58,6 +58,6 @@ public class SacrificioDeMaat extends Habilidade {
 		
 		alvo.recalcularAtributosEstatisticas();
 		
-		br.com.dantesrpg.model.util.SessionLogger.log("⚖️ " + conjurador.getNome() + " sacrificou " + (int)danoAliado + " HP de " + alvo.getNome() + " em troca de +" + (int)(bonusDano * 100) + "% de Dano!");
-	}
+
+}
 }

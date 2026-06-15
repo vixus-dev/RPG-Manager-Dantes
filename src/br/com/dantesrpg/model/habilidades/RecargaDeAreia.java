@@ -29,7 +29,6 @@ public class RecargaDeAreia extends Habilidade {
 		Arma arma = conjurador.getArmaEquipada();
 		if (arma != null) {
 			arma.recarregar();
-			br.com.dantesrpg.model.util.SessionLogger.log("🔫 " + conjurador.getNome() + " recarregou sua arma!");
 		}
 	}
 }

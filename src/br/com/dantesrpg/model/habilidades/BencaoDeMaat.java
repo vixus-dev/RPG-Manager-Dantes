@@ -52,6 +52,6 @@ public class BencaoDeMaat extends Habilidade {
 		
 		alvo.recalcularAtributosEstatisticas();
 		
-		br.com.dantesrpg.model.util.SessionLogger.log("⚖️ " + conjurador.getNome() + " abençoou " + alvo.getNome() + " com um escudo de " + (int)valorEscudo + " e +25% de Dano!");
-	}
+
+}
 }

@@ -42,8 +42,8 @@ public class CorteDeApofis extends Habilidade {
 		for (Personagem alvo : alvos) {
 			if (alvo != conjurador) {
 				alvo.adicionarEfeito(cortaCura);
-				br.com.dantesrpg.model.util.SessionLogger.log("⚔️ " + alvo.getNome() + " foi afligido com Corta Cura+!");
-			}
+
+}
 		}
 	}
 }
