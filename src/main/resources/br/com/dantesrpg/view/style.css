@@ -1529,6 +1529,201 @@
     -fx-border-radius: 4;
     -fx-border-color: rgba(233, 69, 96, 0.5);
     -fx-border-width: 1;
+    -fx-padding: 4 14;
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.3), 6, 0, 0, 0);
+}
+
+/* --- PREVIEW DE ITEM --- */
+.loja-preview-panel {
+    -fx-background-color: #16161e;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 14;
+}
+
+.loja-preview-nome {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #3a3a4a transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 8 0;
+}
+
+.loja-preview-descricao {
+    -fx-text-fill: #909090;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 4 0;
+}
+
+.loja-preview-stat {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 2 0;
+}
+
+.loja-preview-separator {
+    -fx-background-color: #2a2a3a;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+    -fx-padding: 4 0;
+}
+
+/* --- BARRA DE OVERCLOCK --- */
+.overclock-bar-track {
+    -fx-background-color: #0a0a12;
+    -fx-background-radius: 3;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-pref-height: 12;
+}
+
+.overclock-bar-fill {
+    -fx-background-color: linear-gradient(to right, #0a3a5a, #00ffff);
+    -fx-background-radius: 2;
+}
+
+.overclock-bar-fill-max {
+    -fx-background-color: linear-gradient(to right, #5a4a00, #ffd700);
+    -fx-background-radius: 2;
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.4), 4, 0, 0, 0);
+}
+
+/* --- SEPARADOR DE CATEGORIA --- */
+.loja-categoria-header {
+    -fx-text-fill: #707080;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #2a2a3a transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 0 4 0;
+}
+
+/* --- SEÇÃO DE COLUNA --- */
+.loja-section {
+    -fx-background-color: #16161e;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 12;
+}
+
+.loja-section-title {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #3a3a4a transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 6 0;
+}
+
+/* --- OVERCLOCK TOKEN COUNT --- */
+.loja-token-count {
+    -fx-background-color: #0a2a3a;
+    -fx-text-fill: cyan;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 6 12;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #0a4a5a;
+    -fx-border-width: 1;
+}
+
+/* --- ÍCONE DE TIPO --- */
+.loja-tipo-icone {
+    -fx-font-size: 16px;
+    -fx-min-width: 24;
+    -fx-alignment: center;
+}
+
+/* ============================================= */
+/* ===  BOTÃO INFO DOSSIÊ E POPUP             === */
+/* ============================================= */
+
+.editor-btn-info {
+    -fx-background-color: rgba(0, 240, 255, 0.08);
+    -fx-text-fill: #00f0ff;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: rgba(0, 240, 255, 0.3);
+    -fx-border-width: 1;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+.editor-btn-info:hover {
+    -fx-background-color: rgba(0, 240, 255, 0.18);
+    -fx-border-color: #00f0ff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 240, 255, 0.45), 8, 0, 0, 0);
+}
+
+.popup-dialog {
+    -fx-background-color: #0c0b15;
+    -fx-border-color: #e94560;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-padding: 16;
+}
+
+.popup-dialog .label {
+    -fx-text-fill: white;
+}
+
+.popup-dialog .dialog-pane {
+    -fx-background-color: #0c0b15;
+}
+
+.popup-dialog .button {
+    -fx-background-color: #1a1a2e;
+    -fx-text-fill: white;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.popup-dialog .button:hover {
+    -fx-background-color: #e94560;
+    -fx-text-fill: white;
+    -fx-border-color: #e94560;
+}
+
+/* --- BOTÕES DE FILTRO DO INVENTÁRIO --- */
+.editor-btn-filter {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-text-fill: #a0a0b0;
+    -fx-font-weight: bold;
+    -fx-font-size: 10px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1;
+    -fx-padding: 4 10;
+    -fx-cursor: hand;
+}
+
+.editor-btn-filter:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.25);
+}
+
+.editor-btn-filter-active {
+    -fx-background-color: rgba(233, 69, 96, 0.15);
+    -fx-text-fill: #e94560;
+    -fx-font-weight: bold;
+    -fx-font-size: 10px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: rgba(233, 69, 96, 0.5);
+    -fx-border-width: 1;
     -fx-padding: 4 10;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.25), 4, 0, 0, 0);
@@ -1538,3 +1733,32 @@
     -fx-background-color: rgba(233, 69, 96, 0.25);
     -fx-border-color: #e94560;
 }
+
+/* --- GRADIENTES PARA LISTAS DE PERSONAGENS SOBRE O MAPA --- */
+.player-list-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.player-list-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.enemy-list-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.enemy-list-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+/* Painéis de Gradiente Flutuantes e Transparentes ao Mouse */
+.player-list-gradient {
+    -fx-background-color: linear-gradient(to right, rgba(15, 15, 15, 0.9) 0%, rgba(15, 15, 15, 0.5) 75%, transparent 100%);
+}
+
+.enemy-list-gradient {
+    -fx-background-color: linear-gradient(to left, rgba(15, 15, 15, 0.9) 0%, rgba(15, 15, 15, 0.5) 75%, transparent 100%);
+}
+

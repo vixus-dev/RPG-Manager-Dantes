@@ -69,7 +69,7 @@ public class MapController {
 	@FXML
 	private Canvas aoeCanvas;
 	@FXML
-	private Pane mapViewport;
+	private StackPane mapViewport;
 	@FXML
 	private StackPane mapContent;
 	@FXML

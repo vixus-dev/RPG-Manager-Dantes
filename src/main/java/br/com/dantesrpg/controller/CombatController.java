@@ -7,9 +7,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -74,6 +76,12 @@ public class CombatController {
 	private BorderPane rootPane;
 	@FXML
 	private BorderPane contextPane;
+	@FXML
+	private StackPane mainCombatStack;
+	@FXML
+	private ScrollPane playerScrollPane;
+	@FXML
+	private ScrollPane enemyScrollPane;
 	@FXML
 	private Button btnGerenciarCombate;
 	@FXML
@@ -177,6 +185,32 @@ public class CombatController {
 		this.combatViewCenterNode = rootPane.getCenter();
 		System.out.println("COMBATE: Iniciando...");
 
+		// Clip mainCombatStack to prevent any child (like the map) from overflowing
+		if (mainCombatStack != null) {
+			javafx.scene.shape.Rectangle stackClip = new javafx.scene.shape.Rectangle();
+			stackClip.widthProperty().bind(mainCombatStack.widthProperty());
+			stackClip.heightProperty().bind(mainCombatStack.heightProperty());
+			mainCombatStack.setClip(stackClip);
+		}
+
+		// Make ScrollPane viewports ignore mouse events on transparent bounds
+		javafx.application.Platform.runLater(() -> {
+			if (playerScrollPane != null) {
+				playerScrollPane.setPickOnBounds(false);
+				Node playerViewport = playerScrollPane.lookup(".viewport");
+				if (playerViewport != null) {
+					playerViewport.setPickOnBounds(false);
+				}
+			}
+			if (enemyScrollPane != null) {
+				enemyScrollPane.setPickOnBounds(false);
+				Node enemyViewport = enemyScrollPane.lookup(".viewport");
+				if (enemyViewport != null) {
+					enemyViewport.setPickOnBounds(false);
+				}
+			}
+		});
+
 		loadArmoryDatabase();
 		loadItempediaDatabase();
 		loadBestiarioDatabase();
@@ -258,7 +292,7 @@ public class CombatController {
 			Parent embeddedRoot = loader.load();
 			this.embeddedMapController = loader.getController();
 			this.embeddedMapController.setMainController(this);
-			contextPane.setCenter(embeddedRoot);
+			mainCombatStack.getChildren().add(0, embeddedRoot);
 		} catch (Exception e) {
 			System.err.println("Erro crítico ao carregar EmbeddedMapView.fxml:");
 			e.printStackTrace();
@@ -575,8 +609,8 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				if (ownerWindow != null)
 					detailedTurnHudStage.initOwner(ownerWindow);
 				detailedTurnHudStage.setResizable(true);
-				detailedTurnHudStage.setMinWidth(1058);
-				detailedTurnHudStage.setMinHeight(598);
+				detailedTurnHudStage.setMinWidth(1060);
+				detailedTurnHudStage.setMinHeight(600);
 				detailedTurnHudStage.setScene(new Scene(detailedTurnHudRoot));
 			}
 			detailedTurnHudStage.setTitle("Ações Detalhadas de " + ator.getNome());
