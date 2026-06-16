@@ -7,6 +7,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Separator?>
@@ -14,7 +16,7 @@
 <BorderPane fx:id="rootPane" prefHeight="600.0" prefWidth="1024.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.CombatController">
 
    <left>
-      <VBox alignment="TOP_CENTER" prefWidth="100.0" spacing="10.0" styleClass="navigation-bar">
+      <VBox alignment="CENTER" prefWidth="100.0" spacing="10.0" styleClass="navigation-bar">
          <padding>
             <Insets top="10.0" />
          </padding>
@@ -68,30 +70,39 @@
             </HBox>
          </top>
 
-         <left>
-             <ScrollPane prefWidth="340.0" VBox.vgrow="ALWAYS" hbarPolicy="NEVER" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
-               <content>
-                  <VBox fx:id="playerListContainer" alignment="TOP_LEFT" spacing="2.5" style="-fx-background-color: transparent;">
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                  </VBox>
-               </content>
-            </ScrollPane>
-         </left>
+         <center>
+            <StackPane fx:id="mainCombatStack" pickOnBounds="false">
+               <children>
+                  <!-- Map is added programmatically as the first child of this StackPane -->
+                  
+                  <!-- Left Gradient Overlay (Mouse-Transparent) -->
+                  <Pane prefWidth="340.0" mouseTransparent="true" styleClass="player-list-gradient" StackPane.alignment="CENTER_LEFT"/>
 
-         <right>
-            <ScrollPane prefWidth="340.0" VBox.vgrow="ALWAYS" hbarPolicy="NEVER" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
-               <content>
-                  <VBox fx:id="enemyListContainer" alignment="TOP_RIGHT" spacing="2.5" style="-fx-background-color: transparent;">
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                  </VBox>
-               </content>
-            </ScrollPane>
-         </right>
-         
-         </BorderPane>
+                  <!-- Right Gradient Overlay (Mouse-Transparent) -->
+                  <Pane prefWidth="340.0" mouseTransparent="true" styleClass="enemy-list-gradient" StackPane.alignment="CENTER_RIGHT"/>
+
+                  <ScrollPane fx:id="playerScrollPane" prefWidth="340.0" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" fitToWidth="true" fitToHeight="true" styleClass="player-list-scroll" style="-fx-background: transparent;" pickOnBounds="false" StackPane.alignment="CENTER_LEFT">
+                     <content>
+                        <VBox fx:id="playerListContainer" alignment="CENTER_LEFT" spacing="2.5" style="-fx-background-color: transparent;" pickOnBounds="false">
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+
+                  <ScrollPane fx:id="enemyScrollPane" prefWidth="340.0" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" fitToWidth="true" fitToHeight="true" styleClass="enemy-list-scroll" style="-fx-background: transparent;" pickOnBounds="false" StackPane.alignment="CENTER_RIGHT">
+                     <content>
+                        <VBox fx:id="enemyListContainer" alignment="CENTER_RIGHT" spacing="2.5" style="-fx-background-color: transparent;" pickOnBounds="false">
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </StackPane>
+         </center>
+      </BorderPane>
    </center>
 </BorderPane>

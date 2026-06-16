@@ -9,13 +9,13 @@
 <BorderPane styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.MapController">
 
     <center>
-        <Pane fx:id="mapViewport" style="-fx-background-color: #222222;">
+        <StackPane fx:id="mapViewport" style="-fx-background-color: #222222;">
             <StackPane fx:id="mapContent" alignment="TOP_LEFT">
                 <GridPane fx:id="mapGrid" style="-fx-background-color: #222222;">
                 </GridPane>
                 <Canvas fx:id="aoeCanvas" mouseTransparent="true" />
             </StackPane>
-        </Pane>
+        </StackPane>
     </center>
 
 </BorderPane>

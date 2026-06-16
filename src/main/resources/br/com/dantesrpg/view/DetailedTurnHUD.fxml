@@ -17,9 +17,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox fx:id="detailedTurnHudRoot" spacing="0.0" prefWidth="1080.0" prefHeight="550.0" styleClass="turn-hud-root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.DetailedTurnHUDController">
+<HBox fx:id="detailedTurnHudRoot" spacing="0.0" prefWidth="1242.0" prefHeight="650.0" styleClass="turn-hud-root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.DetailedTurnHUDController">
     
-    <VBox fx:id="detailsColumn" spacing="10.0" prefWidth="280.0" style="-fx-border-color: #444; -fx-border-width: 0 1 0 0; -fx-padding: 15;">
+    <VBox fx:id="detailsColumn" spacing="10.0" prefWidth="322.0" style="-fx-border-color: #444; -fx-border-width: 0 1 0 0; -fx-padding: 15;">
         
         <Label fx:id="labelNomeAtor" styleClass="label-header" text="Nome do Personagem" style="-fx-font-size: 18px; -fx-text-fill: cyan;"/>
         <Label fx:id="labelClasseRaca" text="Raça / Classe" style="-fx-text-fill: gray;"/>
@@ -71,7 +71,7 @@
         </ScrollPane>
     </VBox>
 
-    <VBox fx:id="actionSelectorColumn" spacing="10.0" prefWidth="400.0" style="-fx-padding: 15;">
+    <VBox fx:id="actionSelectorColumn" spacing="10.0" prefWidth="460.0" style="-fx-padding: 15;">
         <Label text="Painel de Comando" styleClass="label-header"/>
         
         <HBox spacing="5.0">
@@ -100,7 +100,7 @@
         </HBox>
     </VBox>
 
-    <VBox fx:id="actionDetailsColumn" spacing="15.0" prefWidth="400.0" style="-fx-border-color: #444; -fx-border-width: 0 0 0 1; -fx-padding: 15; -fx-background-color: #222;" visible="false" managed="false">
+    <VBox fx:id="actionDetailsColumn" spacing="15.0" prefWidth="460.0" style="-fx-border-color: #444; -fx-border-width: 0 0 0 1; -fx-padding: 15; -fx-background-color: #222;" visible="false" managed="false">
 
         <Label fx:id="lblActionTitle" text="Ataque Básico" styleClass="label-header" style="-fx-text-fill: cyan; -fx-font-size: 18px;" wrapText="true"/>
         <Label fx:id="lblActionDesc" text="Descrição..." wrapText="true" style="-fx-text-fill: gray; -fx-font-style: italic;"/>
@@ -158,7 +158,7 @@
         
     </VBox>
 
-    <VBox fx:id="diceRollColumn" spacing="12.0" prefWidth="220.0"
+    <VBox fx:id="diceRollColumn" spacing="12.0" prefWidth="253.0"
           style="-fx-border-color: #444; -fx-border-width: 0 0 0 1; -fx-padding: 15; -fx-background-color: #1a1a2a;"
           visible="false" managed="false">
 
