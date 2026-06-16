@@ -90,6 +90,7 @@ public class MapController {
 	private double dragAnchorY;
 	private double dragAnchorHvalue;
 	private double dragAnchorVvalue;
+	private boolean dragOcorreu = false;
 
 	private CombatController mainController;
 
@@ -225,21 +226,28 @@ public class MapController {
 			}
 		});
 
-		// Drag com botao do meio para pan
+		// Drag com botao do meio ou botao esquerdo para pan
 		mapViewport.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			if (event.isMiddleButtonDown()) {
+			if (event.isMiddleButtonDown() || event.isPrimaryButtonDown()) {
 				dragAnchorX = event.getSceneX();
 				dragAnchorY = event.getSceneY();
 				dragAnchorHvalue = mapContent.getTranslateX();
 				dragAnchorVvalue = mapContent.getTranslateY();
-				event.consume();
+				dragOcorreu = false;
+				if (event.isMiddleButtonDown()) {
+					event.consume();
+				}
 			}
 		});
 
 		mapViewport.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
-			if (event.isMiddleButtonDown()) {
+			if (event.isMiddleButtonDown() || event.isPrimaryButtonDown()) {
 				double deltaX = event.getSceneX() - dragAnchorX;
 				double deltaY = event.getSceneY() - dragAnchorY;
+				
+				if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+					dragOcorreu = true;
+				}
 				
 				mapContent.setTranslateX(dragAnchorHvalue + deltaX);
 				mapContent.setTranslateY(dragAnchorVvalue + deltaY);
@@ -555,6 +563,11 @@ public class MapController {
 	}
 
 	private void onGridCellClicked(MouseEvent event, Pane cell, int x, int y) {
+		if (dragOcorreu) {
+			dragOcorreu = false;
+			event.consume();
+			return;
+		}
 		// 1. Botão Direito: Seleciona peão para movimento livre ou cancela seleção
 		if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
 			if (modoEditor) {
