@@ -83,6 +83,8 @@ public class MapTokenRenderer {
 
 				Pane peaoContainer = new Pane();
 				peaoContainer.setPrefSize(tamanhoTotalPixels, tamanhoTotalPixels);
+				peaoContainer.setMinSize(tamanhoTotalPixels, tamanhoTotalPixels);
+				peaoContainer.setMaxSize(tamanhoTotalPixels, tamanhoTotalPixels);
 
 				String nomeToken = "";
 				String numeroOverlay = "";
