@@ -9,74 +9,117 @@ public class MapGenerator {
 		Random rand = new Random();
 		TileRegistry registry = TileRegistry.getInstance();
 
-		String idChaoBase = "floor";
-		String idChaoSecundario = "floor";
-		String idParede = "wall";
-		String idObstaculo = "object";
+		String idChaoBase = null;
+		String idChaoSecundario = null;
+		String idParede = null;
+		String idObstaculo = null;
 		String idEfeito = null;
 
 		switch (bioma) {
-		case "Laboratório":
+		case "Superficie":
+			idChaoBase = "floor";
+			idParede = "wall";
+			break;
+		case "E.D.E.N":
+			idChaoBase = "floor";
+			idParede = "wall";
+			break;
+		case "E.D.E.N Segundo":
+			idChaoBase = "floor3";
+			idParede = "wall3";
+			break;
+		case "E.D.E.N Externo":
+			idChaoBase = "floor2";
+			idParede = "wall2";
+			idEfeito = "coal";
+			break;
+		case "Limbo":
+			idChaoBase = "grass1";
+			break;
+		case "Templo Grego":
+			idChaoBase = "floor4";
+			idParede = "wall4";
+			break;
+		case "Inferno":
+			idChaoBase = "floor5";
+			idEfeito = "lava";
+			break;
+		case "Clair De Lune":
+			idChaoBase = "floor6";
+			idParede = "wall5";
+			break;
+		case "Luxuria Interno":
+			idChaoBase = "floor7";
+			idParede = "wall7";
+			break;
+		case "Luxuria Externo":
+			idChaoBase = "floor7";
+			idParede = "wall6";
+			break;
+		case "Gula":
+			idChaoBase = "floor8";
+			idParede = "wall8";
+			idEfeito = "sangue";
+			break;
+		case "Gula Factory":
 			idChaoBase = "floor9";
 			idParede = "wall7";
 			idEfeito = "acido";
 			break;
-		case "Caverna Grega":
-			idChaoBase = "floor4";
+		case "Ganacia Externo":
+			idChaoBase = "sand";
 			idChaoSecundario = "SandBrick";
-			idParede = "wall4";
-			idEfeito = "sand";
+			idEfeito = "LiquidGold";
 			break;
-		case "Inferno":
-			idChaoBase = "floor8";
-			idChaoSecundario = "floor2";
-			idParede = "wall8";
-			idEfeito = "lava";
+		case "Ganacia Interno":
+			idChaoBase = "SandBrick";
+			idParede = "sandStone";
 			break;
-		case "Planície":
-			idChaoBase = "grass1";
+		case "Exemple":
+			idChaoBase = "floor7";
 			idChaoSecundario = "floor";
-			idParede = "wall";
-			idEfeito = "sand";
-			break;
-		case "Salão Escuro":
-			idChaoBase = "floor2";
-			idChaoSecundario = "floor";
-			idParede = "wall2";
-			idEfeito = "sangue";
+			idParede = "wall7";
+			idEfeito = "acido";
 			break;
 		default:
 			break;
 		}
 
-		double densidade = 0.15;
+		double densidade = 0.10;
+		
 		if ("Baixa".equals(densidadeStr)) {
 			densidade = 0.05;
 		} else if ("Alta".equals(densidadeStr)) {
 			densidade = 0.30;
 		}
 
-		TileDefinition chaoBase = registry.getById(idChaoBase);
-		TileDefinition chaoSec = registry.getById(idChaoSecundario);
-		TileDefinition parede = registry.getById(idParede);
-		TileDefinition obs = registry.getById(idObstaculo);
+		TileDefinition chaoBase = idChaoBase != null ? registry.getById(idChaoBase) : null;
+		TileDefinition chaoSec = idChaoSecundario != null ? registry.getById(idChaoSecundario) : null;
+		TileDefinition parede = idParede != null ? registry.getById(idParede) : null;
+		TileDefinition obs = idObstaculo != null ? registry.getById(idObstaculo) : null;
 		TileDefinition efeito = idEfeito != null ? registry.getById(idEfeito) : null;
 
 		if (chaoBase == null) chaoBase = registry.getDefault();
 		if (chaoSec == null) chaoSec = chaoBase;
-		if (parede == null) parede = registry.getDefault();
-		if (obs == null) obs = parede;
 
 		for (int x = 0; x < largura; x++) {
 			for (int y = 0; y < altura; y++) {
 				// Paredes da borda
 				if (x == 0 || y == 0 || x == largura - 1 || y == altura - 1) {
-					mapa[x][y] = parede;
+					mapa[x][y] = (parede != null) ? parede : chaoBase;
 				} else {
 					// Preenchimento interno
 					double r = rand.nextDouble();
 					if (r < densidade) {
-						mapa[x][y] = (rand.nextBoolean() ? parede : obs);
+						if (parede != null && obs != null) {
+							mapa[x][y] = (rand.nextBoolean() ? parede : obs);
+						} else if (parede != null) {
+							mapa[x][y] = parede;
+						} else if (obs != null) {
+							mapa[x][y] = obs;
+						} else {
+							mapa[x][y] = chaoBase;
+						}
 					} else if (r < densidade + 0.10 && efeito != null) {
 						mapa[x][y] = efeito;
 					} else if (r < densidade + 0.30) {

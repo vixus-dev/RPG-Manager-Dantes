@@ -45,7 +45,7 @@ public class SeletorMapaController {
         
         carregarListaArquivos();
         
-        comboBioma.setItems(FXCollections.observableArrayList("Laboratório", "Caverna Grega", "Inferno", "Planície", "Salão Escuro"));
+        comboBioma.setItems(FXCollections.observableArrayList("Superficie", "E.D.E.N", "E.D.E.N Segundo", "E.D.E.N Externo", "Limbo", "Templo Grego", "Inferno", "Clair De Lune", "Luxuria Interno", "Luxuria Externo", "Gula", "Gula Factory", "Ganacia Externo", "Ganacia Interno", "Exemple"));
         comboBioma.getSelectionModel().selectFirst();
         
         comboTamanho.setItems(FXCollections.observableArrayList("15x15 (Pequeno)", "25x25 (Médio)", "40x40 (Grande)", "60x60 (Gigante)"));
