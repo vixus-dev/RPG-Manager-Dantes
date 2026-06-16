@@ -21,7 +21,7 @@
                     <Canvas fx:id="aoeCanvas" mouseTransparent="true" />
                 </StackPane>
             </StackPane>
-            <HBox fx:id="floatingToggleBox" alignment="CENTER" spacing="4.0" visible="false" managed="false" StackPane.alignment="BOTTOM_CENTER" styleClass="floating-mode-capsule" pickOnBounds="false">
+            <HBox fx:id="floatingToggleBox" alignment="CENTER" spacing="4.0" visible="false" managed="false" StackPane.alignment="BOTTOM_CENTER" styleClass="floating-mode-capsule" pickOnBounds="false" maxWidth="-Infinity" maxHeight="-Infinity">
                 <StackPane.margin>
                     <Insets bottom="20.0" />
                 </StackPane.margin>
@@ -38,4 +38,3 @@
     </center>
 
 </BorderPane>
-
