@@ -184,6 +184,13 @@ public class MapController {
 				}
 			}
 		});
+
+		if (mapViewport != null) {
+			javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle();
+			clip.widthProperty().bind(mapViewport.widthProperty());
+			clip.heightProperty().bind(mapViewport.heightProperty());
+			mapViewport.setClip(clip);
+		}
 	}
 
 	private void configurarZoomEPan() {
