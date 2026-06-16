@@ -574,9 +574,9 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				Window ownerWindow = rootPane.getScene() != null ? rootPane.getScene().getWindow() : null;
 				if (ownerWindow != null)
 					detailedTurnHudStage.initOwner(ownerWindow);
-				detailedTurnHudStage.setResizable(false);
-				detailedTurnHudStage.setMinWidth(920);
-				detailedTurnHudStage.setMinHeight(520);
+				detailedTurnHudStage.setResizable(true);
+				detailedTurnHudStage.setMinWidth(1058);
+				detailedTurnHudStage.setMinHeight(598);
 				detailedTurnHudStage.setScene(new Scene(detailedTurnHudRoot));
 			}
 			detailedTurnHudStage.setTitle("Ações Detalhadas de " + ator.getNome());
