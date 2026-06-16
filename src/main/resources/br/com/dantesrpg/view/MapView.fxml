@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.MapController">
+<BorderPane prefHeight="600.0" prefWidth="900.0" styleClass="root" stylesheets="@style.css" minWidth="0.0" minHeight="0.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.MapController">
     
     <top>
         <ToolBar fx:id="topToolbar" style="-fx-background-color: #333; -fx-border-color: #555; -fx-border-width: 0 0 1 0;">
@@ -44,8 +44,8 @@
      </top>
 
     <center>
-        <StackPane fx:id="mapViewport" style="-fx-background-color: #222222;">
-            <StackPane fx:id="mapContent" alignment="TOP_LEFT">
+        <StackPane fx:id="mapViewport" style="-fx-background-color: #222222;" minWidth="0.0" minHeight="0.0">
+            <StackPane fx:id="mapContent" alignment="TOP_LEFT" maxWidth="-Infinity" maxHeight="-Infinity">
                 <GridPane fx:id="mapGrid" style="-fx-background-color: #222222;">
                 </GridPane>
                 <Canvas fx:id="aoeCanvas" mouseTransparent="true" />
@@ -53,4 +53,4 @@
         </StackPane>
     </center>
     
-    </BorderPane>
+</BorderPane>

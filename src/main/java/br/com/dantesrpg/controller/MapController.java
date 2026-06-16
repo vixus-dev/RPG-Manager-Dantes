@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.shape.ArcType;
@@ -78,6 +79,8 @@ public class MapController {
 	private ToggleButton btnEditorMapa;
 	@FXML
 	private Button btnPularSquad;
+	@FXML
+	private HBox floatingToggleBox;
 
 	private double zoomLevel = 1.0;
 	private static final double ZOOM_MIN = 0.3;
@@ -916,6 +919,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			}
 
 			inicializarHelpers();
+			resetZoom();
 
 		} catch (Exception e) {
 			System.err.println("Erro crítico ao carregar mapa de imagem.");
@@ -978,6 +982,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			}
 
 			inicializarHelpers();
+			resetZoom();
 
 		} catch (Exception e) {
 			System.err.println("Erro crítico ao carregar mapa procedural.");
@@ -1570,6 +1575,11 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			calcularEExibirMovimento(ator);
 		}
 
+		if (floatingToggleBox != null) {
+			floatingToggleBox.setVisible(true);
+			floatingToggleBox.setManaged(true);
+		}
+
 		mapGrid.getScene().setCursor(javafx.scene.Cursor.CROSSHAIR);
 		limparCanvas();
 		limparDestaquesGridAtaque();
@@ -1712,6 +1722,11 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		removerLabelContador(); // Apenas remove o texto
 
 		limparDestaquesAlcance();
+
+		if (floatingToggleBox != null) {
+			floatingToggleBox.setVisible(false);
+			floatingToggleBox.setManaged(false);
+		}
 
 		if (mapGrid.getScene() != null) {
 			mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
