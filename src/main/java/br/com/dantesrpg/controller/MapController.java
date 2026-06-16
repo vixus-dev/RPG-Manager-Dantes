@@ -551,7 +551,65 @@ public class MapController {
 		celulasHarmoniaDestacadas.clear();
 	}
 
-	private void onGridCellClicked(Pane cell, int x, int y) {
+	private void onGridCellClicked(MouseEvent event, Pane cell, int x, int y) {
+		// 1. Botão Direito: Seleciona peão para movimento livre ou cancela seleção
+		if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
+			if (modoEditor) {
+				event.consume();
+				return;
+			}
+			if (modoSpawnInimigo) {
+				System.out.println("GM: Modo SPAWN cancelado via clique na célula.");
+				mainController.notifySpawnConcluido();
+				event.consume();
+				return;
+			}
+
+			if (peaoSelecionadoParaMover != null) {
+				System.out.println("MAPA (GM): Cancelou movimento livre do peão: " + peaoSelecionadoParaMover.getNome());
+				peaoSelecionadoParaMover = null;
+				setCombatCursor(javafx.scene.Cursor.DEFAULT);
+			} else {
+				Personagem alvoNaCelula = getPersonagemNaCelula(x, y);
+				if (alvoNaCelula != null) {
+					peaoSelecionadoParaMover = alvoNaCelula;
+					System.out.println("MAPA (GM): 'Pegou' o peão (botão direito): " + alvoNaCelula.getNome());
+					setCombatCursor(javafx.scene.Cursor.CLOSED_HAND);
+				} else {
+					System.out.println("MAPA (GM): Clique com botão direito em célula vazia.");
+				}
+			}
+			event.consume();
+			return;
+		}
+
+		// 2. Botão Esquerdo com peão já selecionado para movimento livre: Posiciona
+		if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && peaoSelecionadoParaMover != null) {
+			if (paredesGrid[x][y]) {
+				System.out.println("MAPA (GM): Não pode soltar em parede.");
+				event.consume();
+				return;
+			}
+
+			// Move
+			peaoSelecionadoParaMover.setPosX(x);
+			peaoSelecionadoParaMover.setPosY(y);
+
+			// Atualiza visual
+			if (mainController != null) {
+				mainController.forEachMap(m -> m.desenharPeoes(mainController.getCombatentes()));
+			} else {
+				desenharPeoes(getCombatentes());
+			}
+
+			// Solta
+			System.out.println("MAPA (GM): Soltou " + peaoSelecionadoParaMover.getNome() + " em (" + x + "," + y + ")");
+			peaoSelecionadoParaMover = null;
+			setCombatCursor(javafx.scene.Cursor.DEFAULT);
+			event.consume();
+			return;
+		}
+
 		// Modos Especiais
 		if (modoEditor) {
 			if (editorTile != null) {
@@ -850,7 +908,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 					aplicarTileNaCelula(cell, tile, x, y);
 
 					cell.getStyleClass().add("map-cell");
-					cell.setOnMouseClicked(event -> onGridCellClicked(cell, cellX, cellY));
+					cell.setOnMouseClicked(event -> onGridCellClicked(event, cell, cellX, cellY));
 					cell.setOnMouseEntered(event -> onGridCellMouseEntered(cell, cellX, cellY));
 					mapGrid.add(cell, x, y);
 					celulasDoGrid[x][y] = cell;
@@ -912,7 +970,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 					aplicarTileNaCelula(cell, tile, x, y);
 
 					cell.getStyleClass().add("map-cell");
-					cell.setOnMouseClicked(event -> onGridCellClicked(cell, cellX, cellY));
+					cell.setOnMouseClicked(event -> onGridCellClicked(event, cell, cellX, cellY));
 					cell.setOnMouseEntered(event -> onGridCellMouseEntered(cell, cellX, cellY));
 					mapGrid.add(cell, x, y);
 					celulasDoGrid[x][y] = cell;
@@ -1203,7 +1261,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 				cell.getStyleClass().add("map-floor");
 				final int cellX = x;
 				final int cellY = y;
-				cell.setOnMouseClicked(event -> onGridCellClicked(cell, cellX, cellY));
+				cell.setOnMouseClicked(event -> onGridCellClicked(event, cell, cellX, cellY));
 				cell.setOnMouseEntered(event -> onGridCellMouseEntered(cell, cellX, cellY));
 				mapGrid.add(cell, x, y);
 				celulasDoGrid[x][y] = cell;
