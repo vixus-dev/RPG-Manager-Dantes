@@ -80,12 +80,12 @@ public class EffectProcessor {
 		String nomeEfeito = arma.getNomeEfeitoOnHit();
 		double chance = arma.getChanceEfeitoOnHit();
 
-		// Yaweh unique weapon special on-hit effect against demons (20% chance)
+		// Yaweh unique weapon special on-hit effect against demons (25% chance)
 		if (arma != null && "Yaweh".equalsIgnoreCase(arma.getNome())) {
 			String racaAlvo = (alvo.getRaca() != null) ? alvo.getRaca().getNome().toLowerCase() : "";
 			boolean isDemon = racaAlvo.contains("demônio") || racaAlvo.contains("demonio") || racaAlvo.contains("demon") || (alvo.getRaca() instanceof br.com.dantesrpg.model.racas.HalfDemon);
 			if (isDemon) {
-				if (Math.random() <= 0.20) {
+				if (Math.random() <= 0.25) {
 					System.out.println(">>> Yaweh On-Hit: Chama Divina ativado contra " + alvo.getNome() + "!");
 					int danoDaSource = Math.max(1, (int) danoCausado);
 					Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Chama Divina", 0, danoDaSource);
