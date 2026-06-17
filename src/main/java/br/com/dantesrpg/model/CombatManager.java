@@ -589,6 +589,13 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 							efeitoObj.getModificadores().put("REDUCAO_CURA", redAtual + 0.02);
 							p.recalcularAtributosEstatisticas();
 						}
+						if (efeitoObj.getNome().equals("Chama Divina")) {
+							double armaduraRed = efeitoObj.getModificadores().getOrDefault("BONUS_ARMADURA_PERCENTUAL", 0.0);
+							double curaRed = efeitoObj.getModificadores().getOrDefault("REDUCAO_CURA", 0.0);
+							efeitoObj.getModificadores().put("BONUS_ARMADURA_PERCENTUAL", armaduraRed - 0.20);
+							efeitoObj.getModificadores().put("REDUCAO_CURA", curaRed + 0.50);
+							p.recalcularAtributosEstatisticas();
+						}
 						if (danoFinalDoT > 0) {
 							// Dormindo: acorda após 2 ticks de dano
 							if (p.getEfeitosAtivos().containsKey("Dormindo")) {

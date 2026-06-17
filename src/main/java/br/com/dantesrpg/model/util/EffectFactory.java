@@ -82,6 +82,15 @@ public class EffectFactory {
 			return new Efeito("HellFire", TipoEfeito.DOT, 2000, mods, danoPorTick, TICK_INTERVAL);
 		});
 
+		// Chama Divina: 5 ticks, 50% do dano por tick | -20% armadura por tick | -50% cura por tick | Duração 500 TU
+		presets.put("Chama Divina", (duracao, danoDaSource) -> {
+			int danoPorTick = Math.max(1, (int) (danoDaSource * 0.50));
+			Map<String, Double> mods = new HashMap<>();
+			mods.put("BONUS_ARMADURA_PERCENTUAL", 0.0); // Começa em 0%, incrementa -20% a cada tick
+			mods.put("REDUCAO_CURA", 0.0); // Começa em 0%, incrementa +50% a cada tick
+			return new Efeito("Chama Divina", TipoEfeito.DOT, 500, mods, danoPorTick, TICK_INTERVAL);
+		});
+
 		// Hemorragia (Grau 2): 5 ticks, 2% da vida máxima por tick | Reduz cura em 30% pelo dobro da duração
 		// Duração DoT: 500 TU | Redução de cura: 1000 TU (aplicada separadamente)
 		presets.put("Hemorragia", (duracao, danoDaSource) -> {

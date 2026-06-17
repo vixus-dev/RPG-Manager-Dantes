@@ -25,6 +25,8 @@ public class EffectTooltipBuilder {
 				"Fogo infernal devastador. Causa 15% do dano por tick e reduz a cura em +2% a cada tick (acumula).");
 		DESCRICOES.put("Hemorragia",
 				"Hemorragia grave que causa 2% da vida máxima por tick e reduz cura recebida em 30%.");
+		DESCRICOES.put("Chama Divina",
+				"Chamas divinas que causam 50% do dano contínuo por tick. Cada tick reduz a armadura em 20% e a cura em 50%.");
 
 		// --- Debuffs CC ---
 		DESCRICOES.put("Choque", "Sobrecarga elétrica que adiciona +20 TU ao alvo no momento da aplicação.");
@@ -126,6 +128,7 @@ public class EffectTooltipBuilder {
 		// ===================== NOMES LEGÍVEIS DOS MODIFICADORES =====================
 		NOMES_MODIFICADORES.put("DANO_BONUS_PERCENTUAL", "Dano Bônus");
 		NOMES_MODIFICADORES.put("ARMADURA_TOTAL", "Armadura");
+		NOMES_MODIFICADORES.put("BONUS_ARMADURA_PERCENTUAL", "Bônus de Armadura");
 		NOMES_MODIFICADORES.put("MOVIMENTO", "Movimento");
 		NOMES_MODIFICADORES.put("REDUCAO_CURA", "Redução de Cura");
 		NOMES_MODIFICADORES.put("REDUCAO_DANO_MODIFICADOR", "Redução de Dano");

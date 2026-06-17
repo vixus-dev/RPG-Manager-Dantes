@@ -8,9 +8,19 @@ import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.Raça;
 
 public class RaçaPlaceholder extends Raça {
+	private final String nomeRaca;
+
+	public RaçaPlaceholder() {
+		this.nomeRaca = "Criatura";
+	}
+
+	public RaçaPlaceholder(String nomeRaca) {
+		this.nomeRaca = nomeRaca != null ? nomeRaca : "Criatura";
+	}
+
 	@Override
 	public String getNome() {
-		return "Criatura";
+		return nomeRaca;
 	}
 
 	@Override

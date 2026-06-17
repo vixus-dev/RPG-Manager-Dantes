@@ -386,7 +386,7 @@ public class Personagem {
 					bonusArmaduraPercentualEfeito += e.getModificadores().get("BONUS_ARMADURA_PERCENTUAL");
 				}
 			}
-			if (bonusArmaduraPercentualEfeito > 0) {
+			if (bonusArmaduraPercentualEfeito != 0.0) {
 				this.armaduraTotal += (int) (this.armaduraTotal * bonusArmaduraPercentualEfeito);
 			}
 		}

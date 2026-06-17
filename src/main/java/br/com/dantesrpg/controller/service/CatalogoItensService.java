@@ -116,6 +116,8 @@ public class CatalogoItensService {
 			return new br.com.dantesrpg.model.armas.unicas.Rubrum();
 		if (nomeArma.equals("Laminas Do Exterminio"))
 			return new br.com.dantesrpg.model.armas.unicas.LaminasDoExterminio();
+		if (nomeArma.equals("Yaweh"))
+			return new br.com.dantesrpg.model.armas.unicas.Yaweh();
 
 		if (nomeArma.equals("Bastão Primordial Behemoth"))
 			return new br.com.dantesrpg.model.armas.unicas.BastaoPrimordialBehemoth();

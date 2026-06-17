@@ -23,19 +23,13 @@
   "faccao": "JOGADOR",
   "vidaAtual": 33.0,
   "contadorTU": 0,
-  "armaEquipada": {
-    "magiasSalvas": [],
-    "nome": "Grimório do Aprendiz"
-  },
+  "armaEquipada": "Yaweh",
   "inventario": {},
   "xpAtual": 0,
   "vidaMaximaBase": 33.0,
   "classe": "Alquimista",
   "armasEquipadas": [
-    {
-      "magiasSalvas": [],
-      "nome": "Grimório do Aprendiz"
-    }
+    "Yaweh"
   ],
   "nome": "Servant",
   "segmentos": 0,

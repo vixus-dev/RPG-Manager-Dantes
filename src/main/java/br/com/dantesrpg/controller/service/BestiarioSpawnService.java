@@ -125,7 +125,8 @@ public class BestiarioSpawnService {
 		long qtdExistente = estado.getCombatentes().stream().filter(p -> p.getNome().startsWith(nomeBase)).count();
 		String nomeFinal = nomeBase + " " + (qtdExistente + 1);
 
-		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(), new ClassePlaceholder(), 1, atributos,
+		String racaStr = (String) data.getOrDefault("raca", "Criatura");
+		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1, atributos,
 				vidaMax, 0);
 		monstro.setFaccao("INIMIGO");
 		monstro.setXpReward(xpReward);
@@ -199,7 +200,8 @@ public class BestiarioSpawnService {
 				.collect(Collectors.toList());
 		String nomeFinal = definirNomeSpawnado(nome, existentes);
 
-		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(), new ClassePlaceholder(), 1,
+		String racaStr = (String) dadosMonstro.getOrDefault("raca", "Criatura");
+		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1,
 				atributosBase(agilidade, defesa), vida, 0);
 		monstro.setVidaMaxima(vida);
 		monstro.setVidaAtual(vida);
