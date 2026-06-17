@@ -50,6 +50,8 @@ public class PlayerCardController {
 	@FXML
 	private Polygon bloodShieldBarPolygon;
 	@FXML
+	private Polygon divineShieldBarPolygon;
+	@FXML
 	private Polygon contractBarPolygon;
 	@FXML
 	private Label labelContractCount;
@@ -264,8 +266,10 @@ public class PlayerCardController {
 		double sangueMax = personagem.getEscudoSangueMaximo();
 		double normalAtual = personagem.getEscudoNormalAtual();
 		double normalMax = personagem.getEscudoNormalMaximo();
+		double divineAtual = personagem.getEscudoDivinoAtual();
+		double divineMax = personagem.getEscudoDivinoMaximo();
 
-		double capTotal = sangueMax + normalMax; // "Limite flexível" combinado
+		double capTotal = divineMax + sangueMax + normalMax; // "Limite flexível" combinado
 
 		if (capTotal <= 0) {
 			shieldTrack.setVisible(false);
@@ -274,6 +278,10 @@ public class PlayerCardController {
 			if (bloodShieldBarPolygon != null) {
 				bloodShieldBarPolygon.setVisible(false);
 				bloodShieldBarPolygon.getPoints().clear();
+			}
+			if (divineShieldBarPolygon != null) {
+				divineShieldBarPolygon.setVisible(false);
+				divineShieldBarPolygon.getPoints().clear();
 			}
 			return;
 		}
@@ -289,14 +297,34 @@ public class PlayerCardController {
 		double maxWidthRect = endXRectBase - startX;
 		double maxWidthAngled = endXAngledBase - startX;
 
-		// SANGUE (vermelho) — segmento à esquerda, proporcional a sangueAtual/capTotal
-		if (bloodShieldBarPolygon != null) {
-			if (sangueAtual > 0) {
-				double progress = sangueAtual / capTotal;
+		// 1. DIVINO (cor #cdf8fa) — segmento à esquerda, proporcional a divineAtual/capTotal
+		if (divineShieldBarPolygon != null) {
+			if (divineAtual > 0) {
+				double progress = divineAtual / capTotal;
 				double endRect = startX + maxWidthRect * progress;
 				double endAngled = startX + maxWidthAngled * progress;
-				bloodShieldBarPolygon.getPoints().setAll(startX, topY, endRect, topY, endAngled, bottomY, startX,
+				divineShieldBarPolygon.getPoints().setAll(startX, topY, endRect, topY, endAngled, bottomY, startX,
 						bottomY);
+				divineShieldBarPolygon.setVisible(true);
+			} else {
+				divineShieldBarPolygon.setVisible(false);
+				divineShieldBarPolygon.getPoints().clear();
+			}
+		}
+
+		// 2. SANGUE (vermelho) — posicionado após o espaço reservado do divino
+		if (bloodShieldBarPolygon != null) {
+			if (sangueAtual > 0) {
+				double offsetPct = (capTotal > 0) ? (divineMax / capTotal) : 0.0;
+				double widthPct = sangueAtual / capTotal;
+				double startPct = offsetPct;
+				double endPct = offsetPct + widthPct;
+				double segStartRect = startX + maxWidthRect * startPct;
+				double segStartAngled = startX + maxWidthAngled * startPct;
+				double segEndRect = startX + maxWidthRect * endPct;
+				double segEndAngled = startX + maxWidthAngled * endPct;
+				bloodShieldBarPolygon.getPoints().setAll(segStartRect, topY, segEndRect, topY, segEndAngled, bottomY,
+						segStartAngled, bottomY);
 				bloodShieldBarPolygon.setVisible(true);
 			} else {
 				bloodShieldBarPolygon.setVisible(false);
@@ -304,11 +332,9 @@ public class PlayerCardController {
 			}
 		}
 
-		// NORMAL (azul) — segmento à direita do sangue, proporcional a normalAtual/capTotal
-		// O início do segmento normal é posicionado após o "espaço reservado" do sangue,
-		// que é sangueMax/capTotal (mesmo se sangueAtual caiu, a posição é preservada).
+		// 3. NORMAL (azul) — posicionado após o espaço reservado do divino + sangue
 		if (normalAtual > 0) {
-			double offsetPct = (capTotal > 0) ? (sangueMax / capTotal) : 0.0;
+			double offsetPct = (capTotal > 0) ? ((divineMax + sangueMax) / capTotal) : 0.0;
 			double widthPct = normalAtual / capTotal;
 			double startPct = offsetPct;
 			double endPct = offsetPct + widthPct;

@@ -150,6 +150,11 @@ public class PersonagemEffects {
 				}
 			}
 
+			if ("Proteção dos Céus".equals(nomeEfeito)) {
+				personagem.getPropriedades().removeIf(prop -> prop.startsWith("ProtecaoCeusLastHP:"));
+				personagem.setEscudoDivinoAtual(Math.max(0.0, personagem.getEscudoDivinoAtual() - 20.0));
+			}
+
 			if (personagem.getRaca() != null) {
 				personagem.getRaca().onEffectUpdate(personagem, removido, false);
 			}

@@ -52,6 +52,8 @@ public class Personagem {
 	private double escudoNormalMaximo;
 	private double escudoSangueAtual;
 	private double escudoSangueMaximo;
+	private double escudoDivinoAtual;
+	private double escudoDivinoMaximo;
 	private int armaduraTotal;
 	private double reducaoDanoArmadura;
 
@@ -146,6 +148,8 @@ public class Personagem {
 		this.escudoNormalMaximo = 0.0;
 		this.escudoSangueAtual = 0.0;
 		this.escudoSangueMaximo = 0.0;
+		this.escudoDivinoAtual = 0.0;
+		this.escudoDivinoMaximo = 0.0;
 		this.vidaMaximaBase = vidaMaximaBase;
 		this.iniciativaBase = iniciativaBase;
 
@@ -836,7 +840,7 @@ public class Personagem {
 	 * Usado para exibição agregada e compatibilidade com chamadas legadas.
 	 */
 	public double getEscudoAtual() {
-		return escudoNormalAtual + escudoSangueAtual;
+		return escudoNormalAtual + escudoSangueAtual + escudoDivinoAtual;
 	}
 
 	public double getEscudoNormalAtual() {
@@ -853,6 +857,14 @@ public class Personagem {
 
 	public double getEscudoSangueMaximo() {
 		return escudoSangueMaximo;
+	}
+
+	public double getEscudoDivinoAtual() {
+		return escudoDivinoAtual;
+	}
+
+	public double getEscudoDivinoMaximo() {
+		return escudoDivinoMaximo;
 	}
 
 	public double getTaxaCritica() {
@@ -1113,6 +1125,25 @@ public class Personagem {
 			this.escudoSangueMaximo = this.escudoSangueAtual;
 		}
 		recalcularSeBonusOvertimeDependeDoEscudo();
+	}
+
+	public void setEscudoDivinoAtual(double v) {
+		this.escudoDivinoAtual = Math.max(0.0, v);
+		if (this.escudoDivinoAtual == 0.0) {
+			this.escudoDivinoMaximo = 0.0;
+		}
+	}
+
+	public void setEscudoDivinoMaximo(double v) {
+		this.escudoDivinoMaximo = Math.max(0.0, v);
+	}
+
+	public void adicionarEscudoDivino(double v) {
+		if (v <= 0) return;
+		this.escudoDivinoAtual += v;
+		if (this.escudoDivinoAtual > this.escudoDivinoMaximo) {
+			this.escudoDivinoMaximo = this.escudoDivinoAtual;
+		}
 	}
 
 	private void recalcularSeBonusOvertimeDependeDoEscudo() {

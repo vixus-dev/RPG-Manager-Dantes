@@ -59,6 +59,7 @@
 .shield-track { -fx-fill: rgba(0, 0, 0, 0.3); -fx-stroke: transparent; }
 .shield-bar-fill { -fx-fill: linear-gradient(to right, #2B7FFF, #155DFC); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, blue, 5, 0.3, 0, 0); }
 .blood-shield-bar-fill { -fx-fill: linear-gradient(to right, #8B0000, #FF0000); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, red, 5, 0.3, 0, 0); }
+.divine-shield-bar-fill { -fx-fill: linear-gradient(to right, #cdf8fa, #a0e5e8); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, #cdf8fa, 5, 0.3, 0, 0); }
 .debt-bar-fill { -fx-fill: linear-gradient(to right, #FF4444, #AA0000); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, red, 5, 0.3, 0, 0); }
 
 /* Detailed HUD */

@@ -46,8 +46,8 @@ public class VisaoDivina extends Habilidade {
 			return;
 		}
 
-		int sagacidade = conjurador.getAtributosFinais().getOrDefault(Atributo.SAGACIDADE, 1);
-		int tipoDado = DiceRoller.getTipoDado(sagacidade);
+		int percepcao = conjurador.getAtributosFinais().getOrDefault(Atributo.PERCEPCAO, 1);
+		int tipoDado = DiceRoller.getTipoDado(percepcao);
 
 		int roll = 0;
 		if (manager.getLastInput() != null) {
@@ -57,6 +57,6 @@ public class VisaoDivina extends Habilidade {
 			roll = DiceRoller.rolarDado(tipoDado);
 		}
 
-		System.out.println(">>> Visão Divina: " + conjurador.getNome() + " rodou Sagacidade (d" + tipoDado + "): " + roll);
+		System.out.println(">>> Visão Divina: " + conjurador.getNome() + " rodou Percepção (d" + tipoDado + "): " + roll);
 	}
 }

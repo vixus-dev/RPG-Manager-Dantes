@@ -186,6 +186,9 @@ public class DiceInputsBuilder {
 		if (nome.equals("Aprimorar Poção") || nome.equals("Mestre Filosofal")) {
 			precisa = true;
 		}
+		if (nome.equals("Benção Divina") || nome.equals("Visão Divina")) {
+			precisa = true;
+		}
 		if (nome.equals("Caçada") || nome.equals("Trocado")) {
 			precisa = false;
 		}
@@ -198,7 +201,7 @@ public class DiceInputsBuilder {
 			return Atributo.SORTE;
 		}
 		if (hab instanceof br.com.dantesrpg.model.habilidades.VisaoDivina) {
-			return Atributo.SAGACIDADE;
+			return Atributo.PERCEPCAO;
 		}
 		Atributo atr = Atributo.FORCA;
 		if (ator.getArmaEquipada() != null) {
@@ -209,7 +212,6 @@ public class DiceInputsBuilder {
 				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.PlainSolo
 				|| hab instanceof br.com.dantesrpg.model.habilidades.BencaoDivina
 				|| hab instanceof br.com.dantesrpg.model.habilidades.ProtecaoDosCeus
-				|| hab instanceof br.com.dantesrpg.model.habilidades.VisaoDivina
 				|| hab instanceof br.com.dantesrpg.model.habilidades.HolySpirit) {
 			atr = Atributo.INSPIRACAO;
 		}

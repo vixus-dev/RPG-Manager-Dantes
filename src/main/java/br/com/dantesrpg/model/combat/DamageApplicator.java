@@ -222,9 +222,22 @@ public class DamageApplicator {
 		double danoRestante = dano;
 
 		if (!ignoraEscudo) {
-			// --- ESCUDO DE SANGUE (primeiro, ignora reduções) ---
+			// --- ESCUDO DIVINO (primeiro de tudo, recebe o dano já reduzido) ---
+			double escudoDivino = alvo.getEscudoDivinoAtual();
+			if (escudoDivino > 0) {
+				if (danoRestante >= escudoDivino) {
+					danoRestante -= escudoDivino;
+					alvo.setEscudoDivinoAtual(0);
+					System.out.println(">>> Escudo Divino QUEBROU! Dano residual: " + (int) danoRestante);
+				} else {
+					alvo.setEscudoDivinoAtual(escudoDivino - danoRestante);
+					danoRestante = 0;
+				}
+			}
+
+			// --- ESCUDO DE SANGUE (segundo, ignora reduções) ---
 			double escudoSangue = alvo.getEscudoSangueAtual();
-			if (escudoSangue > 0) {
+			if (danoRestante > 0 && escudoSangue > 0) {
 				// Reverte a redução que já foi aplicada em aplicarReducaoDanoPreArmadura
 				// para obter o valor bruto que o sangue deve absorver.
 				double reducaoArmadura = alvo.getReducaoDanoArmadura() + alvo.getReducaoDanoTopor();

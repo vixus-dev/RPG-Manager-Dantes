@@ -438,6 +438,9 @@ public class PersonagemJsonService {
 		if (data.containsKey("escudoSangueAtual")) {
 			personagem.setEscudoSangueAtual(((Number) data.get("escudoSangueAtual")).doubleValue());
 		}
+		if (data.containsKey("escudoDivinoAtual")) {
+			personagem.setEscudoDivinoAtual(((Number) data.get("escudoDivinoAtual")).doubleValue());
+		}
 		if (data.containsKey("escudoAtual")
 				&& !data.containsKey("escudoNormalAtual")
 				&& !data.containsKey("escudoSangueAtual")) {
@@ -563,6 +566,7 @@ public class PersonagemJsonService {
 		data.put("manaAtual", personagem.getManaAtual());
 		data.put("escudoNormalAtual", personagem.getEscudoNormalAtual());
 		data.put("escudoSangueAtual", personagem.getEscudoSangueAtual());
+		data.put("escudoDivinoAtual", personagem.getEscudoDivinoAtual());
 		data.put("contadorTU", personagem.getContadorTU());
 		data.put("posX", personagem.getPosX());
 		data.put("posY", personagem.getPosY());

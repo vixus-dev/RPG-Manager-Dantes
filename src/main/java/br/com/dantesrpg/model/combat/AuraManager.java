@@ -287,6 +287,47 @@ public class AuraManager {
 
 		processarTurnoTheMastersCall(ator, estado);
 
+		// --- PROTEÇÃO DOS CÉUS (Sarvant / YAWEH) ---
+		if (ator.getEfeitosAtivos().containsKey("Proteção dos Céus")) {
+			Efeito efeito = ator.getEfeitosAtivos().get("Proteção dos Céus");
+			double currentShield = ator.getEscudoDivinoAtual();
+			int lastShield = 20; // fallback padrão
+			String propKey = "ProtecaoCeusLastHP:";
+			for (String prop : ator.getPropriedades()) {
+				if (prop.startsWith(propKey)) {
+					try {
+						lastShield = Integer.parseInt(prop.substring(propKey.length()));
+					} catch (Exception e) {}
+					break;
+				}
+			}
+
+			if (currentShield == lastShield) {
+				// Se o HP do escudo não mudou, aumenta a taxa crítica em 5% cumulativamente
+				Map<String, Double> mods = efeito.getModificadores();
+				if (mods == null) {
+					mods = new HashMap<>();
+					efeito.setModificadores(mods);
+				} else if (!(mods instanceof HashMap)) {
+					mods = new HashMap<>(mods);
+					efeito.setModificadores(mods);
+				}
+				double currentCrit = mods.getOrDefault("TAXA_CRITICA", 0.0);
+				mods.put("TAXA_CRITICA", currentCrit + 0.05);
+				System.out.println(">>> Proteção dos Céus: Escudo intacto! Taxa Crítica acumulada: +" + (int)((currentCrit + 0.05) * 100) + "%");
+			} else {
+				// Se o HP do escudo diminuiu, restaura o valor para 20
+				ator.setEscudoDivinoAtual(20.0);
+				currentShield = 20.0;
+				System.out.println(">>> Proteção dos Céus: Escudo danificado! Restaurado para 20 HP.");
+			}
+
+			// Atualiza a propriedade com o novo valor do escudo
+			ator.getPropriedades().removeIf(prop -> prop.startsWith(propKey));
+			ator.adicionarPropriedade(propKey + (int) currentShield);
+			ator.recalcularAtributosEstatisticas();
+		}
+
 		// Ringue da Vontade (Alexei)
 		if (ator.getEfeitosAtivos().containsKey("Ringue (Preparando)")) {
 			System.out.println(">>> Início do Turno: Ativando 'O Ringue da Vontade Inquebrantável'!");
