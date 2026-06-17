@@ -106,14 +106,22 @@ public class DiceInputsBuilder {
 		}
 
 		// --- 2. Opções de seleção da habilidade (bloco inicial) ---
-		if (hab != null && hab.getOpcoesSelection() != null && !hab.getOpcoesSelection().isEmpty()) {
+		List<String> listOpInit = null;
+		if (hab != null) {
+			if (hab instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
+				listOpInit = ((br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) hab).getOpcoesDinamicas(ator);
+			} else {
+				listOpInit = hab.getOpcoesSelection();
+			}
+		}
+		if (listOpInit != null && !listOpInit.isEmpty()) {
 			Label lbl = new Label("Escolha uma Opção:");
 			lbl.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold;");
 
 			ToggleGroup tg = new ToggleGroup();
 			toggleGroupOpcoes = tg;
-			FlowPane box = criarFlowPaneOpcoes(hab.getOpcoesSelection(), tg);
-			if (!hab.getOpcoesSelection().isEmpty()) tg.getToggles().get(0).setSelected(true);
+			FlowPane box = criarFlowPaneOpcoes(listOpInit, tg);
+			if (!listOpInit.isEmpty()) tg.getToggles().get(0).setSelected(true);
 
 			diceInputsBox.getChildren().addAll(lbl, box);
 		}
@@ -138,8 +146,15 @@ public class DiceInputsBuilder {
 
 		// --- 6. Lista consolidada de opções (habilidade OU fantasma nobre) ---
 		List<String> listaOpcoes = null;
-		if (hab != null) listaOpcoes = hab.getOpcoesSelection();
-		else if (fn != null) listaOpcoes = fn.getOpcoesSelection();
+		if (hab != null) {
+			if (hab instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
+				listaOpcoes = ((br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) hab).getOpcoesDinamicas(ator);
+			} else {
+				listaOpcoes = hab.getOpcoesSelection();
+			}
+		} else if (fn != null) {
+			listaOpcoes = fn.getOpcoesSelection();
+		}
 
 		if (listaOpcoes != null && !listaOpcoes.isEmpty()) {
 			ToggleGroup group = new ToggleGroup();
@@ -148,7 +163,7 @@ public class DiceInputsBuilder {
 			FlowPane flow = new FlowPane(5, 5);
 			flow.setPrefWrapLength(300);
 			for (String opt : listaOpcoes) {
-				ToggleButton tb = new ToggleButton(opt);
+				ToggleButton tb = new ToggleButton(formatarNomeOpcao(opt));
 				tb.setToggleGroup(group);
 				tb.setUserData(opt);
 				tb.setPrefWidth(120);
@@ -190,6 +205,9 @@ public class DiceInputsBuilder {
 	}
 
 	public static Atributo resolverAtributo(Personagem ator, Habilidade hab) {
+		if (hab instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
+			return Atributo.SORTE;
+		}
 		Atributo atr = Atributo.FORCA;
 		if (ator.getArmaEquipada() != null) {
 			atr = ator.getArmaEquipada().getAtributoMultiplicador();
@@ -330,13 +348,23 @@ public class DiceInputsBuilder {
 		diceInputsBox.getChildren().addAll(lbl, tf);
 	}
 
+	private static String formatarNomeOpcao(String opt) {
+		if (opt != null && opt.startsWith("PocaoAlquimica_")) {
+			String[] parts = opt.split("_");
+			if (parts.length >= 3) {
+				return parts[1] + " (IS: " + parts[2] + ")";
+			}
+		}
+		return opt;
+	}
+
 	private FlowPane criarFlowPaneOpcoes(List<String> opcoes, ToggleGroup group) {
 		FlowPane flow = new FlowPane();
 		flow.setHgap(5);
 		flow.setVgap(5);
 		flow.setPrefWrapLength(300);
 		for (String op : opcoes) {
-			ToggleButton btn = new ToggleButton(op);
+			ToggleButton btn = new ToggleButton(formatarNomeOpcao(op));
 			btn.setToggleGroup(group);
 			btn.setUserData(op);
 			btn.setStyle("-fx-base: #444; -fx-text-fill: white;");

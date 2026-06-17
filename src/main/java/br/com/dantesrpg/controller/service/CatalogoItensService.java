@@ -30,6 +30,7 @@ import br.com.dantesrpg.model.enums.Raridade;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.items.Consumivel;
 import br.com.dantesrpg.model.items.EssenciaInimigo;
+import br.com.dantesrpg.model.items.PocaoAlquimica;
 import br.com.dantesrpg.model.racas.RaçaPlaceholder;
 import br.com.dantesrpg.model.util.FileLoader;
 import br.com.dantesrpg.model.util.HabilidadeFactory;
@@ -137,6 +138,29 @@ public class CatalogoItensService {
 	public Item getItem(String tipoItem, Map<String, Map<String, Object>> bestiarioDatabase) {
 		if (tipoItem == null)
 			return null;
+
+		if (tipoItem.startsWith("PocaoAlquimica_")) {
+			String[] parts = tipoItem.split("_");
+			if (parts.length >= 3) {
+				String tipoPocao = parts[1];
+				int is = 10;
+				try {
+					is = Integer.parseInt(parts[2]);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+				boolean isV2 = tipoItem.contains("_V2_");
+				int roll = 0;
+				if (isV2 && parts.length >= 5) {
+					try {
+						roll = Integer.parseInt(parts[4]);
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					}
+				}
+				return new PocaoAlquimica(tipoItem, tipoPocao, is, isV2, roll);
+			}
+		}
 
 		if (itempediaDatabase != null && itempediaDatabase.containsKey(tipoItem)) {
 			try {

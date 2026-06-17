@@ -26,6 +26,7 @@ import java.util.Optional;
 // Imports do seu Model
 import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.classes.ClassePlaceholder;
+import br.com.dantesrpg.model.classes.Alquimista;
 import br.com.dantesrpg.model.classes.Barbaro;
 import br.com.dantesrpg.model.classes.Campeao;
 import br.com.dantesrpg.model.classes.Feiticeiro;
@@ -462,6 +463,8 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 			return new Invocador();
 		if ("Campeão".equalsIgnoreCase(nomeClasse))
 			return new Campeao();
+		if ("Alquimista".equalsIgnoreCase(nomeClasse))
+			return new Alquimista();
 		System.err.println("Classe não reconhecida: " + nomeClasse);
 		return new ClassePlaceholder();
 	}
