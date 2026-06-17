@@ -317,6 +317,7 @@ public class AuraManager {
 				System.out.println(">>> Proteção dos Céus: Escudo intacto! Taxa Crítica acumulada: +" + (int)((currentCrit + 0.05) * 100) + "%");
 			} else {
 				// Se o HP do escudo diminuiu, restaura o valor para 20
+				ator.setEscudoDivinoMaximo(20.0);
 				ator.setEscudoDivinoAtual(20.0);
 				currentShield = 20.0;
 				System.out.println(">>> Proteção dos Céus: Escudo danificado! Restaurado para 20 HP.");

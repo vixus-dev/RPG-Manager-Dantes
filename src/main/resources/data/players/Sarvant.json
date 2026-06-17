@@ -22,21 +22,38 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": 33.0,
-  "contadorTU": 0,
-  "armaEquipada": "Yaweh",
+  "contadorTU": 1,
+  "armaEquipada": {
+    "magiasSalvas": [
+      "Benção Divina",
+      "Proteção dos Céus",
+      "Visão Divina",
+      "Holy Spirit"
+    ],
+    "nome": "Yaweh"
+  },
   "inventario": {},
   "xpAtual": 0,
   "vidaMaximaBase": 33.0,
   "classe": "Alquimista",
   "armasEquipadas": [
-    "Yaweh"
+    {
+      "magiasSalvas": [
+        "Benção Divina",
+        "Proteção dos Céus",
+        "Visão Divina",
+        "Holy Spirit"
+      ],
+      "nome": "Yaweh"
+    }
   ],
   "nome": "Servant",
   "segmentos": 0,
   "grau": 0,
-  "posX": 4,
-  "posY": 4,
+  "posX": 2,
+  "posY": 3,
   "manaAtual": 12.5,
+  "escudoDivinoAtual": 0.0,
   "raca": "Humano",
   "nivel": 7,
   "racaData": {
