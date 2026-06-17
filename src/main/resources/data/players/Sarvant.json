@@ -1,0 +1,56 @@
+{
+  "iniciativaBase": 16,
+  "atributosBase": {
+    "CARISMA": 5,
+    "SAGACIDADE": 10,
+    "TOPOR": 1,
+    "ENDURANCE": 3,
+    "FORCA": 1,
+    "PERCEPCAO": 10,
+    "SORTE": 8,
+    "INSPIRACAO": 10,
+    "INTELIGENCIA": 10,
+    "DESTREZA": 2
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 33.0,
+  "contadorTU": 0,
+  "armaEquipada": {
+    "magiasSalvas": [],
+    "nome": "Grimório do Aprendiz"
+  },
+  "inventario": {},
+  "xpAtual": 0,
+  "vidaMaximaBase": 33.0,
+  "classe": "Alquimista",
+  "armasEquipadas": [
+    {
+      "magiasSalvas": [],
+      "nome": "Grimório do Aprendiz"
+    }
+  ],
+  "nome": "Servant",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 5,
+  "posY": 5,
+  "manaAtual": 12.5,
+  "raca": "Humano",
+  "nivel": 7,
+  "racaData": {
+    "contratoAtivoDividaRestante": 0.0,
+    "estadoEmprestimo": "NENHUM",
+    "vidaNegativaAcumulada": 0.0,
+    "contratoAtivoValorTotal": 0.0,
+    "filaContratos": []
+  },
+  "wieldingMaximo": 2
+}
