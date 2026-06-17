@@ -288,7 +288,9 @@ public class AuraManager {
 		processarTurnoTheMastersCall(ator, estado);
 
 		// --- PROTEÇÃO DOS CÉUS (Sarvant / YAWEH) ---
-		if (ator.getEfeitosAtivos().containsKey("Proteção dos Céus")) {
+		// Se Despertar Divino estiver ativo, a lógica do escudo é controlada pelo FN (onTurnStart)
+		if (ator.getEfeitosAtivos().containsKey("Proteção dos Céus")
+				&& !ator.getEfeitosAtivos().containsKey("Despertar Divino")) {
 			Efeito efeito = ator.getEfeitosAtivos().get("Proteção dos Céus");
 			double currentShield = ator.getEscudoDivinoAtual();
 			int lastShield = 20; // fallback padrão

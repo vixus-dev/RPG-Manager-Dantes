@@ -80,18 +80,28 @@ public class EffectProcessor {
 		String nomeEfeito = arma.getNomeEfeitoOnHit();
 		double chance = arma.getChanceEfeitoOnHit();
 
-		// Yaweh unique weapon special on-hit effect against demons (25% chance)
+		// Yaweh unique weapon special on-hit effect (Chama Divina)
 		if (arma != null && "Yaweh".equalsIgnoreCase(arma.getNome())) {
-			String racaAlvo = (alvo.getRaca() != null) ? alvo.getRaca().getNome().toLowerCase() : "";
-			boolean isDemon = racaAlvo.contains("demônio") || racaAlvo.contains("demonio") || racaAlvo.contains("demon") || (alvo.getRaca() instanceof br.com.dantesrpg.model.racas.HalfDemon);
-			if (isDemon) {
-				if (Math.random() <= 0.25) {
-					System.out.println(">>> Yaweh On-Hit: Chama Divina ativado contra " + alvo.getNome() + "!");
-					int danoDaSource = Math.max(1, (int) danoCausado);
-					Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Chama Divina", 0, danoDaSource);
-					efeito.setStacks(1);
-					aplicarEfeito(alvo, efeito);
-				}
+			boolean despertarAtivo = ator.temPropriedade("DESPERTAR_DIVINO_ATIVO");
+			double chanceChama = despertarAtivo ? 0.40 : 0.25;
+
+			boolean podeAplicar;
+			if (despertarAtivo) {
+				// Despertar Divino: aplica a todos os inimigos
+				podeAplicar = true;
+			} else {
+				// Normal: apenas contra demônios
+				String racaAlvo = (alvo.getRaca() != null) ? alvo.getRaca().getNome().toLowerCase() : "";
+				podeAplicar = racaAlvo.contains("demônio") || racaAlvo.contains("demonio") || racaAlvo.contains("demon") || (alvo.getRaca() instanceof br.com.dantesrpg.model.racas.HalfDemon);
+			}
+
+			if (podeAplicar && Math.random() <= chanceChama) {
+				System.out.println(">>> Yaweh On-Hit: Chama Divina ativado contra " + alvo.getNome()
+						+ "!" + (despertarAtivo ? " (Despertar Divino: 40%)" : ""));
+				int danoDaSource = Math.max(1, (int) danoCausado);
+				Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Chama Divina", 0, danoDaSource);
+				efeito.setStacks(1);
+				aplicarEfeito(alvo, efeito);
 			}
 		}
 

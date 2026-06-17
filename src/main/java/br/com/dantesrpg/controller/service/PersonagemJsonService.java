@@ -37,6 +37,7 @@ import br.com.dantesrpg.model.fantasmasnobres.ApostadorIncansavel;
 import br.com.dantesrpg.model.fantasmasnobres.InvocacaoMurasame;
 import br.com.dantesrpg.model.fantasmasnobres.IraDeAnthyros;
 import br.com.dantesrpg.model.fantasmasnobres.RingOfTheUndyingWill;
+import br.com.dantesrpg.model.fantasmasnobres.RevelacaoDeYaweh;
 import br.com.dantesrpg.model.fantasmasnobres.VigiliaEterna;
 import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.util.FileLoader;
@@ -364,6 +365,9 @@ public class PersonagemJsonService {
 		}
 		if (nome.equals("Pinocchio")) {
 			personagem.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.TheMastersCall());
+		}
+		if (nome.equalsIgnoreCase("Servant") || nome.equalsIgnoreCase("Sarvant")) {
+			personagem.setFantasmaNobre(new RevelacaoDeYaweh());
 		}
 	}
 

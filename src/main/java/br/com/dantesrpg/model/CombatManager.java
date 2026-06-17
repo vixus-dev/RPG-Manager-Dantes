@@ -710,6 +710,10 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 								System.out.println(">>> " + p.getNome()
 										+ " — A Falsa Justiça se dissipou.");
 							}
+							if (nomeEfeito.equals("Despertar Divino")) {
+								br.com.dantesrpg.model.fantasmasnobres.RevelacaoDeYaweh
+										.reverterDespertarDivino(p);
+							}
 						}
 					}
 					if (statsChanged) {

@@ -301,7 +301,20 @@ public class DamageResolutionController {
 					int dificuldade = 2 + (grau * 2);
 					lblInfoExtra.setText("Dif: " + dificuldade + " (Grau " + grau + ")");
 				} else if (selecao.equals("Bloqueio")) {
-					lblInfoExtra.setText("Dado x 4.5% = Redução");
+					double bonus = 0;
+					if (alvo != null && alvo.getEfeitosAtivos().containsKey("Manto Divino")) {
+						br.com.dantesrpg.model.Efeito manto = alvo.getEfeitosAtivos().get("Manto Divino");
+						if (manto.getModificadores() != null) {
+							bonus = manto.getModificadores().getOrDefault("BONUS_BLOQUEIO", 2.0);
+						} else {
+							bonus = 2.0;
+						}
+					}
+					if (bonus > 0) {
+						lblInfoExtra.setText(String.format("Dado + %.0f (Manto Divino) x 4.5%% = Redução", bonus));
+					} else {
+						lblInfoExtra.setText("Dado x 4.5% = Redução");
+					}
 				}
 			}
 		}
@@ -327,12 +340,26 @@ public class DamageResolutionController {
 				}
 
 			} else if (selecao.equals("Bloqueio")) {
-				double percentualReducao = valorInput * 0.045;
+				double bonus = 0;
+				if (alvo != null && alvo.getEfeitosAtivos().containsKey("Manto Divino")) {
+					br.com.dantesrpg.model.Efeito manto = alvo.getEfeitosAtivos().get("Manto Divino");
+					if (manto.getModificadores() != null) {
+						bonus = manto.getModificadores().getOrDefault("BONUS_BLOQUEIO", 2.0);
+					} else {
+						bonus = 2.0;
+					}
+				}
+				double valorFinal = valorInput + bonus;
+				double percentualReducao = valorFinal * 0.045;
 				if (percentualReducao > 1.0)
 					percentualReducao = 1.0;
 				double danoReduzido = evento.getValorDano() * (1.0 - percentualReducao);
 				String pctTexto = String.format("%.1f%%", percentualReducao * 100);
-				lblResultado.setText("Reduz " + pctTexto + " -> " + Math.round(danoReduzido));
+				if (bonus > 0) {
+					lblResultado.setText(String.format("Reduz %s (Dado+%.0f) -> %d", pctTexto, bonus, Math.round(danoReduzido)));
+				} else {
+					lblResultado.setText("Reduz " + pctTexto + " -> " + Math.round(danoReduzido));
+				}
 				lblResultado.setTextFill(Color.ORANGE);
 			}
 		}
@@ -354,9 +381,20 @@ public class DamageResolutionController {
 						System.out.println(">>> " + alvo.getNome() + " ESQUIVOU!");
 					}
 				} else if (selecao.equals("Bloqueio")) {
-					double percentual = Math.min(1.0, valorInput * 0.045);
+					double bonus = 0;
+					if (alvo != null && alvo.getEfeitosAtivos().containsKey("Manto Divino")) {
+						br.com.dantesrpg.model.Efeito manto = alvo.getEfeitosAtivos().get("Manto Divino");
+						if (manto.getModificadores() != null) {
+							bonus = manto.getModificadores().getOrDefault("BONUS_BLOQUEIO", 2.0);
+						} else {
+							bonus = 2.0;
+						}
+						alvo.removerEfeito("Manto Divino");
+						alvo.recalcularAtributosEstatisticas();
+					}
+					double percentual = Math.min(1.0, (valorInput + bonus) * 0.045);
 					danoFinal = danoFinal * (1.0 - percentual);
-					System.out.println(">>> " + alvo.getNome() + " BLOQUEOU. Dano: " + danoFinal);
+					System.out.println(">>> " + alvo.getNome() + " BLOQUEOU (Manto Divino Bônus: +" + bonus + "). Dano: " + danoFinal);
 				}
 			} catch (Exception e) {
 			}

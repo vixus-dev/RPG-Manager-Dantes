@@ -89,6 +89,8 @@ public class EffectTooltipBuilder {
 				"Modo Justiça ativado! Aura que fortalece aliados e enfraquece inimigos próximos.");
 		DESCRICOES.put("Vigília (Foco)", "Foco concentrado da Vigília. Bônus especial para o portador.");
 		DESCRICOES.put("Ringue (Preparando)", "Preparando o Ringue da Vontade. O campo será selado em breve.");
+		DESCRICOES.put("Despertar Divino", "Transformação ativa de Sarvant. Yaweh tem alcance 1, custo 120, escala com Inspiração, possui ataque alternativo em cone (100°, 1.2x dano, alcance 2), e chance de Chama Divina sobe para 40% contra qualquer inimigo.");
+		DESCRICOES.put("Manto Divino", "Postura defensiva. O próximo teste de bloqueio é fortalecido em +2. Consumido após o uso.");
 
 		// --- Efeitos Raciais ---
 		DESCRICOES.put("Τέλεια αρμονία",

@@ -484,7 +484,7 @@ public class ReforcosDialogService {
 		cbFantasma.getItems().add("(Nenhum)");
 		cbFantasma.getItems().addAll("AcertoDeContas", "AndJusticeForMySelf", "ApostadorIncansavel", "GodsWill",
 				"InvocacaoMurasame", "InvocacaoSangrenta", "IraDeAnthyros", "JihoGekkyuden", "LuaSombria",
-				"ModoPolaris", "ProfetaDeBehemoth", "RingOfTheUndyingWill", "Ritual", "TheMastersCall",
+				"ModoPolaris", "ProfetaDeBehemoth", "RevelacaoDeYaweh", "RingOfTheUndyingWill", "Ritual", "TheMastersCall",
 				"VigiliaEterna");
 		cbFantasma.setValue("(Nenhum)");
 		return cbFantasma;
