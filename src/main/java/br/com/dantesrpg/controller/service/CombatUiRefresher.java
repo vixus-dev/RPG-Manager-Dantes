@@ -11,13 +11,25 @@ import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.controller.PlayerCardController;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Personagem;
+import br.com.dantesrpg.model.util.ImageCache;
 import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 public class CombatUiRefresher {
@@ -28,8 +40,10 @@ public class CombatUiRefresher {
 	private final Supplier<VBox> enemyListSupplier;
 	private final Supplier<HBox> timelineSupplier;
 
-	private Label tuPreviewLabel;
-	private FadeTransition tuPreviewAnimation;
+	private Node tuPreviewNode;
+	private ParallelTransition activePreviewTransition;
+	private final List<TranslateTransition> activeSlideTransitions = new ArrayList<>();
+	private static final double SHIFT_AMOUNT = 55.0; // 40px token + 15px spacing
 
 	public CombatUiRefresher(CombatController controller, Supplier<EstadoCombate> estadoSupplier,
 			Supplier<VBox> playerListSupplier, Supplier<VBox> enemyListSupplier, Supplier<HBox> timelineSupplier) {
@@ -90,17 +104,132 @@ public class CombatUiRefresher {
 		controller.forEachMap(m -> m.desenharPeoes(estado.getCombatentes()));
 	}
 
+	private VBox criarTokenVisivel(Personagem personagem, int tuExibido, boolean isPreview) {
+		VBox token = new VBox();
+		token.setAlignment(Pos.CENTER);
+		token.setSpacing(4);
+		token.setUserData(personagem);
+
+		// Portrait StackPane
+		StackPane portraitContainer = new StackPane();
+		portraitContainer.setPrefSize(40, 40);
+		portraitContainer.setMinSize(40, 40);
+		portraitContainer.setMaxSize(40, 40);
+
+		// ImageView
+		ImageView img = new ImageView();
+		img.setFitWidth(36);
+		img.setFitHeight(36);
+		img.setPreserveRatio(true);
+
+		// Load portrait
+		String nomeBase = personagem.getNome().toLowerCase().replace(" ", "_");
+		if (personagem.isClone()) {
+			Personagem criador = personagem.getCriador();
+			if (criador != null) {
+				nomeBase = criador.getNome().toLowerCase().replace(" ", "_");
+			}
+		}
+		String imagePath = "/portraits/" + nomeBase + ".png";
+		Image portraitImage = ImageCache.get(imagePath, 36, 36);
+
+		// Fallback portrait (colored circle with initials)
+		if (portraitImage == null || portraitImage.isError()) {
+			Circle placeholderCircle = new Circle(18);
+			placeholderCircle.setFill(Color.web("#2c2c35"));
+			Label initials = new Label(personagem.getNome().substring(0, Math.min(2, personagem.getNome().length())).toUpperCase());
+			initials.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 11px; -fx-text-fill: #888899; -fx-font-weight: bold;");
+			StackPane placeholder = new StackPane(placeholderCircle, initials);
+			placeholder.setPrefSize(36, 36);
+			portraitContainer.getChildren().add(placeholder);
+		} else {
+			img.setImage(portraitImage);
+			Circle clip = new Circle(18, 18, 18);
+			img.setClip(clip);
+			portraitContainer.getChildren().add(img);
+		}
+
+		// Border Circle
+		Circle border = new Circle(18, 18, 18);
+		border.setFill(Color.TRANSPARENT);
+		border.setStrokeWidth(2.5);
+
+		// Color mapping and glows
+		if (isPreview) {
+			border.setStroke(Color.web("#00ff88")); // Holographic green
+			border.setEffect(new DropShadow(8, Color.web("#00ff88")));
+			token.setOpacity(0.7);
+		} else {
+			boolean isAtorAtual = (estadoSupplier.get() != null && estadoSupplier.get().getAtorAtual() == personagem);
+			if (isAtorAtual) {
+				border.setStroke(Color.web("#ffd700")); // Active turn is Golden
+				border.setEffect(new DropShadow(10, Color.web("#ffd700")));
+			} else if (personagem.isClone()) {
+				border.setStroke(Color.web("#ee82ee")); // Violet for clones
+				border.setEffect(new DropShadow(5, Color.web("#ee82ee")));
+			} else if (controller.isPlayer(personagem)) {
+				border.setStroke(Color.web("#00f0ff")); // Cyan for players
+				border.setEffect(new DropShadow(5, Color.web("#00f0ff")));
+			} else {
+				border.setStroke(Color.web("#ff3333")); // Red for enemies
+				border.setEffect(new DropShadow(5, Color.web("#ff3333")));
+			}
+		}
+		portraitContainer.getChildren().add(border);
+
+		// Balloon with TU
+		Label lblTU = new Label(String.valueOf(tuExibido));
+		if (isPreview) {
+			lblTU.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 10px; -fx-text-fill: #00ff88; -fx-font-weight: bold;");
+		} else {
+			lblTU.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 10px; -fx-text-fill: white; -fx-font-weight: bold;");
+		}
+
+		StackPane balloon = new StackPane(lblTU);
+		if (isPreview) {
+			balloon.setStyle("-fx-background-color: rgba(0, 40, 20, 0.7); -fx-border-color: #00ff88; -fx-border-width: 0.5px; -fx-border-radius: 4px; -fx-background-radius: 4px; -fx-padding: 1px 5px;");
+		} else {
+			balloon.setStyle("-fx-background-color: rgba(0, 0, 0, 0.65); -fx-background-radius: 4px; -fx-padding: 1px 5px;");
+		}
+
+		token.getChildren().addAll(portraitContainer, balloon);
+
+		// Tooltip
+		String tooltipText = personagem.getNome();
+		if (personagem.isClone()) {
+			tooltipText += " (Clone)";
+		}
+		Tooltip tooltip = new Tooltip(tooltipText);
+		tooltip.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 12px;");
+		Tooltip.install(token, tooltip);
+
+		// Interactive micro-animations
+		if (!isPreview) {
+			token.setOnMouseEntered(e -> {
+				ScaleTransition hoverScale = new ScaleTransition(Duration.millis(150), portraitContainer);
+				hoverScale.setToX(1.15);
+				hoverScale.setToY(1.15);
+				hoverScale.play();
+			});
+			token.setOnMouseExited(e -> {
+				ScaleTransition hoverScale = new ScaleTransition(Duration.millis(150), portraitContainer);
+				hoverScale.setToX(1.0);
+				hoverScale.setToY(1.0);
+				hoverScale.play();
+			});
+		}
+
+		return token;
+	}
+
 	public void atualizarTimelineTU() {
 		HBox timelineContainer = timelineSupplier.get();
 		EstadoCombate estado = estadoSupplier.get();
 		if (timelineContainer == null || estado == null || estado.getCombatentes() == null) {
 			return;
 		}
-		if (tuPreviewAnimation != null) {
-			tuPreviewAnimation.stop();
-			tuPreviewAnimation = null;
-		}
-		tuPreviewLabel = null;
+
+		limparTUPreview();
 		timelineContainer.getChildren().clear();
 
 		List<Personagem> ordenadosPorTU = new ArrayList<>(estado.getCombatentes());
@@ -119,18 +248,10 @@ public class CombatUiRefresher {
 					continue;
 				}
 				mestresComCloneExibido.add(criador);
-
-				Label marcador = new Label("Clones (" + criador.getNome() + ") [" + personagem.getContadorTU() + "]");
-				marcador.setStyle("-fx-text-fill: violet; -fx-font-weight: bold;");
-				timelineContainer.getChildren().add(marcador);
-				continue;
 			}
 
-			Label marcador = new Label(personagem.getNome() + " [" + personagem.getContadorTU() + "]");
-			marcador.setStyle(controller.isPlayer(personagem)
-					? "-fx-text-fill: cyan; -fx-font-weight: bold;"
-					: "-fx-text-fill: lightcoral;");
-			timelineContainer.getChildren().add(marcador);
+			VBox token = criarTokenVisivel(personagem, personagem.getContadorTU(), false);
+			timelineContainer.getChildren().add(token);
 		}
 	}
 
@@ -141,49 +262,69 @@ public class CombatUiRefresher {
 		}
 
 		limparTUPreview();
-		tuPreviewLabel = new Label(ator.getNome() + " [" + tuPrevisto + "]");
-		tuPreviewLabel.setStyle(
-				"-fx-text-fill: #00ff88; -fx-font-weight: bold; -fx-font-size: 12px; "
-						+ "-fx-border-color: #00ff88; -fx-border-width: 1; -fx-border-style: dashed; "
-						+ "-fx-padding: 2 6; -fx-border-radius: 3; -fx-background-radius: 3;");
+
+		tuPreviewNode = criarTokenVisivel(ator, tuPrevisto, true);
 
 		int insertIndex = 0;
 		for (int i = 0; i < timelineContainer.getChildren().size(); i++) {
 			Node child = timelineContainer.getChildren().get(i);
-			if (child instanceof Label) {
-				String text = ((Label) child).getText();
-				int bracketStart = text.lastIndexOf('[');
-				int bracketEnd = text.lastIndexOf(']');
-				if (bracketStart != -1 && bracketEnd != -1) {
-					try {
-						int tuDoMarcador = Integer.parseInt(text.substring(bracketStart + 1, bracketEnd));
-						if (tuPrevisto > tuDoMarcador) {
-							insertIndex = i + 1;
-						}
-					} catch (NumberFormatException ignored) {
-					}
+			if (child.getUserData() instanceof Personagem) {
+				Personagem p = (Personagem) child.getUserData();
+				if (tuPrevisto > p.getContadorTU()) {
+					insertIndex = i + 1;
 				}
 			}
 		}
 
-		timelineContainer.getChildren().add(insertIndex, tuPreviewLabel);
-		tuPreviewAnimation = new FadeTransition(Duration.millis(600), tuPreviewLabel);
-		tuPreviewAnimation.setFromValue(1.0);
-		tuPreviewAnimation.setToValue(0.3);
-		tuPreviewAnimation.setCycleCount(FadeTransition.INDEFINITE);
-		tuPreviewAnimation.setAutoReverse(true);
-		tuPreviewAnimation.play();
+		timelineContainer.getChildren().add(insertIndex, tuPreviewNode);
+
+		// Animate the inserted preview token
+		tuPreviewNode.setScaleX(0.0);
+		tuPreviewNode.setScaleY(0.0);
+		tuPreviewNode.setOpacity(0.0);
+
+		ScaleTransition st = new ScaleTransition(Duration.millis(250), tuPreviewNode);
+		st.setToX(1.0);
+		st.setToY(1.0);
+
+		FadeTransition ft = new FadeTransition(Duration.millis(250), tuPreviewNode);
+		ft.setToValue(0.7);
+
+		activePreviewTransition = new ParallelTransition(st, ft);
+		activePreviewTransition.play();
+
+		// Slide subsequent tokens to the right to open space
+		for (int i = insertIndex + 1; i < timelineContainer.getChildren().size(); i++) {
+			Node child = timelineContainer.getChildren().get(i);
+			child.setTranslateX(-SHIFT_AMOUNT);
+
+			TranslateTransition tt = new TranslateTransition(Duration.millis(250), child);
+			tt.setToX(0.0);
+			activeSlideTransitions.add(tt);
+			tt.play();
+		}
 	}
 
 	public void limparTUPreview() {
 		HBox timelineContainer = timelineSupplier.get();
-		if (tuPreviewAnimation != null) {
-			tuPreviewAnimation.stop();
-			tuPreviewAnimation = null;
+		if (activePreviewTransition != null) {
+			activePreviewTransition.stop();
+			activePreviewTransition = null;
 		}
-		if (tuPreviewLabel != null && timelineContainer != null) {
-			timelineContainer.getChildren().remove(tuPreviewLabel);
-			tuPreviewLabel = null;
+		for (TranslateTransition tt : activeSlideTransitions) {
+			tt.stop();
+		}
+		activeSlideTransitions.clear();
+
+		if (tuPreviewNode != null && timelineContainer != null) {
+			timelineContainer.getChildren().remove(tuPreviewNode);
+			tuPreviewNode = null;
+		}
+
+		if (timelineContainer != null) {
+			for (Node child : timelineContainer.getChildren()) {
+				child.setTranslateX(0.0);
+			}
 		}
 	}
 

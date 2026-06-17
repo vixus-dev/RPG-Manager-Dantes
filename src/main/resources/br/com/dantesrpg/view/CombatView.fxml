@@ -59,13 +59,18 @@
       <BorderPane fx:id="contextPane" BorderPane.alignment="CENTER">
 
          <top>
-             <HBox fx:id="timelineBar" alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" styleClass="timeline-bar">
+             <HBox fx:id="timelineBar" alignment="CENTER_LEFT" prefHeight="80.0" spacing="10.0" styleClass="timeline-bar">
                <padding>
                   <Insets left="10.0" right="10.0"/>
                </padding>
                <children>
                   <Label text="Próximos Turnos:" style="-fx-text-fill: yellow;" />
-                  <HBox fx:id="timelineContainer" alignment="CENTER_LEFT" spacing="15.0" />
+                  <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Pane maxHeight="2.0" style="-fx-background-color: #3a3a3a; -fx-background-radius: 1px;" translateY="-10" StackPane.alignment="CENTER" />
+                        <HBox fx:id="timelineContainer" alignment="CENTER_LEFT" spacing="15.0" />
+                     </children>
+                  </StackPane>
                </children>
             </HBox>
          </top>

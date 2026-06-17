@@ -86,6 +86,7 @@ public class EffectProcessor {
 			double chanceChama = despertarAtivo ? 0.40 : 0.25;
 
 			boolean podeAplicar;
+			
 			if (despertarAtivo) {
 				// Despertar Divino: aplica a todos os inimigos
 				podeAplicar = true;
