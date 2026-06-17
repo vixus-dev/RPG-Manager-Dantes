@@ -801,6 +801,56 @@ public class DetailedTurnHUDController {
 			input.setOpcaoEscolhida(selectedId);
 		}
 
+		if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.classe.ArremessarPocao) {
+			List<String> opcoesPotions = new ArrayList<>();
+			if (atorAtual.getInventario() != null) {
+				for (String key : atorAtual.getInventario().getItensAgrupados().keySet()) {
+					Item item = mainController.getItem(key);
+					if (isPocao(key, item)) {
+						opcoesPotions.add(key);
+					}
+				}
+			}
+
+			if (opcoesPotions.isEmpty()) {
+				Alert alert = new Alert(Alert.AlertType.WARNING);
+				alert.setTitle("Arremessar Poção");
+				alert.setHeaderText("Nenhuma poção disponível.");
+				alert.setContentText("Você não possui poções no inventário para arremessar.");
+				alert.showAndWait();
+				return;
+			}
+
+			Map<String, String> idToName = new HashMap<>();
+			List<String> displayNames = new ArrayList<>();
+			for (String id : opcoesPotions) {
+				Item item = mainController.getItem(id);
+				String displayName = item != null ? item.getNome() : formatarNomeOpcao(id);
+				int count = atorAtual.getInventario().getItensAgrupados().getOrDefault(id, 1);
+				String uniqueName = displayName + " (x" + count + ")";
+				idToName.put(uniqueName, id);
+				displayNames.add(uniqueName);
+			}
+
+			ChoiceDialog<String> choiceDialog = new ChoiceDialog<>(displayNames.get(0), displayNames);
+			choiceDialog.setTitle("Arremessar Poção");
+			choiceDialog.setHeaderText("Selecione a poção do inventário para arremessar:");
+			choiceDialog.setContentText("Poção:");
+			choiceDialog.getDialogPane().setStyle("-fx-background-color: #222;");
+			DialogPane dp = choiceDialog.getDialogPane();
+			if (dp.lookup(".label") != null) {
+				dp.lookup(".label").setStyle("-fx-text-fill: white;");
+			}
+
+			Optional<String> choiceResult = choiceDialog.showAndWait();
+			if (choiceResult.isEmpty()) {
+				return;
+			}
+
+			String selectedId = idToName.get(choiceResult.get());
+			input.setOpcaoEscolhida(selectedId);
+		}
+
 		if (epicentroX != -1) input.setEpicentro(epicentroX, epicentroY);
 
 		// Dado de atributo principal
@@ -1145,5 +1195,21 @@ public class DetailedTurnHUDController {
 			}
 		}
 		return opt;
+	}
+
+	private static boolean isPocao(String key, Item item) {
+		if (key == null) return false;
+		if (key.startsWith("PocaoAlquimica_")) return true;
+		if (item == null) return false;
+		String k = key.toLowerCase();
+		String n = item.getNome().toLowerCase();
+		return k.contains("pocao") || k.contains("poção")
+				|| n.contains("pocao") || n.contains("poção")
+				|| n.contains("seringa")
+				|| n.contains("antídoto") || n.contains("antidoto")
+				|| n.contains("tônico") || n.contains("tonico")
+				|| n.contains("bálsamo") || n.contains("balsamo")
+				|| n.contains("soro")
+				|| n.contains("água benta") || n.contains("agua benta");
 	}
 }

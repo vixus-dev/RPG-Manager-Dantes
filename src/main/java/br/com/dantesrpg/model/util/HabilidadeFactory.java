@@ -125,6 +125,7 @@ public class HabilidadeFactory {
 		registro.put("Fome...", Fome::new);
 		registro.put("Sintetizar Poção", SintetizarPocao::new);
 		registro.put("Aprimorar Poção", AprimorarPocao::new);
+		registro.put("Arremessar Poção", ArremessarPocao::new);
 
 		// KuangLi - Profeta de Behemoth
 		registro.put("Mergulho", Mergulho::new);
