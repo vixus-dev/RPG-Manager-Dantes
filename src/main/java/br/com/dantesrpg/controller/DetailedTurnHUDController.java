@@ -755,6 +755,52 @@ public class DetailedTurnHUDController {
 			input.setOpcaoEscolhida((String) toggleGroupOpcoes.getSelectedToggle().getUserData());
 		}
 
+		if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
+			List<String> opcoesPotions = new ArrayList<>();
+			if (atorAtual.getInventario() != null) {
+				for (String key : atorAtual.getInventario().getItensAgrupados().keySet()) {
+					if (key.startsWith("PocaoAlquimica_") && !key.contains("_V2_")) {
+						opcoesPotions.add(key);
+					}
+				}
+			}
+
+			if (opcoesPotions.isEmpty()) {
+				Alert alert = new Alert(Alert.AlertType.WARNING);
+				alert.setTitle("Aprimorar Poção");
+				alert.setHeaderText("Nenhuma poção aprimorável.");
+				alert.setContentText("Você não possui poções alquímicas básicas no inventário.");
+				alert.showAndWait();
+				return;
+			}
+
+			Map<String, String> idToName = new HashMap<>();
+			List<String> displayNames = new ArrayList<>();
+			for (String id : opcoesPotions) {
+				String displayName = formatarNomeOpcao(id);
+				idToName.put(displayName, id);
+				displayNames.add(displayName);
+			}
+
+			ChoiceDialog<String> choiceDialog = new ChoiceDialog<>(displayNames.get(0), displayNames);
+			choiceDialog.setTitle("Aprimorar Poção");
+			choiceDialog.setHeaderText("Selecione a poção do inventário para aprimorar:");
+			choiceDialog.setContentText("Poção:");
+			choiceDialog.getDialogPane().setStyle("-fx-background-color: #222;");
+			DialogPane dp = choiceDialog.getDialogPane();
+			if (dp.lookup(".label") != null) {
+				dp.lookup(".label").setStyle("-fx-text-fill: white;");
+			}
+
+			Optional<String> choiceResult = choiceDialog.showAndWait();
+			if (choiceResult.isEmpty()) {
+				return;
+			}
+
+			String selectedId = idToName.get(choiceResult.get());
+			input.setOpcaoEscolhida(selectedId);
+		}
+
 		if (epicentroX != -1) input.setEpicentro(epicentroX, epicentroY);
 
 		// Dado de atributo principal
@@ -1089,5 +1135,15 @@ public class DetailedTurnHUDController {
 	private String formatarNumero(double valor) {
 		if (valor >= 1000) return String.format("%.1fk", valor / 1000.0).replace(",", ".");
 		return String.format("%.0f", valor);
+	}
+
+	private static String formatarNomeOpcao(String opt) {
+		if (opt != null && opt.startsWith("PocaoAlquimica_")) {
+			String[] parts = opt.split("_");
+			if (parts.length >= 3) {
+				return parts[1] + " (IS: " + parts[2] + ")";
+			}
+		}
+		return opt;
 	}
 }

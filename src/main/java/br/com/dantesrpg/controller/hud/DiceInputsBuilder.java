@@ -106,22 +106,14 @@ public class DiceInputsBuilder {
 		}
 
 		// --- 2. Opções de seleção da habilidade (bloco inicial) ---
-		List<String> listOpInit = null;
-		if (hab != null) {
-			if (hab instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
-				listOpInit = ((br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) hab).getOpcoesDinamicas(ator);
-			} else {
-				listOpInit = hab.getOpcoesSelection();
-			}
-		}
-		if (listOpInit != null && !listOpInit.isEmpty()) {
+		if (hab != null && hab.getOpcoesSelection() != null && !hab.getOpcoesSelection().isEmpty()) {
 			Label lbl = new Label("Escolha uma Opção:");
 			lbl.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold;");
 
 			ToggleGroup tg = new ToggleGroup();
 			toggleGroupOpcoes = tg;
-			FlowPane box = criarFlowPaneOpcoes(listOpInit, tg);
-			if (!listOpInit.isEmpty()) tg.getToggles().get(0).setSelected(true);
+			FlowPane box = criarFlowPaneOpcoes(hab.getOpcoesSelection(), tg);
+			if (!hab.getOpcoesSelection().isEmpty()) tg.getToggles().get(0).setSelected(true);
 
 			diceInputsBox.getChildren().addAll(lbl, box);
 		}
@@ -146,15 +138,8 @@ public class DiceInputsBuilder {
 
 		// --- 6. Lista consolidada de opções (habilidade OU fantasma nobre) ---
 		List<String> listaOpcoes = null;
-		if (hab != null) {
-			if (hab instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
-				listaOpcoes = ((br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) hab).getOpcoesDinamicas(ator);
-			} else {
-				listaOpcoes = hab.getOpcoesSelection();
-			}
-		} else if (fn != null) {
-			listaOpcoes = fn.getOpcoesSelection();
-		}
+		if (hab != null) listaOpcoes = hab.getOpcoesSelection();
+		else if (fn != null) listaOpcoes = fn.getOpcoesSelection();
 
 		if (listaOpcoes != null && !listaOpcoes.isEmpty()) {
 			ToggleGroup group = new ToggleGroup();
@@ -196,6 +181,9 @@ public class DiceInputsBuilder {
 		boolean precisa = hab.getMultiplicadorDeDano() > 0;
 		String nome = hab.getNome();
 		if (nome.equals("Distorted Solo") || nome.equals("Wha-Wha Solo") || nome.equals("Plain Solo")) {
+			precisa = true;
+		}
+		if (nome.equals("Aprimorar Poção")) {
 			precisa = true;
 		}
 		if (nome.equals("Caçada") || nome.equals("Trocado")) {
