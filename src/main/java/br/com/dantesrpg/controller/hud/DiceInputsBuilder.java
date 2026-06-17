@@ -197,6 +197,9 @@ public class DiceInputsBuilder {
 				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.MestreFilosofal) {
 			return Atributo.SORTE;
 		}
+		if (hab instanceof br.com.dantesrpg.model.habilidades.VisaoDivina) {
+			return Atributo.SAGACIDADE;
+		}
 		Atributo atr = Atributo.FORCA;
 		if (ator.getArmaEquipada() != null) {
 			atr = ator.getArmaEquipada().getAtributoMultiplicador();
