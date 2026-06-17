@@ -923,6 +923,17 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 							escolha);
 				}
 
+			} else if (habilidade instanceof br.com.dantesrpg.model.habilidades.classe.SintetizarPocao) {
+				String escolha = input.getOpcaoEscolhida();
+				if (escolha == null)
+					escolha = "Cura";
+				((br.com.dantesrpg.model.habilidades.classe.SintetizarPocao) habilidade).executarComEscolha(ator, escolha);
+
+			} else if (habilidade instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
+				String escolha = input.getOpcaoEscolhida();
+				int sorteRoll = input.getResultadoDado("DADO_ATRIBUTO");
+				((br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) habilidade).executarAprimoramento(ator, escolha, sorteRoll);
+
 			} else {
 				if (!ator.isClone() || habilidadePodeSerCopiadaPorClone(habilidade)) {
 					effectProcessor.aplicarEfeitosDaHabilidade(ator, habilidade, alvos, estado, this);
@@ -1489,6 +1500,16 @@ for (Personagem p : jogadoresVivos) {
 			TipoAcao tipoAcaoAtual) {
 		double modTU = 1.0;
 		int custoExtraFixo = 0;
+
+		if (tipoAcaoAtual == TipoAcao.HABILIDADE) {
+			for (Efeito e : conjurador.getEfeitosAtivos().values()) {
+				if (e.getModificadores() != null && e.getModificadores().containsKey("REDUCAO_TU_HABILIDADES")) {
+					modTU -= e.getModificadores().get("REDUCAO_TU_HABILIDADES");
+					System.out.println(">>> Redução de TU de Habilidade aplicada (" + e.getNome() + "): -" 
+							+ (int) (e.getModificadores().get("REDUCAO_TU_HABILIDADES") * 100) + "%");
+				}
+			}
+		}
 
 		if (conjurador.getEfeitosAtivos().containsKey("Estado Dourado")) {
 			modTU -= 0.15;

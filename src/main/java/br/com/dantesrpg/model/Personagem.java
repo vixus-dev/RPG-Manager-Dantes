@@ -1,5 +1,6 @@
 package br.com.dantesrpg.model;
 
+import br.com.dantesrpg.model.classes.Alquimista;
 import br.com.dantesrpg.model.classes.Feiticeiro;
 import br.com.dantesrpg.model.classes.Invocador;
 import br.com.dantesrpg.model.enums.Atributo;
@@ -350,6 +351,8 @@ public class Personagem {
 			this.taxaCritica += 0.25;
 		if (this.classe instanceof Invocador)
 			this.manaMaxima -= 2;
+		if (this.classe instanceof Alquimista)
+			this.manaMaxima += 1;
 
 		// Bônus de Raça
 		if (this.raca instanceof Marionette || (this.raca != null && "Marionette".equalsIgnoreCase(this.raca.getNome())))
@@ -373,6 +376,19 @@ public class Personagem {
 			double bonusArmPct = this.raca.getBonusArmaduraPercentual(this);
 			if (bonusArmPct > 0) {
 				this.armaduraTotal += (int) (this.armaduraTotal * bonusArmPct);
+			}
+		}
+
+		// Poção de Resistencia: aumenta a armadura em IS% do valor atual
+		if (this.efeitosAtivos != null) {
+			double bonusArmaduraPercentualEfeito = 0.0;
+			for (Efeito e : this.efeitosAtivos.values()) {
+				if (e.getModificadores() != null && e.getModificadores().containsKey("BONUS_ARMADURA_PERCENTUAL")) {
+					bonusArmaduraPercentualEfeito += e.getModificadores().get("BONUS_ARMADURA_PERCENTUAL");
+				}
+			}
+			if (bonusArmaduraPercentualEfeito > 0) {
+				this.armaduraTotal += (int) (this.armaduraTotal * bonusArmaduraPercentualEfeito);
 			}
 		}
 
