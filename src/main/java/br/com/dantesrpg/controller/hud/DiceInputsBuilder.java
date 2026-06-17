@@ -203,7 +203,11 @@ public class DiceInputsBuilder {
 		}
 		if (hab instanceof br.com.dantesrpg.model.habilidades.classe.WhaWhaSolo
 				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.DistortedSolo
-				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.PlainSolo) {
+				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.PlainSolo
+				|| hab instanceof br.com.dantesrpg.model.habilidades.BencaoDivina
+				|| hab instanceof br.com.dantesrpg.model.habilidades.ProtecaoDosCeus
+				|| hab instanceof br.com.dantesrpg.model.habilidades.VisaoDivina
+				|| hab instanceof br.com.dantesrpg.model.habilidades.HolySpirit) {
 			atr = Atributo.INSPIRACAO;
 		}
 		return atr;

@@ -1295,6 +1295,7 @@ if (excedente > 0) {
 				resolverAcao(input, estado);
 
 				int custoDestaAcao = Math.max(0, atacante.getContadorTU() - tuInicialPorClone.get(atacante));
+				
 				if (false) {
 					damageCalculator.resolverDanoPadrao(atacante, atacante.getArmaEquipada(), rolagemGlobal, List.of(alvo),
 							habilidade.getMultiplicadorDeDano(), TipoAcao.HABILIDADE, habilidade, estado, input);

@@ -31,6 +31,7 @@ import br.com.dantesrpg.model.fantasmasnobres.RingOfTheUndyingWill;
 import br.com.dantesrpg.model.fantasmasnobres.Ritual;
 import br.com.dantesrpg.model.fantasmasnobres.TheMastersCall;
 import br.com.dantesrpg.model.fantasmasnobres.VigiliaEterna;
+import br.com.dantesrpg.model.fantasmasnobres.RevelacaoDeYaweh;
 import br.com.dantesrpg.model.items.EssenciaInimigo;
 public class FantasmaNobreActionService {
 
@@ -135,6 +136,8 @@ ator.getInventario().removerItem(essencia);
 				return new ModoPolaris();
 			case "ProfetaDeBehemoth":
 				return new ProfetaDeBehemoth();
+			case "RevelacaoDeYaweh":
+				return new RevelacaoDeYaweh();
 			case "RingOfTheUndyingWill":
 				return new RingOfTheUndyingWill();
 			case "Ritual":

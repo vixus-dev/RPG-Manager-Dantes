@@ -89,6 +89,12 @@ public class HabilidadeFactory {
 		registro.put("Bênção de Maat", BencaoDeMaat::new);
 		registro.put("Sacrifício de Maat", SacrificioDeMaat::new);
 
+		// YAWEH Grimoire Spells
+		registro.put("Benção Divina", BencaoDivina::new);
+		registro.put("Proteção dos Céus", ProtecaoDosCeus::new);
+		registro.put("Visão Divina", VisaoDivina::new);
+		registro.put("Holy Spirit", HolySpirit::new);
+
 		// Lua Profana
 		registro.put("sweet dreams", SweetDreams::new);
 		registro.put("bitter Hunt", BitterHunt::new);
