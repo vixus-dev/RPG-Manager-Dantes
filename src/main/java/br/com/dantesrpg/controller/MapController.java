@@ -464,7 +464,7 @@ public class MapController {
 				desenharPreviewCone(x, y);
 				break;
 			default: // INDIVIDUAL ou MULTIPLOS
-				if (p != null && !p.equals(atorAtual)) {
+				if (p != null && (!p.equals(atorAtual) || (habilidadeAtual != null && habilidadeAtual.afetaSiMesmo()))) {
 					List<Personagem> lista = new ArrayList<>();
 					lista.add(p);
 					mainController.alvosIdentificadosNoMapa(lista);
@@ -752,7 +752,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			if (celulasAlcanceMovimento.contains(cell)) {
 				Personagem alvo = getPersonagemNaCelula(x, y);
 
-				if (alvo != null && !alvo.equals(atorAtual)) {
+				if (alvo != null && (!alvo.equals(atorAtual) || (habilidadeAtual != null && habilidadeAtual.afetaSiMesmo()))) {
 					if (atorAtual.isClone() && alvo.isClone() && atorAtual.getCriador() == alvo.getCriador()) {
 						System.out.println("MAPA: Clone não pode atacar seu aliado clone!");
 						return;
@@ -784,6 +784,9 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			celulas = aoeCalc.calcularCelulasMovimento(startX, startY, maxDist, dominiosAtivos);
 		} else {
 			celulas = aoeCalc.calcularCelulasAtaque(startX, startY, maxDist);
+			if (habilidadeAtual != null && habilidadeAtual.afetaSiMesmo()) {
+				celulas.add(celulasDoGrid[startX][startY]);
+			}
 		}
 		for (Pane cell : celulas) {
 			cell.getStyleClass().add(cssClass);

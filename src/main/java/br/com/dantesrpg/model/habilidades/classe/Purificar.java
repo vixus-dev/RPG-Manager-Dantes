@@ -21,6 +21,21 @@ public class Purificar extends Habilidade {
 	}
 
 	@Override
+	public boolean afetaInimigos() {
+		return false;
+	}
+
+	@Override
+	public boolean afetaAliados() {
+		return true;
+	}
+
+	@Override
+	public boolean afetaSiMesmo() {
+		return true;
+	}
+
+	@Override
 	public void executar(Personagem c, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
 		Personagem alvo = alvos.get(0);
 		List<String> debuffs = new ArrayList<>();

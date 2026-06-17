@@ -87,7 +87,7 @@ public class SquadModeHandler {
 		if (isMirar) {
 			if (celulasAlcanceMovimento.contains(cell)) {
 				Personagem alvo = mapController.getPersonagemNaCelula(x, y);
-				if (alvo != null && !alvo.equals(atorAtual)) {
+				if (alvo != null && (!alvo.equals(atorAtual) || (mapController.getHabilidadeAtual() != null && mapController.getHabilidadeAtual().afetaSiMesmo()))) {
 					if (alvo.isClone() && alvo.getCriador() == atorAtual.getCriador()) {
 						System.out.println("SQUAD: Fogo amigo bloqueado.");
 						return;

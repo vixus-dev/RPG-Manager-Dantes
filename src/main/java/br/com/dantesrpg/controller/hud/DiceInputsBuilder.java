@@ -105,18 +105,6 @@ public class DiceInputsBuilder {
 			lblCritResult.setStyle("-fx-text-fill: gray; -fx-font-size: 18px; -fx-font-weight: bold;");
 		}
 
-		// --- 2. Opções de seleção da habilidade (bloco inicial) ---
-		if (hab != null && hab.getOpcoesSelection() != null && !hab.getOpcoesSelection().isEmpty()) {
-			Label lbl = new Label("Escolha uma Opção:");
-			lbl.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold;");
-
-			ToggleGroup tg = new ToggleGroup();
-			toggleGroupOpcoes = tg;
-			FlowPane box = criarFlowPaneOpcoes(hab.getOpcoesSelection(), tg);
-			if (!hab.getOpcoesSelection().isEmpty()) tg.getToggles().get(0).setSelected(true);
-
-			diceInputsBox.getChildren().addAll(lbl, box);
-		}
 
 		// --- 3. Painel especial: Domínio Idle Death Gamble ---
 		if (ator.getEfeitosAtivos().containsKey("Domínio: Idle Death Gamble")) {
@@ -356,18 +344,4 @@ public class DiceInputsBuilder {
 		return opt;
 	}
 
-	private FlowPane criarFlowPaneOpcoes(List<String> opcoes, ToggleGroup group) {
-		FlowPane flow = new FlowPane();
-		flow.setHgap(5);
-		flow.setVgap(5);
-		flow.setPrefWrapLength(300);
-		for (String op : opcoes) {
-			ToggleButton btn = new ToggleButton(formatarNomeOpcao(op));
-			btn.setToggleGroup(group);
-			btn.setUserData(op);
-			btn.setStyle("-fx-base: #444; -fx-text-fill: white;");
-			flow.getChildren().add(btn);
-		}
-		return flow;
-	}
 }
