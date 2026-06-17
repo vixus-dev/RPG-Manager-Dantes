@@ -44,6 +44,8 @@ public class CombatUiRefresher {
 	private ParallelTransition activePreviewTransition;
 	private final List<TranslateTransition> activeSlideTransitions = new ArrayList<>();
 	private static final double SHIFT_AMOUNT = 55.0; // 40px token + 15px spacing
+	private javafx.animation.Transition activeCountdownTransition;
+	private int lastTickCounter = -1;
 
 	public CombatUiRefresher(CombatController controller, Supplier<EstadoCombate> estadoSupplier,
 			Supplier<VBox> playerListSupplier, Supplier<VBox> enemyListSupplier, Supplier<HBox> timelineSupplier) {
@@ -229,8 +231,18 @@ public class CombatUiRefresher {
 			return;
 		}
 
+		if (activeCountdownTransition != null) {
+			activeCountdownTransition.stop();
+			activeCountdownTransition = null;
+		}
+
 		limparTUPreview();
 		timelineContainer.getChildren().clear();
+
+		int currentTick = estado.getTickCounter();
+		final int tempoParaAvancar = (lastTickCounter != -1 && currentTick > lastTickCounter) 
+				? (currentTick - lastTickCounter) : 0;
+		lastTickCounter = currentTick;
 
 		List<Personagem> ordenadosPorTU = new ArrayList<>(estado.getCombatentes());
 		ordenadosPorTU.sort(Comparator.comparingInt(Personagem::getContadorTU)
@@ -250,8 +262,55 @@ public class CombatUiRefresher {
 				mestresComCloneExibido.add(criador);
 			}
 
-			VBox token = criarTokenVisivel(personagem, personagem.getContadorTU(), false);
+			int startingTU = personagem.getContadorTU() + tempoParaAvancar;
+			VBox token = criarTokenVisivel(personagem, startingTU, false);
 			timelineContainer.getChildren().add(token);
+		}
+
+		if (tempoParaAvancar > 0) {
+			activeCountdownTransition = new javafx.animation.Transition() {
+				{
+					setCycleDuration(Duration.millis(800));
+				}
+				@Override
+				protected void interpolate(double frac) {
+					for (Node node : timelineContainer.getChildren()) {
+						if (node instanceof VBox) {
+							VBox token = (VBox) node;
+							if (token.getUserData() instanceof Personagem) {
+								Personagem p = (Personagem) token.getUserData();
+								int startTU = p.getContadorTU() + tempoParaAvancar;
+								int currentTU = startTU - (int)(frac * tempoParaAvancar);
+								if (token.getChildren().size() > 1 && token.getChildren().get(1) instanceof StackPane) {
+									StackPane balloon = (StackPane) token.getChildren().get(1);
+									if (!balloon.getChildren().isEmpty() && balloon.getChildren().get(0) instanceof Label) {
+										Label lbl = (Label) balloon.getChildren().get(0);
+										lbl.setText(String.valueOf(currentTU));
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			activeCountdownTransition.setOnFinished(e -> {
+				for (Node node : timelineContainer.getChildren()) {
+					if (node instanceof VBox) {
+						VBox token = (VBox) node;
+						if (token.getUserData() instanceof Personagem) {
+							Personagem p = (Personagem) token.getUserData();
+							if (token.getChildren().size() > 1 && token.getChildren().get(1) instanceof StackPane) {
+								StackPane balloon = (StackPane) token.getChildren().get(1);
+								if (!balloon.getChildren().isEmpty() && balloon.getChildren().get(0) instanceof Label) {
+									Label lbl = (Label) balloon.getChildren().get(0);
+									lbl.setText(String.valueOf(p.getContadorTU()));
+								}
+							}
+						}
+					}
+				}
+			});
+			activeCountdownTransition.play();
 		}
 	}
 
