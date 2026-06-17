@@ -40,7 +40,7 @@ public class ImageCache {
 			Image imagem;
 			if (larguraDesejada > 0 && alturaDesejada > 0) {
 				// Downsampling nativo durante a leitura para economizar megabytes de RAM nativa
-				imagem = new Image(is, larguraDesejada, alturaDesejada, true, true);
+				imagem = new Image(is, larguraDesejada, alturaDesejada, true, false);
 			} else {
 				imagem = new Image(is);
 			}

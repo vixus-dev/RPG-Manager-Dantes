@@ -1237,6 +1237,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 				Image img = ImageCache.get(imagemParaCarregar, CELL_SIZE, CELL_SIZE);
 				if (img != null && !img.isError()) {
 					ImageView fxView = new ImageView(img);
+					fxView.setSmooth(false);
 					fxView.setFitWidth(CELL_SIZE);
 					fxView.setFitHeight(CELL_SIZE);
 					fxView.setPreserveRatio(true);
@@ -1830,6 +1831,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 					// Adiciona sprite overlay (ImageView) se disponível
 					if (spriteOverlay != null) {
 						ImageView fxView = new ImageView(spriteOverlay);
+						fxView.setSmooth(false);
 						fxView.setFitWidth(CELL_SIZE);
 						fxView.setFitHeight(CELL_SIZE);
 						fxView.setPreserveRatio(false);

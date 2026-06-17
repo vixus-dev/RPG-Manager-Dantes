@@ -111,6 +111,7 @@ public class MapTokenRenderer {
 					if (tokenImage == null || tokenImage.isError()) throw new Exception("Erro imagem");
 
 					javafx.scene.image.ImageView tokenView = new javafx.scene.image.ImageView(tokenImage);
+					tokenView.setSmooth(false);
 					tokenView.setFitWidth(tamanhoTotalPixels);
 					tokenView.setFitHeight(tamanhoTotalPixels);
 					tokenView.setPreserveRatio(true);
