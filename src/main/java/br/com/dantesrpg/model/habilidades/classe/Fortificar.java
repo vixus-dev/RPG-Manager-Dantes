@@ -10,9 +10,7 @@ import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.enums.TipoHabilidade;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Fortificar extends Habilidade {
 	public Fortificar() {

@@ -3,7 +3,6 @@ package br.com.dantesrpg.model.fantasmasnobres;
 import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.enums.*;
 import br.com.dantesrpg.model.habilidades.classe.RugidoPredatório;
-import br.com.dantesrpg.model.util.EffectFactory;
 import java.util.*;
 
 public class InvocacaoSangrenta extends FantasmaNobre {

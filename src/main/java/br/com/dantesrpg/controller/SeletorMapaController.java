@@ -2,7 +2,6 @@ package br.com.dantesrpg.controller;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javafx.collections.FXCollections;

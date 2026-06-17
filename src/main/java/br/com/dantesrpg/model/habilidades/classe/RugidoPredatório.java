@@ -8,7 +8,6 @@ import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.enums.TipoHabilidade;
-import br.com.dantesrpg.model.util.EffectFactory;
 
 import java.util.Collections;
 import java.util.HashMap; // Import necessário

@@ -2,7 +2,6 @@ package br.com.dantesrpg.model.racas;
 
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.model.*;
-import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.habilidades.raciais.Transformar;
 

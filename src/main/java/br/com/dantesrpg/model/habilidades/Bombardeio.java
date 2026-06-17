@@ -2,7 +2,6 @@ package br.com.dantesrpg.model.habilidades;
 
 import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.enums.*;
-import br.com.dantesrpg.model.util.EffectFactory; // Usando sua Factory
 import java.util.*;
 
 public class Bombardeio extends Habilidade {
@@ -38,8 +37,5 @@ public class Bombardeio extends Habilidade {
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
 		System.out.println(conjurador.getNome() + " usa " + getNome() + "!");
-
-		Arma arma = conjurador.getArmaEquipada();
-		double danoBase = arma.getDanoBase();
 	}
 }

@@ -1,8 +1,6 @@
 package br.com.dantesrpg.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import br.com.dantesrpg.controller.CombatController;

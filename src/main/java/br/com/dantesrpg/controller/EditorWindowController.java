@@ -2,7 +2,6 @@ package br.com.dantesrpg.controller;
 
 import br.com.dantesrpg.model.map.TileDefinition;
 import br.com.dantesrpg.model.map.TileRegistry;
-import br.com.dantesrpg.model.util.FileLoader;
 import br.com.dantesrpg.model.util.ImageCache;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -19,7 +18,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**

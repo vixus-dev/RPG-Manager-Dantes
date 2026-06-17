@@ -11,7 +11,6 @@ import br.com.dantesrpg.model.racas.HalfAngel;
 import br.com.dantesrpg.model.racas.HalfDemon;
 import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.racas.Marionette;
-import br.com.dantesrpg.model.util.BarbaroUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

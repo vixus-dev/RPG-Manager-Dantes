@@ -6,8 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.collections.FXCollections;
-import javafx.collections.transformation.FilteredList;
 
 import java.util.Map;
 import java.util.List;
@@ -20,7 +18,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import br.com.dantesrpg.model.Arma;
-import br.com.dantesrpg.model.util.FileLoader;
 import br.com.dantesrpg.model.util.ImageCache;
 
 public class BestiarioController {

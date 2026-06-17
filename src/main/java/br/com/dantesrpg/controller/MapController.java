@@ -4,7 +4,6 @@ import br.com.dantesrpg.model.Arma;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
-import br.com.dantesrpg.model.util.FileLoader;
 import br.com.dantesrpg.model.util.ImageCache;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -18,7 +17,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.shape.ArcType;
-import javafx.util.Pair;
 import javafx.scene.paint.Color;
 import java.util.List;
 import javafx.scene.image.Image;
@@ -34,7 +32,6 @@ import br.com.dantesrpg.model.map.Dominio;
 import java.util.HashMap;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 import javafx.scene.input.MouseEvent;
 
@@ -48,10 +45,8 @@ import br.com.dantesrpg.controller.map.MapTokenRenderer;
 import br.com.dantesrpg.controller.map.SquadModeHandler;
 
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.transform.Scale;
 import javax.imageio.ImageIO;
 import java.io.FileInputStream;
 

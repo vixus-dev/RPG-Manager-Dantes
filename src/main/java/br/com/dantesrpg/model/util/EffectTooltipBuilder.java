@@ -1,7 +1,6 @@
 package br.com.dantesrpg.model.util;
 
 import br.com.dantesrpg.model.Efeito;
-import br.com.dantesrpg.model.enums.TipoEfeito;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

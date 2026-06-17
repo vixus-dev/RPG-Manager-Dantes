@@ -6,7 +6,6 @@ import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
-import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.enums.TipoHabilidade;
 import java.util.Collections;
 import java.util.List;

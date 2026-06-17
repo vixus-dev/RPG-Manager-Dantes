@@ -2,7 +2,6 @@ package br.com.dantesrpg.controller.map;
 
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.fantasmasnobres.TheMastersCall;
-import br.com.dantesrpg.model.util.FileLoader;
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.model.util.ImageCache;
 import javafx.scene.Node;

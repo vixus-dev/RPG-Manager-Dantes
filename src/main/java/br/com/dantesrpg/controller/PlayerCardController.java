@@ -13,7 +13,6 @@ import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.util.ContratoDeVida;
 import br.com.dantesrpg.model.util.ContratoDeVidaUtils;
 import br.com.dantesrpg.model.util.EffectTooltipBuilder;
-import br.com.dantesrpg.model.util.FileLoader;
 import br.com.dantesrpg.model.util.ImageCache;
 import javafx.scene.image.Image;
 

@@ -16,7 +16,6 @@ import javafx.util.StringConverter;
 import java.util.*;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
 
 public class DetailedTurnHUDController {
 

@@ -8,7 +8,6 @@ import br.com.dantesrpg.model.habilidades.classe.SintetizarPocao;
 import br.com.dantesrpg.model.habilidades.classe.AprimorarPocao;
 import br.com.dantesrpg.model.habilidades.classe.ArremessarPocao;
 import br.com.dantesrpg.model.habilidades.classe.MestreFilosofal;
-import br.com.dantesrpg.model.habilidades.classe.ReversaoDeFeitico;
 
 import java.util.ArrayList;
 import java.util.HashMap;
