@@ -7,7 +7,7 @@ import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.habilidades.classe.SintetizarPocao;
 import br.com.dantesrpg.model.habilidades.classe.AprimorarPocao;
 import br.com.dantesrpg.model.habilidades.classe.ArremessarPocao;
-import br.com.dantesrpg.model.habilidades.classe.RestricaoCelestial;
+import br.com.dantesrpg.model.habilidades.classe.MestreFilosofal;
 import br.com.dantesrpg.model.habilidades.classe.ReversaoDeFeitico;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class Alquimista extends Classe {
 		this.habilidadesDaClasse.add(new SintetizarPocao()); // Nível 1
 		this.habilidadesDaClasse.add(new AprimorarPocao()); // Nível 3
 		this.habilidadesDaClasse.add(new ArremessarPocao()); // Nível 5
-		this.habilidadesDaClasse.add(new RestricaoCelestial());// Nível 8
+		this.habilidadesDaClasse.add(new MestreFilosofal()); // Nível 8
 	}
 
 	@Override

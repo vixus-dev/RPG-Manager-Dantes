@@ -183,7 +183,7 @@ public class DiceInputsBuilder {
 		if (nome.equals("Distorted Solo") || nome.equals("Wha-Wha Solo") || nome.equals("Plain Solo")) {
 			precisa = true;
 		}
-		if (nome.equals("Aprimorar Poção")) {
+		if (nome.equals("Aprimorar Poção") || nome.equals("Mestre Filosofal")) {
 			precisa = true;
 		}
 		if (nome.equals("Caçada") || nome.equals("Trocado")) {
@@ -193,7 +193,8 @@ public class DiceInputsBuilder {
 	}
 
 	public static Atributo resolverAtributo(Personagem ator, Habilidade hab) {
-		if (hab instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
+		if (hab instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao
+				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.MestreFilosofal) {
 			return Atributo.SORTE;
 		}
 		Atributo atr = Atributo.FORCA;
