@@ -11,6 +11,8 @@ import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.controller.PlayerCardController;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Personagem;
+import br.com.dantesrpg.model.Efeito;
+import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.util.ImageCache;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -26,10 +28,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 public class CombatUiRefresher {
@@ -38,17 +42,18 @@ public class CombatUiRefresher {
 	private final Supplier<EstadoCombate> estadoSupplier;
 	private final Supplier<VBox> playerListSupplier;
 	private final Supplier<VBox> enemyListSupplier;
-	private final Supplier<HBox> timelineSupplier;
+	private final Supplier<Pane> timelineSupplier;
 
 	private Node tuPreviewNode;
 	private ParallelTransition activePreviewTransition;
 	private final List<TranslateTransition> activeSlideTransitions = new ArrayList<>();
 	private static final double SHIFT_AMOUNT = 55.0; // 40px token + 15px spacing
+	private static final double PIXELS_PER_TU = 2.0;
 	private javafx.animation.Transition activeCountdownTransition;
 	private int lastTickCounter = -1;
 
 	public CombatUiRefresher(CombatController controller, Supplier<EstadoCombate> estadoSupplier,
-			Supplier<VBox> playerListSupplier, Supplier<VBox> enemyListSupplier, Supplier<HBox> timelineSupplier) {
+			Supplier<VBox> playerListSupplier, Supplier<VBox> enemyListSupplier, Supplier<Pane> timelineSupplier) {
 		this.controller = controller;
 		this.estadoSupplier = estadoSupplier;
 		this.playerListSupplier = playerListSupplier;
@@ -224,8 +229,144 @@ public class CombatUiRefresher {
 		return token;
 	}
 
+	private static class DotPrediction {
+		final Personagem alvo;
+		final String nomeEfeito;
+		final int offsetTU;
+
+		DotPrediction(Personagem alvo, String nomeEfeito, int offsetTU) {
+			this.alvo = alvo;
+			this.nomeEfeito = nomeEfeito;
+			this.offsetTU = offsetTU;
+		}
+	}
+
+	private List<DotPrediction> calcularPrevisoesDoT(EstadoCombate estado, int maxTU) {
+		List<DotPrediction> predictions = new ArrayList<>();
+		if (estado == null || estado.getCombatentes() == null) return predictions;
+		int currentTick = estado.getTickCounter();
+
+		for (Personagem p : estado.getCombatentes()) {
+			if (!p.isAtivoNoCombate()) {
+				continue;
+			}
+			for (Efeito ef : p.getEfeitosAtivos().values()) {
+				if (ef.getTipo() == TipoEfeito.DOT && ef.getIntervaloTickTU() > 0) {
+					int interval = ef.getIntervaloTickTU();
+					int duration = ef.getDuracaoTURestante();
+					
+					int offset = interval - (currentTick % interval);
+					if (offset == 0) {
+						offset = interval;
+					}
+					while (offset <= duration && offset <= maxTU) {
+						predictions.add(new DotPrediction(p, ef.getNome(), offset));
+						offset += interval;
+					}
+				}
+			}
+		}
+		return predictions;
+	}
+
+	private VBox criarMarcadorDoT(DotPrediction prediction, int offsetExibido) {
+		VBox marker = new VBox();
+		marker.setAlignment(Pos.TOP_CENTER);
+		marker.setSpacing(2);
+		marker.setUserData(prediction);
+
+		HBox topBox = new HBox(2);
+		topBox.setAlignment(Pos.CENTER);
+
+		ImageView dotImg = new ImageView();
+		dotImg.setFitWidth(16);
+		dotImg.setFitHeight(16);
+		dotImg.setPreserveRatio(true);
+
+		String effectName = prediction.nomeEfeito.toLowerCase().replace(" ", "_");
+		if (effectName.equals("queimação")) effectName = "queimacao";
+		if (effectName.equals("bênção_do_gekkyūden")) effectName = "bencao_gekkyuden";
+		if (effectName.equals("maldição_do_gekkyūden")) effectName = "maldicao_gekkyuden";
+
+		String imagePath = "/effects/dot/" + effectName + ".png";
+		Image iconImage = ImageCache.get(imagePath, 16, 16);
+
+		if (iconImage == null || iconImage.isError()) {
+			Circle fbCircle = new Circle(8);
+			String letter = "?";
+			Color fill = Color.PURPLE;
+			if (prediction.nomeEfeito.toLowerCase().contains("venen") || prediction.nomeEfeito.toLowerCase().contains("toxin")) {
+				fill = Color.web("#2ecc71");
+				letter = "V";
+			} else if (prediction.nomeEfeito.toLowerCase().contains("sangra") || prediction.nomeEfeito.toLowerCase().contains("hemorr")) {
+				fill = Color.web("#e74c3c");
+				letter = "S";
+			} else if (prediction.nomeEfeito.toLowerCase().contains("queim") || prediction.nomeEfeito.toLowerCase().contains("fire") || prediction.nomeEfeito.toLowerCase().contains("chama")) {
+				fill = Color.web("#f39c12");
+				letter = "F";
+			}
+			fbCircle.setFill(fill);
+			Label fbLbl = new Label(letter);
+			fbLbl.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 9px; -fx-text-fill: white; -fx-font-weight: bold;");
+			StackPane fbStack = new StackPane(fbCircle, fbLbl);
+			fbStack.setPrefSize(16, 16);
+			topBox.getChildren().add(fbStack);
+		} else {
+			dotImg.setImage(iconImage);
+			topBox.getChildren().add(dotImg);
+		}
+
+		ImageView charImg = new ImageView();
+		charImg.setFitWidth(14);
+		charImg.setFitHeight(14);
+		charImg.setPreserveRatio(true);
+
+		String charNameBase = prediction.alvo.getNome().toLowerCase().replace(" ", "_");
+		String charImagePath = "/portraits/" + charNameBase + ".png";
+		Image charImage = ImageCache.get(charImagePath, 14, 14);
+
+		if (charImage != null && !charImage.isError()) {
+			charImg.setImage(charImage);
+			Circle clip = new Circle(7, 7, 7);
+			charImg.setClip(clip);
+			topBox.getChildren().add(charImg);
+		} else {
+			Circle fbChar = new Circle(7, Color.web("#444444"));
+			Label fbCharLbl = new Label(prediction.alvo.getNome().substring(0, 1).toUpperCase());
+			fbCharLbl.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 8px; -fx-text-fill: #aaa;");
+			StackPane fbCharStack = new StackPane(fbChar, fbCharLbl);
+			topBox.getChildren().add(fbCharStack);
+		}
+
+		Pane line = new Pane();
+		line.setPrefSize(1.5, 12);
+		line.setMinSize(1.5, 12);
+		line.setMaxSize(1.5, 12);
+
+		String lineStyle = "-fx-background-color: #555555;";
+		if (prediction.nomeEfeito.toLowerCase().contains("venen") || prediction.nomeEfeito.toLowerCase().contains("toxin")) {
+			lineStyle = "-fx-background-color: #2ecc71;";
+		} else if (prediction.nomeEfeito.toLowerCase().contains("sangra") || prediction.nomeEfeito.toLowerCase().contains("hemorr")) {
+			lineStyle = "-fx-background-color: #e74c3c;";
+		} else if (prediction.nomeEfeito.toLowerCase().contains("queim") || prediction.nomeEfeito.toLowerCase().contains("fire") || prediction.nomeEfeito.toLowerCase().contains("chama")) {
+			lineStyle = "-fx-background-color: #f39c12;";
+		}
+		line.setStyle(lineStyle);
+
+		Label lblOffset = new Label(offsetExibido + " TU");
+		lblOffset.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 8px; -fx-text-fill: #888888; -fx-font-weight: bold;");
+
+		marker.getChildren().addAll(topBox, line, lblOffset);
+
+		Tooltip tooltip = new Tooltip(prediction.nomeEfeito + " tick em " + prediction.alvo.getNome());
+		tooltip.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 11px;");
+		Tooltip.install(marker, tooltip);
+
+		return marker;
+	}
+
 	public void atualizarTimelineTU() {
-		HBox timelineContainer = timelineSupplier.get();
+		Pane timelineContainer = timelineSupplier.get();
 		EstadoCombate estado = estadoSupplier.get();
 		if (timelineContainer == null || estado == null || estado.getCombatentes() == null) {
 			return;
@@ -250,6 +391,9 @@ public class CombatUiRefresher {
 				.thenComparing((p1, p2) -> Integer.compare(p2.getPlacarIniciativa(), p1.getPlacarIniciativa())));
 		Set<Personagem> mestresComCloneExibido = new HashSet<>();
 
+		List<Personagem> exibidosNaTimeline = new ArrayList<>();
+		int maxTU = 400;
+
 		for (Personagem personagem : ordenadosPorTU) {
 			if (!personagem.isAtivoNoCombate()) {
 				continue;
@@ -261,12 +405,62 @@ public class CombatUiRefresher {
 				}
 				mestresComCloneExibido.add(criador);
 			}
-
-			int startingTU = personagem.getContadorTU() + tempoParaAvancar;
-			VBox token = criarTokenVisivel(personagem, startingTU, false);
-			timelineContainer.getChildren().add(token);
+			exibidosNaTimeline.add(personagem);
+			maxTU = Math.max(maxTU, personagem.getContadorTU());
 		}
 
+		int rulerLengthTU = maxTU + 100;
+		double rulerWidth = rulerLengthTU * PIXELS_PER_TU;
+		timelineContainer.setPrefWidth(rulerWidth);
+
+		// 1. Draw horizontal timeline line
+		Line horizontalLine = new Line(0, 30, rulerWidth, 30);
+		horizontalLine.setStroke(Color.web("#3a3a3a"));
+		horizontalLine.setStrokeWidth(2.0);
+		timelineContainer.getChildren().add(horizontalLine);
+
+		// 2. Draw ruler tick marks every 100 TU
+		for (int tu = 100; tu <= rulerLengthTU; tu += 100) {
+			double x = tu * PIXELS_PER_TU;
+			Line tick = new Line(x, 25, x, 35);
+			tick.setStroke(Color.web("#555555"));
+			tick.setStrokeWidth(1.5);
+
+			Label lblTick = new Label(tu + " TU");
+			lblTick.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 9px; -fx-text-fill: #555555; -fx-font-weight: bold;");
+			lblTick.setLayoutX(x - 15);
+			lblTick.setLayoutY(38);
+
+			timelineContainer.getChildren().addAll(tick, lblTick);
+		}
+
+		// 3. Draw predicted DoT tick marks
+		List<DotPrediction> dotPredictions = calcularPrevisoesDoT(estado, rulerLengthTU);
+		for (DotPrediction pred : dotPredictions) {
+			int startingOffset = pred.offsetTU + tempoParaAvancar;
+			VBox dotMarker = criarMarcadorDoT(pred, startingOffset);
+			dotMarker.setLayoutX(startingOffset * PIXELS_PER_TU - 15);
+			dotMarker.setLayoutY(2);
+			timelineContainer.getChildren().add(dotMarker);
+		}
+
+		// 4. Draw character tokens with overlap resolution
+		double lastX = -50.0;
+		double minGap = 45.0;
+		for (Personagem p : exibidosNaTimeline) {
+			int startingTU = p.getContadorTU() + tempoParaAvancar;
+			VBox token = criarTokenVisivel(p, startingTU, false);
+			
+			double spatialX = startingTU * PIXELS_PER_TU;
+			double layoutX = Math.max(spatialX, lastX + minGap);
+			token.setLayoutX(layoutX);
+			token.setLayoutY(10);
+			
+			timelineContainer.getChildren().add(token);
+			lastX = layoutX;
+		}
+
+		// 5. Animate countdown and glide characters/DoTs to the left
 		if (tempoParaAvancar > 0) {
 			activeCountdownTransition = new javafx.animation.Transition() {
 				{
@@ -274,48 +468,91 @@ public class CombatUiRefresher {
 				}
 				@Override
 				protected void interpolate(double frac) {
+					double currentTempo = tempoParaAvancar * (1.0 - frac);
+					
+					// Recalculate layoutX for characters
+					double interpLastX = -50.0;
 					for (Node node : timelineContainer.getChildren()) {
 						if (node instanceof VBox) {
-							VBox token = (VBox) node;
-							if (token.getUserData() instanceof Personagem) {
-								Personagem p = (Personagem) token.getUserData();
-								int startTU = p.getContadorTU() + tempoParaAvancar;
-								int currentTU = startTU - (int)(frac * tempoParaAvancar);
-								if (token.getChildren().size() > 1 && token.getChildren().get(1) instanceof StackPane) {
-									StackPane balloon = (StackPane) token.getChildren().get(1);
+							VBox box = (VBox) node;
+							if (box.getUserData() instanceof Personagem) {
+								Personagem p = (Personagem) box.getUserData();
+								double currentTU = p.getContadorTU() + currentTempo;
+								
+								if (box.getChildren().size() > 1 && box.getChildren().get(1) instanceof StackPane) {
+									StackPane balloon = (StackPane) box.getChildren().get(1);
 									if (!balloon.getChildren().isEmpty() && balloon.getChildren().get(0) instanceof Label) {
 										Label lbl = (Label) balloon.getChildren().get(0);
-										lbl.setText(String.valueOf(currentTU));
+										lbl.setText(String.valueOf((int) Math.round(currentTU)));
 									}
 								}
+
+								double spatialX = currentTU * PIXELS_PER_TU;
+								double layoutX = Math.max(spatialX, interpLastX + minGap);
+								box.setLayoutX(layoutX);
+								interpLastX = layoutX;
+							} else if (box.getUserData() instanceof DotPrediction) {
+								DotPrediction pred = (DotPrediction) box.getUserData();
+								double currentOffset = pred.offsetTU + currentTempo;
+
+								if (box.getChildren().size() > 2 && box.getChildren().get(2) instanceof Label) {
+									Label lbl = (Label) box.getChildren().get(2);
+									lbl.setText(String.valueOf((int) Math.round(currentOffset)) + " TU");
+								}
+
+								box.setLayoutX(currentOffset * PIXELS_PER_TU - 15);
 							}
 						}
 					}
 				}
 			};
+
 			activeCountdownTransition.setOnFinished(e -> {
+				double finishedLastX = -50.0;
 				for (Node node : timelineContainer.getChildren()) {
 					if (node instanceof VBox) {
-						VBox token = (VBox) node;
-						if (token.getUserData() instanceof Personagem) {
-							Personagem p = (Personagem) token.getUserData();
-							if (token.getChildren().size() > 1 && token.getChildren().get(1) instanceof StackPane) {
-								StackPane balloon = (StackPane) token.getChildren().get(1);
+						VBox box = (VBox) node;
+						if (box.getUserData() instanceof Personagem) {
+							Personagem p = (Personagem) box.getUserData();
+							if (box.getChildren().size() > 1 && box.getChildren().get(1) instanceof StackPane) {
+								StackPane balloon = (StackPane) box.getChildren().get(1);
 								if (!balloon.getChildren().isEmpty() && balloon.getChildren().get(0) instanceof Label) {
 									Label lbl = (Label) balloon.getChildren().get(0);
 									lbl.setText(String.valueOf(p.getContadorTU()));
 								}
 							}
+							double spatialX = p.getContadorTU() * PIXELS_PER_TU;
+							double layoutX = Math.max(spatialX, finishedLastX + minGap);
+							box.setLayoutX(layoutX);
+							finishedLastX = layoutX;
+						} else if (box.getUserData() instanceof DotPrediction) {
+							DotPrediction pred = (DotPrediction) box.getUserData();
+							if (box.getChildren().size() > 2 && box.getChildren().get(2) instanceof Label) {
+								Label lbl = (Label) box.getChildren().get(2);
+								lbl.setText(pred.offsetTU + " TU");
+							}
+							box.setLayoutX(pred.offsetTU * PIXELS_PER_TU - 15);
 						}
 					}
 				}
 			});
 			activeCountdownTransition.play();
+		} else {
+			double fallbackLastX = -50.0;
+			for (Node node : timelineContainer.getChildren()) {
+				if (node instanceof VBox && node.getUserData() instanceof Personagem) {
+					Personagem p = (Personagem) node.getUserData();
+					double spatialX = p.getContadorTU() * PIXELS_PER_TU;
+					double layoutX = Math.max(spatialX, fallbackLastX + minGap);
+					node.setLayoutX(layoutX);
+					fallbackLastX = layoutX;
+				}
+			}
 		}
 	}
 
 	public void mostrarTUPreview(Personagem ator, int tuPrevisto) {
-		HBox timelineContainer = timelineSupplier.get();
+		Pane timelineContainer = timelineSupplier.get();
 		if (timelineContainer == null) {
 			return;
 		}
@@ -323,21 +560,27 @@ public class CombatUiRefresher {
 		limparTUPreview();
 
 		tuPreviewNode = criarTokenVisivel(ator, tuPrevisto, true);
+		tuPreviewNode.setLayoutX(tuPrevisto * PIXELS_PER_TU - 20);
+		tuPreviewNode.setLayoutY(10);
 
 		int insertIndex = 0;
-		for (int i = 0; i < timelineContainer.getChildren().size(); i++) {
-			Node child = timelineContainer.getChildren().get(i);
-			if (child.getUserData() instanceof Personagem) {
-				Personagem p = (Personagem) child.getUserData();
-				if (tuPrevisto > p.getContadorTU()) {
-					insertIndex = i + 1;
-				}
+		List<Node> currentTokens = new ArrayList<>();
+		for (Node child : timelineContainer.getChildren()) {
+			if (child instanceof VBox && child.getUserData() instanceof Personagem) {
+				currentTokens.add(child);
+			}
+		}
+
+		for (int i = 0; i < currentTokens.size(); i++) {
+			Node child = currentTokens.get(i);
+			Personagem p = (Personagem) child.getUserData();
+			if (tuPrevisto > p.getContadorTU()) {
+				insertIndex = timelineContainer.getChildren().indexOf(child) + 1;
 			}
 		}
 
 		timelineContainer.getChildren().add(insertIndex, tuPreviewNode);
 
-		// Animate the inserted preview token
 		tuPreviewNode.setScaleX(0.0);
 		tuPreviewNode.setScaleY(0.0);
 		tuPreviewNode.setOpacity(0.0);
@@ -352,20 +595,20 @@ public class CombatUiRefresher {
 		activePreviewTransition = new ParallelTransition(st, ft);
 		activePreviewTransition.play();
 
-		// Slide subsequent tokens to the right to open space
-		for (int i = insertIndex + 1; i < timelineContainer.getChildren().size(); i++) {
-			Node child = timelineContainer.getChildren().get(i);
-			child.setTranslateX(-SHIFT_AMOUNT);
-
-			TranslateTransition tt = new TranslateTransition(Duration.millis(250), child);
-			tt.setToX(0.0);
-			activeSlideTransitions.add(tt);
-			tt.play();
+		for (Node child : currentTokens) {
+			Personagem p = (Personagem) child.getUserData();
+			if (p.getContadorTU() >= tuPrevisto) {
+				child.setTranslateX(-SHIFT_AMOUNT);
+				TranslateTransition tt = new TranslateTransition(Duration.millis(250), child);
+				tt.setToX(0.0);
+				activeSlideTransitions.add(tt);
+				tt.play();
+			}
 		}
 	}
 
 	public void limparTUPreview() {
-		HBox timelineContainer = timelineSupplier.get();
+		Pane timelineContainer = timelineSupplier.get();
 		if (activePreviewTransition != null) {
 			activePreviewTransition.stop();
 			activePreviewTransition = null;

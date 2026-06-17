@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -98,7 +99,7 @@ public class CombatController {
 	@FXML
 	private Button btnReforcos;
 	@FXML
-	private HBox timelineContainer;
+	private Pane timelineContainer;
 	@FXML
 	private VBox playerListContainer;
 	@FXML

@@ -65,12 +65,11 @@
                </padding>
                <children>
                   <Label text="Próximos Turnos:" style="-fx-text-fill: yellow;" />
-                  <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                     <children>
-                        <Pane maxHeight="2.0" style="-fx-background-color: #3a3a3a; -fx-background-radius: 1px;" translateY="-10" StackPane.alignment="CENTER" />
-                        <HBox fx:id="timelineContainer" alignment="CENTER_LEFT" spacing="15.0" />
-                     </children>
-                  </StackPane>
+                  <ScrollPane fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="NEVER" pannable="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0;" HBox.hgrow="ALWAYS">
+                     <content>
+                        <Pane fx:id="timelineContainer" minHeight="80.0" prefHeight="80.0" />
+                     </content>
+                  </ScrollPane>
                </children>
             </HBox>
          </top>
