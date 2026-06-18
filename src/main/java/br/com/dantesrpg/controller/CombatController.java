@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
@@ -100,6 +99,8 @@ public class CombatController {
 	private Button btnReforcos;
 	@FXML
 	private Pane timelineContainer;
+	@FXML
+	private ScrollPane timelineScrollPane;
 	@FXML
 	private VBox playerListContainer;
 	@FXML
@@ -248,6 +249,21 @@ public class CombatController {
 		});
 
 		setupEmbeddedMap();
+
+		if (timelineScrollPane != null) {
+			timelineScrollPane.setOnScroll(event -> {
+				if (event.getDeltaY() != 0) {
+					double delta = event.getDeltaY() > 0 ? -0.1 : 0.1;
+					timelineScrollPane.setHvalue(Math.max(0.0, Math.min(1.0, timelineScrollPane.getHvalue() + delta)));
+					event.consume();
+				}
+			});
+			timelineScrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
+				if (oldVal == null || oldVal.getWidth() != newVal.getWidth()) {
+					javafx.application.Platform.runLater(this::atualizarTimelineTU);
+				}
+			});
+		}
 
 		popularListasDeCombatentes();
 		atualizarTimelineTU();
@@ -530,6 +546,8 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 			verificarFimDeCombate();
 			return;
 		}
+
+		atualizarTimelineTU();
 
 		// Verifica se é Clone
 		if (atorAtual.isClone() && atorAtual.getCriador() != null) {

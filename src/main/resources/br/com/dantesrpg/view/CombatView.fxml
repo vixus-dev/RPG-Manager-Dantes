@@ -65,7 +65,7 @@
                </padding>
                <children>
                   <Label text="Próximos Turnos:" style="-fx-text-fill: yellow;" />
-                  <ScrollPane fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="NEVER" pannable="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0;" HBox.hgrow="ALWAYS">
+                  <ScrollPane fx:id="timelineScrollPane" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="NEVER" pannable="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0;" HBox.hgrow="ALWAYS">
                      <content>
                         <Pane fx:id="timelineContainer" minHeight="80.0" prefHeight="80.0" />
                      </content>
