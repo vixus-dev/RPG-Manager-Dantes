@@ -130,7 +130,31 @@ public class Personagem {
 		return contratosDeVida;
 	}
 
-	// ========== CONSTRUTOR ==========
+	// ========== CONSTRUTORES ==========
+
+	public Personagem() {
+		this.nome = "Dummy";
+		this.atributosBase = new HashMap<>();
+		for (br.com.dantesrpg.model.enums.Atributo a : br.com.dantesrpg.model.enums.Atributo.values()) {
+			this.atributosBase.put(a, 10);
+		}
+		this.efeitosAtivos = new HashMap<>();
+		this.habilidadesDeClasse = new ArrayList<>();
+		this.inventario = new Inventario();
+		this.escudoNormalAtual = 0.0;
+		this.escudoNormalMaximo = 0.0;
+		this.escudoSangueAtual = 0.0;
+		this.escudoSangueMaximo = 0.0;
+		this.escudoDivinoAtual = 0.0;
+		this.escudoDivinoMaximo = 0.0;
+		this.vidaMaximaBase = 100.0;
+		this.iniciativaBase = 10;
+		this.vidaMaxima = 100.0;
+		this.vidaAtual = 100.0;
+		this.manaMaximaBase = 10;
+		this.manaMaxima = 10;
+		this.manaAtual = 10;
+	}
 
 	public Personagem(String nome, Raça raca, Classe classe, int nivel, Map<Atributo, Integer> atributosBase,
 			double vidaMaximaBase, int iniciativaBase) {

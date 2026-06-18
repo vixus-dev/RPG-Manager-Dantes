@@ -364,8 +364,25 @@ public class GerenciadorCombateController {
 		if (selecionado == null) return;
 		try {
 			selecionado.setVidaAtual(parseDoubleSeguro(inputVida.getText()), estadoCombate, mainController);
-			selecionado.setEscudoAtual(parseDoubleSeguro(inputEscudo.getText()));
-			selecionado.setTemEscudoDeSangue(checkEscudoDeSangue.isSelected());
+			
+			double escNormal = parseDoubleSeguro(inputEscudoNormal.getText());
+			selecionado.setEscudoNormalAtual(escNormal);
+			if (escNormal > selecionado.getEscudoNormalMaximo()) {
+				selecionado.setEscudoNormalMaximo(escNormal);
+			}
+
+			double escSangue = parseDoubleSeguro(inputEscudoSangue.getText());
+			selecionado.setEscudoSangueAtual(escSangue);
+			if (escSangue > selecionado.getEscudoSangueMaximo()) {
+				selecionado.setEscudoSangueMaximo(escSangue);
+			}
+
+			double escDivino = parseDoubleSeguro(inputEscudoDivino.getText());
+			selecionado.setEscudoDivinoAtual(escDivino);
+			if (escDivino > selecionado.getEscudoDivinoMaximo()) {
+				selecionado.setEscudoDivinoMaximo(escDivino);
+			}
+
 			selecionado.setManaAtual(parseDoubleSeguro(inputMana.getText()));
 			selecionado.setContadorTU(parseIntSeguro(inputTU.getText()));
 			autoSaveAndRefresh();
@@ -770,8 +787,12 @@ public class GerenciadorCombateController {
 		// Só atualiza se o campo não está focado (evita conflito com digitação do GM)
 		if (!inputVida.isFocused())
 			inputVida.setText(String.format("%.1f", selecionado.getVidaAtual()));
-		if (!inputEscudo.isFocused())
-			inputEscudo.setText(String.format("%.1f", selecionado.getEscudoAtual()));
+		if (inputEscudoNormal != null && !inputEscudoNormal.isFocused())
+			inputEscudoNormal.setText(String.format("%.1f", selecionado.getEscudoNormalAtual()));
+		if (inputEscudoSangue != null && !inputEscudoSangue.isFocused())
+			inputEscudoSangue.setText(String.format("%.1f", selecionado.getEscudoSangueAtual()));
+		if (inputEscudoDivino != null && !inputEscudoDivino.isFocused())
+			inputEscudoDivino.setText(String.format("%.1f", selecionado.getEscudoDivinoAtual()));
 		if (!inputMana.isFocused())
 			inputMana.setText(String.format("%.1f", selecionado.getManaAtual()));
 		if (!inputTU.isFocused())
@@ -780,7 +801,6 @@ public class GerenciadorCombateController {
 		lblVidaMax.setText("/ " + String.format("%.0f", selecionado.getVidaMaxima()));
 		lblManaMax.setText("/ " + String.format("%.0f", selecionado.getManaMaxima()));
 
-		checkEscudoDeSangue.setSelected(selecionado.isEscudoDeSangue());
 		checkAusente.setSelected(selecionado.isAusente());
 		checkProtagonista.setSelected(selecionado.isProtagonista());
 
@@ -1298,5 +1318,114 @@ public class GerenciadorCombateController {
 				setTooltip(tip);
 			}
 		});
+	}
+
+	private void atualizarListaTurnos() {
+		if (listaTurnos == null || estadoCombate == null) return;
+		List<Personagem> sorted = new ArrayList<>(estadoCombate.getCombatentes());
+		sorted.sort((p1, p2) -> Integer.compare(p1.getContadorTU(), p2.getContadorTU()));
+		listaTurnos.setItems(FXCollections.observableArrayList(sorted));
+	}
+
+	@FXML
+	private void onSubirTurnoClick() {
+		moverPersonagemNaFila(-1);
+	}
+
+	@FXML
+	private void onDescerTurnoClick() {
+		moverPersonagemNaFila(1);
+	}
+
+	private void moverPersonagemNaFila(int direcao) {
+		Personagem p = listaTurnos.getSelectionModel().getSelectedItem();
+		if (p == null || estadoCombate == null) return;
+
+		List<Personagem> sorted = new ArrayList<>(estadoCombate.getCombatentes());
+		sorted.sort((p1, p2) -> Integer.compare(p1.getContadorTU(), p2.getContadorTU()));
+
+		int index = sorted.indexOf(p);
+		if (index == -1) return;
+
+		int targetIndex = index + direcao;
+		if (targetIndex < 0 || targetIndex >= sorted.size()) return;
+
+		int novoTU;
+		if (targetIndex == 0) {
+			novoTU = Math.max(0, sorted.get(0).getContadorTU() - 10);
+		} else if (targetIndex == sorted.size() - 1) {
+			novoTU = sorted.get(sorted.size() - 1).getContadorTU() + 10;
+		} else {
+			if (direcao < 0) {
+				int prevTU = sorted.get(targetIndex - 1).getContadorTU();
+				int nextTU = sorted.get(targetIndex).getContadorTU();
+				novoTU = (prevTU + nextTU) / 2;
+			} else {
+				int prevTU = sorted.get(targetIndex).getContadorTU();
+				int nextTU = sorted.get(targetIndex + 1).getContadorTU();
+				novoTU = (prevTU + nextTU) / 2;
+			}
+		}
+
+		p.setContadorTU(novoTU);
+		resolverColisoesTU();
+		autoSaveAndRefresh();
+
+		listaTurnos.getSelectionModel().select(p);
+	}
+
+	private void resolverColisoesTU() {
+		if (estadoCombate == null) return;
+		List<Personagem> sorted = new ArrayList<>(estadoCombate.getCombatentes());
+		sorted.sort((p1, p2) -> Integer.compare(p1.getContadorTU(), p2.getContadorTU()));
+
+		for (int i = 1; i < sorted.size(); i++) {
+			Personagem prev = sorted.get(i - 1);
+			Personagem curr = sorted.get(i);
+			if (curr.getContadorTU() <= prev.getContadorTU()) {
+				curr.setContadorTU(prev.getContadorTU() + 1);
+			}
+		}
+	}
+
+	@FXML
+	private void onCuraRapidaClick() {
+		if (selecionado == null) return;
+		try {
+			double valor = parseDoubleSeguro(inputValorRapido.getText());
+			if (valor <= 0) return;
+			selecionado.curarIgnorandoBloqueios(valor, estadoCombate, mainController);
+			inputValorRapido.clear();
+			autoSaveAndRefresh();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void onDanoRapidoClick() {
+		if (selecionado == null || mainController == null) return;
+		try {
+			double valor = parseDoubleSeguro(inputValorRapido.getText());
+			if (valor <= 0) return;
+
+			// Cria um atacante temporário da facção oposta para mecânica de reações/vampirismo
+			Personagem atacante = new Personagem();
+			if ("JOGADOR".equalsIgnoreCase(selecionado.getFaccao())) {
+				atacante.setFaccao("INIMIGO");
+			} else {
+				atacante.setFaccao("JOGADOR");
+			}
+			atacante.setNome("Dano GM");
+
+			mainController.getCombatManager().getDamageApplicator().aplicarDanoAoAlvo(
+				atacante, selecionado, valor, false, TipoAcao.AMBIENTE, estadoCombate
+			);
+
+			inputValorRapido.clear();
+			autoSaveAndRefresh();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
