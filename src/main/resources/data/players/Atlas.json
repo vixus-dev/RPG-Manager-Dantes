@@ -1,47 +1,54 @@
 {
-  "xpAtual": 0,
   "iniciativaBase": 11,
-  "vidaMaximaBase": 175,
-  "classe": "???",
   "atributosBase": {
-    "INSPIRACAO": 3,
     "INTELIGENCIA": 7,
     "DESTREZA": 5,
-    "ENDURANCE": 11,
     "SAGACIDADE": 3,
-    "PERCEPCAO": 3,
     "SORTE": 2,
     "FORCA": 9,
     "CARISMA": 3,
-    "TOPOR": 10
+    "TOPOR": 10,
+    "PERCEPCAO": 3,
+    "ENDURANCE": 11,
+    "INSPIRACAO": 3
   },
-  "nome": "Atlas",
+  "escudoSangueAtual": 80.0,
   "pontosParaDistribuir": 0,
-  "posX": 6,
-  "posY": 7,
-  "amuleto2": "Anel de Rei",
-  "amuleto1": "Anel de Rei",
-  "manaAtual": 8,
-  "raca": "Humano",
+  "escudoNormalAtual": 110.0,
   "carteira": {
     "prata": 351,
     "ouro": 0,
     "bronze": 854
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 136.5,
-  "contadorTU": 7,
+  "vidaAtual": -260.0,
+  "contadorTU": 1,
   "armaduraEquipada": "Armadura do Mestre",
-  "nivel": 10,
   "armaEquipada": "Ataduras de Ferro",
   "inventario": {},
-  "escudoAtual": 0,
-  "racaData": {
-    "vidaNegativaAcumulada": 0,
-    "filaContratos": []
-  },
-  "wieldingMaximo": 2,
+  "xpAtual": 0,
+  "vidaMaximaBase": 175.0,
+  "classe": "???",
   "armasEquipadas": [
     "Ataduras de Ferro"
-  ]
+  ],
+  "nome": "Atlas",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 5,
+  "posY": 5,
+  "amuleto2": "Anel de Rei",
+  "amuleto1": "Anel de Rei",
+  "manaAtual": 8.0,
+  "escudoDivinoAtual": 20.0,
+  "raca": "Humano",
+  "nivel": 10,
+  "racaData": {
+    "contratoAtivoDividaRestante": 0.0,
+    "estadoEmprestimo": "ATIVO",
+    "vidaNegativaAcumulada": 260.0,
+    "contratoAtivoValorTotal": 0.0,
+    "filaContratos": []
+  },
+  "wieldingMaximo": 2
 }

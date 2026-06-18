@@ -12,6 +12,8 @@ import br.com.dantesrpg.model.Efeito;
 import br.com.dantesrpg.model.enums.Raridade;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.enums.TipoAcao;
+import br.com.dantesrpg.model.util.ContratoDeVida;
+import br.com.dantesrpg.model.util.ContratoDeVidaUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -61,6 +63,16 @@ public class GerenciadorCombateController {
 	@FXML private Label lblTotalMoedas;
 	@FXML private TextField inputXPManual;
 	@FXML private Label lblXPInfo;
+	@FXML private TextField inputQtdAlterarMoedas;
+	@FXML private TextField inputGrau;
+	@FXML private TextField inputPontos;
+
+	// ========== ABA CONTRATOS ==========
+	@FXML private ListView<ContratoDeVida> listaContratos;
+	@FXML private ComboBox<String> comboFonteContrato;
+	@FXML private TextField inputValorContrato;
+	@FXML private TextField inputDuracaoContrato;
+	@FXML private CheckBox checkPersisteContrato;
 
 	// ========== ABA INVENTARIO ==========
 	@FXML private TextField inputBuscaItem;
@@ -141,6 +153,34 @@ public class GerenciadorCombateController {
 						setGraphic(null);
 					} else {
 						setText(String.format("[%d TU] %s (%s)", item.getContadorTU(), item.getNome(), item.getFaccao()));
+						setStyle("-fx-text-fill: white; -fx-font-family: 'Oxanium'; -fx-font-size: 12px;");
+					}
+				}
+			});
+		}
+
+		if (comboFonteContrato != null) {
+			comboFonteContrato.getItems().addAll(
+				ContratoDeVida.FONTE_HUMANO,
+				ContratoDeVida.FONTE_BARBARO,
+				ContratoDeVida.FONTE_RESPIRAR,
+				ContratoDeVida.FONTE_SIT_IN_BALANCE
+			);
+			comboFonteContrato.getSelectionModel().selectFirst();
+		}
+
+		if (listaContratos != null) {
+			listaContratos.setCellFactory(lv -> new ListCell<ContratoDeVida>() {
+				@Override
+				protected void updateItem(ContratoDeVida item, boolean empty) {
+					super.updateItem(item, empty);
+					if (empty || item == null) {
+						setText(null);
+						setGraphic(null);
+					} else {
+						String duracao = item.getDuracaoTURestante() == -1 ? "Indefinido" : (item.getDuracaoTURestante() + " TU");
+						setText(String.format("Fonte: %s | Dívida: %.1f/%.1f | Duração: %s",
+							item.getFonte(), item.getDividaRestante(), item.getValorTotal(), duracao));
 						setStyle("-fx-text-fill: white; -fx-font-family: 'Oxanium'; -fx-font-size: 12px;");
 					}
 				}
@@ -385,6 +425,16 @@ public class GerenciadorCombateController {
 
 			selecionado.setManaAtual(parseDoubleSeguro(inputMana.getText()));
 			selecionado.setContadorTU(parseIntSeguro(inputTU.getText()));
+			
+			if (selecionado.getInventario() != null) {
+				int totalOuro = parseIntSeguro(inputOuro.getText());
+				int totalPrata = parseIntSeguro(inputPrata.getText());
+				int totalBronze = parseIntSeguro(inputBronze.getText());
+				selecionado.getInventario().setMoedasOuro(totalOuro);
+				selecionado.getInventario().setMoedasPrata(totalPrata);
+				selecionado.getInventario().setMoedasBronze(totalBronze);
+			}
+			
 			autoSaveAndRefresh();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -481,20 +531,22 @@ public class GerenciadorCombateController {
 	private void alterarMoeda(String tipo, boolean adicionar) {
 		if (selecionado == null) return;
 		try {
-			int valor;
+			int valor = 1;
+			if (inputQtdAlterarMoedas != null && !inputQtdAlterarMoedas.getText().trim().isEmpty()) {
+				valor = parseIntSeguro(inputQtdAlterarMoedas.getText());
+			}
+			if (valor <= 0) return;
+
 			switch (tipo) {
 				case "ouro":
-					valor = parseIntSeguro(inputOuro.getText());
 					if (adicionar) selecionado.getInventario().receberOuro(valor);
 					else selecionado.getInventario().gastarOuro(valor);
 					break;
 				case "prata":
-					valor = parseIntSeguro(inputPrata.getText());
 					if (adicionar) selecionado.getInventario().receberPrata(valor);
 					else selecionado.getInventario().gastarPrata(valor);
 					break;
 				case "bronze":
-					valor = parseIntSeguro(inputBronze.getText());
 					if (adicionar) selecionado.getInventario().receber(valor);
 					else selecionado.getInventario().gastarBronze(valor);
 					break;
@@ -811,9 +863,16 @@ public class GerenciadorCombateController {
 		if (selecionado.getJsonFileName() != null) {
 			lblXPInfo.setText("XP: " + selecionado.getXpAtual() + " / " + selecionado.getXpParaProximoNivel()
 					+ " | Grau: " + selecionado.getGrau() + " | Pts: " + selecionado.getPontosParaDistribuir());
+			if (inputGrau != null && !inputGrau.isFocused())
+				inputGrau.setText(String.valueOf(selecionado.getGrau()));
+			if (inputPontos != null && !inputPontos.isFocused())
+				inputPontos.setText(String.valueOf(selecionado.getPontosParaDistribuir()));
 		} else {
 			lblXPInfo.setText("XP Reward: " + selecionado.getXpReward());
+			if (inputGrau != null) inputGrau.setText("0");
+			if (inputPontos != null) inputPontos.setText("0");
 		}
+		atualizarListaContratos();
 	}
 
 	// =====================================================================
@@ -1423,6 +1482,114 @@ public class GerenciadorCombateController {
 			);
 
 			inputValorRapido.clear();
+			autoSaveAndRefresh();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void onSubtrairXPClick() {
+		if (selecionado == null) return;
+		try {
+			int xp = parseIntSeguro(inputXPManual.getText());
+			if (xp <= 0) return;
+			selecionado.setXpAtual(Math.max(0, selecionado.getXpAtual() - xp));
+			System.out.println("GM: Subtraído " + xp + " XP de " + selecionado.getNome());
+			autoSaveAndRefresh();
+			inputXPManual.clear();
+		} catch (Exception e) {
+			System.err.println("Erro: Valor de XP inválido.");
+		}
+	}
+
+	@FXML
+	private void onSetGrauClick() {
+		if (selecionado == null) return;
+		try {
+			int grau = parseIntSeguro(inputGrau.getText());
+			selecionado.setGrau(grau);
+			System.out.println("GM: Grau definido para " + grau + " para " + selecionado.getNome());
+			autoSaveAndRefresh();
+		} catch (Exception e) {
+			System.err.println("Erro: Grau inválido.");
+		}
+	}
+
+	@FXML
+	private void onAddPontosClick() {
+		if (selecionado == null) return;
+		try {
+			int pts = parseIntSeguro(inputPontos.getText());
+			if (pts <= 0) return;
+			selecionado.setPontosParaDistribuir(selecionado.getPontosParaDistribuir() + pts);
+			autoSaveAndRefresh();
+			inputPontos.clear();
+		} catch (Exception e) {
+			System.err.println("Erro: Quantidade de pontos inválida.");
+		}
+	}
+
+	@FXML
+	private void onRemovePontosClick() {
+		if (selecionado == null) return;
+		try {
+			int pts = parseIntSeguro(inputPontos.getText());
+			if (pts <= 0) return;
+			selecionado.setPontosParaDistribuir(Math.max(0, selecionado.getPontosParaDistribuir() - pts));
+			autoSaveAndRefresh();
+			inputPontos.clear();
+		} catch (Exception e) {
+			System.err.println("Erro: Quantidade de pontos inválida.");
+		}
+	}
+
+	private void atualizarListaContratos() {
+		if (listaContratos == null) return;
+		if (selecionado == null) {
+			listaContratos.getItems().clear();
+			return;
+		}
+		listaContratos.setItems(FXCollections.observableArrayList(selecionado.getContratosDeVida()));
+	}
+
+	@FXML
+	private void onAdicionarContratoClick() {
+		if (selecionado == null) return;
+		try {
+			String fonte = comboFonteContrato.getValue();
+			if (fonte == null || fonte.trim().isEmpty()) {
+				fonte = "Custom";
+			}
+			double valor = parseDoubleSeguro(inputValorContrato.getText());
+			if (valor <= 0) return;
+			int duracao = parseIntSeguro(inputDuracaoContrato.getText());
+			boolean persiste = checkPersisteContrato.isSelected();
+
+			ContratoDeVida contrato = new ContratoDeVida(fonte, valor, duracao, persiste);
+			ContratoDeVidaUtils.adicionarContrato(selecionado, contrato);
+
+			inputValorContrato.clear();
+			inputDuracaoContrato.setText("-1");
+			autoSaveAndRefresh();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void onRemoverContratoClick() {
+		if (selecionado == null) return;
+		try {
+			ContratoDeVida contrato = listaContratos.getSelectionModel().getSelectedItem();
+			if (contrato == null) return;
+
+			selecionado.getContratosDeVida().remove(contrato);
+			if (contrato.isBarbaro()) {
+				selecionado.removerEfeito("Raiva Imparável");
+			}
+			ContratoDeVidaUtils.pagarDivida(selecionado, 0.0);
+
 			autoSaveAndRefresh();
 		} catch (Exception e) {
 			e.printStackTrace();

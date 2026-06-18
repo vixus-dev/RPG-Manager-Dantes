@@ -129,14 +129,36 @@
                         </HBox>
                      </VBox>
 
-                     <!-- Secao: XP -->
-                      <HBox spacing="8" alignment="CENTER_LEFT" styleClass="bento-card" style="-fx-padding: 12;">
-                         <Label text="XP:" style="-fx-text-fill: #cc88ff; -fx-font-weight: bold; -fx-font-size: 13px;"/>
-                         <TextField fx:id="inputXPManual" promptText="Qtd" styleClass="editor-search-field" prefWidth="70.0" />
-                         <Button text="+ XP" onAction="#onAdicionarXPClick" style="-fx-background-color: rgba(204, 136, 255, 0.15); -fx-text-fill: #cc88ff; -fx-background-radius: 5; -fx-border-color: rgba(204, 136, 255, 0.3); -fx-border-width: 1; -fx-cursor: hand;"/>
-                         <Region HBox.hgrow="ALWAYS" />
+                     <!-- Secao: Progresso e Nivel -->
+                      <VBox spacing="8.0" styleClass="bento-card">
+                         <Label styleClass="header-label" text="Progresso e Nível" />
+                         <GridPane hgap="8.0" vgap="8.0">
+                            <columnConstraints>
+                               <ColumnConstraints percentWidth="20" />
+                               <ColumnConstraints percentWidth="30" />
+                               <ColumnConstraints percentWidth="25" />
+                               <ColumnConstraints percentWidth="25" />
+                            </columnConstraints>
+                            
+                            <!-- Row 0: XP -->
+                            <Label text="XP:" style="-fx-text-fill: #cc88ff; -fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                            <TextField fx:id="inputXPManual" promptText="Qtd" styleClass="editor-search-field" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                            <Button text="+ XP" onAction="#onAdicionarXPClick" style="-fx-background-color: rgba(204, 136, 255, 0.15); -fx-text-fill: #cc88ff; -fx-background-radius: 5; -fx-border-color: rgba(204, 136, 255, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" maxWidth="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="2" />
+                            <Button text="- XP" onAction="#onSubtrairXPClick" style="-fx-background-color: rgba(204, 136, 255, 0.15); -fx-text-fill: #a060cc; -fx-background-radius: 5; -fx-border-color: rgba(204, 136, 255, 0.2); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" maxWidth="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="3" />
+
+                            <!-- Row 1: Grau -->
+                            <Label text="Grau:" style="-fx-text-fill: #00ffcc; -fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                            <TextField fx:id="inputGrau" promptText="Grau" styleClass="editor-search-field" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                            <Button text="Set Grau" onAction="#onSetGrauClick" style="-fx-background-color: rgba(0, 255, 204, 0.15); -fx-text-fill: #00ffcc; -fx-background-radius: 5; -fx-border-color: rgba(0, 255, 204, 0.3); -fx-border-width: 1; -fx-cursor: hand;" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="2" GridPane.columnSpan="2" />
+
+                            <!-- Row 2: Pontos -->
+                            <Label text="Pontos:" style="-fx-text-fill: #ff9900; -fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                            <TextField fx:id="inputPontos" promptText="Pts" styleClass="editor-search-field" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                            <Button text="+" onAction="#onAddPontosClick" style="-fx-background-color: rgba(255, 153, 0, 0.15); -fx-text-fill: #ff9900; -fx-background-radius: 5; -fx-border-color: rgba(255, 153, 0, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" maxWidth="Infinity" GridPane.rowIndex="2" GridPane.columnIndex="2" />
+                            <Button text="-" onAction="#onRemovePontosClick" style="-fx-background-color: rgba(255, 153, 0, 0.15); -fx-text-fill: #cc7700; -fx-background-radius: 5; -fx-border-color: rgba(255, 153, 0, 0.2); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" maxWidth="Infinity" GridPane.rowIndex="2" GridPane.columnIndex="3" />
+                         </GridPane>
                          <Label fx:id="lblXPInfo" style="-fx-text-fill: #aaa; -fx-font-size: 11px;" text="" />
-                      </HBox>
+                      </VBox>
 
                      <!-- Secao: Controle de Sessao -->
                      <VBox spacing="8.0" styleClass="bento-card">
@@ -171,6 +193,12 @@
                             <Button text="+" onAction="#onAddBronzeClick" style="-fx-background-color: rgba(205, 127, 50, 0.12); -fx-text-fill: #cd7f32; -fx-background-radius: 5; -fx-border-color: rgba(205, 127, 50, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="2" maxWidth="Infinity"/>
                             <Button text="-" onAction="#onRemoveBronzeClick" style="-fx-background-color: rgba(138, 85, 34, 0.12); -fx-text-fill: #8a5522; -fx-background-radius: 5; -fx-border-color: rgba(138, 85, 34, 0.25); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="3" maxWidth="Infinity"/>
                         </GridPane>
+                        
+                        <HBox spacing="8.0" alignment="CENTER_LEFT" style="-fx-padding: 4 0 0 0;">
+                            <Label text="Alterar Qtd:" style="-fx-text-fill: #aaa; -fx-font-size: 11px;" />
+                            <TextField fx:id="inputQtdAlterarMoedas" text="1" styleClass="editor-search-field" prefWidth="60.0"/>
+                        </HBox>
+                        
                         <Label fx:id="lblTotalMoedas" style="-fx-text-fill: #888; -fx-font-size: 11px;" text="Total: 0 bronze" />
                      </VBox>
 
@@ -301,7 +329,46 @@
                   </VBox>
                </Tab>
 
-               <!-- ==================== ABA 5: SISTEMA ==================== -->
+               <!-- ==================== ABA 5: CONTRATOS DE VIDA ==================== -->
+               <Tab text="Contratos" styleClass="editor-tab">
+                  <VBox spacing="10.0" style="-fx-padding: 12;" styleClass="editor-background">
+                     <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+                        <!-- Left Side: List of active contracts -->
+                        <VBox spacing="8.0" styleClass="bento-card" HBox.hgrow="ALWAYS" prefWidth="300.0">
+                           <Label styleClass="header-label" text="Contratos Ativos" />
+                           <ListView fx:id="listaContratos" VBox.vgrow="ALWAYS" styleClass="editor-list-view" />
+                           <Button text="Remover Contrato Selecionado" onAction="#onRemoverContratoClick" style="-fx-background-color: rgba(255, 75, 75, 0.12); -fx-text-fill: #ff4b4b; -fx-background-radius: 5; -fx-border-color: rgba(255, 75, 75, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" maxWidth="Infinity" />
+                        </VBox>
+
+                        <!-- Right Side: Add new contract -->
+                        <VBox spacing="8.0" styleClass="bento-card" HBox.hgrow="ALWAYS" prefWidth="250.0">
+                           <Label styleClass="header-label" text="Novo Contrato" />
+                           <GridPane hgap="8.0" vgap="8.0">
+                              <columnConstraints>
+                                 <ColumnConstraints percentWidth="35" />
+                                 <ColumnConstraints percentWidth="65" />
+                              </columnConstraints>
+                              
+                              <Label text="Fonte:" style="-fx-text-fill: #aaa;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                              <ComboBox fx:id="comboFonteContrato" maxWidth="Infinity" promptText="Selecione..." GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+                              <Label text="Valor:" style="-fx-text-fill: #aaa;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                              <TextField fx:id="inputValorContrato" promptText="HP" styleClass="editor-search-field" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+                              <Label text="Duração:" style="-fx-text-fill: #aaa;" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                              <TextField fx:id="inputDuracaoContrato" text="-1" promptText="TU" styleClass="editor-search-field" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                           </GridPane>
+                           
+                           <CheckBox fx:id="checkPersisteContrato" text="Persiste Após Combate" style="-fx-text-fill: #aaa; -fx-font-size: 11px; -fx-padding: 4 0;" selected="true" />
+                           
+                           <Region VBox.vgrow="ALWAYS" />
+                           <Button text="Adicionar Contrato" onAction="#onAdicionarContratoClick" style="-fx-background-color: rgba(0, 255, 136, 0.12); -fx-text-fill: #00ff88; -fx-background-radius: 5; -fx-border-color: rgba(0, 255, 136, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" maxWidth="Infinity" />
+                        </VBox>
+                     </HBox>
+                  </VBox>
+               </Tab>
+
+               <!-- ==================== ABA 6: SISTEMA ==================== -->
                <Tab text="Sistema" styleClass="editor-tab">
                   <VBox spacing="15.0" style="-fx-padding: 20;" styleClass="editor-background" alignment="TOP_CENTER">
                      <VBox spacing="12" styleClass="bento-card" maxWidth="400.0">
