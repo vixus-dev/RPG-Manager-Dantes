@@ -57,6 +57,21 @@ public final class ContratoDeVidaUtils {
 		}
 	}
 
+	/**
+	 * Remove um contrato diretamente da fila do personagem.
+	 * Dispara recalculo de atributos e limpa buffs associados.
+	 */
+	public static void removerContrato(Personagem p, ContratoDeVida contrato) {
+		if (p == null || contrato == null)
+			return;
+		p.getContratosDeVida().remove(contrato);
+		if (contrato.isBarbaro()) {
+			removerBuffBarbaro(p);
+		}
+		sincronizarEfeitoVisual(p);
+		p.recalcularAtributosEstatisticas();
+	}
+
 	// ========== CONSULTAS ==========
 
 	/**

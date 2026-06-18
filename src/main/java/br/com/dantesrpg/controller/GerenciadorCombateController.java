@@ -1597,11 +1597,7 @@ public class GerenciadorCombateController {
 			ContratoDeVida contrato = listaContratos.getSelectionModel().getSelectedItem();
 			if (contrato == null) return;
 
-			selecionado.getContratosDeVida().remove(contrato);
-			if (contrato.isBarbaro()) {
-				selecionado.removerEfeito("Raiva Imparável");
-			}
-			ContratoDeVidaUtils.pagarDivida(selecionado, 0.0);
+			ContratoDeVidaUtils.removerContrato(selecionado, contrato);
 
 			autoSaveAndRefresh();
 		} catch (Exception e) {
