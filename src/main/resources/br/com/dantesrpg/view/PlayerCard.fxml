@@ -15,14 +15,13 @@
       <Polygon fx:id="hpTrack" points="95,25, 250,25, 260,43, 95,43" styleClass="bar-track"/>
       <Polygon fx:id="mpTrack" points="95,47, 260,47, 250,65, 95,65" styleClass="bar-track"/>
       <Polygon fx:id="passiveTrack" points="95,69, 250,69, 240,80, 95,80" styleClass="bar-track"/>
-      
+      <Polygon fx:id="hpBarPolygon" styleClass="hp-bar-fill"/>
       <Polygon fx:id="contractBarPolygon" styleClass="contract-bar-fill" visible="false"/>
       <Label fx:id="labelContractCount" text="+1" visible="false" 
        layoutX="150.0" layoutY="25.0" 
        style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-effect: dropshadow(gaussian, black, 2, 1.0, 0, 0);" 
        AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="25.0"/>
 
-      <Polygon fx:id="hpBarPolygon" styleClass="hp-bar-fill"/>
       <Polygon fx:id="mpBarPolygon" styleClass="mp-bar-fill"/>
       <Polygon fx:id="passiveBarPolygon" styleClass="passive-bar-fill"/>
 

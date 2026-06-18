@@ -109,6 +109,7 @@ public class GerenciadorCombateController {
 	private EstadoCombate estadoCombate;
 	private Personagem selecionado;
 	private String efeitoEditandoNome = null;
+	private boolean isSyncing = false;
 
 	private ObservableList<String> masterDataItens = FXCollections.observableArrayList();
 	private List<ItemInfo> masterItemInfoList = new ArrayList<>();
@@ -203,11 +204,16 @@ public class GerenciadorCombateController {
 		carregarDados();
 		atualizarContadorAndar();
 		if (mainController != null) {
-			String currentEfeito = mainController.getEfeitoAndarAtual();
-			if (currentEfeito != null) {
-				comboEfeitoAndar.setValue(currentEfeito);
+			isSyncing = true;
+			try {
+				String currentEfeito = mainController.getEfeitoAndarAtual();
+				if (currentEfeito != null) {
+					comboEfeitoAndar.setValue(currentEfeito);
+				}
+				checkEfeitoAndarAtivo.setSelected(mainController.isEfeitoAndarAtivo());
+			} finally {
+				isSyncing = false;
 			}
-			checkEfeitoAndarAtivo.setSelected(mainController.isEfeitoAndarAtivo());
 		}
 	}
 
@@ -288,13 +294,18 @@ public class GerenciadorCombateController {
 		}
 		atualizarContadorAndar();
 		if (mainController != null) {
-			String currentEfeito = mainController.getEfeitoAndarAtual();
-			if (currentEfeito != null && !currentEfeito.equals(comboEfeitoAndar.getValue())) {
-				comboEfeitoAndar.setValue(currentEfeito);
-			}
-			boolean currentAtivo = mainController.isEfeitoAndarAtivo();
-			if (currentAtivo != checkEfeitoAndarAtivo.isSelected()) {
-				checkEfeitoAndarAtivo.setSelected(currentAtivo);
+			isSyncing = true;
+			try {
+				String currentEfeito = mainController.getEfeitoAndarAtual();
+				if (currentEfeito != null && !currentEfeito.equals(comboEfeitoAndar.getValue())) {
+					comboEfeitoAndar.setValue(currentEfeito);
+				}
+				boolean currentAtivo = mainController.isEfeitoAndarAtivo();
+				if (currentAtivo != checkEfeitoAndarAtivo.isSelected()) {
+					checkEfeitoAndarAtivo.setSelected(currentAtivo);
+				}
+			} finally {
+				isSyncing = false;
 			}
 		}
 	}
@@ -1327,11 +1338,13 @@ public class GerenciadorCombateController {
 		comboEfeitoAndar.getSelectionModel().selectFirst();
 
 		comboEfeitoAndar.valueProperty().addListener((o, old, newVal) -> {
+			if (isSyncing) return;
 			if (mainController != null)
 				mainController.setEfeitoAndar(newVal, checkEfeitoAndarAtivo.isSelected());
 			atualizarContadorAndar();
 		});
 		checkEfeitoAndarAtivo.selectedProperty().addListener((o, old, isSelected) -> {
+			if (isSyncing) return;
 			if (mainController != null)
 				mainController.setEfeitoAndar(comboEfeitoAndar.getValue(), isSelected);
 			atualizarContadorAndar();
