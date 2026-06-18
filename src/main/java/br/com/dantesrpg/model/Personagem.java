@@ -496,6 +496,11 @@ public class Personagem {
 		setVidaAtual(novaVida, null, null);
 	}
 
+	public void curarIgnorandoBloqueios(double valor, EstadoCombate estado,
+			br.com.dantesrpg.controller.CombatController controller) {
+		getHealthManager().curarIgnorandoBloqueios(valor, estado, controller);
+	}
+
 	public void forcarCura(double valor) {
 		getHealthManager().forcarCura(valor);
 	}
@@ -1125,6 +1130,14 @@ public class Personagem {
 			this.escudoSangueMaximo = this.escudoSangueAtual;
 		}
 		recalcularSeBonusOvertimeDependeDoEscudo();
+	}
+
+	public void setEscudoNormalMaximo(double v) {
+		this.escudoNormalMaximo = Math.max(0.0, v);
+	}
+
+	public void setEscudoSangueMaximo(double v) {
+		this.escudoSangueMaximo = Math.max(0.0, v);
 	}
 
 	public void setEscudoDivinoAtual(double v) {

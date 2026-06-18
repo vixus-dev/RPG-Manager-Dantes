@@ -125,6 +125,58 @@ public class PersonagemHealth {
 		}
 	}
 
+	public void curarIgnorandoBloqueios(double valor, EstadoCombate estado, CombatController controller) {
+		double vidaAntiga = personagem.getVidaAtual();
+		double curaRecebida = valor;
+
+		if (personagem.getReducaoCuraPercentual() > 0) {
+			double fatorCura = Math.max(0.0, 1.0 - personagem.getReducaoCuraPercentual());
+			System.out.println(">>> " + personagem.getNome() + " teve a cura reduzida em "
+					+ String.format("%.0f", personagem.getReducaoCuraPercentual() * 100) + "%.");
+			curaRecebida *= fatorCura;
+		}
+
+		if (curaRecebida <= 0)
+			return;
+
+		double restante = curaRecebida;
+
+		// 1) Enche HP até o teto atual
+		double espacoHp = Math.max(0, personagem.getVidaMaxima() - personagem.getVidaAtual());
+		double usaNoHp = Math.min(restante, espacoHp);
+		if (usaNoHp > 0) {
+			personagem.setVidaAtualInterno(personagem.getVidaAtual() + usaNoHp);
+			restante -= usaNoHp;
+		}
+
+		// 2) Excedente paga contratos; teto sobe; troco volta a encher HP
+		int safetyCounter = 0;
+		while (restante > 0 && ContratoDeVidaUtils.temContrato(personagem) && safetyCounter++ < 32) {
+			double vidaMaxAntes = personagem.getVidaMaxima();
+			double restanteAntes = restante;
+
+			restante = ContratoDeVidaUtils.pagarDivida(personagem, restante);
+
+			double vidaMaxDepois = personagem.getVidaMaxima();
+			if (vidaMaxDepois > vidaMaxAntes) {
+				double espacoExtra = Math.max(0, vidaMaxDepois - personagem.getVidaAtual());
+				if (espacoExtra > 0 && restante > 0) {
+					double usaNoHp2 = Math.min(restante, espacoExtra);
+					personagem.setVidaAtualInterno(personagem.getVidaAtual() + usaNoHp2);
+					restante -= usaNoHp2;
+				}
+			}
+
+			if (vidaMaxDepois <= vidaMaxAntes && restante == restanteAntes) {
+				break; // sem progresso
+			}
+		}
+
+		if (personagem.getRaca() != null && Math.abs(personagem.getVidaAtual() - vidaAntiga) > 0.01) {
+			personagem.getRaca().onHpChanged(personagem, vidaAntiga, personagem.getVidaAtual(), estado, controller);
+		}
+	}
+
 	public void forcarCura(double valor) {
 		personagem.setVidaAtualInterno(Math.min(personagem.getVidaMaxima(), personagem.getVidaAtual() + valor));
 	}

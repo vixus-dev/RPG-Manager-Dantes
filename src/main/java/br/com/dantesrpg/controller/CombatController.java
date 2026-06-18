@@ -1106,9 +1106,13 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 	}
 
 	public void setEfeitoAndar(String efeito, boolean ativo) {
+		if (efeito != null && efeito.equals(this.efeitoAndarAtual) && this.efeitoAndarAtivo == ativo) {
+			return;
+		}
 		this.efeitoAndarAtual = efeito;
 		this.efeitoAndarAtivo = ativo;
 		System.out.println("GM: Efeito de Andar alterado para: " + efeito + " (Ativo: " + ativo + ")");
+		notificarGerenciadorCombate();
 	}
 
 	public String getEfeitoAndarAtual() {

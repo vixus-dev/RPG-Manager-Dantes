@@ -39,13 +39,13 @@ public class JanelasCombateCoordinator {
 	private final Consumer<File> carregarMetadadosDoMapa;
 	private final Supplier<Stage> detailedTurnHudStageSupplier;
 
+	private final List<GerenciadorCombateController> gerenciadoresAtivos = new ArrayList<>();
 	private Stage mapStage;
 	private MapController mapController;
 	private Stage diceRollStage;
 	private DiceRollPromptController diceRollController;
 	private Stage bestiarioStage;
 	private BestiarioController bestiarioController;
-	private GerenciadorCombateController gerenciadorCombateController;
 
 	public JanelasCombateCoordinator(CombatController controller, Supplier<EstadoCombate> estadoSupplier,
 			Supplier<CombatManager> combatManagerSupplier,
@@ -195,12 +195,12 @@ public class JanelasCombateCoordinator {
 			painelController.setListaItensMestre(todosItens);
 			painelController.setListaItensComInfo(todosItens, controller);
 
-			gerenciadorCombateController = painelController;
+			gerenciadoresAtivos.add(painelController);
 
 			Stage stage = new Stage();
 			stage.setTitle("Painel do Mestre");
 			stage.setScene(new Scene(root));
-			stage.setOnCloseRequest(e -> gerenciadorCombateController = null);
+			stage.setOnCloseRequest(e -> gerenciadoresAtivos.remove(painelController));
 			stage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -208,8 +208,8 @@ public class JanelasCombateCoordinator {
 	}
 
 	public void notificarGerenciadorCombate() {
-		if (gerenciadorCombateController != null) {
-			gerenciadorCombateController.refreshCompleto();
+		for (GerenciadorCombateController c : new ArrayList<>(gerenciadoresAtivos)) {
+			c.refreshCompleto();
 		}
 	}
 

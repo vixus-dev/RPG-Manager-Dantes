@@ -11,6 +11,7 @@ import br.com.dantesrpg.model.util.EffectTooltipBuilder;
 import br.com.dantesrpg.model.Efeito;
 import br.com.dantesrpg.model.enums.Raridade;
 import br.com.dantesrpg.model.enums.TipoEfeito;
+import br.com.dantesrpg.model.enums.TipoAcao;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -20,6 +21,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -30,14 +34,8 @@ import java.util.Map;
 
 public class GerenciadorCombateController {
 
-	// ========== TABELA DE COMBATENTES ==========
-	@FXML private TableView<Personagem> tabelaCombatentes;
-	@FXML private TableColumn<Personagem, String> colNome;
-	@FXML private TableColumn<Personagem, String> colHP;
-	@FXML private TableColumn<Personagem, String> colEscudo;
-	@FXML private TableColumn<Personagem, String> colTU;
-	@FXML private TableColumn<Personagem, String> colFaccao;
-	@FXML private TableColumn<Personagem, String> colStatus;
+	// ========== SELETOR DE COMBATENTES ==========
+	@FXML private VBox combatListContainer;
 
 	// ========== CABECALHO ==========
 	@FXML private TabPane tabPaneDetalhes;
@@ -46,12 +44,15 @@ public class GerenciadorCombateController {
 
 	// ========== ABA PRINCIPAL ==========
 	@FXML private TextField inputVida;
-	@FXML private TextField inputEscudo;
+	@FXML private TextField inputEscudoNormal;
+	@FXML private TextField inputEscudoSangue;
+	@FXML private TextField inputEscudoDivino;
+	@FXML private TextField inputValorRapido;
+	@FXML private ListView<Personagem> listaTurnos;
 	@FXML private TextField inputMana;
 	@FXML private TextField inputTU;
 	@FXML private Label lblVidaMax;
 	@FXML private Label lblManaMax;
-	@FXML private CheckBox checkEscudoDeSangue;
 	@FXML private CheckBox checkAusente;
 	@FXML private CheckBox checkProtagonista;
 	@FXML private TextField inputOuro;
@@ -122,18 +123,29 @@ public class GerenciadorCombateController {
 
 	@FXML
 	public void initialize() {
-		configurarColunasTabela();
 		configurarFiltroItens();
 		configurarEfeitosAndar();
 		configurarComboEfeitos();
 		configurarFiltrosInventario();
 		configurarSelecaoEfeitos();
 
-		tabelaCombatentes.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-			selecionarPersonagem(newVal);
-		});
-
 		tabPaneDetalhes.setDisable(true);
+
+		if (listaTurnos != null) {
+			listaTurnos.setCellFactory(lv -> new ListCell<Personagem>() {
+				@Override
+				protected void updateItem(Personagem item, boolean empty) {
+					super.updateItem(item, empty);
+					if (empty || item == null) {
+						setText(null);
+						setGraphic(null);
+					} else {
+						setText(String.format("[%d TU] %s (%s)", item.getContadorTU(), item.getNome(), item.getFaccao()));
+						setStyle("-fx-text-fill: white; -fx-font-family: 'Oxanium'; -fx-font-size: 12px;");
+					}
+				}
+			});
+		}
 
 		// Timer de auto-refresh a cada 2 segundos
 		refreshTimer = new Timeline(new KeyFrame(Duration.seconds(2), e -> onTimerRefresh()));
@@ -150,6 +162,13 @@ public class GerenciadorCombateController {
 		this.estadoCombate = estado;
 		carregarDados();
 		atualizarContadorAndar();
+		if (mainController != null) {
+			String currentEfeito = mainController.getEfeitoAndarAtual();
+			if (currentEfeito != null) {
+				comboEfeitoAndar.setValue(currentEfeito);
+			}
+			checkEfeitoAndarAtivo.setSelected(mainController.isEfeitoAndarAtivo());
+		}
 	}
 
 	public void setListaItensMestre(List<String> itens) {
@@ -192,9 +211,10 @@ public class GerenciadorCombateController {
 	private void onTimerRefresh() {
 		if (estadoCombate == null) return;
 
-		// Atualiza a tabela de combatentes
+		// Atualiza o seletor de combatentes
 		removerInvocacoesMortas();
-		tabelaCombatentes.refresh();
+		popularListaCombatentes();
+		atualizarListaTurnos();
 
 		// Atualiza campos se personagem selecionado
 		if (selecionado != null) {
@@ -215,6 +235,7 @@ public class GerenciadorCombateController {
 		if (estadoCombate == null) return;
 		removerInvocacoesMortas();
 		carregarDados();
+		atualizarListaTurnos();
 		if (selecionado != null) {
 			atualizarCamposInput();
 			atualizarListaInventario();
@@ -226,6 +247,16 @@ public class GerenciadorCombateController {
 			}
 		}
 		atualizarContadorAndar();
+		if (mainController != null) {
+			String currentEfeito = mainController.getEfeitoAndarAtual();
+			if (currentEfeito != null && !currentEfeito.equals(comboEfeitoAndar.getValue())) {
+				comboEfeitoAndar.setValue(currentEfeito);
+			}
+			boolean currentAtivo = mainController.isEfeitoAndarAtivo();
+			if (currentAtivo != checkEfeitoAndarAtivo.isSelected()) {
+				checkEfeitoAndarAtivo.setSelected(currentAtivo);
+			}
+		}
 	}
 
 	// =====================================================================
@@ -695,7 +726,7 @@ public class GerenciadorCombateController {
 			mainController.atualizarInterfaceTotal();
 			mainController.salvarEstadoJogadores();
 		}
-		tabelaCombatentes.refresh();
+		popularListaCombatentes();
 	}
 
 	// =====================================================================
@@ -959,73 +990,132 @@ public class GerenciadorCombateController {
 
 	private void carregarDados() {
 		if (estadoCombate != null) {
-			tabelaCombatentes.getItems().setAll(estadoCombate.getCombatentes());
+			popularListaCombatentes();
 		}
 	}
 
-	// =====================================================================
-	// CONFIGURAÇÕES DE INICIALIZACAO
-	// =====================================================================
+	private void popularListaCombatentes() {
+		if (estadoCombate == null || combatListContainer == null) return;
 
-	private void configurarColunasTabela() {
-		colNome.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNome()));
+		combatListContainer.getChildren().clear();
+		for (Personagem p : estadoCombate.getCombatentes()) {
+			VBox btnContent = new VBox(4);
+			btnContent.setAlignment(Pos.CENTER_LEFT);
+			btnContent.setPadding(new Insets(4, 8, 4, 8));
 
-		colHP.setCellValueFactory(data -> {
-			Personagem p = data.getValue();
-			if (p.isProtagonista()) return new SimpleStringProperty("?");
-			return new SimpleStringProperty(String.format("%.0f/%.0f", p.getVidaAtual(), p.getVidaMaxima()));
-		});
+			// Nome + Faction badge/color
+			HBox nameRow = new HBox(8);
+			nameRow.setAlignment(Pos.CENTER_LEFT);
+			Label lblNome = new Label(p.getNome());
+			lblNome.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px;");
+			nameRow.getChildren().add(lblNome);
 
-		colEscudo.setCellValueFactory(data -> {
-			Personagem p = data.getValue();
-			double escudo = p.getEscudoAtual();
-			if (escudo <= 0) return new SimpleStringProperty("-");
-			String prefix = p.isEscudoDeSangue() ? "S:" : "";
-			return new SimpleStringProperty(prefix + String.format("%.0f", escudo));
-		});
+			// Faction indicator
+			Label lblFaccao = new Label(p.getFaccao());
+			if ("JOGADOR".equalsIgnoreCase(p.getFaccao())) {
+				lblFaccao.setStyle("-fx-text-fill: #00ffcc; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-color: rgba(0, 255, 204, 0.1); -fx-padding: 1 4; -fx-background-radius: 3;");
+			} else {
+				lblFaccao.setStyle("-fx-text-fill: #ff4444; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-color: rgba(255, 68, 68, 0.1); -fx-padding: 1 4; -fx-background-radius: 3;");
+			}
+			nameRow.getChildren().add(lblFaccao);
 
-		colTU.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getContadorTU())));
-		colFaccao.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getFaccao()));
-
-		colStatus.setCellValueFactory(data -> {
-			Personagem p = data.getValue();
-			if (p.isAusente()) return new SimpleStringProperty("[AUS]");
-			if (!p.isVivo()) return new SimpleStringProperty("[MORTO]");
-			if (p.isProtagonista()) return new SimpleStringProperty("[PROT]");
-
-			// Mostra numero de efeitos ativos
-			int numEfeitos = p.getEfeitosAtivos() != null ? p.getEfeitosAtivos().size() : 0;
-			if (numEfeitos > 0) return new SimpleStringProperty("EF:" + numEfeitos);
-			return new SimpleStringProperty("OK");
-		});
-
-		// Colorir linhas com base no estado
-		tabelaCombatentes.setRowFactory(tv -> new TableRow<Personagem>() {
-			@Override
-			protected void updateItem(Personagem p, boolean empty) {
-				super.updateItem(p, empty);
-				if (empty || p == null) {
-					setStyle("");
-					return;
-				}
-				if (!p.isVivo()) {
-					setStyle("-fx-background-color: #2a1515; -fx-text-fill: #ff6666;");
-				} else if (p.isAusente()) {
-					setStyle("-fx-background-color: #1a1a2a; -fx-text-fill: #666;");
-				} else if (p.getEfeitosAtivos() != null && !p.getEfeitosAtivos().isEmpty()) {
-					// Tem efeitos: cor leve de aviso
-					boolean temDebuff = p.getEfeitosAtivos().values().stream()
-							.anyMatch(ef -> ef.getTipo() == TipoEfeito.DEBUFF || ef.getTipo() == TipoEfeito.DOT);
-					if (temDebuff) {
-						setStyle("-fx-background-color: #2a2015;");
-					} else {
-						setStyle("-fx-background-color: #152a20;");
+			// HP + Shields progress / label info
+			Label lblStats = new Label();
+			lblStats.setStyle("-fx-text-fill: #aaa; -fx-font-size: 11px;");
+			if (p.isProtagonista()) {
+				lblStats.setText("HP: ? / ?");
+			} else {
+				StringBuilder statsSb = new StringBuilder();
+				statsSb.append("HP: ").append(String.format("%.0f/%.0f", p.getVidaAtual(), p.getVidaMaxima()));
+				double normalSh = p.getEscudoNormalAtual();
+				double bloodSh = p.getEscudoSangueAtual();
+				double divineSh = p.getEscudoDivinoAtual();
+				if (normalSh > 0 || bloodSh > 0 || divineSh > 0) {
+					statsSb.append(" [");
+					boolean first = true;
+					if (normalSh > 0) {
+						statsSb.append("E:").append(String.format("%.0f", normalSh));
+						first = false;
 					}
+					if (bloodSh > 0) {
+						if (!first) statsSb.append("|");
+						statsSb.append("S:").append(String.format("%.0f", bloodSh));
+						first = false;
+					}
+					if (divineSh > 0) {
+						if (!first) statsSb.append("|");
+						statsSb.append("D:").append(String.format("%.0f", divineSh));
+					}
+					statsSb.append("]");
+				}
+				lblStats.setText(statsSb.toString());
+			}
+
+			// TU + Status info
+			HBox statusRow = new HBox(12);
+			statusRow.setAlignment(Pos.CENTER_LEFT);
+			Label lblTU = new Label("TU: " + p.getContadorTU());
+			lblTU.setStyle("-fx-text-fill: #ffd700; -fx-font-size: 11px; -fx-font-weight: bold;");
+			statusRow.getChildren().add(lblTU);
+
+			Label lblStatus = new Label();
+			if (p.isAusente()) {
+				lblStatus.setText("[AUSENTE]");
+				lblStatus.setStyle("-fx-text-fill: #888; -fx-font-size: 10px;");
+			} else if (!p.isVivo()) {
+				lblStatus.setText("[MORTO]");
+				lblStatus.setStyle("-fx-text-fill: #ff6666; -fx-font-size: 10px; -fx-font-weight: bold;");
+			} else {
+				int activeEffects = p.getEfeitosAtivos() != null ? p.getEfeitosAtivos().size() : 0;
+				if (activeEffects > 0) {
+					lblStatus.setText("Efeitos: " + activeEffects);
+					lblStatus.setStyle("-fx-text-fill: #cc88ff; -fx-font-size: 10px;");
 				} else {
-					setStyle("");
+					lblStatus.setText("OK");
+					lblStatus.setStyle("-fx-text-fill: #2ecc71; -fx-font-size: 10px;");
 				}
 			}
-		});
+			statusRow.getChildren().add(lblStatus);
+
+			btnContent.getChildren().addAll(nameRow, lblStats, statusRow);
+
+			Button btnCombatente = new Button();
+			btnCombatente.setGraphic(btnContent);
+			btnCombatente.setMaxWidth(Double.MAX_VALUE);
+
+			String baseStyleClass = "player-select-button";
+			btnCombatente.getStyleClass().add(baseStyleClass);
+
+			if ("JOGADOR".equalsIgnoreCase(p.getFaccao())) {
+				if (!p.isVivo()) {
+					btnCombatente.setStyle("-fx-background-color: #1a0f12; -fx-border-color: #552222;");
+				} else {
+					btnCombatente.setStyle("-fx-background-color: #121622; -fx-border-color: #223355;");
+				}
+			} else {
+				if (!p.isVivo()) {
+					btnCombatente.setStyle("-fx-background-color: #1a0808; -fx-border-color: #551111;");
+				} else {
+					btnCombatente.setStyle("-fx-background-color: #1e1115; -fx-border-color: #44222a;");
+				}
+			}
+
+			if (p == selecionado) {
+				btnCombatente.getStyleClass().add("player-select-button-selected");
+				if ("JOGADOR".equalsIgnoreCase(p.getFaccao())) {
+					btnCombatente.setStyle(btnCombatente.getStyle() + " -fx-border-color: #00f0ff; -fx-border-width: 2px;");
+				} else {
+					btnCombatente.setStyle(btnCombatente.getStyle() + " -fx-border-color: #ff4444; -fx-border-width: 2px;");
+				}
+			}
+
+			btnCombatente.setOnAction(e -> {
+				selecionarPersonagem(p);
+				popularListaCombatentes();
+			});
+
+			combatListContainer.getChildren().add(btnCombatente);
+		}
 	}
 
 	private void configurarFiltroItens() {
