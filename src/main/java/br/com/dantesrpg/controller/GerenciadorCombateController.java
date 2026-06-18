@@ -619,6 +619,7 @@ public class GerenciadorCombateController {
 		if (selecionado != null && nomeItem != null && mainController != null) {
 			try {
 				int qtd = parseIntSeguro(inputQtdItem.getText());
+				if (qtd <= 0) qtd = 1;
 				Item item = mainController.getItem(nomeItem);
 				if (item != null) {
 					for (int i = 0; i < qtd; i++)
@@ -637,14 +638,25 @@ public class GerenciadorCombateController {
 	private void onRemoverItemClick() {
 		String selectedString = listaInventarioAtual.getSelectionModel().getSelectedItem();
 		if (selecionado != null && selectedString != null && mainController != null) {
-			// O item armazena a chave no userData
-			String tipoItem = selectedString;
-			Item itemModelo = mainController.getItem(tipoItem);
-			if (itemModelo != null) {
-				selecionado.getInventario().removerItem(itemModelo);
-				System.out.println("GM: Removido 1x " + tipoItem);
-				atualizarListaInventario();
-				autoSaveAndRefresh();
+			try {
+				int qtd = parseIntSeguro(inputQtdItem.getText());
+				if (qtd <= 0) qtd = 1;
+				Item itemModelo = mainController.getItem(selectedString);
+				if (itemModelo != null) {
+					int removidos = 0;
+					for (int i = 0; i < qtd; i++) {
+						if (selecionado.getInventario().removerItemPorTipo(selectedString)) {
+							removidos++;
+						} else {
+							break;
+						}
+					}
+					System.out.println("GM: Removido " + removidos + "x " + selectedString);
+					atualizarListaInventario();
+					autoSaveAndRefresh();
+				}
+			} catch (Exception e) {
+				// Input invalido
 			}
 		}
 	}

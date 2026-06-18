@@ -234,7 +234,7 @@
                         <Label styleClass="header-label" text="Inventário Atual" />
                         <ListView fx:id="listaInventarioAtual" VBox.vgrow="ALWAYS" styleClass="editor-list-view" />
                         <HBox spacing="6">
-                           <Button maxWidth="Infinity" onAction="#onRemoverItemClick" text="Remover 1x Selecionado" style="-fx-background-color: rgba(255, 75, 75, 0.12); -fx-text-fill: #ff4b4b; -fx-background-radius: 5; -fx-border-color: rgba(255, 75, 75, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                           <Button maxWidth="Infinity" onAction="#onRemoverItemClick" text="Remover Qtd Selecionada" style="-fx-background-color: rgba(255, 75, 75, 0.12); -fx-text-fill: #ff4b4b; -fx-background-radius: 5; -fx-border-color: rgba(255, 75, 75, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
                         </HBox>
                      </VBox>
                   </VBox>
