@@ -1,0 +1,48 @@
+{
+  "iniciativaBase": 40,
+  "atributosBase": {
+    "DESTREZA": 10,
+    "ENDURANCE": 10,
+    "INSPIRACAO": 10,
+    "FORCA": 10,
+    "CARISMA": 10,
+    "INTELIGENCIA": 10,
+    "SORTE": 10,
+    "SAGACIDADE": 10,
+    "TOPOR": 10,
+    "PERCEPCAO": 10
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 160.0,
+  "contadorTU": 0,
+  "fantasmaNobre": "JihoGekkyuden",
+  "armaduraEquipada": "Couraça de Obsidiana",
+  "armaEquipada": "Manoplas de Couro de Réptil",
+  "inventario": {},
+  "xpAtual": 0,
+  "vidaMaximaBase": 125.0,
+  "classe": "Feiticeiro",
+  "armasEquipadas": [
+    "Manoplas de Couro de Réptil"
+  ],
+  "nome": "Rena",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 0,
+  "posY": 0,
+  "amuleto2": "Pingente do Coração do Deus do SOL",
+  "amuleto1": "Cinto do Saqueador de Tumbas",
+  "manaAtual": 11.5,
+  "escudoDivinoAtual": 0.0,
+  "raca": "Anao",
+  "nivel": 8,
+  "wieldingMaximo": 2
+}

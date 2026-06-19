@@ -599,6 +599,94 @@ public class ReforcosDialogService {
 		lvPresets.getItems().setAll(items);
 	}
 
+	private String extrairNomePreset(String selectedItem) {
+		if (selectedItem == null) return null;
+		String presetName = selectedItem;
+		if (presetName.startsWith("[Equipado] ")) {
+			presetName = presetName.substring("[Equipado] ".length());
+		}
+		int parenIndex = presetName.indexOf(" (");
+		if (parenIndex != -1) {
+			presetName = presetName.substring(0, parenIndex);
+		}
+		return presetName.trim();
+	}
+
+	private void atualizarComboDisponiveis(ComboBox<String> cbDisponiveis, PartyPreset preset) {
+		cbDisponiveis.getItems().clear();
+		List<String> todos = listarArquivosPersonagens.get();
+		if (todos != null) {
+			for (String nome : todos) {
+				if (preset == null || !preset.getCharacterNames().contains(nome)) {
+					cbDisponiveis.getItems().add(nome);
+				}
+			}
+		}
+		if (!cbDisponiveis.getItems().isEmpty()) {
+			cbDisponiveis.setValue(cbDisponiveis.getItems().get(0));
+		}
+	}
+
+	private void exibirDetalhesPreset(PartyPreset preset, TextField tfEditPresetName, ListView<String> lvMembros,
+			ComboBox<String> cbDisponiveis, VBox centerPanel, VBox rightPanelMemberSection) {
+		if (preset == null) {
+			tfEditPresetName.clear();
+			lvMembros.getItems().clear();
+			cbDisponiveis.getItems().clear();
+			centerPanel.setDisable(true);
+			rightPanelMemberSection.setDisable(true);
+			return;
+		}
+
+		centerPanel.setDisable(false);
+		rightPanelMemberSection.setDisable(false);
+		tfEditPresetName.setText(preset.getName());
+		lvMembros.getItems().setAll(preset.getCharacterNames());
+		atualizarComboDisponiveis(cbDisponiveis, preset);
+	}
+
+	private void moverPreset(int direcao, ListView<String> lvPresets, Runnable refreshPresetsList) {
+		int selectedIndex = lvPresets.getSelectionModel().getSelectedIndex();
+		if (selectedIndex == -1) return;
+
+		PartyPresetsData data = PartyPresetsData.carregarPresets();
+		List<PartyPreset> list = data.getPresets();
+		int newIndex = selectedIndex + direcao;
+		if (newIndex >= 0 && newIndex < list.size()) {
+			PartyPreset temp = list.get(selectedIndex);
+			list.set(selectedIndex, list.get(newIndex));
+			list.set(newIndex, temp);
+			PartyPresetsData.salvarPresets(data);
+			refreshPresetsList.run();
+			lvPresets.getSelectionModel().select(newIndex);
+		}
+	}
+
+	private void moverMembro(int direcao, String presetName, int memberIndex, ListView<String> lvPresets,
+			ListView<String> lvMembros, ComboBox<String> cbDisponiveis, VBox centerPanel, VBox rightPanelMemberSection) {
+		PartyPresetsData data = PartyPresetsData.carregarPresets();
+		PartyPreset preset = data.getPresets().stream()
+				.filter(p -> p.getName().equalsIgnoreCase(presetName))
+				.findFirst().orElse(null);
+		if (preset == null) return;
+
+		List<String> characterNames = preset.getCharacterNames();
+		int newIndex = memberIndex + direcao;
+		if (newIndex >= 0 && newIndex < characterNames.size()) {
+			String temp = characterNames.get(memberIndex);
+			characterNames.set(memberIndex, characterNames.get(newIndex));
+			characterNames.set(newIndex, temp);
+
+			PartyPresetsData.salvarPresets(data);
+
+			int currentPresetIdx = lvPresets.getSelectionModel().getSelectedIndex();
+			atualizarListaPresets(lvPresets);
+			lvPresets.getSelectionModel().select(currentPresetIdx);
+
+			lvMembros.getSelectionModel().select(newIndex);
+		}
+	}
+
 	private Tab criarAbaPresets(ListView<String> lvPresets, ListView<Personagem> lvAtivos,
 			Runnable refreshLists, Runnable refreshPresetsList) {
 		Tab tabPresets = new Tab("Presets de Equipe");
@@ -608,6 +696,7 @@ public class ReforcosDialogService {
 		mainLayout.setPadding(new Insets(15));
 		mainLayout.setStyle("-fx-background-color: #121218;");
 
+		// --- PAINEL ESQUERDO: LISTA DE PRESETS ---
 		VBox leftPanel = new VBox(10);
 		HBox.setHgrow(leftPanel, javafx.scene.layout.Priority.ALWAYS);
 		Label lblPresets = new Label("Slots de Equipe Salvos");
@@ -615,18 +704,85 @@ public class ReforcosDialogService {
 
 		VBox.setVgrow(lvPresets, javafx.scene.layout.Priority.ALWAYS);
 
-		HBox leftButtons = new HBox(10);
+		HBox leftButtons1 = new HBox(10);
 		Button btnEquipar = new Button("Equipar Equipe");
 		btnEquipar.setStyle("-fx-background-color: #1a3a1a; -fx-text-fill: #2ecc71; -fx-font-weight: bold;");
 		Button btnExcluirPreset = new Button("Excluir Slot");
 		btnExcluirPreset.setStyle("-fx-background-color: #3a1a1a; -fx-text-fill: #e74c3c; -fx-font-weight: bold;");
-		leftButtons.getChildren().addAll(btnEquipar, btnExcluirPreset);
-		leftPanel.getChildren().addAll(lblPresets, lvPresets, leftButtons);
+		leftButtons1.getChildren().addAll(btnEquipar, btnExcluirPreset);
 
-		VBox rightPanel = new VBox(15);
+		HBox leftButtons2 = new HBox(10);
+		Button btnMoverPresetCima = new Button("Mover ↑");
+		btnMoverPresetCima.setStyle("-fx-background-color: #1e1e2f; -fx-text-fill: #8a8af0; -fx-font-weight: bold;");
+		Button btnMoverPresetBaixo = new Button("Mover ↓");
+		btnMoverPresetBaixo.setStyle("-fx-background-color: #1e1e2f; -fx-text-fill: #8a8af0; -fx-font-weight: bold;");
+		leftButtons2.getChildren().addAll(btnMoverPresetCima, btnMoverPresetBaixo);
+
+		leftPanel.getChildren().addAll(lblPresets, lvPresets, leftButtons1, leftButtons2);
+
+		// --- PAINEL CENTRAL: EDIÇÃO DO PRESET SELECIONADO ---
+		VBox centerPanel = new VBox(10);
+		HBox.setHgrow(centerPanel, javafx.scene.layout.Priority.ALWAYS);
+		centerPanel.setDisable(true); // Desabilitado inicialmente
+
+		Label lblCenterTitle = new Label("Edição da Equipe");
+		lblCenterTitle.setStyle("-fx-text-fill: #e94560; -fx-font-size: 16px; -fx-font-weight: bold;");
+
+		Label lblNameLabel = new Label("Nome da Equipe:");
+		lblNameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px;");
+
+		HBox editNameBox = new HBox(8);
+		TextField tfEditPresetName = new TextField();
+		tfEditPresetName.setPromptText("Renomear equipe...");
+		tfEditPresetName.setStyle("-fx-background-color: #16161e; -fx-text-fill: white; -fx-border-color: #808090;");
+		HBox.setHgrow(tfEditPresetName, javafx.scene.layout.Priority.ALWAYS);
+		Button btnSalvarNome = new Button("Renomear");
+		btnSalvarNome.setStyle("-fx-background-color: #1a3a1a; -fx-text-fill: #2ecc71; -fx-font-weight: bold;");
+		editNameBox.getChildren().addAll(tfEditPresetName, btnSalvarNome);
+
+		Label lblMembros = new Label("Membros da Equipe (Ordem de Turno):");
+		lblMembros.setStyle("-fx-text-fill: white; -fx-font-size: 12px;");
+
+		ListView<String> lvMembros = new ListView<>();
+		lvMembros.setStyle("-fx-background-color: #16161e; -fx-control-inner-background: #16161e;");
+		VBox.setVgrow(lvMembros, javafx.scene.layout.Priority.ALWAYS);
+
+		HBox memberButtons = new HBox(8);
+		Button btnMoverMembroCima = new Button("Mover Membro ↑");
+		btnMoverMembroCima.setStyle("-fx-background-color: #1e1e2f; -fx-text-fill: #8a8af0; -fx-font-weight: bold;");
+		Button btnMoverMembroBaixo = new Button("Mover Membro ↓");
+		btnMoverMembroBaixo.setStyle("-fx-background-color: #1e1e2f; -fx-text-fill: #8a8af0; -fx-font-weight: bold;");
+		Button btnRemoverMembro = new Button("Remover");
+		btnRemoverMembro.setStyle("-fx-background-color: #3a1a1a; -fx-text-fill: #e74c3c; -fx-font-weight: bold;");
+		memberButtons.getChildren().addAll(btnMoverMembroCima, btnMoverMembroBaixo, btnRemoverMembro);
+
+		centerPanel.getChildren().addAll(lblCenterTitle, lblNameLabel, editNameBox, lblMembros, lvMembros, memberButtons);
+
+		// --- PAINEL DIREITO: ADICIONAR MEMBROS / SALVAR ATUAL ---
+		VBox rightPanel = new VBox(20);
 		rightPanel.setMinWidth(300);
 		rightPanel.setPadding(new Insets(0, 0, 0, 10));
 
+		// Seção de Adicionar Membros (ligada à seleção)
+		VBox rightPanelMemberSection = new VBox(10);
+		rightPanelMemberSection.setDisable(true); // Desabilitado inicialmente
+		Label lblAddMembro = new Label("Adicionar Membro à Equipe");
+		lblAddMembro.setStyle("-fx-text-fill: #2ecc71; -fx-font-size: 16px; -fx-font-weight: bold;");
+
+		ComboBox<String> cbDisponiveis = new ComboBox<>();
+		cbDisponiveis.setStyle("-fx-background-color: #16161e; -fx-text-fill: white; -fx-border-color: #808090;");
+		cbDisponiveis.setMaxWidth(Double.MAX_VALUE);
+
+		Button btnAdicionarMembro = new Button("Adicionar Personagem");
+		btnAdicionarMembro.setStyle("-fx-background-color: #1a3a1a; -fx-text-fill: #2ecc71; -fx-font-weight: bold;");
+		btnAdicionarMembro.setMaxWidth(Double.MAX_VALUE);
+		rightPanelMemberSection.getChildren().addAll(lblAddMembro, cbDisponiveis, btnAdicionarMembro);
+
+		javafx.scene.control.Separator separator = new javafx.scene.control.Separator();
+		separator.setStyle("-fx-background-color: #333;");
+
+		// Seção de Salvar Equipe Atual (sempre habilitada)
+		VBox rightPanelSaveSection = new VBox(10);
 		Label lblSalvar = new Label("Salvar Equipe Atual");
 		lblSalvar.setStyle("-fx-text-fill: #2ecc71; -fx-font-size: 16px; -fx-font-weight: bold;");
 
@@ -641,11 +797,130 @@ public class ReforcosDialogService {
 		Button btnSalvarPreset = new Button("Salvar Novo Preset");
 		btnSalvarPreset.setStyle("-fx-background-color: #1a1a2e; -fx-text-fill: #e94560; -fx-font-weight: bold;");
 		btnSalvarPreset.setMaxWidth(Double.MAX_VALUE);
+		rightPanelSaveSection.getChildren().addAll(lblSalvar, lblInfo, tfPresetName, btnSalvarPreset);
 
-		rightPanel.getChildren().addAll(lblSalvar, lblInfo, tfPresetName, btnSalvarPreset);
+		rightPanel.getChildren().addAll(rightPanelMemberSection, separator, rightPanelSaveSection);
 
-		mainLayout.getChildren().addAll(leftPanel, rightPanel);
+		mainLayout.getChildren().addAll(leftPanel, centerPanel, rightPanel);
 		tabPresets.setContent(mainLayout);
+
+		// --- OUVINTE DE SELEÇÃO DA LISTA DE PRESETS (SINCRONIZAÇÃO) ---
+		lvPresets.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+			String presetName = extrairNomePreset(newVal);
+			if (presetName == null) {
+				exibirDetalhesPreset(null, tfEditPresetName, lvMembros, cbDisponiveis, centerPanel, rightPanelMemberSection);
+				return;
+			}
+			PartyPresetsData data = PartyPresetsData.carregarPresets();
+			PartyPreset preset = data.getPresets().stream()
+					.filter(p -> p.getName().equalsIgnoreCase(presetName))
+					.findFirst().orElse(null);
+			exibirDetalhesPreset(preset, tfEditPresetName, lvMembros, cbDisponiveis, centerPanel, rightPanelMemberSection);
+		});
+
+		// --- AÇÕES DOS BOTÕES ---
+
+		btnMoverPresetCima.setOnAction(e -> moverPreset(-1, lvPresets, refreshPresetsList));
+		btnMoverPresetBaixo.setOnAction(e -> moverPreset(1, lvPresets, refreshPresetsList));
+
+		btnSalvarNome.setOnAction(e -> {
+			String selected = lvPresets.getSelectionModel().getSelectedItem();
+			if (selected == null) return;
+			String presetName = extrairNomePreset(selected);
+			String newName = tfEditPresetName.getText().trim();
+			if (newName.isEmpty()) {
+				Alert alert = new Alert(Alert.AlertType.ERROR, "O nome da equipe não pode estar vazio!");
+				alert.getDialogPane().setStyle("-fx-background-color: #222;");
+				alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: white;");
+				alert.showAndWait();
+				return;
+			}
+
+			PartyPresetsData data = PartyPresetsData.carregarPresets();
+			PartyPreset preset = data.getPresets().stream()
+					.filter(p -> p.getName().equalsIgnoreCase(presetName))
+					.findFirst().orElse(null);
+
+			if (preset != null) {
+				if (preset.getName().equalsIgnoreCase(data.getEquippedSlotName())) {
+					data.setEquippedSlotName(newName);
+				}
+				preset.setName(newName);
+				PartyPresetsData.salvarPresets(data);
+
+				refreshPresetsList.run();
+				for (int i = 0; i < lvPresets.getItems().size(); i++) {
+					String item = lvPresets.getItems().get(i);
+					if (extrairNomePreset(item).equalsIgnoreCase(newName)) {
+						lvPresets.getSelectionModel().select(i);
+						break;
+					}
+				}
+
+				Alert alert = new Alert(Alert.AlertType.INFORMATION, "Equipe renomeada para '" + newName + "' com sucesso!");
+				alert.getDialogPane().setStyle("-fx-background-color: #222;");
+				alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: white;");
+				alert.showAndWait();
+			}
+		});
+
+		btnMoverMembroCima.setOnAction(e -> {
+			String selectedPresetName = extrairNomePreset(lvPresets.getSelectionModel().getSelectedItem());
+			if (selectedPresetName == null) return;
+			int memberIndex = lvMembros.getSelectionModel().getSelectedIndex();
+			if (memberIndex == -1) return;
+
+			moverMembro(-1, selectedPresetName, memberIndex, lvPresets, lvMembros, cbDisponiveis, centerPanel, rightPanelMemberSection);
+		});
+
+		btnMoverMembroBaixo.setOnAction(e -> {
+			String selectedPresetName = extrairNomePreset(lvPresets.getSelectionModel().getSelectedItem());
+			if (selectedPresetName == null) return;
+			int memberIndex = lvMembros.getSelectionModel().getSelectedIndex();
+			if (memberIndex == -1) return;
+
+			moverMembro(1, selectedPresetName, memberIndex, lvPresets, lvMembros, cbDisponiveis, centerPanel, rightPanelMemberSection);
+		});
+
+		btnRemoverMembro.setOnAction(e -> {
+			String selectedPresetName = extrairNomePreset(lvPresets.getSelectionModel().getSelectedItem());
+			if (selectedPresetName == null) return;
+			String selectedMember = lvMembros.getSelectionModel().getSelectedItem();
+			if (selectedMember == null) return;
+
+			PartyPresetsData data = PartyPresetsData.carregarPresets();
+			PartyPreset preset = data.getPresets().stream()
+					.filter(p -> p.getName().equalsIgnoreCase(selectedPresetName))
+					.findFirst().orElse(null);
+			if (preset != null) {
+				preset.getCharacterNames().remove(selectedMember);
+				PartyPresetsData.salvarPresets(data);
+
+				int currentPresetIdx = lvPresets.getSelectionModel().getSelectedIndex();
+				atualizarListaPresets(lvPresets);
+				lvPresets.getSelectionModel().select(currentPresetIdx);
+			}
+		});
+
+		btnAdicionarMembro.setOnAction(e -> {
+			String selectedPresetName = extrairNomePreset(lvPresets.getSelectionModel().getSelectedItem());
+			if (selectedPresetName == null) return;
+			String characterName = cbDisponiveis.getValue();
+			if (characterName == null) return;
+
+			PartyPresetsData data = PartyPresetsData.carregarPresets();
+			PartyPreset preset = data.getPresets().stream()
+					.filter(p -> p.getName().equalsIgnoreCase(selectedPresetName))
+					.findFirst().orElse(null);
+			if (preset != null) {
+				preset.getCharacterNames().add(characterName);
+				PartyPresetsData.salvarPresets(data);
+
+				int currentPresetIdx = lvPresets.getSelectionModel().getSelectedIndex();
+				atualizarListaPresets(lvPresets);
+				lvPresets.getSelectionModel().select(currentPresetIdx);
+			}
+		});
 
 		btnSalvarPreset.setOnAction(e -> {
 			String name = tfPresetName.getText().trim();
@@ -694,15 +969,7 @@ public class ReforcosDialogService {
 			String selected = lvPresets.getSelectionModel().getSelectedItem();
 			if (selected == null) return;
 
-			String presetName = selected;
-			if (presetName.startsWith("[Equipado] ")) {
-				presetName = presetName.substring("[Equipado] ".length());
-			}
-			int parenIndex = presetName.indexOf(" (");
-			if (parenIndex != -1) {
-				presetName = presetName.substring(0, parenIndex);
-			}
-			presetName = presetName.trim();
+			String presetName = extrairNomePreset(selected);
 
 			PartyPresetsData data = PartyPresetsData.carregarPresets();
 			final String finalPresetName = presetName;
@@ -748,15 +1015,7 @@ public class ReforcosDialogService {
 			String selected = lvPresets.getSelectionModel().getSelectedItem();
 			if (selected == null) return;
 
-			String presetName = selected;
-			if (presetName.startsWith("[Equipado] ")) {
-				presetName = presetName.substring("[Equipado] ".length());
-			}
-			int parenIndex = presetName.indexOf(" (");
-			if (parenIndex != -1) {
-				presetName = presetName.substring(0, parenIndex);
-			}
-			presetName = presetName.trim();
+			String presetName = extrairNomePreset(selected);
 
 			Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Tem certeza que deseja excluir o preset '" + presetName + "'?");
 			confirm.getDialogPane().setStyle("-fx-background-color: #222;");
