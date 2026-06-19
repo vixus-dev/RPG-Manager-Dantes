@@ -1,0 +1,41 @@
+{
+  "equippedSlotName": "Equipe 1",
+  "presets": [
+    {
+      "name": "Equipe 1",
+      "characterNames": [
+        "Pinocchio",
+        "alexei",
+        "lilith",
+        "eidan",
+        "KuangLi"
+      ]
+    },
+    {
+      "name": "Equipe Primaria",
+      "characterNames": [
+        "alexei",
+        "ayame",
+        "darrell",
+        "eidan",
+        "lyria",
+        "trakin"
+      ]
+    },
+    {
+      "name": "Equipe 2",
+      "characterNames": [
+        "Sarvant"
+      ]
+    },
+    {
+      "name": "Equipe Filosofos",
+      "characterNames": [
+        "Aristóteles",
+        "Atlas",
+        "Julius",
+        "Platão"
+      ]
+    }
+  ]
+}

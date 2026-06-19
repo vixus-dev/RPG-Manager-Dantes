@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Personagem;
+import br.com.dantesrpg.model.util.PartyPreset;
+import br.com.dantesrpg.model.util.PartyPresetsData;
 
 public class EstadoJogadoresService {
 
@@ -33,6 +35,34 @@ public class EstadoJogadoresService {
 
 	public List<Personagem> criarJogadoresIniciais() {
 		List<Personagem> players = new ArrayList<>();
+
+		// Tenta carregar o preset equipado
+		PartyPresetsData presetsData = PartyPresetsData.carregarPresets();
+		if (presetsData != null && presetsData.getEquippedSlotName() != null) {
+			String equippedName = presetsData.getEquippedSlotName();
+			PartyPreset equippedPreset = presetsData.getPresets().stream()
+					.filter(p -> p.getName().equalsIgnoreCase(equippedName))
+					.findFirst().orElse(null);
+			if (equippedPreset != null && !equippedPreset.getCharacterNames().isEmpty()) {
+				int count = 0;
+				for (String name : equippedPreset.getCharacterNames()) {
+					Personagem p = carregarPersonagem.apply(name);
+					if (p != null) {
+						p.setPosX(4 + (count % 3));
+						p.setPosY(4 + (count / 3));
+						players.add(p);
+						count++;
+					}
+				}
+				if (!players.isEmpty()) {
+					System.out.println("SISTEMA: Inicializado com a equipe equipada '" + equippedName + "' (" + players.size() + " personagens).");
+					return players;
+				}
+			}
+		}
+
+		// Fallback: Jogadores padrão
+		System.out.println("SISTEMA: Nenhum preset equipado encontrado. Inicializando com jogadores padrão.");
 		Personagem alexei = carregarPersonagem.apply("alexei");
 		Personagem lilith = carregarPersonagem.apply("lilith");
 		Personagem eidan = carregarPersonagem.apply("eidan");
@@ -64,10 +94,6 @@ public class EstadoJogadoresService {
 			pinocchio.setPosX(3);
 			pinocchio.setPosY(4);
 			players.add(pinocchio);
-		}
-
-		if (arkos != null) {
-			// Arkos era carregado pelo fluxo antigo, mas nao entrava no combate inicial.
 		}
 		return players;
 	}

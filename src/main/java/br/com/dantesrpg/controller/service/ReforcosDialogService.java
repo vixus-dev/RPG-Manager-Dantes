@@ -12,6 +12,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import br.com.dantesrpg.model.util.PartyPreset;
+import br.com.dantesrpg.model.util.PartyPresetsData;
+
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.controller.MapController;
 import br.com.dantesrpg.model.Amuleto;
@@ -102,9 +105,14 @@ public class ReforcosDialogService {
 		ListView<Personagem> lvAtivos = criarListaPersonagens();
 		Runnable refreshLists = () -> atualizarListas(lvReforcos, lvAtivos);
 
+		ListView<String> lvPresets = new ListView<>();
+		lvPresets.setStyle("-fx-background-color: #16161e; -fx-control-inner-background: #16161e;");
+		Runnable refreshPresetsList = () -> atualizarListaPresets(lvPresets);
+
 		Tab tabGerenciar = criarAbaGerenciar(lvReforcos, lvAtivos, refreshLists);
 		Tab tabCriar = criarAbaCriar(tabPane, refreshLists);
-		tabPane.getTabs().addAll(tabGerenciar, tabCriar);
+		Tab tabPresets = criarAbaPresets(lvPresets, lvAtivos, refreshLists, refreshPresetsList);
+		tabPane.getTabs().addAll(tabGerenciar, tabCriar, tabPresets);
 
 		BorderPane root = new BorderPane();
 		root.setCenter(tabPane);
@@ -119,6 +127,7 @@ public class ReforcosDialogService {
 
 		stage.setScene(scene);
 		refreshLists.run();
+		refreshPresetsList.run();
 		stage.showAndWait();
 	}
 
@@ -572,5 +581,200 @@ public class ReforcosDialogService {
 		cbAmuleto2.setValue("(Nenhum)");
 		cbFantasma.setValue("(Nenhum)");
 		rbReforco.setSelected(true);
+	}
+
+	private void atualizarListaPresets(ListView<String> lvPresets) {
+		PartyPresetsData data = PartyPresetsData.carregarPresets();
+		List<String> items = new ArrayList<>();
+		if (data != null && data.getPresets() != null) {
+			for (PartyPreset p : data.getPresets()) {
+				String prefix = "";
+				if (p.getName().equalsIgnoreCase(data.getEquippedSlotName())) {
+					prefix = "[Equipado] ";
+				}
+				String members = String.join(", ", p.getCharacterNames());
+				items.add(prefix + p.getName() + " (" + members + ")");
+			}
+		}
+		lvPresets.getItems().setAll(items);
+	}
+
+	private Tab criarAbaPresets(ListView<String> lvPresets, ListView<Personagem> lvAtivos,
+			Runnable refreshLists, Runnable refreshPresetsList) {
+		Tab tabPresets = new Tab("Presets de Equipe");
+		tabPresets.setClosable(false);
+
+		HBox mainLayout = new HBox(20);
+		mainLayout.setPadding(new Insets(15));
+		mainLayout.setStyle("-fx-background-color: #121218;");
+
+		VBox leftPanel = new VBox(10);
+		HBox.setHgrow(leftPanel, javafx.scene.layout.Priority.ALWAYS);
+		Label lblPresets = new Label("Slots de Equipe Salvos");
+		lblPresets.setStyle("-fx-text-fill: #e94560; -fx-font-size: 16px; -fx-font-weight: bold;");
+
+		VBox.setVgrow(lvPresets, javafx.scene.layout.Priority.ALWAYS);
+
+		HBox leftButtons = new HBox(10);
+		Button btnEquipar = new Button("Equipar Equipe");
+		btnEquipar.setStyle("-fx-background-color: #1a3a1a; -fx-text-fill: #2ecc71; -fx-font-weight: bold;");
+		Button btnExcluirPreset = new Button("Excluir Slot");
+		btnExcluirPreset.setStyle("-fx-background-color: #3a1a1a; -fx-text-fill: #e74c3c; -fx-font-weight: bold;");
+		leftButtons.getChildren().addAll(btnEquipar, btnExcluirPreset);
+		leftPanel.getChildren().addAll(lblPresets, lvPresets, leftButtons);
+
+		VBox rightPanel = new VBox(15);
+		rightPanel.setMinWidth(300);
+		rightPanel.setPadding(new Insets(0, 0, 0, 10));
+
+		Label lblSalvar = new Label("Salvar Equipe Atual");
+		lblSalvar.setStyle("-fx-text-fill: #2ecc71; -fx-font-size: 16px; -fx-font-weight: bold;");
+
+		Label lblInfo = new Label("A equipe ativa no combate atual será salva neste slot.");
+		lblInfo.setStyle("-fx-text-fill: #808090; -fx-font-size: 11px;");
+		lblInfo.setWrapText(true);
+
+		TextField tfPresetName = new TextField();
+		tfPresetName.setPromptText("Nome da Nova Equipe...");
+		tfPresetName.setStyle("-fx-background-color: #16161e; -fx-text-fill: white; -fx-border-color: #808090;");
+
+		Button btnSalvarPreset = new Button("Salvar Novo Preset");
+		btnSalvarPreset.setStyle("-fx-background-color: #1a1a2e; -fx-text-fill: #e94560; -fx-font-weight: bold;");
+		btnSalvarPreset.setMaxWidth(Double.MAX_VALUE);
+
+		rightPanel.getChildren().addAll(lblSalvar, lblInfo, tfPresetName, btnSalvarPreset);
+
+		mainLayout.getChildren().addAll(leftPanel, rightPanel);
+		tabPresets.setContent(mainLayout);
+
+		btnSalvarPreset.setOnAction(e -> {
+			String name = tfPresetName.getText().trim();
+			if (name.isEmpty()) {
+				Alert alert = new Alert(Alert.AlertType.ERROR, "O nome do preset não pode estar vazio!");
+				alert.getDialogPane().setStyle("-fx-background-color: #222;");
+				alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: white;");
+				alert.showAndWait();
+				return;
+			}
+
+			EstadoCombate estado = estadoSupplier.get();
+			if (estado == null) return;
+
+			List<String> activeCharNames = estado.getCombatentes().stream()
+					.filter(p -> p != null && "JOGADOR".equals(p.getFaccao()))
+					.map(p -> p.getJsonFileName() != null ? p.getJsonFileName().replace(".json", "") : p.getNome().toLowerCase())
+					.collect(Collectors.toList());
+
+			if (activeCharNames.isEmpty()) {
+				Alert alert = new Alert(Alert.AlertType.WARNING, "Não há personagens da facção JOGADOR ativos no combate no momento!");
+				alert.getDialogPane().setStyle("-fx-background-color: #222;");
+				alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: white;");
+				alert.showAndWait();
+				return;
+			}
+
+			PartyPresetsData data = PartyPresetsData.carregarPresets();
+			data.getPresets().removeIf(p -> p.getName().equalsIgnoreCase(name));
+			data.getPresets().add(new PartyPreset(name, activeCharNames));
+			if (data.getEquippedSlotName() == null || data.getEquippedSlotName().isEmpty()) {
+				data.setEquippedSlotName(name);
+			}
+			PartyPresetsData.salvarPresets(data);
+
+			tfPresetName.clear();
+			refreshPresetsList.run();
+
+			Alert alert = new Alert(Alert.AlertType.INFORMATION, "Preset '" + name + "' salvo com sucesso!");
+			alert.getDialogPane().setStyle("-fx-background-color: #222;");
+			alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: white;");
+			alert.showAndWait();
+		});
+
+		btnEquipar.setOnAction(e -> {
+			String selected = lvPresets.getSelectionModel().getSelectedItem();
+			if (selected == null) return;
+
+			String presetName = selected;
+			if (presetName.startsWith("[Equipado] ")) {
+				presetName = presetName.substring("[Equipado] ".length());
+			}
+			int parenIndex = presetName.indexOf(" (");
+			if (parenIndex != -1) {
+				presetName = presetName.substring(0, parenIndex);
+			}
+			presetName = presetName.trim();
+
+			PartyPresetsData data = PartyPresetsData.carregarPresets();
+			final String finalPresetName = presetName;
+			PartyPreset preset = data.getPresets().stream()
+					.filter(p -> p.getName().equalsIgnoreCase(finalPresetName))
+					.findFirst().orElse(null);
+
+			if (preset == null) return;
+
+			EstadoCombate estado = estadoSupplier.get();
+			if (estado == null) return;
+
+			estado.getCombatentes().removeIf(p -> p != null && "JOGADOR".equals(p.getFaccao()));
+
+			int count = 0;
+			for (String charName : preset.getCharacterNames()) {
+				Personagem p = carregarPersonagem.apply(charName);
+				if (p != null) {
+					p.setFaccao("JOGADOR");
+					p.recalcularAtributosEstatisticas();
+					p.setVidaAtual(p.getVidaMaxima());
+					p.setManaAtual(p.getManaMaxima());
+					posicionarNaEntrada(p);
+					estado.getCombatentes().add(p);
+					count++;
+				}
+			}
+
+			data.setEquippedSlotName(preset.getName());
+			PartyPresetsData.salvarPresets(data);
+
+			refreshLists.run();
+			refreshPresetsList.run();
+			atualizarInterfaceRoster.run();
+
+			Alert alert = new Alert(Alert.AlertType.INFORMATION, "Equipe '" + preset.getName() + "' equipada com sucesso! (" + count + " personagens ativos)");
+			alert.getDialogPane().setStyle("-fx-background-color: #222;");
+			alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: white;");
+			alert.showAndWait();
+		});
+
+		btnExcluirPreset.setOnAction(e -> {
+			String selected = lvPresets.getSelectionModel().getSelectedItem();
+			if (selected == null) return;
+
+			String presetName = selected;
+			if (presetName.startsWith("[Equipado] ")) {
+				presetName = presetName.substring("[Equipado] ".length());
+			}
+			int parenIndex = presetName.indexOf(" (");
+			if (parenIndex != -1) {
+				presetName = presetName.substring(0, parenIndex);
+			}
+			presetName = presetName.trim();
+
+			Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Tem certeza que deseja excluir o preset '" + presetName + "'?");
+			confirm.getDialogPane().setStyle("-fx-background-color: #222;");
+			confirm.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: white;");
+			Optional<ButtonType> result = confirm.showAndWait();
+			if (result.isPresent() && result.get() == ButtonType.OK) {
+				PartyPresetsData data = PartyPresetsData.carregarPresets();
+				final String finalPresetName = presetName;
+				data.getPresets().removeIf(p -> p.getName().equalsIgnoreCase(finalPresetName));
+				if (presetName.equalsIgnoreCase(data.getEquippedSlotName())) {
+					data.setEquippedSlotName(null);
+				}
+				PartyPresetsData.salvarPresets(data);
+
+				refreshPresetsList.run();
+			}
+		});
+
+		return tabPresets;
 	}
 }
