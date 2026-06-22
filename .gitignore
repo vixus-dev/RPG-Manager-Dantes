@@ -48,3 +48,8 @@ ui-ux-pro-max-skill-2.5.0/
 
 # Maven Build
 target/
+
+# Agent/AI Working Directories
+scratch/
+design-system/
+historico/
