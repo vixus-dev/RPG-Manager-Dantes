@@ -33,7 +33,12 @@ public class DiceRoller {
 			return 26;
 		if (valorAtributo <= 36)
 			return 28;
-		return 30;
+		if (valorAtributo <= 40)
+			return 30;
+		
+		int pontosAcima = valorAtributo - 40;
+		int dadosAcima = (int) Math.ceil(pontosAcima / 4.0);
+		return 30 + (dadosAcima * 2);
 	}
 
 	public static int rolarDado(int tipoDado) {
@@ -41,10 +46,10 @@ public class DiceRoller {
 	}
 
 	public static double getBonusRankPercentual(int valorAtributo) {
-		if (valorAtributo >= 20) return 0.25; // Rank P
-		if (valorAtributo >= 16) return 0.20; // Rank S
-		if (valorAtributo >= 14) return 0.15; // Rank A
-		if (valorAtributo >= 10) return 0.10; // Rank B
+		if (valorAtributo >= 22) return 0.25; // Rank P
+		if (valorAtributo >= 15) return 0.20; // Ranks S-, S, S+, SS, SS+, SSS, SSS+
+		if (valorAtributo >= 12) return 0.15; // Ranks A-, A, A+
+		if (valorAtributo >= 9) return 0.10;  // Ranks B-, B, B+
 		return 0.0;
 	}
 
@@ -53,6 +58,16 @@ public class DiceRoller {
 		double bonusPercent = getBonusRankPercentual(valorAtributo);
 		int bonus = (int) (tipoDado * bonusPercent);
 		int resultadoFinal = rolagemBruta + bonus;
+		return Math.min(resultadoFinal, tipoDado);
+	}
+
+	public static int aplicarBonusRankESorte(int rolagemBruta, int valorAtributo, int valorSorte) {
+		int tipoDado = getTipoDado(valorAtributo);
+		double bonusRankPercent = getBonusRankPercentual(valorAtributo);
+		double bonusSortePercent = valorSorte * 0.01;
+		int bonusRank = (int) (tipoDado * bonusRankPercent);
+		int bonusSorte = (int) (tipoDado * bonusSortePercent);
+		int resultadoFinal = rolagemBruta + bonusRank + bonusSorte;
 		return Math.min(resultadoFinal, tipoDado);
 	}
 }

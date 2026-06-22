@@ -39,7 +39,7 @@ public class DamageCalculator {
 	// ========== ESTIMATIVA DE DANO ==========
 
 	public int estimarDano(Personagem ator, Habilidade habilidade, Personagem alvo, int rolagemDadoAtributo,
-			int rolagemTrocado) {
+			int rolagemNatural, int rolagemTrocado) {
 		if (ator == null || ator.getArmaEquipada() == null)
 			return 0;
 		Arma arma = ator.getArmaEquipada();
@@ -75,10 +75,11 @@ public class DamageCalculator {
 		for (int i = 0; i < numeroDeTicks; i++) {
 			double modGolpePerfeito = 1.0;
 
-			if (i == 0 && rolagemDadoAtributo > 0) {
+			if (i == 0) {
 				int tipoDado = DiceRoller
 						.getTipoDado(ator.getAtributosFinais().getOrDefault(arma.getAtributoMultiplicador(), 1));
-				if (rolagemDadoAtributo == tipoDado) {
+				int checkRolagem = (rolagemNatural > 0) ? rolagemNatural : rolagemDadoAtributo;
+				if (checkRolagem == tipoDado) {
 					modGolpePerfeito = 1.25;
 				}
 			}
@@ -181,6 +182,7 @@ public class DamageCalculator {
 		}
 
 		double fatorSorte = 1.0 + ator.getSortePercentual();
+		int rolagemNatural = (input != null) ? input.getResultadoDado("DADO_ATRIBUTO_NATURAL") : 0;
 
 		// Geração de Eventos de Dano
 		for (Personagem alvo : alvos) {
@@ -203,7 +205,7 @@ public class DamageCalculator {
 						double multiplicadorFinal = multiplicadorHabilidade * modModo;
 
 						Boolean criticoManual = (input != null) ? input.getCriticoManual() : null;
-						double modCritico = calcularModificadorCritico(ator, rolagemDadoAtributo, armaDoTick, i, estavaEmStealth,
+						double modCritico = calcularModificadorCritico(ator, rolagemDadoAtributo, rolagemNatural, armaDoTick, i, estavaEmStealth,
 								multiplicadorFinal, isTiroEspecial, criticoManual);
 						boolean isCrit = (modCritico > 1.0);
 
@@ -257,7 +259,7 @@ public class DamageCalculator {
 					double multiplicadorFinal = multiplicadorHabilidade * modModo;
 
 					Boolean criticoManual = (input != null) ? input.getCriticoManual() : null;
-					double modCritico = calcularModificadorCritico(ator, rolagemDadoAtributo, armaPrincipal, i, estavaEmStealth,
+					double modCritico = calcularModificadorCritico(ator, rolagemDadoAtributo, rolagemNatural, armaPrincipal, i, estavaEmStealth,
 							multiplicadorFinal, isTiroEspecial, criticoManual);
 					boolean isCrit = (modCritico > 1.0);
 
@@ -419,14 +421,15 @@ public class DamageCalculator {
 
 	// ========== MODIFICADOR CRÍTICO ==========
 
-	private double calcularModificadorCritico(Personagem ator, int rolagem, Arma arma, int tickIndex,
+	private double calcularModificadorCritico(Personagem ator, int rolagem, int rolagemNatural, Arma arma, int tickIndex,
 			boolean stealth, double modHabilidade, boolean isTiroEspecial, Boolean criticoManual) {
 		double mod = 1.0;
 
 		if (tickIndex == 0) {
 			int tipoDado = DiceRoller
 					.getTipoDado(ator.getAtributosFinais().getOrDefault(arma.getAtributoMultiplicador(), 1));
-			if (rolagem == tipoDado) {
+			int checkRolagem = (rolagemNatural > 0) ? rolagemNatural : rolagem;
+			if (checkRolagem == tipoDado) {
 				mod *= 1.25;
 				System.out.println(">>> GOLPE PERFEITO!");
 			}

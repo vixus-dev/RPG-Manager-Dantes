@@ -38,7 +38,7 @@ public class JihoGekkyuden extends FantasmaNobre {
 		return "Expansão de Domínio (7x7). Converte a área em sangue negro por 500 TU. "
 				+ "Aliados ganham +50% dano e +1 escudo de sangue a cada 5 TU; "
 				+ "inimigos sofrem -2 movimento e 1 de dano a cada 20 TU. "
-				+ "Após o domínio se dissipar, Lillith fica exausta por 100 TU.";
+				+ "Após o domínio se dissipar, O usuario fica exausto por 100 TU.";
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class JihoGekkyuden extends FantasmaNobre {
 	@Override
 	public TipoAlvo getTipoAlvo() {
 		return TipoAlvo.SI_MESMO;
-	}
+	} 
 
 	@Override
 	public int getTamanhoArea() {

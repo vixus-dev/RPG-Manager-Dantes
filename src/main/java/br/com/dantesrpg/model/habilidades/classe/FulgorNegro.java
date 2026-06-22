@@ -1,9 +1,9 @@
 package br.com.dantesrpg.model.habilidades.classe;
 
-import br.com.dantesrpg.model.AcaoMestreInput; // Import necessário
-import br.com.dantesrpg.model.Arma; // Import necessário
-import br.com.dantesrpg.model.CombatManager; // Import necessário
-import br.com.dantesrpg.model.EstadoCombate; // Import necessário
+import br.com.dantesrpg.model.AcaoMestreInput; 
+import br.com.dantesrpg.model.Arma; 
+import br.com.dantesrpg.model.CombatManager; 
+import br.com.dantesrpg.model.EstadoCombate; 
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
@@ -14,11 +14,8 @@ import java.util.List;
 public class FulgorNegro extends Habilidade {
 
 	public FulgorNegro() {
-		super("Fulgor Negro", "Dá um soco em falso, parando no ultimo segundo...", TipoHabilidade.ATIVA, 1, // Custo de
-																											// Mana
-																											// (será
-																											// tratado)
-				50, // Custo de TU
+		super("Fulgor Negro", "Dá um soco em falso, parando no ultimo segundo...", TipoHabilidade.ATIVA, 1,
+				40, // Custo de TU
 				1, // Nível Necessário
 				TipoAlvo.INDIVIDUAL, 1.0, // Multiplicador base (será ignorado)
 				1, Collections.emptyList());
@@ -31,7 +28,6 @@ public class FulgorNegro extends Habilidade {
 
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
-		System.out.println(conjurador.getNome() + " prepara o " + getNome() + "...");
 	}
 
 	public void executarFulgorNegro(AcaoMestreInput input, EstadoCombate estado, CombatManager manager) {
@@ -39,6 +35,7 @@ public class FulgorNegro extends Habilidade {
 		List<Personagem> alvos = input.getAlvos();
 
 		int rolagemDadoAtributo = input.getResultadoDado("DADO_ATRIBUTO");
+
 		if (rolagemDadoAtributo == -1) {
 			System.err.println("Erro: Fulgor Negro sem Resultado Dado Atributo.");
 			return;
@@ -51,39 +48,34 @@ public class FulgorNegro extends Habilidade {
 
 		if (restricaoAtiva) {
 			int rolagemChanceRestricao = input.getResultadoDado("DADO_CHANCE_RESTRICAO");
+
 			if (rolagemChanceRestricao == -1) {
-				System.err.println("Erro: Fulgor Negro (Restrição) sem Resultado Dado Chance.");
+				System.err.println("Erro: Fulgor Negro sem Resultado Dado Chance.");
 				return;
 			}
 
-			acertoEspecial = (rolagemChanceRestricao >= 1); // Assume 1 ou mais = Sucesso
-			System.out.println(">>> " + ator.getNome() + " tenta um Fulgor Negro (Restrição 50/50): "
+			acertoEspecial = (rolagemChanceRestricao >= 1);
+			
+			System.out.println(">>> " + ator.getNome() + " tenta um Fulgor Negro: "
 					+ (acertoEspecial ? "SUCESSO" : "FALHA"));
 			danoCriticoBonus = 1.75;
 		} else {
 			// Regras Normais
 			int rolagemDadoChance = input.getResultadoDado("DADO_CHANCE_FULGOR");
 			if (rolagemDadoChance == -1) {
-				System.err.println("Erro: Fulgor Negro sem Resultado Dado Chance.");
 				return;
 			}
-			System.out.println(">>> " + ator.getNome() + " tenta um Fulgor Negro!");
-			System.out.println(">>> Rolagem do Fulgor Negro (1d4): " + rolagemDadoChance);
 			acertoEspecial = (rolagemDadoChance >= 3);
 			danoCriticoBonus = 1.00;
 		}
 
 		if (acertoEspecial) { // SUCESSO
-			System.out.println(">>> SUCESSO! Fulgor Negro causa Acerto Crítico de +" + (danoCriticoBonus * 100) + "%!");
-
 			if (!restricaoAtiva) {
 				ator.setManaAtual(ator.getManaAtual() + 2);
-				System.out.println(">>> Fulgor Negro recupera 2 de Mana extra!");
 			}
 
 			Arma arma = ator.getArmaEquipada();
 			if (arma == null) {
-				System.out.println("...mas está desarmado!");
 				return;
 			}
 

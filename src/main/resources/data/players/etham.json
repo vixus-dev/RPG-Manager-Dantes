@@ -1,0 +1,49 @@
+{
+  "iniciativaBase": 12,
+  "atributosBase": {
+    "INTELIGENCIA": 6,
+    "CARISMA": 5,
+    "SAGACIDADE": 10,
+    "ENDURANCE": 4,
+    "SORTE": 6,
+    "PERCEPCAO": 6,
+    "TOPOR": 4,
+    "FORCA": 3,
+    "DESTREZA": 6,
+    "INSPIRACAO": 3
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 16.2,
+  "contadorTU": 99,
+  "fantasmaNobre": "AcertoDeContas",
+  "armaEquipada": "Pistola de fogo",
+  "inventario": {
+    "PocaoAlquimica_Cura_11": 1,
+    "CaixaMunicaoP": 6
+  },
+  "xpAtual": 20,
+  "vidaMaximaBase": 42.0,
+  "classe": "Mestre das Balas",
+  "armasEquipadas": [
+    "Pistola de fogo",
+    "Pistola de fogo"
+  ],
+  "nome": "Etham",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 2,
+  "posY": 5,
+  "manaAtual": 7.5,
+  "escudoDivinoAtual": 0.0,
+  "raca": "Elfo",
+  "nivel": 1,
+  "wieldingMaximo": 2
+}

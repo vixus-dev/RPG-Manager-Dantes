@@ -1258,7 +1258,12 @@ if (excedente > 0) {
 						+ (habilidade != null ? habilidade.getNome() : "Ataque Basico") + ".");
 
 				AcaoMestreInput input = new AcaoMestreInput(clone, new ArrayList<>(), habilidade);
-				input.adicionarResultadoDado("DADO_ATRIBUTO", rolagemGlobal);
+				Atributo atr = br.com.dantesrpg.controller.hud.DiceInputsBuilder.resolverAtributo(clone, habilidade);
+				int valorAtr = clone.getAtributosFinais().getOrDefault(atr, 1);
+				int valorSorte = clone.getAtributosFinais().getOrDefault(Atributo.SORTE, 1);
+				int rolagemFinal = br.com.dantesrpg.model.util.DiceRoller.aplicarBonusRankESorte(rolagemGlobal, valorAtr, valorSorte);
+				input.adicionarResultadoDado("DADO_ATRIBUTO", rolagemFinal);
+				input.adicionarResultadoDado("DADO_ATRIBUTO_NATURAL", rolagemGlobal);
 				input.setModoAtaque(modoAtaque != null ? modoAtaque : ModoAtaque.NORMAL);
 				input.setTirosExtras(Math.max(0, tirosExtras));
 
@@ -1291,7 +1296,12 @@ if (excedente > 0) {
 				System.out.println("   -> Clone " + atacante.getNome() + " ataca " + alvo.getNome());
 
 				AcaoMestreInput input = new AcaoMestreInput(atacante, List.of(alvo), habilidade);
-				input.adicionarResultadoDado("DADO_ATRIBUTO", rolagemGlobal);
+				Atributo atr = br.com.dantesrpg.controller.hud.DiceInputsBuilder.resolverAtributo(atacante, habilidade);
+				int valorAtr = atacante.getAtributosFinais().getOrDefault(atr, 1);
+				int valorSorte = atacante.getAtributosFinais().getOrDefault(Atributo.SORTE, 1);
+				int rolagemFinal = br.com.dantesrpg.model.util.DiceRoller.aplicarBonusRankESorte(rolagemGlobal, valorAtr, valorSorte);
+				input.adicionarResultadoDado("DADO_ATRIBUTO", rolagemFinal);
+				input.adicionarResultadoDado("DADO_ATRIBUTO_NATURAL", rolagemGlobal);
 
 				input.setModoAtaque(modoAtaque != null ? modoAtaque : ModoAtaque.NORMAL);
 				input.setTirosExtras(Math.max(0, tirosExtras));
@@ -1617,8 +1627,8 @@ for (Personagem p : jogadoresVivos) {
 	// ========== WRAPPERS DE COMPATIBILIDADE (delegam aos subsistemas) ==========
 
 	public int estimarDano(Personagem ator, Habilidade habilidade, Personagem alvo, int rolagemDadoAtributo,
-			int rolagemTrocado) {
-		return damageCalculator.estimarDano(ator, habilidade, alvo, rolagemDadoAtributo, rolagemTrocado);
+			int rolagemNatural, int rolagemTrocado) {
+		return damageCalculator.estimarDano(ator, habilidade, alvo, rolagemDadoAtributo, rolagemNatural, rolagemTrocado);
 	}
 
 	public void aplicarDanoAoAlvo(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,

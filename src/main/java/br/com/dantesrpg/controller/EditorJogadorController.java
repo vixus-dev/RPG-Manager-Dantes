@@ -1312,6 +1312,12 @@ public class EditorJogadorController {
 	// =============================================
 
 	private String getRank(int pontos) {
+		if (pontos >= 46) return "PP+";
+		if (pontos == 45) return "PP";
+		if (pontos == 44) return "PP-";
+		if (pontos == 43) return "O+";
+		if (pontos == 42) return "O";
+		if (pontos == 41) return "O-";
 		if (pontos >= 22) return "P";
 		if (pontos == 21) return "SSS+";
 		if (pontos == 20) return "SSS";

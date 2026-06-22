@@ -858,8 +858,10 @@ public class DetailedTurnHUDController {
 				int rolagemBruta = Integer.parseInt(inputDadoAtributo.getText());
 				Atributo atr = DiceInputsBuilder.resolverAtributo(atorAtual, habilidadeSelecionada);
 				int valorAtr = atorAtual.getAtributosFinais().getOrDefault(atr, 1);
-				int rolagemFinal = DiceRoller.aplicarBonusDeRank(rolagemBruta, valorAtr);
+				int valorSorte = atorAtual.getAtributosFinais().getOrDefault(Atributo.SORTE, 1);
+				int rolagemFinal = DiceRoller.aplicarBonusRankESorte(rolagemBruta, valorAtr, valorSorte);
 				input.adicionarResultadoDado("DADO_ATRIBUTO", rolagemFinal);
+				input.adicionarResultadoDado("DADO_ATRIBUTO_NATURAL", rolagemBruta);
 			} catch (Exception ignored) {}
 		}
 
@@ -927,16 +929,18 @@ public class DetailedTurnHUDController {
 
 	private void atualizarEstimativaDano() {
 		int rolagem = 0;
+		int rolagemBruta = 0;
 		try {
 			if (inputDadoAtributo != null && !inputDadoAtributo.getText().isEmpty()) {
-				int rolagemBruta = Integer.parseInt(inputDadoAtributo.getText());
+				rolagemBruta = Integer.parseInt(inputDadoAtributo.getText());
 				Atributo atr = DiceInputsBuilder.resolverAtributo(atorAtual, habilidadeSelecionada);
 				int valorAtr = atorAtual.getAtributosFinais().getOrDefault(atr, 1);
-				rolagem = DiceRoller.aplicarBonusDeRank(rolagemBruta, valorAtr);
+				int valorSorte = atorAtual.getAtributosFinais().getOrDefault(Atributo.SORTE, 1);
+				rolagem = DiceRoller.aplicarBonusRankESorte(rolagemBruta, valorAtr, valorSorte);
 			}
 		} catch (Exception ignored) {}
 
-		int dano = mainController.getCombatManager().estimarDano(atorAtual, habilidadeSelecionada, null, rolagem, 0);
+		int dano = mainController.getCombatManager().estimarDano(atorAtual, habilidadeSelecionada, null, rolagem, rolagemBruta, 0);
 
 		double modVisual = 1.0;
 		if (isAtaqueBasico) {

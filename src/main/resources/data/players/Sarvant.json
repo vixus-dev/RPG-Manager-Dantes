@@ -1,17 +1,16 @@
 {
-  "fantasmaNobre": "RevelacaoDeYaweh",
   "iniciativaBase": 16,
   "atributosBase": {
+    "INTELIGENCIA": 10,
     "CARISMA": 5,
     "SAGACIDADE": 10,
-    "TOPOR": 1,
     "ENDURANCE": 3,
-    "FORCA": 1,
-    "PERCEPCAO": 10,
     "SORTE": 8,
-    "INSPIRACAO": 10,
-    "INTELIGENCIA": 10,
-    "DESTREZA": 2
+    "PERCEPCAO": 10,
+    "TOPOR": 1,
+    "FORCA": 1,
+    "DESTREZA": 2,
+    "INSPIRACAO": 10
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
@@ -23,7 +22,8 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": 33.0,
-  "contadorTU": 1,
+  "contadorTU": 120,
+  "fantasmaNobre": "RevelacaoDeYaweh",
   "armaEquipada": {
     "magiasSalvas": [
       "Benção Divina",
@@ -34,7 +34,7 @@
     "nome": "Yaweh"
   },
   "inventario": {},
-  "xpAtual": 0,
+  "xpAtual": 75,
   "vidaMaximaBase": 33.0,
   "classe": "Alquimista",
   "armasEquipadas": [
@@ -52,8 +52,9 @@
   "segmentos": 0,
   "grau": 0,
   "posX": 2,
-  "posY": 3,
-  "manaAtual": 12.5,
+  "posY": 6,
+  "amuleto1": "Botas de Berseker",
+  "manaAtual": 8.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Humano",
   "nivel": 7,

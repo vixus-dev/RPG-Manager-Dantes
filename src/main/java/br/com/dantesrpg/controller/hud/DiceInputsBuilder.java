@@ -90,9 +90,31 @@ public class DiceInputsBuilder {
 			inputDadoAtributo = new TextField();
 			inputDadoAtributo.setPromptText("Resultado do d" + tipoDado);
 			inputDadoAtributo.setStyle("-fx-background-color: #333; -fx-text-fill: cyan; -fx-font-weight: bold;");
-			inputDadoAtributo.textProperty().addListener((o, ov, nv) -> onEstimateChange.run());
 
-			diceInputsBox.getChildren().addAll(lbl, inputDadoAtributo);
+			Label lblFinalResult = new Label("");
+			lblFinalResult.setStyle("-fx-text-fill: #00FFFF; -fx-font-weight: bold; -fx-font-size: 13px;");
+
+			inputDadoAtributo.textProperty().addListener((o, ov, nv) -> {
+				if (nv == null || nv.isEmpty()) {
+					lblFinalResult.setText("");
+				} else {
+					try {
+						int rolagemBruta = Integer.parseInt(nv);
+						int valorSorte = ator.getAtributosFinais().getOrDefault(Atributo.SORTE, 1);
+						int rolagemFinal = DiceRoller.aplicarBonusRankESorte(rolagemBruta, valorAtr, valorSorte);
+						lblFinalResult.setText("➔ " + rolagemFinal);
+					} catch (NumberFormatException e) {
+						lblFinalResult.setText("");
+					}
+				}
+				onEstimateChange.run();
+			});
+
+			HBox inputRow = new HBox(10);
+			inputRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+			inputRow.getChildren().addAll(inputDadoAtributo, lblFinalResult);
+
+			diceInputsBox.getChildren().addAll(lbl, inputRow);
 
 			// Ativa a coluna de rolagem de dados
 			diceRollColumn.setVisible(true);
