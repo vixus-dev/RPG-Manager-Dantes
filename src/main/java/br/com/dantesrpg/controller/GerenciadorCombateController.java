@@ -57,6 +57,7 @@ public class GerenciadorCombateController {
 	@FXML private Label lblManaMax;
 	@FXML private CheckBox checkAusente;
 	@FXML private CheckBox checkProtagonista;
+	@FXML private CheckBox checkRacaV2;
 	@FXML private ComboBox<String> comboFaccao;
 	@FXML private TextField inputOuro;
 	@FXML private TextField inputPrata;
@@ -516,6 +517,14 @@ public class GerenciadorCombateController {
 	}
 
 	@FXML
+	private void onCheckRacaV2Change() {
+		if (selecionado != null && !isSyncing && selecionado.getRaca() != null) {
+			selecionado.getRaca().setV2(checkRacaV2.isSelected());
+			autoSaveAndRefresh();
+		}
+	}
+
+	@FXML
 	private void onComboFaccaoChange() {
 		if (isSyncing || selecionado == null) return;
 		String novaFaccao = comboFaccao.getValue();
@@ -894,6 +903,9 @@ public class GerenciadorCombateController {
 		isSyncing = true;
 		checkAusente.setSelected(selecionado.isAusente());
 		checkProtagonista.setSelected(selecionado.isProtagonista());
+		if (checkRacaV2 != null) {
+			checkRacaV2.setSelected(selecionado.getRaca() != null && selecionado.getRaca().isV2());
+		}
 		if (comboFaccao != null) {
 			comboFaccao.setValue(selecionado.getFaccao());
 		}
