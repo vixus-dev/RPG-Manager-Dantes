@@ -12,6 +12,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import br.com.dantesrpg.model.enums.PesoEntidade;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.SelectionMode;
 import br.com.dantesrpg.model.util.PartyPreset;
 import br.com.dantesrpg.model.util.PartyPresetsData;
 
@@ -57,6 +60,7 @@ public class ReforcosDialogService {
 	private final Supplier<EstadoCombate> estadoSupplier;
 	private final Supplier<Map<String, Map<String, Object>>> armorySupplier;
 	private final Supplier<Map<String, Map<String, Object>>> itempediaSupplier;
+	private final Supplier<Map<String, Map<String, Object>>> bestiarioSupplier;
 	private final Supplier<List<String>> listarArquivosPersonagens;
 	private final Function<String, Personagem> carregarPersonagem;
 	private final Function<String, Raça> mapearRaca;
@@ -70,6 +74,7 @@ public class ReforcosDialogService {
 	public ReforcosDialogService(CombatController controller, Supplier<EstadoCombate> estadoSupplier,
 			Supplier<Map<String, Map<String, Object>>> armorySupplier,
 			Supplier<Map<String, Map<String, Object>>> itempediaSupplier,
+			Supplier<Map<String, Map<String, Object>>> bestiarioSupplier,
 			Supplier<List<String>> listarArquivosPersonagens, Function<String, Personagem> carregarPersonagem,
 			Function<String, Raça> mapearRaca, Function<String, Classe> mapearClasse,
 			Function<String, FantasmaNobre> instanciarFantasmaNobre, Function<String, Arma> buscarArma,
@@ -79,6 +84,7 @@ public class ReforcosDialogService {
 		this.estadoSupplier = estadoSupplier;
 		this.armorySupplier = armorySupplier;
 		this.itempediaSupplier = itempediaSupplier;
+		this.bestiarioSupplier = bestiarioSupplier;
 		this.listarArquivosPersonagens = listarArquivosPersonagens;
 		this.carregarPersonagem = carregarPersonagem;
 		this.mapearRaca = mapearRaca;
@@ -93,9 +99,9 @@ public class ReforcosDialogService {
 	public void abrirPainel() {
 		Stage stage = new Stage();
 		stage.setTitle("Painel de Reforços e Roster");
-		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initModality(Modality.NONE);
 		stage.setResizable(true);
-		stage.setMinWidth(950);
+		stage.setMinWidth(1200);
 		stage.setMinHeight(650);
 
 		TabPane tabPane = new TabPane();
@@ -117,7 +123,7 @@ public class ReforcosDialogService {
 		BorderPane root = new BorderPane();
 		root.setCenter(tabPane);
 
-		Scene scene = new Scene(root, 950, 700);
+		Scene scene = new Scene(root, 1200, 700);
 		try {
 			scene.getStylesheets().add(controller.getClass()
 					.getResource("/br/com/dantesrpg/view/style.css").toExternalForm());
@@ -148,12 +154,20 @@ public class ReforcosDialogService {
 
 				HBox cell = new HBox(10);
 				cell.setAlignment(Pos.CENTER_LEFT);
+				
+				javafx.scene.image.ImageView imgView = new javafx.scene.image.ImageView();
+				imgView.setFitWidth(32);
+				imgView.setFitHeight(32);
+				String tokenName = personagem.getNome().toLowerCase().replace(" ", "_") + ".png";
+				try {
+					javafx.scene.image.Image img = br.com.dantesrpg.model.util.ImageCache.get("/tokens/" + tokenName, 32, 32);
+					if (img != null && !img.isError()) imgView.setImage(img);
+				} catch (Exception e) {}
+
 				Label lblName = new Label(personagem.getNome());
 				lblName.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
-				Label lblDetails = new Label(personagem.getRaca().getNome() + " / "
-						+ personagem.getClasse().getNome() + " (Nível " + personagem.getNivel() + ")");
-				lblDetails.setStyle("-fx-text-fill: #808090; -fx-font-size: 11px;");
-				cell.getChildren().addAll(lblName, lblDetails);
+				
+				cell.getChildren().addAll(imgView, lblName);
 				setGraphic(cell);
 			}
 		});
@@ -190,6 +204,218 @@ public class ReforcosDialogService {
 		btnRemoverDoCombate.setStyle("-fx-background-color: #3a1a1a; -fx-text-fill: #e74c3c; -fx-font-weight: bold;");
 		panelAtivos.getChildren().addAll(lblAtivos, lvAtivos, btnRemoverDoCombate);
 
+		// Panel 3: Bestiario
+		VBox panelBestiario = new VBox(10);
+		HBox.setHgrow(panelBestiario, javafx.scene.layout.Priority.ALWAYS);
+		Label lblBestiario = new Label("Bestiário");
+		lblBestiario.setStyle("-fx-text-fill: #8a2be2; -fx-font-size: 16px; -fx-font-weight: bold;");
+		ListView<String> lvBestiario = new ListView<>();
+		lvBestiario.setStyle("-fx-background-color: #16161e; -fx-control-inner-background: #16161e;");
+		VBox.setVgrow(lvBestiario, javafx.scene.layout.Priority.ALWAYS);
+		Map<String, Map<String, Object>> bestiarioMap = bestiarioSupplier != null ? bestiarioSupplier.get() : null;
+		if (bestiarioMap != null) {
+			lvBestiario.getItems().addAll(bestiarioMap.keySet().stream().sorted().collect(Collectors.toList()));
+		}
+		
+		panelBestiario.getChildren().addAll(lblBestiario, lvBestiario);
+
+		// Panel 4: Editor Enemy (Hidden by default)
+		VBox panelEditEnemy = new VBox(10);
+		HBox.setHgrow(panelEditEnemy, javafx.scene.layout.Priority.ALWAYS);
+		panelEditEnemy.setVisible(false);
+		panelEditEnemy.setManaged(false);
+		panelEditEnemy.setStyle("-fx-background-color: #1a1a24; -fx-padding: 10; -fx-border-color: #8a2be2; -fx-border-width: 2;");
+
+		ScrollPane scrollEdit = new ScrollPane();
+		scrollEdit.setFitToWidth(true);
+		scrollEdit.setStyle("-fx-background: #1a1a24; -fx-background-color: #1a1a24;");
+		VBox.setVgrow(scrollEdit, javafx.scene.layout.Priority.ALWAYS);
+
+		GridPane gridEdit = new GridPane();
+		gridEdit.setHgap(10);
+		gridEdit.setVgap(10);
+		gridEdit.setStyle("-fx-background-color: #1a1a24;");
+
+		Label lblEditTitle = new Label("Adicionar como Aliado");
+		lblEditTitle.setStyle("-fx-text-fill: #8a2be2; -fx-font-size: 16px; -fx-font-weight: bold;");
+
+		TextField tfName = new TextField();
+		tfName.setStyle("-fx-text-fill: white; -fx-background-color: #222;");
+		TextField tfRace = new TextField();
+		tfRace.setStyle("-fx-text-fill: white; -fx-background-color: #222;");
+		Spinner<Integer> spGrau = new Spinner<>(0, 10, 1);
+		spGrau.setEditable(true);
+		Spinner<Integer> spHP = new Spinner<>(1, 100000, 100);
+		spHP.setEditable(true);
+		Spinner<Integer> spMana = new Spinner<>(0, 10000, 10);
+		spMana.setEditable(true);
+		Spinner<Integer> spAgi = new Spinner<>(0, 1000, 10);
+		spAgi.setEditable(true);
+		Spinner<Integer> spDef = new Spinner<>(0, 1000, 0);
+		spDef.setEditable(true);
+		
+		ComboBox<String> cbArmaEnemy = new ComboBox<>();
+		cbArmaEnemy.getItems().add("(Nenhuma)");
+		if (armorySupplier != null && armorySupplier.get() != null) {
+			cbArmaEnemy.getItems().addAll(armorySupplier.get().keySet());
+		}
+
+		ComboBox<PesoEntidade> cbPeso = new ComboBox<>();
+		cbPeso.getItems().addAll(PesoEntidade.values());
+
+		// Properties lists
+		ListView<String> lvDisponiveis = new ListView<>();
+		ListView<String> lvSelecionadas = new ListView<>();
+		lvDisponiveis.setPrefHeight(100);
+		lvSelecionadas.setPrefHeight(100);
+		lvDisponiveis.setStyle("-fx-background-color: #222; -fx-control-inner-background: #222;");
+		lvSelecionadas.setStyle("-fx-background-color: #222; -fx-control-inner-background: #222;");
+		
+		// Fill disponiveis
+		String[] propsPossiveis = {"IMUNIDADE_CONTROLE", "IMUNIDADE_DOT", "EXPLODIR", "VAMPIRISMO", "BLINDADO", "REGENERACAO", "IMUNE_KNOCKBACK"};
+		lvDisponiveis.getItems().addAll(propsPossiveis);
+
+		// Tooltips via CellFactory
+		javafx.util.Callback<ListView<String>, ListCell<String>> cellFactory = lv -> new ListCell<String>() {
+			@Override
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty || item == null) {
+					setText(null);
+					setTooltip(null);
+				} else {
+					setText(item);
+					setStyle("-fx-text-fill: white;");
+					Tooltip tt = new Tooltip(getDescricaoPropriedade(item));
+					tt.setStyle("-fx-font-size: 12px;");
+					setTooltip(tt);
+				}
+			}
+		};
+		lvDisponiveis.setCellFactory(cellFactory);
+		lvSelecionadas.setCellFactory(cellFactory);
+
+		// Double click to move
+		lvDisponiveis.setOnMouseClicked(e -> {
+			if (e.getClickCount() == 2) {
+				String sel = lvDisponiveis.getSelectionModel().getSelectedItem();
+				if (sel != null && !lvSelecionadas.getItems().contains(sel)) {
+					lvSelecionadas.getItems().add(sel);
+					lvDisponiveis.getItems().remove(sel);
+				}
+			}
+		});
+		lvSelecionadas.setOnMouseClicked(e -> {
+			if (e.getClickCount() == 2) {
+				String sel = lvSelecionadas.getSelectionModel().getSelectedItem();
+				if (sel != null) {
+					lvDisponiveis.getItems().add(sel);
+					lvSelecionadas.getItems().remove(sel);
+				}
+			}
+		});
+
+		int r = 0;
+		Label lblN = new Label("Nome:"); lblN.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblN, 0, r); gridEdit.add(tfName, 1, r++);
+		Label lblR = new Label("Raça:"); lblR.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblR, 0, r); gridEdit.add(tfRace, 1, r++);
+		Label lblG = new Label("Grau:"); lblG.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblG, 0, r); gridEdit.add(spGrau, 1, r++);
+		Label lblH = new Label("HP:"); lblH.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblH, 0, r); gridEdit.add(spHP, 1, r++);
+		Label lblM = new Label("Mana:"); lblM.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblM, 0, r); gridEdit.add(spMana, 1, r++);
+		Label lblAg = new Label("Agilidade:"); lblAg.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblAg, 0, r); gridEdit.add(spAgi, 1, r++);
+		Label lblDf = new Label("Defesa:"); lblDf.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblDf, 0, r); gridEdit.add(spDef, 1, r++);
+		Label lblA = new Label("Arma:"); lblA.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblA, 0, r); gridEdit.add(cbArmaEnemy, 1, r++);
+		Label lblP = new Label("Peso:"); lblP.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblP, 0, r); gridEdit.add(cbPeso, 1, r++);
+		
+		Label lblPD = new Label("Props Disp.:"); lblPD.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblPD, 0, r); gridEdit.add(lvDisponiveis, 1, r++);
+		Label lblPS = new Label("Props Selec.:"); lblPS.setStyle("-fx-text-fill: white;");
+		gridEdit.add(lblPS, 0, r); gridEdit.add(lvSelecionadas, 1, r++);
+
+		Button btnAddInimigoAliado = new Button("Adicionar Inimigo como Aliado");
+		btnAddInimigoAliado.setStyle("-fx-background-color: #1a3a1a; -fx-text-fill: #2ecc71; -fx-font-weight: bold;");
+		gridEdit.add(btnAddInimigoAliado, 0, r, 2, 1);
+
+		scrollEdit.setContent(gridEdit);
+		panelEditEnemy.getChildren().addAll(lblEditTitle, scrollEdit);
+
+		// Event when clicking bestiary
+		lvBestiario.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal != null && bestiarioMap != null) {
+				Map<String, Object> data = bestiarioMap.get(newVal);
+				if (data != null) {
+					panelEditEnemy.setVisible(true);
+					panelEditEnemy.setManaged(true);
+					
+					tfName.setText((String) data.getOrDefault("nome", ""));
+					tfRace.setText((String) data.getOrDefault("raca", ""));
+					spGrau.getValueFactory().setValue(((Double) data.getOrDefault("grau", 0.0)).intValue());
+					spHP.getValueFactory().setValue(((Double) data.getOrDefault("vida", 10.0)).intValue());
+					spMana.getValueFactory().setValue(((Double) data.getOrDefault("mana", 0.0)).intValue());
+					spAgi.getValueFactory().setValue(((Double) data.getOrDefault("agilidade", 10.0)).intValue());
+					spDef.getValueFactory().setValue(((Double) data.getOrDefault("defesa", 0.0)).intValue());
+					
+					String armaStr = (String) data.getOrDefault("arma", "");
+					if (armaStr != null && cbArmaEnemy.getItems().contains(armaStr)) {
+						cbArmaEnemy.setValue(armaStr);
+					} else {
+						cbArmaEnemy.setValue("(Nenhuma)");
+					}
+
+					String pesoStr = (String) data.getOrDefault("peso", "");
+					cbPeso.setValue(PesoEntidade.fromJsonId(pesoStr));
+
+					// reset props
+					lvDisponiveis.getItems().clear();
+					lvDisponiveis.getItems().addAll(propsPossiveis);
+					lvSelecionadas.getItems().clear();
+					
+					Object propsObj = data.get("propriedades");
+					if (propsObj instanceof List) {
+						List<String> props = (List<String>) propsObj;
+						for (String p : props) {
+							if (lvDisponiveis.getItems().contains(p)) {
+								lvDisponiveis.getItems().remove(p);
+								lvSelecionadas.getItems().add(p);
+							} else {
+								lvSelecionadas.getItems().add(p);
+							}
+						}
+					}
+				}
+			}
+		});
+
+		btnAddInimigoAliado.setOnAction(e -> {
+			String nameBase = tfName.getText().trim();
+			if (nameBase.isEmpty()) return;
+			
+			String nameAliado = nameBase;
+			boolean exists = false;
+			if (estadoSupplier.get() != null) {
+				exists = estadoSupplier.get().getCombatentes().stream()
+					.anyMatch(p -> p.getNome().equalsIgnoreCase(nameBase));
+			}
+			if (exists) {
+				nameAliado = nameBase + "_aliado";
+			}
+			
+			Personagem aliado = criarInimigoAliado(nameAliado, tfRace.getText(), spGrau.getValue(), 
+				spHP.getValue(), spMana.getValue(), cbArmaEnemy.getValue(), cbPeso.getValue(), 
+				new ArrayList<>(lvSelecionadas.getItems()), spAgi.getValue(), spDef.getValue());
+			
+			adicionarAoCombate(aliado);
+			refreshLists.run();
+		});
+
 		btnAddAoCombate.setOnAction(e -> {
 			Personagem personagem = lvReforcos.getSelectionModel().getSelectedItem();
 			if (personagem != null) {
@@ -216,9 +442,51 @@ public class ReforcosDialogService {
 			}
 		});
 
-		gerenciarLayout.getChildren().addAll(panelReforcos, panelAtivos);
+		gerenciarLayout.getChildren().addAll(panelReforcos, panelAtivos, panelBestiario, panelEditEnemy);
 		tabGerenciar.setContent(gerenciarLayout);
 		return tabGerenciar;
+	}
+
+	private String getDescricaoPropriedade(String prop) {
+		switch (prop) {
+			case "IMUNIDADE_CONTROLE": return "Imunidade a Stun, Lento, e Sono.";
+			case "IMUNIDADE_DOT": return "Imunidade a DoTs (Veneno, Sangramento, etc).";
+			case "EXPLODIR": return "Causa dano em área ao morrer.";
+			case "VAMPIRISMO": return "Recupera HP ao causar dano.";
+			case "BLINDADO": return "Reduz dano físico recebido.";
+			case "REGENERACAO": return "Regenera HP todo turno.";
+			case "IMUNE_KNOCKBACK": return "Não pode ser empurrado.";
+			default: return "Propriedade especial.";
+		}
+	}
+
+	private Personagem criarInimigoAliado(String nome, String racaStr, int grau, int vida, int mana, String armaStr, PesoEntidade peso, List<String> propriedades, int agilidade, int defesa) {
+		Raça racaObj = mapearRaca.apply(racaStr); 
+		Classe classeObj = mapearClasse.apply("Placeholder");
+		
+		Map<Atributo, Integer> atrBase = new HashMap<>();
+		for (Atributo atr : Atributo.values()) {
+			atrBase.put(atr, 10);
+		}
+		atrBase.put(Atributo.DESTREZA, agilidade);
+		atrBase.put(Atributo.TOPOR, defesa);
+		
+		Personagem p = new Personagem(nome, racaObj, classeObj, 1, atrBase, vida, 0);
+		p.setGrau(grau);
+		p.setFaccao("JOGADOR");
+		p.setPesoEntidade(peso);
+		p.getPropriedades().addAll(propriedades);
+		
+		if (armaStr != null && !armaStr.equals("(Nenhuma)")) {
+			p.setArmaEquipada(buscarArma.apply(armaStr));
+		}
+		
+		p.recalcularAtributosEstatisticas();
+		p.setVidaAtual(vida);
+		p.setManaMaxima(mana);
+		p.setManaAtual(mana);
+		
+		return p;
 	}
 
 	private Tab criarAbaCriar(TabPane tabPane, Runnable refreshLists) {

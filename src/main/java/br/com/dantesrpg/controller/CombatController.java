@@ -144,7 +144,7 @@ public class CombatController {
 	private final EstadoJogadoresService estadoJogadoresService = new EstadoJogadoresService(() -> estadoCombate,
 			this::carregarPersonagemComGson, this::salvarPersonagem, this::isPlayer, this::atualizarInterfaceTotal);
 	private final ReforcosDialogService reforcosDialogService = new ReforcosDialogService(this, () -> estadoCombate,
-			() -> armoryDatabase, () -> itempediaDatabase, this::listarArquivosPersonagens,
+			() -> armoryDatabase, () -> itempediaDatabase, () -> bestiarioDatabase, this::listarArquivosPersonagens,
 			this::carregarPersonagemComGson, this::mapearRaca, this::mapearClasse, this::instanciarFantasmaNobre,
 			this::getArma, this::getItem, this::salvarPersonagem, this::atualizarInterfaceRoster);
 
