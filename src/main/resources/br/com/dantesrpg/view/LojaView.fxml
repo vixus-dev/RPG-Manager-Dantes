@@ -60,9 +60,11 @@
 
          <!-- Coluna 2: Preview do Item -->
          <VBox styleClass="loja-preview-panel" HBox.hgrow="NEVER" prefWidth="300.0" spacing="6.0">
-            <javafx.scene.layout.StackPane fx:id="previewImageContainer" prefHeight="100.0" minHeight="100.0" style="-fx-background-color: #0b0914; -fx-border-color: #3a3a4a; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
-               <javafx.scene.image.ImageView fx:id="previewImageView" fitWidth="80" fitHeight="80" preserveRatio="true"/>
-            </javafx.scene.layout.StackPane>
+            <HBox alignment="CENTER">
+               <javafx.scene.layout.StackPane fx:id="previewImageContainer" prefWidth="160.0" prefHeight="160.0" minWidth="160.0" minHeight="160.0" style="-fx-background-color: #0b0914; -fx-border-color: #3a3a4a; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
+                  <javafx.scene.image.ImageView fx:id="previewImageView" fitWidth="150" fitHeight="150" preserveRatio="true"/>
+               </javafx.scene.layout.StackPane>
+            </HBox>
             <Label fx:id="previewNome" text="Selecione um Item" styleClass="loja-preview-nome" />
             <Label fx:id="previewDescricao" text="A descrição do item aparecerá aqui." styleClass="loja-preview-descricao" wrapText="true" />
             <Region styleClass="loja-preview-separator" />

@@ -1259,29 +1259,29 @@ mainController.salvarEstadoJogadores();
 		
 		// Tentar carregar imagem do item (específica)
 		String nomeImg = item.getNome().toLowerCase().replace(" ", "_").replace("'", "");
-		javafx.scene.image.Image img = br.com.dantesrpg.model.util.ImageCache.get("/items/" + nomeImg + ".png", 80, 80);
+		javafx.scene.image.Image img = br.com.dantesrpg.model.util.ImageCache.get("/items/" + nomeImg + ".png", 150, 150);
 		if (img == null || img.isError()) {
 			// Fallback genérico baseado no tipo
 			if (item instanceof Arma) {
 				Arma a = (Arma) item;
 				String tipo = a.getTipo() != null ? a.getTipo().toLowerCase() : "";
 				if (tipo.contains("pistola") || tipo.contains("revolver") || tipo.contains("arma de fogo")) {
-					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_pistol.png", 80, 80);
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_pistol.png", 150, 150);
 				} else if (tipo.contains("espada") || tipo.contains("katana") || tipo.contains("lâmina") || tipo.contains("sword")) {
-					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_sword.png", 80, 80);
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_sword.png", 150, 150);
 				} else if (tipo.contains("pesada") || tipo.contains("machado") || tipo.contains("martelo") || a.isDuasMaos()) {
-					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_heavy.png", 80, 80);
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_heavy.png", 150, 150);
 				} else if (a instanceof br.com.dantesrpg.model.ArmaRanged || "Ranged".equalsIgnoreCase(a.getTipo())) {
-					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_ranged.png", 80, 80);
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_ranged.png", 150, 150);
 				} else {
-					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_melee.png", 80, 80);
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_melee.png", 150, 150);
 				}
 			} else if (item instanceof Armadura) {
-				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_armor.png", 80, 80);
+				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_armor.png", 150, 150);
 			} else if (item instanceof Amuleto) {
-				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_amulet.png", 80, 80);
+				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_amulet.png", 150, 150);
 			} else if (item instanceof Consumivel) {
-				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_potion.png", 80, 80);
+				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_potion.png", 150, 150);
 			}
 		}
 		if (img != null && !img.isError()) {
@@ -1529,10 +1529,11 @@ mainController.salvarEstadoJogadores();
 	// === UTILITÁRIOS
 	// =============================================
 
-	private javafx.scene.layout.Pane criarGraficoAoE(TipoAlvo tipoAlvo, int tamanhoArea, int alcance, int anguloCone) {
+	private javafx.scene.layout.HBox criarGraficoAoE(TipoAlvo tipoAlvo, int tamanhoArea, int alcance, int anguloCone) {
 		javafx.scene.layout.Pane pane = new javafx.scene.layout.Pane();
 		pane.setPrefSize(250, 180);
 		pane.setMinSize(250, 180);
+		pane.setMaxSize(250, 180);
 		pane.setStyle("-fx-background-color: #0d0c15; -fx-border-color: #3a3a4a; -fx-border-radius: 4; -fx-border-width: 1;");
 
 		double centerX = 125.0;
@@ -1636,7 +1637,9 @@ mainController.salvarEstadoJogadores();
 			pane.getChildren().add(aoe);
 		}
 		
-		return pane;
+		javafx.scene.layout.HBox wrapper = new javafx.scene.layout.HBox(pane);
+		wrapper.setAlignment(Pos.CENTER);
+		return wrapper;
 	}
 
 	private String getIconeTipo(Item item) {
