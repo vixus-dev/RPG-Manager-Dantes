@@ -42,10 +42,17 @@
          <!-- Coluna 1: Itens à Venda -->
          <VBox styleClass="loja-section" HBox.hgrow="ALWAYS" prefWidth="400.0" spacing="8.0">
             <Label text="Itens à Venda" styleClass="loja-section-title"/>
-            <HBox spacing="8.0" alignment="CENTER_LEFT" style="-fx-padding: 0 0 5 0;">
-               <TextField fx:id="txtBusca" promptText="Buscar item..." HBox.hgrow="ALWAYS" styleClass="editor-search-field"/>
-               <ComboBox fx:id="comboFiltroCategoria" prefWidth="130.0" styleClass="loja-combo"/>
-            </HBox>
+            <VBox spacing="8.0" style="-fx-padding: 0 0 5 0;">
+               <HBox spacing="8.0" alignment="CENTER_LEFT">
+                  <TextField fx:id="txtBusca" promptText="Buscar item..." HBox.hgrow="ALWAYS" styleClass="editor-search-field"/>
+                  <ComboBox fx:id="comboFiltroCategoria" prefWidth="130.0" styleClass="loja-combo"/>
+               </HBox>
+               <HBox spacing="8.0" alignment="CENTER_LEFT">
+                  <ComboBox fx:id="comboFiltroRaridade" prefWidth="110.0" promptText="Raridade" styleClass="loja-combo"/>
+                  <ComboBox fx:id="comboFiltroWielding" prefWidth="110.0" promptText="Wielding" styleClass="loja-combo"/>
+                  <ComboBox fx:id="comboFiltroTipoArma" prefWidth="110.0" promptText="Tipo" styleClass="loja-combo"/>
+               </HBox>
+            </VBox>
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                <VBox fx:id="itensVendaContainer" spacing="6.0" />
             </ScrollPane>
@@ -53,10 +60,15 @@
 
          <!-- Coluna 2: Preview do Item -->
          <VBox styleClass="loja-preview-panel" HBox.hgrow="NEVER" prefWidth="300.0" spacing="6.0">
+            <javafx.scene.layout.StackPane fx:id="previewImageContainer" prefHeight="100.0" minHeight="100.0" style="-fx-background-color: #0b0914; -fx-border-color: #3a3a4a; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
+               <javafx.scene.image.ImageView fx:id="previewImageView" fitWidth="80" fitHeight="80" preserveRatio="true"/>
+            </javafx.scene.layout.StackPane>
             <Label fx:id="previewNome" text="Selecione um Item" styleClass="loja-preview-nome" />
             <Label fx:id="previewDescricao" text="A descrição do item aparecerá aqui." styleClass="loja-preview-descricao" wrapText="true" />
             <Region styleClass="loja-preview-separator" />
-            <VBox fx:id="previewStatsPane" spacing="3.0" />
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
+               <VBox fx:id="previewStatsPane" spacing="3.0" style="-fx-padding: 0 5 0 0;" />
+            </ScrollPane>
          </VBox>
 
          <!-- Coluna 3: Inventário do Jogador -->

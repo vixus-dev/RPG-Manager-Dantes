@@ -45,6 +45,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.enums.TipoHabilidade;
+import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.util.HabilidadeFactory;
 import javafx.util.Duration;
 import java.util.List;
@@ -66,6 +67,12 @@ public class LojaController {
 	@FXML private ComboBox<String> comboSelecaoLoja;
 	@FXML private TextField txtBusca;
 	@FXML private ComboBox<String> comboFiltroCategoria;
+	@FXML private ComboBox<String> comboFiltroRaridade;
+	@FXML private ComboBox<String> comboFiltroWielding;
+	@FXML private ComboBox<String> comboFiltroTipoArma;
+
+	@FXML private javafx.scene.layout.StackPane previewImageContainer;
+	@FXML private javafx.scene.image.ImageView previewImageView;
 
 	@FXML private Label previewNome;
 	@FXML private Label previewDescricao;
@@ -103,13 +110,21 @@ public class LojaController {
 		// Configuração de Filtros e Busca
 		comboFiltroCategoria.getItems().addAll("Todas", "Armas ⚔️", "Armaduras 🛡️", "Amuletos 💠", "Consumíveis 🧪", "Outros 📦");
 		comboFiltroCategoria.setValue("Todas");
-		comboFiltroCategoria.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-			atualizarUI();
-		});
+		comboFiltroCategoria.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> atualizarUI());
 
-		txtBusca.textProperty().addListener((obs, oldVal, newVal) -> {
-			atualizarUI();
-		});
+		comboFiltroRaridade.getItems().addAll("Todas", "Comum", "Incomum", "Raro", "Épico", "Lendário", "Único", "Mítico");
+		comboFiltroRaridade.setValue("Todas");
+		comboFiltroRaridade.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> atualizarUI());
+
+		comboFiltroWielding.getItems().addAll("Qualquer", "1 Mão", "2 Mãos");
+		comboFiltroWielding.setValue("Qualquer");
+		comboFiltroWielding.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> atualizarUI());
+
+		comboFiltroTipoArma.getItems().addAll("Ambos", "Melee", "Ranged");
+		comboFiltroTipoArma.setValue("Ambos");
+		comboFiltroTipoArma.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> atualizarUI());
+
+		txtBusca.textProperty().addListener((obs, oldVal, newVal) -> atualizarUI());
 	}
 
 	public void inicializarLoja(CombatController controller, EstadoCombate estado, String idLojaInicial) {
@@ -380,6 +395,9 @@ public class LojaController {
 	private void atualizarCatalogo() {
 		String busca = txtBusca.getText() != null ? txtBusca.getText().trim().toLowerCase() : "";
 		String categoriaSelecionada = comboFiltroCategoria.getValue() != null ? comboFiltroCategoria.getValue() : "Todas";
+		String raridadeSelecionada = comboFiltroRaridade.getValue() != null ? comboFiltroRaridade.getValue() : "Todas";
+		String wieldingSelecionado = comboFiltroWielding.getValue() != null ? comboFiltroWielding.getValue() : "Qualquer";
+		String tipoArmaSelecionado = comboFiltroTipoArma.getValue() != null ? comboFiltroTipoArma.getValue() : "Ambos";
 
 		List<Oferta> ofertasFiltradas = ofertasAtuais.stream().filter(o -> {
 			boolean matchesBusca = busca.isEmpty() 
@@ -388,19 +406,40 @@ public class LojaController {
 
 			if (!matchesBusca) return false;
 
-			if ("Todas".equals(categoriaSelecionada)) {
-				return true;
-			} else if ("Armas ⚔️".equals(categoriaSelecionada)) {
-				return o.item instanceof Arma;
+			if ("Armas ⚔️".equals(categoriaSelecionada)) {
+				if (!(o.item instanceof Arma)) return false;
 			} else if ("Armaduras 🛡️".equals(categoriaSelecionada)) {
-				return o.item instanceof Armadura;
+				if (!(o.item instanceof Armadura)) return false;
 			} else if ("Amuletos 💠".equals(categoriaSelecionada)) {
-				return o.item instanceof Amuleto;
+				if (!(o.item instanceof Amuleto)) return false;
 			} else if ("Consumíveis 🧪".equals(categoriaSelecionada)) {
-				return o.item instanceof Consumivel;
+				if (!(o.item instanceof Consumivel)) return false;
 			} else if ("Outros 📦".equals(categoriaSelecionada)) {
-				return !(o.item instanceof Arma) && !(o.item instanceof Armadura) 
-					&& !(o.item instanceof Amuleto) && !(o.item instanceof Consumivel);
+				if (o.item instanceof Arma || o.item instanceof Armadura || o.item instanceof Amuleto || o.item instanceof Consumivel) return false;
+			}
+
+			if (!"Todas".equals(raridadeSelecionada)) {
+				if (o.item instanceof Arma) {
+					Arma a = (Arma) o.item;
+					if (a.getRaridade() == null || !a.getRaridade().name().equalsIgnoreCase(raridadeSelecionada)) return false;
+				} else {
+					return false;
+				}
+			}
+
+			if (o.item instanceof Arma) {
+				Arma a = (Arma) o.item;
+				if (!"Qualquer".equals(wieldingSelecionado)) {
+					if ("1 Mão".equals(wieldingSelecionado) && a.isDuasMaos()) return false;
+					if ("2 Mãos".equals(wieldingSelecionado) && !a.isDuasMaos()) return false;
+				}
+				if (!"Ambos".equals(tipoArmaSelecionado)) {
+					boolean isRanged = (a instanceof br.com.dantesrpg.model.ArmaRanged) || "Ranged".equalsIgnoreCase(a.getTipo());
+					if ("Melee".equals(tipoArmaSelecionado) && isRanged) return false;
+					if ("Ranged".equals(tipoArmaSelecionado) && !isRanged) return false;
+				}
+			} else {
+				if (!"Qualquer".equals(wieldingSelecionado) || !"Ambos".equals(tipoArmaSelecionado)) return false;
 			}
 			return true;
 		}).collect(Collectors.toList());
@@ -1211,6 +1250,40 @@ mainController.salvarEstadoJogadores();
 	private void popularPreview(Item item) {
 		if (item == null) return;
 
+		// Limpar imagem atual
+		previewImageView.setImage(null);
+		
+		// Tentar carregar imagem do item (específica)
+		String nomeImg = item.getNome().toLowerCase().replace(" ", "_").replace("'", "");
+		javafx.scene.image.Image img = br.com.dantesrpg.model.util.ImageCache.get("/items/" + nomeImg + ".png", 80, 80);
+		if (img == null || img.isError()) {
+			// Fallback genérico baseado no tipo
+			if (item instanceof Arma) {
+				Arma a = (Arma) item;
+				String tipo = a.getTipo() != null ? a.getTipo().toLowerCase() : "";
+				if (tipo.contains("pistola") || tipo.contains("revolver") || tipo.contains("arma de fogo")) {
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_pistol.png", 80, 80);
+				} else if (tipo.contains("espada") || tipo.contains("katana") || tipo.contains("lâmina") || tipo.contains("sword")) {
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_sword.png", 80, 80);
+				} else if (tipo.contains("pesada") || tipo.contains("machado") || tipo.contains("martelo") || a.isDuasMaos()) {
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_heavy.png", 80, 80);
+				} else if (a instanceof br.com.dantesrpg.model.ArmaRanged || "Ranged".equalsIgnoreCase(a.getTipo())) {
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_ranged.png", 80, 80);
+				} else {
+					img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_melee.png", 80, 80);
+				}
+			} else if (item instanceof Armadura) {
+				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_armor.png", 80, 80);
+			} else if (item instanceof Amuleto) {
+				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_amulet.png", 80, 80);
+			} else if (item instanceof Consumivel) {
+				img = br.com.dantesrpg.model.util.ImageCache.get("/items/fallback_potion.png", 80, 80);
+			}
+		}
+		if (img != null && !img.isError()) {
+			previewImageView.setImage(img);
+		}
+
 		// Nome com cor de raridade
 		String nomeExibicao = item.isOverclockado() ? item.getNomeComOverclock() : item.getNome();
 		previewNome.setText(nomeExibicao);
@@ -1269,11 +1342,29 @@ mainController.salvarEstadoJogadores();
 		Atributo atr = arma.getAtributoMultiplicador();
 		addPreviewStat("Atributo: " + atr.name(), getCorAtributo(atr));
 
+		// Calcular min/max damage
+		int atrValue = jogadorAtual != null ? jogadorAtual.getAtributosFinais().getOrDefault(atr, 1) : 1;
+		int tipoDado = br.com.dantesrpg.model.util.DiceRoller.getTipoDado(atrValue);
+		
+		int ticks = Math.max(1, arma.getTicksDeDano());
+		int minDano = (int) Math.round(arma.getDanoBase() * (1 + (0.075 * 1)) * ticks);
+		int maxDano = (int) Math.round(arma.getDanoBase() * (1 + (0.075 * tipoDado)) * ticks);
+		
+		addPreviewStat("Dado Utilizado: d" + tipoDado, "#00ffff");
+		addPreviewStat("Previsão de Dano: " + minDano + " - " + maxDano, "#e74c3c");
+
 		// Stats base
-		addPreviewStat("Dano Base: " + arma.getDanoBase() + " (x" + arma.getTicksDeDano() + ")", "#e74c3c");
+		addPreviewStat("Dano Base: " + arma.getDanoBase() + " (x" + ticks + ")", "#e74c3c");
 		addPreviewStat("Wielding: " + arma.getWielding(), "#cccccc");
 		addPreviewStat("Alcance: " + arma.getAlcance(), "#f1c40f");
 		addPreviewStat("Custo TU: " + arma.getCustoTU(), "#3498db");
+
+		// AoE Preview para a Arma
+		addPreviewSeparator();
+		Label lblAoe = new Label("Alcance / Área de Efeito (Preview)");
+		lblAoe.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold; -fx-font-size: 11px;");
+		previewStatsPane.getChildren().add(lblAoe);
+		previewStatsPane.getChildren().add(criarGridAoE(arma.getTipoAlvo(), arma.getTamanhoArea(), arma.getAlcance(), arma.getAnguloCone()));
 
 		// Efeito on hit
 		if (arma.getNomeEfeitoOnHit() != null) {
@@ -1304,44 +1395,87 @@ mainController.salvarEstadoJogadores();
 
 			for (String nomeHab : item.getHabilidadesConcedidasNomes()) {
 				Label lblHab = new Label("\u2022 " + nomeHab);
-				lblHab.setStyle("-fx-text-fill: #f39c12; -fx-cursor: hand; -fx-font-size: 12px;");
+				lblHab.setStyle("-fx-text-fill: #f39c12; -fx-cursor: hand; -fx-font-size: 12px; -fx-underline: true;");
 
 				Habilidade hab = HabilidadeFactory.criarHabilidadePorNome(nomeHab);
 				if (hab != null) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(hab.getNome()).append("\n");
-					sb.append(hab.getDescricao()).append("\n\n");
-					sb.append("Tipo: ").append(hab.getTipo()).append("\n");
-
-					if (hab.getTipo() == TipoHabilidade.ATIVA) {
-						sb.append("Custo: ").append(hab.getCustoMana()).append(" MP | ").append(hab.getCustoTU())
-								.append(" TU\n");
-						if (hab.getMultiplicadorDeDano() > 0) {
-							sb.append("Dano: ").append(String.format("%.0f%%", hab.getMultiplicadorDeDano() * 100)).append("\n");
-						}
-						sb.append("Alvo: ").append(hab.getTipoAlvo());
-						if (hab.getAlcanceMaximo() > 0) {
-							sb.append(" (Alcance: ").append(hab.getAlcanceMaximo()).append(")");
-						}
-						sb.append("\n");
-						if (hab.getTamanhoArea() > 0) {
-							sb.append("Área: ").append(hab.getTamanhoArea());
-							if (hab.getAnguloCone() > 0) {
-								sb.append(" (Cone ").append(hab.getAnguloCone()).append("°)");
-							}
-							sb.append("\n");
-						}
-					}
-
-					Tooltip tp = new Tooltip(sb.toString());
-					tp.setShowDelay(Duration.millis(100));
-					tp.setShowDuration(Duration.seconds(30));
-					lblHab.setTooltip(tp);
+					lblHab.setOnMouseClicked(e -> mostrarDetalhesHabilidade(hab, item instanceof Arma ? (Arma) item : null));
 				}
 
 				previewStatsPane.getChildren().add(lblHab);
 			}
 		}
+	}
+
+	private void mostrarDetalhesHabilidade(Habilidade hab, Arma arma) {
+		Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setTitle("Detalhes da Habilidade");
+		dialog.setHeaderText("Habilidade: " + hab.getNome());
+
+		DialogPane dialogPane = dialog.getDialogPane();
+		dialogPane.setStyle("-fx-background-color: #0d0c15; -fx-border-color: #00ffff; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;");
+		
+		try {
+			String cssPath = getClass().getResource("/br/com/dantesrpg/view/style.css").toExternalForm();
+			dialogPane.getScene().getStylesheets().add(cssPath);
+		} catch (Exception e) {}
+
+		javafx.scene.Node headerPanel = dialogPane.lookup(".header-panel");
+		if (headerPanel != null) {
+			headerPanel.setStyle("-fx-background-color: #09080d;");
+		}
+
+		VBox content = new VBox(12);
+		content.setPadding(new Insets(15));
+		content.setAlignment(Pos.CENTER);
+		content.setStyle("-fx-background-color: #0d0c15;");
+
+		Label lblDesc = new Label(hab.getDescricao());
+		lblDesc.setStyle("-fx-text-fill: #c0c0c0; -fx-font-size: 13px;");
+		lblDesc.setWrapText(true);
+		lblDesc.setMaxWidth(300);
+        
+		HBox custosBox = new HBox(15);
+		custosBox.setAlignment(Pos.CENTER);
+		Label lblMana = new Label("Mana: " + hab.getCustoMana());
+		lblMana.setStyle("-fx-text-fill: #3498db; -fx-font-weight: bold;");
+		Label lblTu = new Label("TU: " + hab.getCustoTU());
+		lblTu.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold;");
+		custosBox.getChildren().addAll(lblMana, lblTu);
+
+		content.getChildren().addAll(lblDesc, custosBox);
+
+		if (hab.getMultiplicadorDeDano() > 0 && arma != null) {
+			Label lblDanoMult = new Label(String.format("Dano da Habilidade: %.0f%% do Dano Base", hab.getMultiplicadorDeDano() * 100));
+			lblDanoMult.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
+            
+			Atributo atr = arma.getAtributoMultiplicador();
+			int atrValue = jogadorAtual != null ? jogadorAtual.getAtributosFinais().getOrDefault(atr, 1) : 1;
+			int tipoDado = br.com.dantesrpg.model.util.DiceRoller.getTipoDado(atrValue);
+			int ticks = Math.max(1, arma.getTicksDeDano());
+            
+			int minDano = (int) Math.round(arma.getDanoBase() * (1 + (0.075 * 1)) * ticks * hab.getMultiplicadorDeDano());
+			int maxDano = (int) Math.round(arma.getDanoBase() * (1 + (0.075 * tipoDado)) * ticks * hab.getMultiplicadorDeDano());
+            
+			Label lblDanoPrev = new Label("Previsão (com " + arma.getNome() + "): " + minDano + " - " + maxDano);
+			lblDanoPrev.setStyle("-fx-text-fill: #ff6b6b; -fx-font-size: 12px;");
+            
+			content.getChildren().addAll(lblDanoMult, lblDanoPrev);
+		}
+
+		Label lblAoe = new Label("Alcance / Área de Efeito");
+		lblAoe.setStyle("-fx-text-fill: #00ffff; -fx-font-weight: bold; -fx-font-size: 12px;");
+		content.getChildren().addAll(lblAoe, criarGridAoE(hab.getTipoAlvo(), hab.getTamanhoArea(), hab.getAlcanceMaximo(), hab.getAnguloCone()));
+
+		dialogPane.setContent(content);
+		dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        
+		javafx.scene.control.Button okBtn = (javafx.scene.control.Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+		if (okBtn != null) {
+			okBtn.setStyle("-fx-background-color: #00ffff; -fx-text-fill: #000000; -fx-font-weight: bold; -fx-cursor: hand;");
+		}
+
+		dialog.showAndWait();
 	}
 
 	private void addPreviewStat(String text, String color) {
@@ -1390,6 +1524,95 @@ mainController.salvarEstadoJogadores();
 	// =============================================
 	// === UTILITÁRIOS
 	// =============================================
+
+	private javafx.scene.layout.GridPane criarGridAoE(TipoAlvo tipoAlvo, int tamanhoArea, int alcance, int anguloCone) {
+		javafx.scene.layout.GridPane grid = new javafx.scene.layout.GridPane();
+		grid.setAlignment(Pos.CENTER);
+		grid.setHgap(1);
+		grid.setVgap(1);
+		grid.setStyle("-fx-background-color: #0d0c15; -fx-padding: 5; -fx-border-color: #3a3a4a; -fx-border-radius: 4; -fx-border-width: 1;");
+		
+		int maxDist = alcance;
+		if (tipoAlvo == TipoAlvo.AREA || tipoAlvo == TipoAlvo.AREA_CIRCULAR || tipoAlvo == TipoAlvo.AREA_QUADRADA) {
+			maxDist = alcance + (tamanhoArea / 2);
+		}
+		if (maxDist > 12) maxDist = 12; // cap visual pra não quebrar a UI
+		int size = (maxDist * 2) + 1;
+		int center = size / 2;
+		
+		double totalSpace = 250.0;
+		double cellSize = (totalSpace - (size * 1.0)) / size;
+		if (cellSize > 14) cellSize = 14;
+		if (cellSize < 4) cellSize = 4;
+		
+		for (int y = 0; y < size; y++) {
+			for (int x = 0; x < size; x++) {
+				javafx.scene.layout.Region cell = new javafx.scene.layout.Region();
+				cell.setPrefSize(cellSize, cellSize);
+				cell.setMinSize(cellSize, cellSize);
+				cell.setMaxSize(cellSize, cellSize);
+				
+				String color = "#1a1a24"; // Base vazia
+				
+				if (x == center && y == center) {
+					color = "#3498db"; // Jogador
+				} else {
+					boolean afetado = false;
+					boolean isAlcance = false;
+					int dx = x - center;
+					int dy = y - center;
+					int absDx = Math.abs(dx);
+					int absDy = Math.abs(dy);
+					int dist = Math.max(absDx, absDy);
+					
+					if (dist <= alcance) {
+						isAlcance = true;
+					}
+					
+					if (tipoAlvo == TipoAlvo.INDIVIDUAL || tipoAlvo == TipoAlvo.MULTIPLOS) {
+						if (dx == 0 && dy == -alcance) afetado = true;
+					} else if (tipoAlvo == TipoAlvo.SI_MESMO) {
+						if (dx == 0 && dy == 0) afetado = true;
+					} else if (tipoAlvo == TipoAlvo.AREA || tipoAlvo == TipoAlvo.AREA_CIRCULAR) {
+						int raio = tamanhoArea / 2;
+						int targetY = -alcance;
+						int targetX = 0;
+						int localDx = Math.abs(dx - targetX);
+						int localDy = Math.abs(dy - targetY);
+						if (localDx + localDy <= raio) afetado = true;
+					} else if (tipoAlvo == TipoAlvo.AREA_QUADRADA) {
+						int raio = (tamanhoArea - 1) / 2;
+						int targetY = -alcance;
+						int targetX = 0;
+						int localDx = Math.abs(dx - targetX);
+						int localDy = Math.abs(dy - targetY);
+						if (localDx <= raio && localDy <= raio) afetado = true;
+					} else if (tipoAlvo == TipoAlvo.LINHA) {
+						int raioLargura = (tamanhoArea - 1) / 2;
+						if (dy < 0 && Math.abs(dy) <= alcance && absDx <= raioLargura) afetado = true;
+					} else if (tipoAlvo == TipoAlvo.CONE) {
+						if (dy < 0 && Math.abs(dy) <= alcance) {
+							double angle = Math.toDegrees(Math.atan2(Math.abs(dx), Math.abs(dy)));
+							if (angle <= anguloCone / 2.0) afetado = true;
+						}
+					}
+					
+					if (afetado) {
+						color = "#e74c3c"; // Vermelho alvo
+					} else if (isAlcance) {
+						color = "#2a2a34"; // Range indicator
+					}
+				}
+				
+				cell.setStyle("-fx-background-color: " + color + "; -fx-border-color: #3a3a4a; -fx-border-width: 1px;");
+				if (x == center && y == center) {
+					cell.setStyle("-fx-background-color: #3498db; -fx-border-color: #3a3a4a; -fx-border-width: 1px; -fx-background-radius: 50%;");
+				}
+				grid.add(cell, x, y);
+			}
+		}
+		return grid;
+	}
 
 	private String getIconeTipo(Item item) {
 		if (item instanceof Arma) return "\u2694";
