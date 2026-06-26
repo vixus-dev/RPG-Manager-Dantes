@@ -27,7 +27,11 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -1364,7 +1368,7 @@ mainController.salvarEstadoJogadores();
 		Label lblAoe = new Label("Alcance / Área de Efeito (Preview)");
 		lblAoe.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold; -fx-font-size: 11px;");
 		previewStatsPane.getChildren().add(lblAoe);
-		previewStatsPane.getChildren().add(criarGridAoE(arma.getTipoAlvo(), arma.getTamanhoArea(), arma.getAlcance(), arma.getAnguloCone()));
+		previewStatsPane.getChildren().add(criarGraficoAoE(arma.getTipoAlvo(), arma.getTamanhoArea(), arma.getAlcance(), arma.getAnguloCone()));
 
 		// Efeito on hit
 		if (arma.getNomeEfeitoOnHit() != null) {
@@ -1465,7 +1469,7 @@ mainController.salvarEstadoJogadores();
 
 		Label lblAoe = new Label("Alcance / Área de Efeito");
 		lblAoe.setStyle("-fx-text-fill: #00ffff; -fx-font-weight: bold; -fx-font-size: 12px;");
-		content.getChildren().addAll(lblAoe, criarGridAoE(hab.getTipoAlvo(), hab.getTamanhoArea(), hab.getAlcanceMaximo(), hab.getAnguloCone()));
+		content.getChildren().addAll(lblAoe, criarGraficoAoE(hab.getTipoAlvo(), hab.getTamanhoArea(), hab.getAlcanceMaximo(), hab.getAnguloCone()));
 
 		dialogPane.setContent(content);
 		dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
@@ -1525,93 +1529,114 @@ mainController.salvarEstadoJogadores();
 	// === UTILITÁRIOS
 	// =============================================
 
-	private javafx.scene.layout.GridPane criarGridAoE(TipoAlvo tipoAlvo, int tamanhoArea, int alcance, int anguloCone) {
-		javafx.scene.layout.GridPane grid = new javafx.scene.layout.GridPane();
-		grid.setAlignment(Pos.CENTER);
-		grid.setHgap(1);
-		grid.setVgap(1);
-		grid.setStyle("-fx-background-color: #0d0c15; -fx-padding: 5; -fx-border-color: #3a3a4a; -fx-border-radius: 4; -fx-border-width: 1;");
+	private javafx.scene.layout.Pane criarGraficoAoE(TipoAlvo tipoAlvo, int tamanhoArea, int alcance, int anguloCone) {
+		javafx.scene.layout.Pane pane = new javafx.scene.layout.Pane();
+		pane.setPrefSize(250, 180);
+		pane.setMinSize(250, 180);
+		pane.setStyle("-fx-background-color: #0d0c15; -fx-border-color: #3a3a4a; -fx-border-radius: 4; -fx-border-width: 1;");
+
+		double centerX = 125.0;
+		double playerY = 150.0;
 		
 		int maxDist = alcance;
 		if (tipoAlvo == TipoAlvo.AREA || tipoAlvo == TipoAlvo.AREA_CIRCULAR || tipoAlvo == TipoAlvo.AREA_QUADRADA) {
 			maxDist = alcance + (tamanhoArea / 2);
 		}
-		if (maxDist > 12) maxDist = 12; // cap visual pra não quebrar a UI
-		int size = (maxDist * 2) + 1;
-		int center = size / 2;
+		if (maxDist < 5) maxDist = 5;
 		
-		double totalSpace = 250.0;
-		double cellSize = (totalSpace - (size * 1.0)) / size;
-		if (cellSize > 14) cellSize = 14;
-		if (cellSize < 4) cellSize = 4;
+		double pixelPerUnit = 120.0 / maxDist; // 120 pixels available upwards
 		
-		for (int y = 0; y < size; y++) {
-			for (int x = 0; x < size; x++) {
-				javafx.scene.layout.Region cell = new javafx.scene.layout.Region();
-				cell.setPrefSize(cellSize, cellSize);
-				cell.setMinSize(cellSize, cellSize);
-				cell.setMaxSize(cellSize, cellSize);
-				
-				String color = "#1a1a24"; // Base vazia
-				
-				if (x == center && y == center) {
-					color = "#3498db"; // Jogador
-				} else {
-					boolean afetado = false;
-					boolean isAlcance = false;
-					int dx = x - center;
-					int dy = y - center;
-					int absDx = Math.abs(dx);
-					int absDy = Math.abs(dy);
-					int dist = Math.max(absDx, absDy);
-					
-					if (dist <= alcance) {
-						isAlcance = true;
-					}
-					
-					if (tipoAlvo == TipoAlvo.INDIVIDUAL || tipoAlvo == TipoAlvo.MULTIPLOS) {
-						if (dx == 0 && dy == -alcance) afetado = true;
-					} else if (tipoAlvo == TipoAlvo.SI_MESMO) {
-						if (dx == 0 && dy == 0) afetado = true;
-					} else if (tipoAlvo == TipoAlvo.AREA || tipoAlvo == TipoAlvo.AREA_CIRCULAR) {
-						int raio = tamanhoArea / 2;
-						int targetY = -alcance;
-						int targetX = 0;
-						int localDx = Math.abs(dx - targetX);
-						int localDy = Math.abs(dy - targetY);
-						if (localDx + localDy <= raio) afetado = true;
-					} else if (tipoAlvo == TipoAlvo.AREA_QUADRADA) {
-						int raio = (tamanhoArea - 1) / 2;
-						int targetY = -alcance;
-						int targetX = 0;
-						int localDx = Math.abs(dx - targetX);
-						int localDy = Math.abs(dy - targetY);
-						if (localDx <= raio && localDy <= raio) afetado = true;
-					} else if (tipoAlvo == TipoAlvo.LINHA) {
-						int raioLargura = (tamanhoArea - 1) / 2;
-						if (dy < 0 && Math.abs(dy) <= alcance && absDx <= raioLargura) afetado = true;
-					} else if (tipoAlvo == TipoAlvo.CONE) {
-						if (dy < 0 && Math.abs(dy) <= alcance) {
-							double angle = Math.toDegrees(Math.atan2(Math.abs(dx), Math.abs(dy)));
-							if (angle <= anguloCone / 2.0) afetado = true;
-						}
-					}
-					
-					if (afetado) {
-						color = "#e74c3c"; // Vermelho alvo
-					} else if (isAlcance) {
-						color = "#2a2a34"; // Range indicator
-					}
-				}
-				
-				cell.setStyle("-fx-background-color: " + color + "; -fx-border-color: #3a3a4a; -fx-border-width: 1px;");
-				if (x == center && y == center) {
-					cell.setStyle("-fx-background-color: #3498db; -fx-border-color: #3a3a4a; -fx-border-width: 1px; -fx-background-radius: 50%;");
-				}
-				grid.add(cell, x, y);
-			}
+		// Indicador de alcance máximo (Círculo tracejado)
+		Circle rangeCircle = new Circle(centerX, playerY, alcance * pixelPerUnit);
+		rangeCircle.setFill(javafx.scene.paint.Color.TRANSPARENT);
+		rangeCircle.setStroke(javafx.scene.paint.Color.web("#3a3a4a"));
+		rangeCircle.setStrokeWidth(1);
+		rangeCircle.getStrokeDashArray().addAll(4d, 4d);
+		pane.getChildren().add(rangeCircle);
+		
+		// Jogador no centro
+		Circle player = new Circle(centerX, playerY, 5);
+		player.setFill(javafx.scene.paint.Color.web("#3498db"));
+		player.setStroke(javafx.scene.paint.Color.web("#000000"));
+		pane.getChildren().add(player);
+		
+		double targetY = playerY - (alcance * pixelPerUnit);
+		
+		javafx.scene.paint.Color aoeColor = javafx.scene.paint.Color.web("#e74c3c", 0.5);
+		javafx.scene.paint.Color aoeStroke = javafx.scene.paint.Color.web("#ff6b6b");
+		
+		if (tipoAlvo == TipoAlvo.INDIVIDUAL || tipoAlvo == TipoAlvo.MULTIPLOS) {
+			Circle target = new Circle(centerX, targetY, 6);
+			target.setFill(aoeColor);
+			target.setStroke(aoeStroke);
+			
+			Line line = new Line(centerX, playerY, centerX, targetY);
+			line.setStroke(javafx.scene.paint.Color.web("#e74c3c", 0.4));
+			line.getStrokeDashArray().addAll(3d, 3d);
+			
+			pane.getChildren().addAll(line, target);
+			
+		} else if (tipoAlvo == TipoAlvo.AREA || tipoAlvo == TipoAlvo.AREA_CIRCULAR) {
+			double radiusPixels = (tamanhoArea / 2.0) * pixelPerUnit;
+			Circle aoe = new Circle(centerX, targetY, radiusPixels);
+			aoe.setFill(aoeColor);
+			aoe.setStroke(aoeStroke);
+			
+			Line line = new Line(centerX, playerY, centerX, targetY);
+			line.setStroke(javafx.scene.paint.Color.web("#e74c3c", 0.4));
+			line.getStrokeDashArray().addAll(3d, 3d);
+			
+			pane.getChildren().addAll(line, aoe);
+			
+		} else if (tipoAlvo == TipoAlvo.AREA_QUADRADA) {
+			double sizePixels = Math.max(1, tamanhoArea * pixelPerUnit);
+			Rectangle aoe = new Rectangle(
+				centerX - sizePixels / 2.0, 
+				targetY - sizePixels / 2.0, 
+				sizePixels, 
+				sizePixels
+			);
+			aoe.setFill(aoeColor);
+			aoe.setStroke(aoeStroke);
+			
+			Line line = new Line(centerX, playerY, centerX, targetY);
+			line.setStroke(javafx.scene.paint.Color.web("#e74c3c", 0.4));
+			line.getStrokeDashArray().addAll(3d, 3d);
+			
+			pane.getChildren().addAll(line, aoe);
+			
+		} else if (tipoAlvo == TipoAlvo.LINHA) {
+			double widthPixels = Math.max(4.0, (tamanhoArea * pixelPerUnit));
+			Rectangle aoe = new Rectangle(
+				centerX - widthPixels / 2.0, 
+				targetY, 
+				widthPixels, 
+				alcance * pixelPerUnit
+			);
+			aoe.setFill(aoeColor);
+			aoe.setStroke(aoeStroke);
+			pane.getChildren().add(aoe);
+			
+		} else if (tipoAlvo == TipoAlvo.CONE) {
+			double radius = alcance * pixelPerUnit;
+			Arc aoe = new Arc(
+				centerX, playerY, 
+				radius, radius, 
+				90 - (anguloCone / 2.0), anguloCone
+			);
+			aoe.setType(ArcType.ROUND);
+			aoe.setFill(aoeColor);
+			aoe.setStroke(aoeStroke);
+			pane.getChildren().add(aoe);
+			
+		} else if (tipoAlvo == TipoAlvo.SI_MESMO) {
+			Circle aoe = new Circle(centerX, playerY, 12);
+			aoe.setFill(aoeColor);
+			aoe.setStroke(aoeStroke);
+			pane.getChildren().add(aoe);
 		}
-		return grid;
+		
+		return pane;
 	}
 
 	private String getIconeTipo(Item item) {
