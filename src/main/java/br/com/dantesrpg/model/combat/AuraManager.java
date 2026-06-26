@@ -228,6 +228,80 @@ public class AuraManager {
 			}
 		}
 
+		// --- AURA DO INEFÁVEL SOL (Escanor / Sol) ---
+		Personagem sol = estado.getCombatentes().stream()
+				.filter(p -> p.isAtivoNoCombate() && p.getNome().contains("Sol"))
+				.findFirst()
+				.orElse(null);
+
+		if (sol != null && sol.getPropriedades().stream().anyMatch(prop -> prop.startsWith("AURA_INEFAVEL_SOL:"))) {
+			int raioSol = 3;
+			int sx = sol.getPosX() + (sol.getTamanhoX() / 2);
+			int sy = sol.getPosY() + (sol.getTamanhoY() / 2);
+
+			String nomeConjurador = sol.getPropriedades().stream()
+					.filter(prop -> prop.startsWith("AURA_INEFAVEL_SOL:"))
+					.findFirst().get().split(":")[1].trim();
+
+			Personagem conjurador = estado.getCombatentes().stream().filter(p -> p.getNome().equals(nomeConjurador)).findFirst().orElse(null);
+			String faccaoSol = conjurador != null ? conjurador.getFaccao() : sol.getFaccao();
+			boolean ondaAtiva = sol.getEfeitosAtivos().containsKey("Onda de Calor (Ativa)");
+
+			for (Personagem p : estado.getCombatentes()) {
+				if (!p.isAtivoNoCombate() || p.equals(sol)) continue;
+
+				int dist = Math.max(Math.abs(p.getPosX() - sx), Math.abs(p.getPosY() - sy));
+				boolean temQueimadura = p.getEfeitosAtivos().containsKey("Queimadura Inefável");
+				boolean temMeioDia = p.getEfeitosAtivos().containsKey("Meio Dia");
+
+				if (dist <= raioSol && ondaAtiva) {
+					if (p.getNome().equals("Escanor") || (conjurador != null && p.equals(conjurador))) {
+						if (!temMeioDia) {
+							Efeito meioDia = new Efeito("Meio Dia", TipoEfeito.BUFF, 9999, new HashMap<>(), 0, 0);
+							p.adicionarEfeito(meioDia);
+							p.recalcularAtributosEstatisticas();
+							System.out.println(">>> " + p.getNome() + " recebe a benção do Meio Dia.");
+						}
+					} else if (p.getFaccao() != null && !p.getFaccao().equals(faccaoSol)) {
+						if (!temQueimadura) {
+							Efeito queimadura = new Efeito("Queimadura Inefável", TipoEfeito.DEBUFF, 9999, new HashMap<>(), 0, 0);
+							p.adicionarEfeito(queimadura);
+							p.recalcularAtributosEstatisticas();
+							System.out.println(">>> " + p.getNome() + " está queimando pela presença do Sol.");
+						}
+					}
+				} else {
+					if (temMeioDia) {
+						p.removerEfeito("Meio Dia");
+						p.recalcularAtributosEstatisticas();
+					}
+					if (temQueimadura) {
+						p.removerEfeito("Queimadura Inefável");
+						p.recalcularAtributosEstatisticas();
+					}
+				}
+			}
+		} else {
+			for (Personagem p : estado.getCombatentes()) {
+				if (p.getEfeitosAtivos().containsKey("Meio Dia")) {
+					p.removerEfeito("Meio Dia");
+					p.recalcularAtributosEstatisticas();
+				}
+				if (p.getEfeitosAtivos().containsKey("Queimadura Inefável")) {
+					p.removerEfeito("Queimadura Inefável");
+					p.recalcularAtributosEstatisticas();
+				}
+			}
+			
+			// Remove the visual domain if the sun doesn't have the effect or disappeared
+			if (getController() != null && sol != null && !sol.getEfeitosAtivos().containsKey("Onda de Calor (Ativa)")) {
+				Dominio domain = getController().getDominio("heatWave_" + sol.getNome());
+				if (domain != null) {
+					getController().removerDominio(domain.getId());
+				}
+			}
+		}
+
 		// --- VÍNCULO DE SELO ---
 		Map<Personagem, Integer> contagemSelos = new HashMap<>();
 

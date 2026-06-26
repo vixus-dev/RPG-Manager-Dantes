@@ -4019,5 +4019,78 @@
     "efeitoAoAcertar": "Queimação",
     "chanceEfeito": 0.25,
     "municaoMaxima": 6
+  },
+  "Rita": {
+    "nome": "Rita",
+    "categoria": "Machado",
+    "descricao": "O Inefavel poder do sol na palma da mão",
+    "raridade": "MITICO",
+    "andar": "4",
+    "valorMoedas": 50.0,
+    "tipoMoeda": "OURO",
+    "danoBase": 35.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "modificadoresDeAtributo": {
+      "FORCA": 38.0,
+      "INSPIRACAO" : 4,
+      "ENDURANCE" : 12,
+      "CARISMA" : 12,
+      "INTELIGENCIA": 10,
+      "DESTREZA" : 12,
+      "SORTE" : 10,
+      "SAGACIDADE" : 20,
+      "TOPOR" : 0,
+      "PERCEPCAO" : 12
+    },
+    "custoTU": 90.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "CONE",
+    "tamanhoArea": 135.0,
+    "efeitoAoAcertar": "Queimadura",
+    "chanceEfeito": 0.15,
+    "modificadoresStatus": {
+      "DANO_CRITICO": 0.50,
+      "TAXA_CRITICA": 0.25
+    },
+    "habilidadesConcedidas": [
+      "Auto-Guarda",
+      "Bash Strike",
+      "Corte de Apófis"
+    ],
+    "wielding": 2.0
+  },
+  "Paz & Guerra": {
+    "nome": "Paz & Guerra",
+    "categoria": "Espada",
+    "descricao": "Um par de lâminas belissimas, lâminas que podem cortar o universo",
+    "raridade": "MITICO",
+    "andar": "9",
+    "valorMoedas": 50.0,
+    "tipoMoeda": "OURO",
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "modificadoresDeAtributo": {
+      "FORCA": 178.0,
+      "INSPIRACAO" : 4,
+      "ENDURANCE" : 12,
+      "CARISMA" : 12,
+      "INTELIGENCIA": 10,
+      "DESTREZA" : 12,
+      "SORTE" : 10,
+      "SAGACIDADE" : 20,
+      "TOPOR" : 0,
+      "PERCEPCAO" : 12
+    },
+    "custoTU": 40.0,
+    "tipo": "Melee",
+    "alcance": 5.0,
+    "modificadoresStatus": {
+      "DANO_CRITICO": 100.00,
+      "TAXA_CRITICA": 0.25
+    },
+    "wielding": 2.0
   }
 }

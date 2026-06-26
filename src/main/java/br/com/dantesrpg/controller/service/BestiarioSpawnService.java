@@ -333,5 +333,8 @@ public class BestiarioSpawnService {
 		if (idMonstro.equalsIgnoreCase("Eremita") || monstro.getNome().contains("RockFeller")) {
 			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.EspadaDeMilSois());
 		}
+		if (idMonstro.equalsIgnoreCase("Escanor")) {
+			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.InefavelSol());
+		}
 	}
 }

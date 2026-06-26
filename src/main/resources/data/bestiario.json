@@ -928,15 +928,28 @@
         "nome": "Escanor - O Sol Cruel",
         "raca": "Corte Infernal",
         "grau": 2,
-        "vida": 31500,
+        "vida": 35000,
         "mana": 11,
-        "agilidade": 35,
+        "agilidade": 10,
         "defesa": 0,
-        "arma": "cadete Estelar",
-        "xpReward": 50,
+        "arma": "Rita",
+        "xpReward": 2500,
         "peso": "muito pesado",
         "tamanhoX": 2,
         "tamanhoY": 2,
+        "poderoso": true
+    },
+	"O mais forte": {
+        "nome": "O mais forte",
+        "raca": "Arcanjo",
+        "grau": 5,
+        "vida": 500000,
+        "mana": 10,
+        "agilidade": 20,
+        "defesa": 0,
+        "arma": "Paz & Guerra",
+        "xpReward": 50,
+        "peso": "muito pesado",
         "poderoso": true
     }
 }
