@@ -862,5 +862,19 @@
 		"arma": "cadete Estelar",
 		"xpReward": 50,
 		"peso": "medio_padrao"
+	},
+	"Escanor": {
+		"nome": "Escanor - O Sol Cruel",
+		"raca": "Corte Infernal",
+		"grau": 2,
+		"vida": 375,
+		"mana": 11,
+		"agilidade": 35,
+		"defesa": 0,
+		"arma": "cadete Estelar",
+		"xpReward": 50,
+		"peso": "muito pesado",
+		"tamanhoX": 2,
+		"tamanhoY": 2
 	}
 }

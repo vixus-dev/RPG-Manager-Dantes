@@ -3177,6 +3177,11 @@
       "DANO_CRITICO": 0.4,
       "TAXA_CRITICA": 0.1
     },
+    "habilidadesConcedidas": [
+      "Auto-Guarda",
+      "Bash Strike",
+      "Corte de Apófis"
+    ],
     "wielding": 2.0
   },
   "Morte Solar": {
