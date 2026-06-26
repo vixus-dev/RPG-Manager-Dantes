@@ -515,6 +515,8 @@ public class ReforcosDialogService {
 		p.setManaMaxima(mana);
 		p.setManaAtual(mana);
 		
+		br.com.dantesrpg.controller.service.BestiarioSpawnService.aplicarFantasmaNobreMonstro(nome, p);
+		
 		return p;
 	}
 

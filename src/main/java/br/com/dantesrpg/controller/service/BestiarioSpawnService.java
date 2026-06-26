@@ -306,7 +306,7 @@ public class BestiarioSpawnService {
 		}
 	}
 
-	private void aplicarFantasmaNobreMonstro(String idMonstro, Personagem monstro) {
+	public static void aplicarFantasmaNobreMonstro(String idMonstro, Personagem monstro) {
 		if (idMonstro.equalsIgnoreCase("morghul")) {
 			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.Ritual());
 		}
@@ -323,7 +323,7 @@ public class BestiarioSpawnService {
 		if (idMonstro.equalsIgnoreCase("Lua Profana")) {
 			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.LuaSombria());
 		}
-		if (idMonstro.equalsIgnoreCase("Eremita")) {
+		if (idMonstro.equalsIgnoreCase("Eremita") || monstro.getNome().contains("RockFeller")) {
 			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.EspadaDeMilSois());
 		}
 	}

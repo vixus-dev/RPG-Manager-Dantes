@@ -59,14 +59,12 @@ public class EspadaDeMilSois extends FantasmaNobre {
 			CombatManager manager) {
 
 		// Ganha 100 de escudo de sangue
-		conjurador.adicionarEscudoSangue(100.0);
+		conjurador.adicionarEscudoSangue(1000.0);
 
 		// Atira um golpe com multiplicador de 10x o dano em um inimigo (AOE)
 		if (alvos != null && !alvos.isEmpty()) {
-			for (Personagem alvo : alvos) {
-				double danoFinal = DamageCalculator.calcularDanoBasico(conjurador, alvo, ModoAtaque.NORMAL, false, estado, input) * 10.0;
-				DamageApplicator.aplicarDanoAoAlvo(conjurador, alvo, danoFinal, false, getNome(), estado, manager, input);
-			}
+			int rolagem = 0;
+			manager.getDamageCalculator().resolverDanoPadrao(conjurador, conjurador.getArmaEquipada(), rolagem, alvos, 30.0, br.com.dantesrpg.model.enums.TipoAcao.FANTASMA_NOBRE, null, estado, input);
 		}
 	}
 }
