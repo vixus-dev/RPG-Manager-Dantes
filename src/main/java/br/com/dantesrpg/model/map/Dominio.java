@@ -133,6 +133,9 @@ public class Dominio {
 	 * movimento deve ser BLOQUEADO.
 	 */
 	public boolean bloqueiaMovimento(int origemX, int origemY, int destinoX, int destinoY) {
+		if (id != null && id.startsWith("heatWave_")) {
+			return false; // A onda de calor é uma zona climática e não uma barreira física/mágica
+		}
 		boolean origemDentro = contemCoordenada(origemX, origemY);
 		boolean destinoDentro = contemCoordenada(destinoX, destinoY);
 		return origemDentro != destinoDentro;

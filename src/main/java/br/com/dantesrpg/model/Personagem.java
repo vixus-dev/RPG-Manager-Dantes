@@ -54,6 +54,7 @@ public class Personagem {
 	private double escudoSangueMaximo;
 	private double escudoDivinoAtual;
 	private double escudoDivinoMaximo;
+	private double escudoInfernalAtual = 0.0;
 	private int armaduraTotal;
 	private double reducaoDanoArmadura;
 
@@ -422,6 +423,11 @@ public class Personagem {
 
 		// Contratos de Vida: reduzem teto de HP máximo
 		this.vidaMaxima -= br.com.dantesrpg.model.util.ContratoDeVidaUtils.getReducaoHpMaximoTotal(this);
+
+		// Escudo Infernal: Reduz HP máximo por ponto, até no mínimo 1.
+		if (this.escudoInfernalAtual > 0) {
+			this.vidaMaxima -= this.escudoInfernalAtual;
+		}
 	}
 
 	private void clampValoresFinais() {
@@ -878,7 +884,7 @@ public class Personagem {
 	 * Usado para exibição agregada e compatibilidade com chamadas legadas.
 	 */
 	public double getEscudoAtual() {
-		return escudoNormalAtual + escudoSangueAtual + escudoDivinoAtual;
+		return escudoNormalAtual + escudoSangueAtual + escudoDivinoAtual + escudoInfernalAtual;
 	}
 
 	public double getEscudoNormalAtual() {
@@ -1165,12 +1171,22 @@ public class Personagem {
 		recalcularSeBonusOvertimeDependeDoEscudo();
 	}
 
-	public void setEscudoNormalMaximo(double v) {
-		this.escudoNormalMaximo = Math.max(0.0, v);
+	public void setEscudoNormalMaximo(double escudoMax) {
+		this.escudoNormalMaximo = escudoMax;
+		recalcularAtributosEstatisticas();
 	}
 
 	public void setEscudoSangueMaximo(double v) {
 		this.escudoSangueMaximo = Math.max(0.0, v);
+	}
+
+	public double getEscudoInfernalAtual() {
+		return escudoInfernalAtual;
+	}
+
+	public void setEscudoInfernalAtual(double escudoInfernalAtual) {
+		this.escudoInfernalAtual = Math.max(0, escudoInfernalAtual);
+		recalcularAtributosEstatisticas();
 	}
 
 	public void setEscudoDivinoAtual(double v) {

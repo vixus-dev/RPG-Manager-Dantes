@@ -36,13 +36,12 @@ public class OndaDeCalor extends Habilidade {
             
             Dominio heatWave = new Dominio(dominioId, "Heat Wave", conjurador,
                     cx, cy, 9, "zona-heatwave");
-            heatWave.setTexturePath("/effects/fire_ground_overlay.png"); // Efeito PNG de chão
+            heatWave.setTexturePath("/effects/sun.png"); // Efeito PNG de chão
             
             // Ativa o domínio no mapa (atualizando visual e permitindo sobreposição)
             manager.getDomainManager().ativarDominioNoMapa(heatWave, conjurador, estado);
         }
         
-        System.out.println(">>> " + conjurador.getNome() + " ativou Onda de calor!");
         manager.atualizarAuras(estado);
     }
 }

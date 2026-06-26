@@ -222,9 +222,22 @@ public class DamageApplicator {
 		double danoRestante = dano;
 
 		if (!ignoraEscudo) {
-			// --- ESCUDO DIVINO (primeiro de tudo, recebe o dano já reduzido) ---
+			// --- ESCUDO INFERNAL (prioridade máxima, recebe o dano já reduzido) ---
+			double escudoInfernal = alvo.getEscudoInfernalAtual();
+			if (escudoInfernal > 0) {
+				if (danoRestante >= escudoInfernal) {
+					danoRestante -= escudoInfernal;
+					alvo.setEscudoInfernalAtual(0);
+					System.out.println(">>> Escudo Infernal QUEBROU! Dano residual: " + (int) danoRestante);
+				} else {
+					alvo.setEscudoInfernalAtual(escudoInfernal - danoRestante);
+					danoRestante = 0;
+				}
+			}
+
+			// --- ESCUDO DIVINO (recebe o dano já reduzido) ---
 			double escudoDivino = alvo.getEscudoDivinoAtual();
-			if (escudoDivino > 0) {
+			if (danoRestante > 0 && escudoDivino > 0) {
 				if (danoRestante >= escudoDivino) {
 					danoRestante -= escudoDivino;
 					alvo.setEscudoDivinoAtual(0);

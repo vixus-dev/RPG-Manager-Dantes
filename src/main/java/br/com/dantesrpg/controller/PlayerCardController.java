@@ -51,6 +51,7 @@ public class PlayerCardController {
 	private Polygon bloodShieldBarPolygon;
 	@FXML
 	private Polygon divineShieldBarPolygon;
+	private Polygon infernalShieldBarPolygon;
 	@FXML
 	private Polygon contractBarPolygon;
 	@FXML
@@ -110,6 +111,26 @@ public class PlayerCardController {
 				diamondShape.getStyleClass().add("diamond-shape-player");
 			else
 				diamondShape.getStyleClass().add("diamond-shape-enemy");
+		}
+
+		// Garante que o retrato, a moldura e os labels fiquem sempre no topo do Z-index (à frente de quaisquer barras de status/escudos)
+		if (diamondShape != null) {
+			diamondShape.toFront();
+		}
+		if (imgPersonagem != null && imgPersonagem.getParent() != null) {
+			imgPersonagem.getParent().toFront();
+		}
+		if (labelNome != null) {
+			labelNome.toFront();
+		}
+		if (labelHPShieldText != null) {
+			labelHPShieldText.toFront();
+		}
+		if (labelMPText != null) {
+			labelMPText.toFront();
+		}
+		if (cardEffectsContainer != null) {
+			cardEffectsContainer.toFront();
 		}
 
 		javafx.application.Platform.runLater(() -> {
@@ -272,7 +293,8 @@ public class PlayerCardController {
 		double divineAtual = personagem.getEscudoDivinoAtual();
 		double divineMax = personagem.getEscudoDivinoMaximo();
 
-		double capTotal = divineMax + sangueMax + normalMax; // "Limite flexível" combinado
+		double infernalAtual = personagem.getEscudoInfernalAtual();
+		double capTotal = divineMax + sangueMax + normalMax + infernalAtual; // "Limite flexível" combinado
 
 		if (capTotal <= 0) {
 			shieldTrack.setVisible(false);
@@ -285,6 +307,10 @@ public class PlayerCardController {
 			if (divineShieldBarPolygon != null) {
 				divineShieldBarPolygon.setVisible(false);
 				divineShieldBarPolygon.getPoints().clear();
+			}
+			if (infernalShieldBarPolygon != null) {
+				infernalShieldBarPolygon.setVisible(false);
+				infernalShieldBarPolygon.getPoints().clear();
 			}
 			return;
 		}
@@ -300,14 +326,39 @@ public class PlayerCardController {
 		double maxWidthRect = endXRectBase - startX;
 		double maxWidthAngled = endXAngledBase - startX;
 
-		// 1. DIVINO (cor #cdf8fa) — segmento à esquerda, proporcional a divineAtual/capTotal
-		if (divineShieldBarPolygon != null) {
-			if (divineAtual > 0) {
-				double progress = divineAtual / capTotal;
+		// 0. INFERNAL (Laranja/Fogo)
+		if (infernalShieldBarPolygon == null && shieldBarPolygon != null && shieldBarPolygon.getParent() instanceof javafx.scene.layout.Pane) {
+			infernalShieldBarPolygon = new Polygon();
+			infernalShieldBarPolygon.setStyle("-fx-fill: linear-gradient(to right, #ff4500, #ff8c00);");
+			((javafx.scene.layout.Pane) shieldBarPolygon.getParent()).getChildren().add(infernalShieldBarPolygon);
+			infernalShieldBarPolygon.toFront();
+		}
+		
+		if (infernalShieldBarPolygon != null) {
+			if (infernalAtual > 0) {
+				double progress = infernalAtual / capTotal;
 				double endRect = startX + maxWidthRect * progress;
 				double endAngled = startX + maxWidthAngled * progress;
-				divineShieldBarPolygon.getPoints().setAll(startX, topY, endRect, topY, endAngled, bottomY, startX,
-						bottomY);
+				infernalShieldBarPolygon.getPoints().setAll(startX, topY, endRect, topY, endAngled, bottomY, startX, bottomY);
+				infernalShieldBarPolygon.setVisible(true);
+			} else {
+				infernalShieldBarPolygon.setVisible(false);
+				infernalShieldBarPolygon.getPoints().clear();
+			}
+		}
+
+		// 1. DIVINO (cor #cdf8fa) — posicionado após o espaço do infernal
+		if (divineShieldBarPolygon != null) {
+			if (divineAtual > 0) {
+				double offsetPct = (capTotal > 0) ? (infernalAtual / capTotal) : 0.0;
+				double widthPct = divineAtual / capTotal;
+				double startPct = offsetPct;
+				double endPct = offsetPct + widthPct;
+				double segStartRect = startX + maxWidthRect * startPct;
+				double segStartAngled = startX + maxWidthAngled * startPct;
+				double segEndRect = startX + maxWidthRect * endPct;
+				double segEndAngled = startX + maxWidthAngled * endPct;
+				divineShieldBarPolygon.getPoints().setAll(segStartRect, topY, segEndRect, topY, segEndAngled, bottomY, segStartAngled, bottomY);
 				divineShieldBarPolygon.setVisible(true);
 			} else {
 				divineShieldBarPolygon.setVisible(false);
@@ -315,10 +366,10 @@ public class PlayerCardController {
 			}
 		}
 
-		// 2. SANGUE (vermelho) — posicionado após o espaço reservado do divino
+		// 2. SANGUE (vermelho) — posicionado após o espaço reservado do infernal + divino
 		if (bloodShieldBarPolygon != null) {
 			if (sangueAtual > 0) {
-				double offsetPct = (capTotal > 0) ? (divineMax / capTotal) : 0.0;
+				double offsetPct = (capTotal > 0) ? ((infernalAtual + divineMax) / capTotal) : 0.0;
 				double widthPct = sangueAtual / capTotal;
 				double startPct = offsetPct;
 				double endPct = offsetPct + widthPct;
@@ -326,8 +377,7 @@ public class PlayerCardController {
 				double segStartAngled = startX + maxWidthAngled * startPct;
 				double segEndRect = startX + maxWidthRect * endPct;
 				double segEndAngled = startX + maxWidthAngled * endPct;
-				bloodShieldBarPolygon.getPoints().setAll(segStartRect, topY, segEndRect, topY, segEndAngled, bottomY,
-						segStartAngled, bottomY);
+				bloodShieldBarPolygon.getPoints().setAll(segStartRect, topY, segEndRect, topY, segEndAngled, bottomY, segStartAngled, bottomY);
 				bloodShieldBarPolygon.setVisible(true);
 			} else {
 				bloodShieldBarPolygon.setVisible(false);
@@ -335,9 +385,9 @@ public class PlayerCardController {
 			}
 		}
 
-		// 3. NORMAL (azul) — posicionado após o espaço reservado do divino + sangue
+		// 3. NORMAL (azul) — posicionado após o espaço reservado
 		if (normalAtual > 0) {
-			double offsetPct = (capTotal > 0) ? ((divineMax + sangueMax) / capTotal) : 0.0;
+			double offsetPct = (capTotal > 0) ? ((infernalAtual + divineMax + sangueMax) / capTotal) : 0.0;
 			double widthPct = normalAtual / capTotal;
 			double startPct = offsetPct;
 			double endPct = offsetPct + widthPct;
@@ -345,8 +395,7 @@ public class PlayerCardController {
 			double segStartAngled = startX + maxWidthAngled * startPct;
 			double segEndRect = startX + maxWidthRect * endPct;
 			double segEndAngled = startX + maxWidthAngled * endPct;
-			shieldBarPolygon.getPoints().setAll(segStartRect, topY, segEndRect, topY, segEndAngled, bottomY,
-					segStartAngled, bottomY);
+			shieldBarPolygon.getPoints().setAll(segStartRect, topY, segEndRect, topY, segEndAngled, bottomY, segStartAngled, bottomY);
 			shieldBarPolygon.setVisible(true);
 		} else {
 			shieldBarPolygon.setVisible(false);

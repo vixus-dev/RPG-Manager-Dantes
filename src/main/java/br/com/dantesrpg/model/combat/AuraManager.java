@@ -10,7 +10,9 @@ import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.fantasmasnobres.TheMastersCall;
 import br.com.dantesrpg.model.map.Dominio;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -230,44 +232,66 @@ public class AuraManager {
 
 		// --- AURA DO INEFÁVEL SOL (Escanor / Sol) ---
 		Personagem sol = estado.getCombatentes().stream()
-				.filter(p -> p.isAtivoNoCombate() && p.getNome().contains("Sol"))
+				.filter(p -> p.isAtivoNoCombate() && p.getPropriedades().stream().anyMatch(prop -> prop.startsWith("AURA_INEFAVEL_SOL:")))
 				.findFirst()
 				.orElse(null);
 
-		if (sol != null && sol.getPropriedades().stream().anyMatch(prop -> prop.startsWith("AURA_INEFAVEL_SOL:"))) {
-			int raioSol = 3;
+		double totalEscudoInfernalGlobal = estado.getCombatentes().stream()
+				.filter(Personagem::isAtivoNoCombate)
+				.mapToDouble(Personagem::getEscudoInfernalAtual)
+				.sum();
+
+		if (sol != null) {
 			int sx = sol.getPosX() + (sol.getTamanhoX() / 2);
 			int sy = sol.getPosY() + (sol.getTamanhoY() / 2);
 
 			String nomeConjurador = sol.getPropriedades().stream()
 					.filter(prop -> prop.startsWith("AURA_INEFAVEL_SOL:"))
-					.findFirst().get().split(":")[1].trim();
+					.findFirst()
+					.map(prop -> prop.split(":")[1].trim())
+					.orElse("");
 
 			Personagem conjurador = estado.getCombatentes().stream().filter(p -> p.getNome().equals(nomeConjurador)).findFirst().orElse(null);
 			String faccaoSol = conjurador != null ? conjurador.getFaccao() : sol.getFaccao();
 			boolean ondaAtiva = sol.getEfeitosAtivos().containsKey("Onda de Calor (Ativa)");
 
+			Dominio dominioSol = getController() != null ? getController().getDominio("heatWave_" + sol.getNome()) : null;
+
 			for (Personagem p : estado.getCombatentes()) {
 				if (!p.isAtivoNoCombate() || p.equals(sol)) continue;
 
 				int dist = Math.max(Math.abs(p.getPosX() - sx), Math.abs(p.getPosY() - sy));
+				boolean dentro = (dominioSol != null) ? dominioSol.contemPersonagem(p) : (dist <= 3);
+
 				boolean temQueimadura = p.getEfeitosAtivos().containsKey("Queimadura Inefável");
 				boolean temMeioDia = p.getEfeitosAtivos().containsKey("Meio Dia");
 
-				if (dist <= raioSol && ondaAtiva) {
+				if (dentro && ondaAtiva) {
 					if (p.getNome().equals("Escanor") || (conjurador != null && p.equals(conjurador))) {
 						if (!temMeioDia) {
 							Efeito meioDia = new Efeito("Meio Dia", TipoEfeito.BUFF, 9999, new HashMap<>(), 0, 0);
 							p.adicionarEfeito(meioDia);
-							p.recalcularAtributosEstatisticas();
+							temMeioDia = true;
 							System.out.println(">>> " + p.getNome() + " recebe a benção do Meio Dia.");
 						}
-					} else if (p.getFaccao() != null && !p.getFaccao().equals(faccaoSol)) {
-						if (!temQueimadura) {
-							Efeito queimadura = new Efeito("Queimadura Inefável", TipoEfeito.DEBUFF, 9999, new HashMap<>(), 0, 0);
-							p.adicionarEfeito(queimadura);
+						if (temMeioDia) {
+							Efeito meioDia = p.getEfeitosAtivos().get("Meio Dia");
+							if (meioDia != null && meioDia.getModificadores() != null) {
+								meioDia.getModificadores().put("DANO_BONUS_PERCENTUAL", 0.05 * totalEscudoInfernalGlobal);
+							}
 							p.recalcularAtributosEstatisticas();
-							System.out.println(">>> " + p.getNome() + " está queimando pela presença do Sol.");
+						}
+					} else {
+						// Comparação de facção segura contra nulos
+						boolean mesmaFaccao = (p.getFaccao() == null && faccaoSol == null) 
+								|| (p.getFaccao() != null && p.getFaccao().equals(faccaoSol));
+						if (!mesmaFaccao) {
+							if (!temQueimadura) {
+								Efeito queimadura = new Efeito("Queimadura Inefável", TipoEfeito.DEBUFF, 9999, new HashMap<>(), 0, 20);
+								p.adicionarEfeito(queimadura);
+								p.recalcularAtributosEstatisticas();
+								System.out.println(">>> " + p.getNome() + " está queimando pela presença do Sol.");
+							}
 						}
 					}
 				} else {
@@ -292,13 +316,26 @@ public class AuraManager {
 					p.recalcularAtributosEstatisticas();
 				}
 			}
-			
-			// Remove the visual domain if the sun doesn't have the effect or disappeared
-			if (getController() != null && sol != null && !sol.getEfeitosAtivos().containsKey("Onda de Calor (Ativa)")) {
-				Dominio domain = getController().getDominio("heatWave_" + sol.getNome());
-				if (domain != null) {
-					getController().removerDominio(domain.getId());
+		}
+
+		// Limpeza robusta de domínios visuais de Onda de Calor órfãos ou expirados (Sol inativo ou sem efeito ativo)
+		if (getController() != null) {
+			List<String> dominiosARemover = new ArrayList<>();
+			List<String> chavesAtivas = new ArrayList<>(getController().getDominiosAtivos().keySet());
+			for (String idDom : chavesAtivas) {
+				if (idDom.startsWith("heatWave_")) {
+					Personagem solDono = estado.getCombatentes().stream()
+							.filter(p -> p.isAtivoNoCombate() && idDom.equals("heatWave_" + p.getNome()))
+							.findFirst()
+							.orElse(null);
+					if (solDono == null || !solDono.getEfeitosAtivos().containsKey("Onda de Calor (Ativa)")) {
+						dominiosARemover.add(idDom);
+					}
 				}
+			}
+			for (String idDom : dominiosARemover) {
+				System.out.println("MAPA: Limpando domínio [" + idDom + "] (Sol inativo ou Onda de Calor expirada).");
+				getController().removerDominio(idDom);
 			}
 		}
 

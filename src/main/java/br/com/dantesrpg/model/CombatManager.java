@@ -558,6 +558,12 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 						}
 					}
 
+					// Queimadura Inefável (Escudo Infernal): a cada tick, adiciona +1 escudo infernal
+					if (nomeEfeito.equals("Queimadura Inefável") && efeitoObj.getIntervaloTickTU() > 0
+							&& (tempoGlobalAtual % efeitoObj.getIntervaloTickTU() == 0)) {
+						p.setEscudoInfernalAtual(p.getEscudoInfernalAtual() + 1);
+					}
+
 					// Bloco de Dano DoT
 					if (efeitoObj.getTipo() == TipoEfeito.DOT && efeitoObj.getIntervaloTickTU() > 0
 							&& (tempoGlobalAtual % efeitoObj.getIntervaloTickTU() == 0)) {
@@ -988,7 +994,7 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 		else if (custoManaFinal < 0)
 			ator.setManaAtual(ator.getManaAtual() - custoManaFinal);
 
-		int custoTUFinal = calcularCustoTUFinal(ator, custoTUBase, habilidade, tipoAcaoAtual);
+		int custoTUFinal = calcularCustoTUFinal(ator, custoTUBase, habilidade, tipoAcaoAtual, estado);
 		double multiplicadorLento = ator.getMultiplicadorCustoTU();
 		custoTUFinal = (int) (custoTUFinal * multiplicadorLento);
 		if (consumirJusticaDouradaSeAtaqueDisparado(ator, habilidade, tipoAcaoAtual)) {
@@ -1080,9 +1086,11 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 			return;
 
 		item.usar(ator, estado, mainController);
-		ator.getInventario().removerItem(item);
+		if (ator.getInventario() != null) {
+			ator.getInventario().removerItem(item);
+		}
 
-		int custoTUFinal = calcularCustoTUFinal(ator, item.getCustoTU());
+		int custoTUFinal = calcularCustoTUFinal(ator, item.getCustoTU(), null, TipoAcao.ITEM, estado);
 		ator.setContadorTU(ator.getContadorTU() + custoTUFinal);
 		System.out.println(ator.getNome() + " gasta " + custoTUFinal + " TUs para usar " + item.getNome() + ".");
 
@@ -1122,7 +1130,7 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 		int excedente = pacote.recarregaAteOMaximo() ? 0 : Math.max(0, pacote.balasConcedidas() - balasRecarregadas);
 		ator.getInventario().removerItemPorTipo(pacote.tipoItem());
 
-		int custoRecarga = calcularCustoTUFinal(ator, pacote.custoTU(), null, TipoAcao.RECARREGAR);
+		int custoRecarga = calcularCustoTUFinal(ator, pacote.custoTU(), null, TipoAcao.RECARREGAR, null);
 		ator.setContadorTU(ator.getContadorTU() + custoRecarga);
 
 		String mensagem = ">>> " + ator.getNome() + " consumiu " + pacote.nome() + " e recarregou "
@@ -1321,7 +1329,7 @@ if (excedente > 0) {
 							: 100;
 				}
 
-				custoDestaAcao = calcularCustoTUFinal(atacante, custoDestaAcao);
+				custoDestaAcao = calcularCustoTUFinal(atacante, custoDestaAcao, estado);
 
 				custoDestaAcao = Math.max(0, atacante.getContadorTU() - tuInicialPorClone.get(atacante));
 
@@ -1501,8 +1509,8 @@ for (Personagem p : jogadoresVivos) {
 		return custoFinal;
 	}
 
-	private int calcularCustoTUFinal(Personagem conjurador, int custoTUBase) {
-		return calcularCustoTUFinal(conjurador, custoTUBase, null, TipoAcao.OUTRO);
+	private int calcularCustoTUFinal(Personagem conjurador, int custoTUBase, EstadoCombate estado) {
+		return calcularCustoTUFinal(conjurador, custoTUBase, null, TipoAcao.OUTRO, estado);
 	}
 
 	private int calcularCustoTUAtaqueBasico(List<Arma> armasSelecionadas) {
@@ -1519,7 +1527,7 @@ for (Personagem p : jogadoresVivos) {
 	}
 
 	private int calcularCustoTUFinal(Personagem conjurador, int custoTUBase, Habilidade habilidade,
-			TipoAcao tipoAcaoAtual) {
+			TipoAcao tipoAcaoAtual, EstadoCombate estado) {
 		double modTU = 1.0;
 		int custoExtraFixo = 0;
 
@@ -1581,6 +1589,18 @@ for (Personagem p : jogadoresVivos) {
 				modTU -= reducaoRaca;
 			}
 			custoExtraFixo += conjurador.getRaca().getCustoTUExtra(conjurador, habilidade, tipoAcaoAtual);
+		}
+
+		if (conjurador.getEfeitosAtivos().containsKey("Meio Dia") && estado != null) {
+			double totalEscudoInfernal = estado.getCombatentes().stream()
+					.filter(Personagem::isAtivoNoCombate)
+					.mapToDouble(Personagem::getEscudoInfernalAtual)
+					.sum();
+			int reducao = (int) (totalEscudoInfernal / 10.0);
+			if (reducao > 0) {
+				custoExtraFixo -= reducao;
+				System.out.println(">>> Meio Dia: Custo de TU reduzido em " + reducao + " (Total Escudo: " + (int) totalEscudoInfernal + ")");
+			}
 		}
 
 		int custoFinalPercentual = (int) (custoTUBase * Math.max(0.0, modTU));
