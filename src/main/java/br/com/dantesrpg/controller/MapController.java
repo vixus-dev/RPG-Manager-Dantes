@@ -443,7 +443,25 @@ public class MapController {
 			return;
 		}
 
-		if (!celulasAlcanceMovimento.contains(cell)) {
+		boolean celularDiretamenteNoAlcance = celulasAlcanceMovimento.contains(cell);
+		Personagem hoverTarget = getPersonagemNaCelula(x, y);
+		boolean alvoNoAlcance = celularDiretamenteNoAlcance;
+
+		if (!celularDiretamenteNoAlcance && hoverTarget != null) {
+			for (int alvoX = hoverTarget.getPosX(); alvoX < hoverTarget.getPosX() + hoverTarget.getTamanhoX(); alvoX++) {
+				for (int alvoY = hoverTarget.getPosY(); alvoY < hoverTarget.getPosY() + hoverTarget.getTamanhoY(); alvoY++) {
+					if (alvoX >= 0 && alvoX < gridLargura && alvoY >= 0 && alvoY < gridAltura) {
+						if (celulasAlcanceMovimento.contains(celulasDoGrid[alvoX][alvoY])) {
+							alvoNoAlcance = true;
+							break;
+						}
+					}
+				}
+				if (alvoNoAlcance) break;
+			}
+		}
+
+		if (!alvoNoAlcance) {
 			mainController.limparSelecaoDeAlvo();
 			limparDestaquesPeoes();
 			return;
@@ -451,22 +469,22 @@ public class MapController {
 
 		switch (habilidadeAtual.getTipoAlvo()) {
 			case AREA_QUADRADA:
-				desenharPreviewQuadrado(x, y);
+				if (celularDiretamenteNoAlcance) desenharPreviewQuadrado(x, y);
 				break;
 			case AREA:
 			case AREA_CIRCULAR:
-				desenharPreviewCircular(x, y);
+				if (celularDiretamenteNoAlcance) desenharPreviewCircular(x, y);
 				break;
 			case LINHA:
-				desenharPreviewLinha(x, y);
+				if (celularDiretamenteNoAlcance) desenharPreviewLinha(x, y);
 				break;
 			case CONE:
-				desenharPreviewCone(x, y);
+				if (celularDiretamenteNoAlcance) desenharPreviewCone(x, y);
 				break;
 			default: // INDIVIDUAL ou MULTIPLOS
-				if (p != null && (!p.equals(atorAtual) || (habilidadeAtual != null && habilidadeAtual.afetaSiMesmo()))) {
+				if (hoverTarget != null && (!hoverTarget.equals(atorAtual) || (habilidadeAtual != null && habilidadeAtual.afetaSiMesmo()))) {
 					List<Personagem> lista = new ArrayList<>();
-					lista.add(p);
+					lista.add(hoverTarget);
 					mainController.alvosIdentificadosNoMapa(lista);
 					destacarPeoesAlvo(lista);
 				} else {
@@ -749,9 +767,25 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			}
 
 			// Verifica Single Target (Peão ou Objeto)
-			if (celulasAlcanceMovimento.contains(cell)) {
-				Personagem alvo = getPersonagemNaCelula(x, y);
+			Personagem alvo = getPersonagemNaCelula(x, y);
+			boolean alvoNoAlcance = celulasAlcanceMovimento.contains(cell);
 
+			if (!alvoNoAlcance && alvo != null) {
+				for (int alvoX = alvo.getPosX(); alvoX < alvo.getPosX() + alvo.getTamanhoX(); alvoX++) {
+					for (int alvoY = alvo.getPosY(); alvoY < alvo.getPosY() + alvo.getTamanhoY(); alvoY++) {
+						if (dentroDoGrid(alvoX, alvoY)) {
+							Pane alvoCell = celulasDoGrid[alvoX][alvoY];
+							if (celulasAlcanceMovimento.contains(alvoCell)) {
+								alvoNoAlcance = true;
+								break;
+							}
+						}
+					}
+					if (alvoNoAlcance) break;
+				}
+			}
+
+			if (alvoNoAlcance) {
 				if (alvo != null && (!alvo.equals(atorAtual) || (habilidadeAtual != null && habilidadeAtual.afetaSiMesmo()))) {
 					if (atorAtual.isClone() && alvo.isClone() && atorAtual.getCriador() == alvo.getCriador()) {
 						System.out.println("MAPA: Clone não pode atacar seu aliado clone!");

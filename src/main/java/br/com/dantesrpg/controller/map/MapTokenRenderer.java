@@ -292,13 +292,15 @@ public class MapTokenRenderer {
 			Node peaoNode = getPeaoNode(alvo);
 			if (peaoNode != null) {
 				if (peaoNode instanceof Pane) {
-					Circle borda = new Circle(CELL_SIZE / 2.0 - 2);
+					int minSize = Math.min(alvo.getTamanhoX(), alvo.getTamanhoY());
+					double tamanhoTotalPixels = (minSize * CELL_SIZE) - 4.0; // margem * 2
+					Circle borda = new Circle(tamanhoTotalPixels / 2.0);
 					borda.setStroke(Color.RED);
 					borda.setStrokeWidth(3);
 					borda.setFill(Color.TRANSPARENT);
 					borda.getStyleClass().add("peao-borda-aoe");
-					borda.setCenterX(CELL_SIZE / 2.0);
-					borda.setCenterY(CELL_SIZE / 2.0);
+					borda.setCenterX(tamanhoTotalPixels / 2.0);
+					borda.setCenterY(tamanhoTotalPixels / 2.0);
 					((Pane) peaoNode).getChildren().add(borda);
 				}
 				peoesAtualmenteDestacados.add(alvo);
