@@ -145,6 +145,10 @@ public class BestiarioSpawnService {
 		monstro.setSegmentosVida(segmentos);
 		monstro.setPesoEntidade(PesoEntidade.fromJsonId(pesoStr));
 		monstro.setPropriedades(lerPropriedades(data));
+		
+		boolean poderoso = data.containsKey("poderoso") && (Boolean) data.get("poderoso");
+		monstro.setPoderoso(poderoso);
+		
 		equiparArma(monstro, nomeArma);
 		aplicarEscudosDePropriedade(monstro, vidaMax);
 
@@ -218,6 +222,9 @@ public class BestiarioSpawnService {
 		monstro.setPosY(y);
 		monstro.setFaccao("INIMIGO");
 		monstro.setPropriedades(props);
+		
+		boolean poderoso = dadosMonstro.containsKey("poderoso") && (Boolean) dadosMonstro.get("poderoso");
+		monstro.setPoderoso(poderoso);
 
 		equiparArma(monstro, nomeArma);
 		aplicarEscudosDePropriedade(monstro, vida);

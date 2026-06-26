@@ -420,7 +420,9 @@ public class GerenciadorCombateController {
 	private void onAplicarStatusClick() {
 		if (selecionado == null) return;
 		try {
-			selecionado.setVidaAtual(parseDoubleSeguro(inputVida.getText()), estadoCombate, mainController);
+			if (!inputVida.getText().trim().equals("?")) {
+				selecionado.setVidaAtual(parseDoubleSeguro(inputVida.getText()), estadoCombate, mainController);
+			}
 			
 			double escNormal = parseDoubleSeguro(inputEscudoNormal.getText());
 			selecionado.setEscudoNormalAtual(escNormal);
@@ -884,8 +886,9 @@ public class GerenciadorCombateController {
 		if (selecionado == null) return;
 
 		// Só atualiza se o campo não está focado (evita conflito com digitação do GM)
-		if (!inputVida.isFocused())
-			inputVida.setText(String.format("%.1f", selecionado.getVidaAtual()));
+		if (!inputVida.isFocused()) {
+			inputVida.setText(selecionado.isPoderoso() ? "?" : String.format("%.1f", selecionado.getVidaAtual()));
+		}
 		if (inputEscudoNormal != null && !inputEscudoNormal.isFocused())
 			inputEscudoNormal.setText(String.format("%.1f", selecionado.getEscudoNormalAtual()));
 		if (inputEscudoSangue != null && !inputEscudoSangue.isFocused())
@@ -897,7 +900,7 @@ public class GerenciadorCombateController {
 		if (!inputTU.isFocused())
 			inputTU.setText(String.valueOf(selecionado.getContadorTU()));
 
-		lblVidaMax.setText("/ " + String.format("%.0f", selecionado.getVidaMaxima()));
+		lblVidaMax.setText(selecionado.isPoderoso() ? "/ ?" : "/ " + String.format("%.0f", selecionado.getVidaMaxima()));
 		lblManaMax.setText("/ " + String.format("%.0f", selecionado.getManaMaxima()));
 
 		isSyncing = true;

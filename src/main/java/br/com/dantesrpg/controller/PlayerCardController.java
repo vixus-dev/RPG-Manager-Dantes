@@ -72,6 +72,9 @@ public class PlayerCardController {
 		if (personagem.isProtagonista()) {
 			labelHPShieldText.setText("? / ?");
 			labelMPText.setText("? / ?");
+		} else if (personagem.isPoderoso()) {
+			labelHPShieldText.setText("? / ?");
+			labelMPText.setText((int) personagem.getManaAtual() + "/" + (int) personagem.getManaMaxima());
 		} else {
 			String hpAtualTexto = formatarNumero(personagem.getVidaAtual());
 			String hpMaxTexto = formatarNumero(personagem.getVidaMaxima());

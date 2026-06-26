@@ -59,8 +59,17 @@ public class CharacterInfoRenderer {
 		labelClasseRaca.setText(raca + " / " + classe);
 		labelClasseRaca.setStyle(racaV2 ? "-fx-text-fill: #FFD700;" : "-fx-text-fill: gray;");
 
-		labelHP.setText(formatarNumero(ator.getVidaAtual()) + "/" + formatarNumero(ator.getVidaMaxima()));
-		labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
+		if (ator.isProtagonista()) {
+			labelHP.setText("?/?");
+			labelMP.setText("?/?");
+		} else if (ator.isPoderoso()) {
+			labelHP.setText("?/?");
+			labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
+		} else {
+			labelHP.setText(formatarNumero(ator.getVidaAtual()) + "/" + formatarNumero(ator.getVidaMaxima()));
+			labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
+		}
+		
 		labelTU.setText("TU: " + ator.getContadorTU());
 
 		renderEffects(ator);

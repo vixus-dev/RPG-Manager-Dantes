@@ -109,6 +109,7 @@ public class Personagem {
 	// === FLAGS DE COMBATE ===
 	private boolean isProtagonista = false;
 	private boolean isAusente = false;
+	private boolean poderoso = false;
 	private List<String> propriedades = new ArrayList<>();
 
 	// === EMPUXO (KNOCKBACK) ===
@@ -724,6 +725,14 @@ public class Personagem {
 		if (!this.propriedades.contains(prop)) {
 			this.propriedades.add(prop);
 		}
+	}
+
+	public boolean isPoderoso() {
+		return poderoso;
+	}
+
+	public void setPoderoso(boolean poderoso) {
+		this.poderoso = poderoso;
 	}
 
 	// === EMPUXO (KNOCKBACK) ===
