@@ -57,6 +57,7 @@ public class GerenciadorCombateController {
 	@FXML private Label lblManaMax;
 	@FXML private CheckBox checkAusente;
 	@FXML private CheckBox checkProtagonista;
+	@FXML private ComboBox<String> comboFaccao;
 	@FXML private TextField inputOuro;
 	@FXML private TextField inputPrata;
 	@FXML private TextField inputBronze;
@@ -141,6 +142,10 @@ public class GerenciadorCombateController {
 		configurarComboEfeitos();
 		configurarFiltrosInventario();
 		configurarSelecaoEfeitos();
+
+		if (comboFaccao != null) {
+			comboFaccao.setItems(FXCollections.observableArrayList("JOGADOR", "INIMIGO", "ALIADO", "NEUTRO", "OBJETO"));
+		}
 
 		tabPaneDetalhes.setDisable(true);
 
@@ -496,7 +501,7 @@ public class GerenciadorCombateController {
 
 	@FXML
 	private void onCheckAusenteChange() {
-		if (selecionado != null) {
+		if (selecionado != null && !isSyncing) {
 			selecionado.setAusente(checkAusente.isSelected());
 			autoSaveAndRefresh();
 		}
@@ -504,8 +509,18 @@ public class GerenciadorCombateController {
 
 	@FXML
 	private void onCheckProtagonistaChange() {
-		if (selecionado != null) {
+		if (selecionado != null && !isSyncing) {
 			selecionado.setProtagonista(checkProtagonista.isSelected());
+			autoSaveAndRefresh();
+		}
+	}
+
+	@FXML
+	private void onComboFaccaoChange() {
+		if (isSyncing || selecionado == null) return;
+		String novaFaccao = comboFaccao.getValue();
+		if (novaFaccao != null) {
+			selecionado.setFaccao(novaFaccao);
 			autoSaveAndRefresh();
 		}
 	}
@@ -876,8 +891,13 @@ public class GerenciadorCombateController {
 		lblVidaMax.setText("/ " + String.format("%.0f", selecionado.getVidaMaxima()));
 		lblManaMax.setText("/ " + String.format("%.0f", selecionado.getManaMaxima()));
 
+		isSyncing = true;
 		checkAusente.setSelected(selecionado.isAusente());
 		checkProtagonista.setSelected(selecionado.isProtagonista());
+		if (comboFaccao != null) {
+			comboFaccao.setValue(selecionado.getFaccao());
+		}
+		isSyncing = false;
 
 		// Moedas
 		atualizarCamposMoedas();

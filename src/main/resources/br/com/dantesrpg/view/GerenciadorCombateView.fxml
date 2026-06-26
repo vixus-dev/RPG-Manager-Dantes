@@ -165,6 +165,10 @@
                         <Label styleClass="header-label" text="Controle de Sessão" />
                         <CheckBox fx:id="checkAusente" onAction="#onCheckAusenteChange" text="Jogador Ausente (Ocultar)" style="-fx-text-fill: #aaa;" />
                         <CheckBox fx:id="checkProtagonista" onAction="#onCheckProtagonistaChange" text="Modo Protagonista (? HP, Imune)" style="-fx-text-fill: #ffcc00;" />
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" style="-fx-padding: 4 0 0 0;">
+                            <Label text="Facção:" style="-fx-text-fill: #aaa;" />
+                            <ComboBox fx:id="comboFaccao" onAction="#onComboFaccaoChange" styleClass="editor-search-field" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                        </HBox>
                      </VBox>
 
                      <!-- Secao: Financas -->
