@@ -3155,6 +3155,30 @@
     },
     "wielding": 2.0
   },
+  "A Thousand Blazing Suns2": {
+    "nome": "A Thousand Blazing Suns2",
+    "categoria": "Pesada",
+    "descricao": "Talvez até o sol não passe de uma estrela tênue diante da noite profunda e longa.",
+    "raridade": "LENDARIO",
+    "andar": "4",
+    "valorMoedas": 50.0,
+    "tipoMoeda": "OURO",
+    "danoBase": 35.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 125.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "CONE",
+    "tamanhoArea": 90.0,
+    "efeitoAoAcertar": "HellFire",
+    "chanceEfeito": 0.2,
+    "modificadoresStatus": {
+      "DANO_CRITICO": 0.4,
+      "TAXA_CRITICA": 0.1
+    },
+    "wielding": 2.0
+  },
   "Morte Solar": {
     "nome": "Morte Solar",
     "categoria": "Martelo",

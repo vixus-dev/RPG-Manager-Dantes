@@ -843,12 +843,24 @@
 		"nome": "RockFeller 'A Nona'",
 		"raca": "Corte Infernal",
 		"grau": 2,
-		"vida": 5000,
+		"vida": 500,
 		"mana": 8,
 		"agilidade": 10,
-		"defesa": 20,
-		"arma": "cadete Estelar",
+		"defesa": 40,
+		"arma": "A Thousand Blazing Suns2",
 		"xpReward": 50,
 		"peso": "pesado"
+	},
+	"Ayame (Alter)": {
+		"nome": "Ayame (Alter)",
+		"raca": "Servo Corrompido",
+		"grau": 2,
+		"vida": 375,
+		"mana": 11,
+		"agilidade": 35,
+		"defesa": 0,
+		"arma": "cadete Estelar",
+		"xpReward": 50,
+		"peso": "medio_padrao"
 	}
 }

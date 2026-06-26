@@ -314,35 +314,52 @@ public class ReforcosDialogService {
 				}
 			}
 		});
+		
+		javafx.scene.image.ImageView imgTokenEnemy = new javafx.scene.image.ImageView();
+		imgTokenEnemy.setFitWidth(128);
+		imgTokenEnemy.setFitHeight(128);
 
 		int r = 0;
 		Label lblN = new Label("Nome:"); lblN.setStyle("-fx-text-fill: white;");
-		gridEdit.add(lblN, 0, r); gridEdit.add(tfName, 1, r++);
+		gridEdit.add(lblN, 0, r); gridEdit.add(tfName, 1, r++, 2, 1);
+		
 		Label lblR = new Label("Raça:"); lblR.setStyle("-fx-text-fill: white;");
-		gridEdit.add(lblR, 0, r); gridEdit.add(tfRace, 1, r++);
+		gridEdit.add(lblR, 0, r); gridEdit.add(tfRace, 1, r++, 2, 1);
+		
+		// Imagem nas linhas dos Spinners (ocupa 5 linhas, na coluna 2)
+		gridEdit.add(imgTokenEnemy, 2, r, 1, 5);
+		GridPane.setMargin(imgTokenEnemy, new Insets(0, 0, 0, 10));
+
 		Label lblG = new Label("Grau:"); lblG.setStyle("-fx-text-fill: white;");
 		gridEdit.add(lblG, 0, r); gridEdit.add(spGrau, 1, r++);
+		
 		Label lblH = new Label("HP:"); lblH.setStyle("-fx-text-fill: white;");
 		gridEdit.add(lblH, 0, r); gridEdit.add(spHP, 1, r++);
+		
 		Label lblM = new Label("Mana:"); lblM.setStyle("-fx-text-fill: white;");
 		gridEdit.add(lblM, 0, r); gridEdit.add(spMana, 1, r++);
+		
 		Label lblAg = new Label("Agilidade:"); lblAg.setStyle("-fx-text-fill: white;");
 		gridEdit.add(lblAg, 0, r); gridEdit.add(spAgi, 1, r++);
+		
 		Label lblDf = new Label("Defesa:"); lblDf.setStyle("-fx-text-fill: white;");
 		gridEdit.add(lblDf, 0, r); gridEdit.add(spDef, 1, r++);
+		
 		Label lblA = new Label("Arma:"); lblA.setStyle("-fx-text-fill: white;");
-		gridEdit.add(lblA, 0, r); gridEdit.add(cbArmaEnemy, 1, r++);
+		gridEdit.add(lblA, 0, r); gridEdit.add(cbArmaEnemy, 1, r++, 2, 1);
+		
 		Label lblP = new Label("Peso:"); lblP.setStyle("-fx-text-fill: white;");
-		gridEdit.add(lblP, 0, r); gridEdit.add(cbPeso, 1, r++);
+		gridEdit.add(lblP, 0, r); gridEdit.add(cbPeso, 1, r++, 2, 1);
 		
 		Label lblPD = new Label("Props Disp.:"); lblPD.setStyle("-fx-text-fill: white;");
-		gridEdit.add(lblPD, 0, r); gridEdit.add(lvDisponiveis, 1, r++);
+		gridEdit.add(lblPD, 0, r); gridEdit.add(lvDisponiveis, 1, r++, 2, 1);
+		
 		Label lblPS = new Label("Props Selec.:"); lblPS.setStyle("-fx-text-fill: white;");
-		gridEdit.add(lblPS, 0, r); gridEdit.add(lvSelecionadas, 1, r++);
-
+		gridEdit.add(lblPS, 0, r); gridEdit.add(lvSelecionadas, 1, r++, 2, 1);
+		
 		Button btnAddInimigoAliado = new Button("Adicionar Inimigo como Aliado");
 		btnAddInimigoAliado.setStyle("-fx-background-color: #1a3a1a; -fx-text-fill: #2ecc71; -fx-font-weight: bold;");
-		gridEdit.add(btnAddInimigoAliado, 0, r, 2, 1);
+		gridEdit.add(btnAddInimigoAliado, 0, r, 3, 1);
 
 		scrollEdit.setContent(gridEdit);
 		panelEditEnemy.getChildren().addAll(lblEditTitle, scrollEdit);
@@ -372,6 +389,18 @@ public class ReforcosDialogService {
 
 					String pesoStr = (String) data.getOrDefault("peso", "");
 					cbPeso.setValue(PesoEntidade.fromJsonId(pesoStr));
+					
+					String tokenName = tfName.getText().toLowerCase().replace(" ", "_") + ".png";
+					try {
+						javafx.scene.image.Image img = br.com.dantesrpg.model.util.ImageCache.get("/tokens/" + tokenName, 128, 128);
+						if (img != null && !img.isError()) {
+							imgTokenEnemy.setImage(img);
+						} else {
+							imgTokenEnemy.setImage(null);
+						}
+					} catch (Exception ex) {
+						imgTokenEnemy.setImage(null);
+					}
 
 					// reset props
 					lvDisponiveis.getItems().clear();
