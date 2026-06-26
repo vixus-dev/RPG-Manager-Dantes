@@ -342,8 +342,8 @@ public class MapController {
 		gc.setStroke(Color.rgb(148, 0, 211, 0.8));
 		gc.setLineWidth(2);
 
-		double atorPixelX = (atorAtual.getPosX() * CELL_SIZE) + (CELL_SIZE / 2.0);
-		double atorPixelY = (atorAtual.getPosY() * CELL_SIZE) + (CELL_SIZE / 2.0);
+		double atorPixelX = (atorAtual.getPosX() * CELL_SIZE) + ((atorAtual.getTamanhoX() * CELL_SIZE) / 2.0);
+		double atorPixelY = (atorAtual.getPosY() * CELL_SIZE) + ((atorAtual.getTamanhoY() * CELL_SIZE) / 2.0);
 
 		double alcancePixels = habilidadeAtual.getAlcanceMaximo() * CELL_SIZE + (CELL_SIZE / 2.0);
 

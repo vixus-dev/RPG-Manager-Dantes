@@ -4,8 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import br.com.dantesrpg.model.map.TileRegistry;
+import br.com.dantesrpg.model.util.FileLoader;
 
 public class Main extends Application {
 
@@ -20,7 +22,8 @@ public class Main extends Application {
 
             Scene scene = new Scene(root);
 
-            primaryStage.setTitle("RPG: A Decadencia - Combat Manager");
+            primaryStage.setTitle("A Decadencia Combat Manager");
+            primaryStage.getIcons().add(new Image(FileLoader.carregarArquivo("/logoTrasnp.png")));
             primaryStage.setScene(scene);
             primaryStage.setMaximized(true);
             primaryStage.show();

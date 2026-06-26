@@ -134,11 +134,14 @@ public class AoEShapeCalculator {
 
 		if (tipo == TipoAlvo.AREA) {
 			int raio = (habilidade.getTamanhoArea()) / 2;
-			int px = ator.getPosX();
-			int py = ator.getPosY();
-			for (int y = py - raio; y <= py + raio; y++) {
-				for (int x = px - raio; x <= px + raio; x++) {
-					if (Math.abs(x - px) + Math.abs(y - py) <= raio) {
+			double pxCenter = ator.getPosX() + (ator.getTamanhoX() - 1) / 2.0;
+			double pyCenter = ator.getPosY() + (ator.getTamanhoY() - 1) / 2.0;
+			int pxInt = (int) Math.round(pxCenter);
+			int pyInt = (int) Math.round(pyCenter);
+			
+			for (int y = pyInt - raio; y <= pyInt + raio; y++) {
+				for (int x = pxInt - raio; x <= pxInt + raio; x++) {
+					if (Math.abs(x - pxInt) + Math.abs(y - pyInt) <= raio) {
 						coletarCelula(x, y, atravessaParedes, celulasDaForma);
 					}
 				}
@@ -164,10 +167,12 @@ public class AoEShapeCalculator {
 			int comprimento = habilidade.getAlcanceMaximo();
 			int larguraLinha = habilidade.getTamanhoArea();
 			int raioLargura = (larguraLinha - 1) / 2;
-			int px = ator.getPosX();
-			int py = ator.getPosY();
+			double pxCenter = ator.getPosX() + (ator.getTamanhoX() - 1) / 2.0;
+			double pyCenter = ator.getPosY() + (ator.getTamanhoY() - 1) / 2.0;
+			int pxInt = (int) Math.round(pxCenter);
+			int pyInt = (int) Math.round(pyCenter);
 
-			double angulo = Math.atan2(centroY - py, centroX - px);
+			double angulo = Math.atan2(centroY - pyCenter, centroX - pxCenter);
 			if (angulo < 0) angulo += 2 * Math.PI;
 			int setor = (int) Math.round(angulo / (Math.PI / 4)) % 8;
 
@@ -180,8 +185,8 @@ public class AoEShapeCalculator {
 			boolean isDiagonal = (dirX != 0 && dirY != 0);
 
 			for (int i = 1; i <= comprimento; i++) {
-				int baseX = px + (i * dirX);
-				int baseY = py + (i * dirY);
+				int baseX = pxInt + (i * dirX);
+				int baseY = pyInt + (i * dirY);
 				boolean bloqueado = false;
 
 				for (int j = -raioLargura; j <= raioLargura; j++) {
@@ -206,19 +211,25 @@ public class AoEShapeCalculator {
 		} else if (tipo == TipoAlvo.CONE) {
 			int alcance = habilidade.getAlcanceMaximo();
 			double anguloHabilidadeMetade = Math.toRadians(habilidade.getAnguloCone() / 2.0);
-			int px = ator.getPosX();
-			int py = ator.getPosY();
-			double anguloCentralMouse = Math.atan2(centroY - py, centroX - px + 0.0001);
+			double pxCenter = ator.getPosX() + (ator.getTamanhoX() - 1) / 2.0;
+			double pyCenter = ator.getPosY() + (ator.getTamanhoY() - 1) / 2.0;
+			int pxInt = (int) Math.round(pxCenter);
+			int pyInt = (int) Math.round(pyCenter);
+			double anguloCentralMouse = Math.atan2(centroY - pyCenter, centroX - pxCenter);
 			List<Integer> desvios = habilidade.getAngulosDesvio();
 
-			for (int y = py - alcance; y <= py + alcance; y++) {
-				for (int x = px - alcance; x <= px + alcance; x++) {
-					if (x == px && y == py) continue;
+			for (int y = pyInt - alcance - 2; y <= pyInt + alcance + 2; y++) {
+				for (int x = pxInt - alcance - 2; x <= pxInt + alcance + 2; x++) {
+					if (x >= ator.getPosX() && x < ator.getPosX() + ator.getTamanhoX() && y >= ator.getPosY() && y < ator.getPosY() + ator.getTamanhoY()) continue;
 					if (!dentroDoGrid(x, y)) continue;
-					int dist = Math.max(Math.abs(x - px), Math.abs(y - py));
+					
+					// Calcula a menor distância de Chebyshev até o próprio atacante
+					int dx = Math.max(0, Math.max(ator.getPosX() - x, x - (ator.getPosX() + ator.getTamanhoX() - 1)));
+					int dy = Math.max(0, Math.max(ator.getPosY() - y, y - (ator.getPosY() + ator.getTamanhoY() - 1)));
+					int dist = Math.max(dx, dy);
 					if (dist > alcance) continue;
 
-					double anguloCelula = Math.atan2(y - py, x - px + 0.0001);
+					double anguloCelula = Math.atan2(y - pyCenter, x - pxCenter);
 					boolean acertou = false;
 
 					for (int desvioGraus : desvios) {
@@ -233,7 +244,7 @@ public class AoEShapeCalculator {
 						}
 					}
 					if (acertou) {
-						if (atravessaParedes || temLinhaDeVisao(px, py, x, y)) {
+						if (atravessaParedes || temLinhaDeVisao(pxInt, pyInt, x, y)) {
 							coletarCelula(x, y, atravessaParedes, celulasDaForma);
 						}
 					}
