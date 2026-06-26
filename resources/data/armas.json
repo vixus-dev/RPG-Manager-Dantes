@@ -3166,6 +3166,18 @@
     "danoBase": 35.0,
     "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
+    "modificadoresDeAtributo": {
+      "FORCA": 16.0,
+      "INSPIRACAO" : 4,
+      "ENDURANCE" : 12,
+      "CARISMA" : 12,
+      "INTELIGENCIA": 10,
+      "DESTREZA" : 12,
+      "SORTE" : 10,
+      "SAGACIDADE" : 20,
+      "TOPOR" : 0,
+      "PERCEPCAO" : 12
+    },
     "custoTU": 125.0,
     "tipo": "Melee",
     "alcance": 2.0,

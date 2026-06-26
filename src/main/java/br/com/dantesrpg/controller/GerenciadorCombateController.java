@@ -1161,6 +1161,8 @@ public class GerenciadorCombateController {
 			lblStats.setStyle("-fx-text-fill: #aaa; -fx-font-size: 11px;");
 			if (p.isProtagonista()) {
 				lblStats.setText("HP: ? / ?");
+			} else if (p.isPoderoso()) {
+				lblStats.setText("HP: ? / ?");
 			} else {
 				StringBuilder statsSb = new StringBuilder();
 				statsSb.append("HP: ").append(String.format("%.0f/%.0f", p.getVidaAtual(), p.getVidaMaxima()));

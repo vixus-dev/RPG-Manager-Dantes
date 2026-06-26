@@ -152,6 +152,7 @@ public class BestiarioController {
 			if (original.containsKey("tamanhoX")) dados.put("tamanhoX", original.get("tamanhoX"));
 			if (original.containsKey("tamanhoY")) dados.put("tamanhoY", original.get("tamanhoY"));
 			if (original.containsKey("peso")) dados.put("peso", original.get("peso"));
+			if (original.containsKey("poderoso")) dados.put("poderoso", original.get("poderoso"));
 		}
 
 		return dados;
