@@ -838,5 +838,17 @@
 		"xpReward": 50,
 		"peso": "pesado",
 		"propriedades": []
+	},
+	"Eremita": {
+		"nome": "RockFeller 'A Nona'",
+		"raca": "Corte Infernal",
+		"grau": 2,
+		"vida": 5000,
+		"mana": 8,
+		"agilidade": 10,
+		"defesa": 20,
+		"arma": "cadete Estelar",
+		"xpReward": 50,
+		"peso": "pesado"
 	}
 }

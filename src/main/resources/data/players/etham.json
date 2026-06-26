@@ -1,19 +1,19 @@
 {
   "iniciativaBase": 12,
   "atributosBase": {
-    "INTELIGENCIA": 6,
     "CARISMA": 5,
-    "SAGACIDADE": 10,
-    "ENDURANCE": 4,
-    "SORTE": 6,
-    "PERCEPCAO": 6,
-    "TOPOR": 4,
     "FORCA": 3,
+    "TOPOR": 4,
+    "PERCEPCAO": 6,
+    "ENDURANCE": 4,
     "DESTREZA": 6,
-    "INSPIRACAO": 3
+    "INSPIRACAO": 3,
+    "SAGACIDADE": 10,
+    "SORTE": 6,
+    "INTELIGENCIA": 6
   },
   "escudoSangueAtual": 0.0,
-  "pontosParaDistribuir": 0,
+  "pontosParaDistribuir": 2,
   "escudoNormalAtual": 0.0,
   "carteira": {
     "prata": 0,
@@ -21,15 +21,15 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 16.2,
-  "contadorTU": 99,
+  "vidaAtual": 27.200000000000003,
+  "contadorTU": 100,
   "fantasmaNobre": "AcertoDeContas",
   "armaEquipada": "Pistola de fogo",
   "inventario": {
     "PocaoAlquimica_Cura_11": 1,
-    "CaixaMunicaoP": 6
+    "CaixaMunicaoP": 4
   },
-  "xpAtual": 20,
+  "xpAtual": 15,
   "vidaMaximaBase": 42.0,
   "classe": "Mestre das Balas",
   "armasEquipadas": [
@@ -40,10 +40,10 @@
   "segmentos": 0,
   "grau": 0,
   "posX": 2,
-  "posY": 5,
-  "manaAtual": 7.5,
+  "posY": 2,
+  "manaAtual": 7.0,
   "escudoDivinoAtual": 0.0,
   "raca": "Elfo",
-  "nivel": 1,
+  "nivel": 2,
   "wieldingMaximo": 2
 }

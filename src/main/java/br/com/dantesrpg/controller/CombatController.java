@@ -455,6 +455,9 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 			return new Lobisomem();
 		if ("Arcanjo".equalsIgnoreCase(nomeRaca))
 			return new Arcanjo();
+		if ("Orc".equalsIgnoreCase(nomeRaca)){
+			return new br.com.dantesrpg.model.racas.Orc();
+		}
 		System.err.println("Raça não reconhecida: " + nomeRaca);
 		return new RaçaPlaceholder();
 	}

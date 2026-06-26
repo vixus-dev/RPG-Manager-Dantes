@@ -1,16 +1,16 @@
 {
   "iniciativaBase": 16,
   "atributosBase": {
-    "INTELIGENCIA": 10,
     "CARISMA": 5,
-    "SAGACIDADE": 10,
-    "ENDURANCE": 3,
-    "SORTE": 8,
-    "PERCEPCAO": 10,
-    "TOPOR": 1,
     "FORCA": 1,
+    "TOPOR": 1,
+    "PERCEPCAO": 10,
+    "ENDURANCE": 3,
     "DESTREZA": 2,
-    "INSPIRACAO": 10
+    "INSPIRACAO": 10,
+    "SAGACIDADE": 10,
+    "SORTE": 8,
+    "INTELIGENCIA": 10
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
@@ -21,9 +21,10 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 33.0,
-  "contadorTU": 120,
+  "vidaAtual": 31.3,
+  "contadorTU": 1,
   "fantasmaNobre": "RevelacaoDeYaweh",
+  "armaduraEquipada": "Colete Militar",
   "armaEquipada": {
     "magiasSalvas": [
       "Benção Divina",
@@ -34,7 +35,7 @@
     "nome": "Yaweh"
   },
   "inventario": {},
-  "xpAtual": 75,
+  "xpAtual": 120,
   "vidaMaximaBase": 33.0,
   "classe": "Alquimista",
   "armasEquipadas": [
@@ -51,10 +52,11 @@
   "nome": "Servant",
   "segmentos": 0,
   "grau": 0,
-  "posX": 2,
-  "posY": 6,
+  "posX": 3,
+  "posY": 2,
+  "amuleto2": "Pingente de Cruz",
   "amuleto1": "Botas de Berseker",
-  "manaAtual": 8.5,
+  "manaAtual": 2.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Humano",
   "nivel": 7,

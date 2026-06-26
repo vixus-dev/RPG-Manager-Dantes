@@ -1,0 +1,49 @@
+{
+  "iniciativaBase": 1,
+  "atributosBase": {
+    "CARISMA": 2,
+    "FORCA": 10,
+    "TOPOR": 5,
+    "PERCEPCAO": 4,
+    "ENDURANCE": 10,
+    "DESTREZA": 5,
+    "INSPIRACAO": 2,
+    "SAGACIDADE": 3,
+    "SORTE": 2,
+    "INTELIGENCIA": 2
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 40.0,
+  "contadorTU": 2,
+  "armaduraEquipada": "Armadura do Mestre",
+  "armaEquipada": "Espada Longa",
+  "inventario": {
+    "Pele Sintética da Tentação": 1,
+    "Pá de Metal": 1
+  },
+  "xpAtual": 0,
+  "vidaMaximaBase": 10.0,
+  "classe": "Barbaro",
+  "armasEquipadas": [
+    "Espada Longa",
+    "Espada de Prata"
+  ],
+  "nome": "Zakaris",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 2,
+  "posY": 3,
+  "manaAtual": 7.0,
+  "escudoDivinoAtual": 0.0,
+  "raca": "Orc",
+  "nivel": 1,
+  "wieldingMaximo": 2
+}

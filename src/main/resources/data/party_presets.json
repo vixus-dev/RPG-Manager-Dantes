@@ -1,5 +1,5 @@
 {
-  "equippedSlotName": "Equipe 2",
+  "equippedSlotName": "Equipe 1",
   "presets": [
     {
       "name": "Equipe 1",
@@ -9,6 +9,14 @@
         "lilith",
         "eidan",
         "KuangLi"
+      ]
+    },
+    {
+      "name": "Equipe 2",
+      "characterNames": [
+        "Sarvant",
+        "etham",
+        "zakaris"
       ]
     },
     {
@@ -23,19 +31,18 @@
       ]
     },
     {
-      "name": "Equipe 2",
-      "characterNames": [
-        "Sarvant",
-        "etham"
-      ]
-    },
-    {
       "name": "Equipe Filosofos",
       "characterNames": [
         "Aristóteles",
         "Atlas",
         "Julius",
         "Platão"
+      ]
+    },
+    {
+      "name": "Beta",
+      "characterNames": [
+        "Virgilio"
       ]
     }
   ]
