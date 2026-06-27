@@ -1,170 +1,117 @@
-# 🔥 RPG Manager: "A Decandencia"
+# 🔥 RPG Manager: "A Decadência" (Dante's Inferno Combat Manager)
 
-Um sistema completo de gerenciamento de sessão para RPG de mesa ambientado em um universo único com combate tático em turnos, sistema de classes, Fantasmas Nobres, mapa interativo e muito mais. Desenvolvido inteiramente em **Java + JavaFX**.
+Um sistema completo de gerenciamento de sessão para RPG de mesa ambientado em um universo único com combate tático em turnos, sistema de classes, Fantasmas Nobres, mapa interativo e muito mais. Desenvolvido inteiramente em **Java 21 + JavaFX 21** com persistência em **Gson**.
 
 ---
 
 ## 📖 Sobre o Projeto
-O **RPG Manager Dante's Inferno MK2** nasceu da necessidade de gerenciar uma campanha de RPG original inspirada na Divina Comédia,ultrakill e devil may cry, com regras próprias, sistema de atributos exclusivo e um lore denso construído sessão a sessão. O software centraliza tudo que um Mestre precisa: fichas de personagem, combate tático, bestiário, loja, mapa e log de sessão tudo em tempo real.
+O **RPG Manager Dante's Inferno MK3** nasceu da necessidade de gerenciar uma campanha de RPG original inspirada na Divina Comédia, *Ultrakill* e *Devil May Cry*, com regras próprias, sistema de atributos exclusivo e um lore denso construído sessão a sessão. O software centraliza tudo que um Mestre precisa: fichas de personagem, combate tático, bestiário, loja, mapa e log de sessão tudo em tempo real.
+
+O projeto atual (MK3) consolidou e refatorou as engines da geração anterior, separando logicamente os subsistemas de combate, roster de jogadores e renderização de mapa tático.
+
 ---
 
 ## ✨ Funcionalidades
 
-### ⚔️ Sistema de Combate
-```
-- Gerenciamento de turnos com contador de TU (Turn Units)
-- Resolução de dano com cálculo de armadura, escudo e redução
-- Suporte a ações do mestre via `AcaoMestreInput`
-- HUD detalhado de turno por personagem
-- Log de combate em tempo real com `SessionLogger`
-- Rolagem de dados integrada com `DiceRoller`
-```
+### ⚔️ Sistema de Combate Tático
+* **Iniciativa baseada em TU (Tempo de Unidade):** Gerenciamento dinâmico de turnos onde o menor TU dita o ator da vez.
+* **Pipeline de Resolução de Ação:** Processamento modular de dano (críticos, modificadores raciais e modos de ataque) integrado ao `CombatManager`.
+* **Distribuição de Dano Dinâmica:** Aplicação automática contra escudos (Escudo de Sangue ➔ Escudo Normal ➔ HP) e cálculo de recuo (Knockback) integrado com o peso físico da entidade.
+* **Efeitos de Combate (Buffs/Debuffs/DoTs):** Gerenciamento automático de duração e efeitos (como sangramento, stuns, venenos e marcas) via `EffectFactory`.
+
 ### 👤 Fichas de Personagem
-```
-- Sistema de atributos **S.P.E.C.I.A.L.I.S.T.**:
-- Estatísticas derivadas: taxa crítica, dano crítico, movimento, redução de dano
-- Equipamentos: arma, armadura e dois amuletos
-- Inventário com itens, consumíveis e essências de inimigos
-- Persistência em arquivos `.json` por personagem
-```
+* **Sistema de atributos S.P.E.C.I.A.L.I.S.T.:** `FORCA`, `PERCEPCAO`, `ENDURANCE`, `CARISMA`, `INTELIGENCIA`, `DESTREZA`, `SORTE`, `INSPIRACAO`, `SAGACIDADE`, `TOPOR`.
+* **Estatísticas Derivadas:** Taxa crítica, dano crítico, movimento base, redução de dano de topor, redução de DoT e resistência a controle de grupo.
+* **Equipamentos Completos:** Slots para armas (melee/ranged), armadura e dois amuletos que recalculam os atributos finais dinamicamente.
+* **Persistência em JSON:** Fichas persistidas e editadas via arquivos JSON em tempo real.
 
-### 🧙 Sistema de Classes
-```
-Cada classe possui habilidades desbloqueadas por nível e modificadores de atributo exclusivos para cada uma delas. existem 19 variações de classes sendo que 7 delas estão implementadas
-```
-### 👻 Fantasmas Nobres (Sistema do Invocador)
-```
-O Invocador pode vincular um **Fantasma Nobre** a si mesmo. Esse fantasma nobre é criado pelo jogador e balanceado pelo mestre, permitindo as mais variaveis habilidades customizadas  
-```
+### 🧙 Classes Jogáveis (10 Classes)
+Habilidades exclusivas desbloqueadas por nível e modificadores de atributos específicos:
+* Bárbaro, Campeão, Feiticeiro, Ilusionista, Invocador, Ladino, Mestre das Balas, Paladino, Pugilista e Alquimista.
 
-### 🗺️ Mapa Tático
-```
-- Renderização de mapa em grid com texturas customizadas por bioma
-- Posicionamento de personagens por coordenadas `(x, y)`
-- Terrenos variados: lava, névoa, chão grego, neon, carvão e mais
-- Suporte a objetos destrutíveis no ambiente
-```
+### 🧬 Raças Jogáveis (10 Raças)
+Mecânicas raciais exclusivas implementadas através de hooks de ciclo de vida (ex: transformações, gatilhos ao receber dano ou abater alvos):
+* Anão, Anjo Caído, Elfo, Half-Angel, Half-Demon, Humano, Lobisomem, Marionette, Vampiro e Orc.
 
-### 📚 Bestiário
-```
-- Banco de inimigos em `bestiario.json`
-- Suporte a propriedades especiais (ex: `EXPLODIR`)
-- Recompensa de XP por inimigo abatido
-- Sistema de grau de dificuldade
-```
+### 👻 Fantasmas Nobres (14 FNs)
+Habilidades extraordinárias e transformações invocadas pelos personagens, possuindo hooks de eventos específicos (como crítico e dano causado).
 
-### 🏪 Loja
-```
-- Interface de loja integrada para compra e venda de itens durante a sessão
-- Suporte a moedas: Bronze, Prata e Ouro
-```
+### 🗺️ Mapa Tático Reativo
+* Renderização em grid programático com suporte a tokens de jogadores e inimigos.
+* Áreas de Efeito (AoE) dinâmicas (círculo, quadrado, cone, linha).
+* Efeitos de solo integrados (lava, névoa, solo ácido, etc.) e objetos destrutíveis em campo.
+* Expansões de Domínio com mecânicas de fusão e limpeza do grid.
 
-### 🎲 Extras
-```
-- Editor de personagem em tempo real
-- Teste de atributos com prompt dedicado
-- Sistema de efeitos ativos (buffs/debuffs) com `EffectFactory`
-- Armas únicas com mecânicas próprias
-- Habilidades de boss com comportamentos especializados
-- Habilidades raciais para todas as 9 raças
-```
+### 🏪 Sistema de Lojas & Inventário
+* Interface visual completa para compras e vendas de equipamentos e consumíveis utilizando o sistema de moedas de Bronze, Prata e Ouro.
+* Catálogo dinâmico alimentado por arquivos JSON locais.
+
 ---
 
 ## 🏗️ Estrutura do Projeto
 
-```
-src/
-├── br/com/dantesrpg/
-│   ├── controller/          # Controllers JavaFX (UI)
-│   │   ├── CombatController
-│   │   ├── MapController
-│   │   ├── BestiarioController
-│   │   ├── LojaController
-│   │   ├── SessionLogController
-│   │   └── ...
-│   ├── model/               # Lógica de negócio
-│   │   ├── classes/         # Classes de personagem
-│   │   ├── racas/           # Raças jogáveis
-│   │   ├── habilidades/     # Habilidades (classe, racial, boss)
-│   │   ├── armas/           # Armas únicas e de boss
-│   │   ├── fantasmasnobres/ # Fantasmas Nobres do Invocador
-│   │   ├── enums/           # Atributos, tipos de ação, efeito, etc.
-│   │   ├── map/             # Dados de mapa e terreno
-│   │   └── util/            # DiceRoller, SessionLogger, Factories
-│   └── main/                # Entrypoint e CSS global
-└── main/resources/
-    └── data/
-        ├── bestiario.json   # Banco de inimigos
-        └── players/         # Fichas dos jogadores (.json)
-```
-
----
-
-## 🛠️ Tecnologias
-
-- **Java 21+**
-- **JavaFX** — Interface gráfica desktop
-- **JSON** — Persistência de dados de personagens e bestiário
-- **Maven / Gradle** — Gerenciamento de dependências
-
----
-## ⚠️Dependencias:
-O projeto utiliza assets de imagem e fontes que não estão incluídos no repositório permitindo customização de inimigos/assets. Certifique-se de ter os recursos na pasta correta antes de rodar.
+O projeto utiliza um design modular focado na separação de responsabilidades (MVC) e na injeção de serviços:
 
 ```
-> JAVA SDK 21
-> JAVA FX
-> JAVA Gson 2.11.0
-``` 
-
-
-## 📜 Personagens Ativos na Campanha
-
-A campanha conta com um elenco rico de personagens jogadores, cada um com ficha própria, equipamentos e progressão, o tamanho de mesa recomendado é 4 a 6 jogadores.
-devido ao alto número de aliados NPC's que podem entrar na party é necessario um cuidado especial com a escala de dificuldade escolhida. (de 1 a 4 aliados NPC's podem ser adicionados)
----
-
-## 🗒️ Histórico de Versões principais
-
-### v1.0.0. — MK1 *Legado*
-```
-- Digitalização e iniciamento do desenvolvimento da ideia base do RPG Manager
-- Uso de java Swing para interface visual
-```
-
-### v2.0.0. — MK2
-```
-- Inicio do uso de CSS e java FX para um visual melhor
-- repaginada no sistema de classes para melhor divisão e manutenção de lógica
-```
-
-### v2.16.0. — MK2
-```
-- Inicio da campanha de RPG e com o teste "pratico" foi possivel ver varios pontos de refino necessarios no código
-- adição do editor de personagens com grafico de "teia"
-```
-
-### v2.43.1 — MK2
-``` 
-- Primeira versão exposta para o github
-- testes externos realizados
-```
-
-### v2.50.0. — MK2
-```
-- Primeira versão unificada em um unico arquivo para execução externa
+src/main/java/br/com/dantesrpg/
+├── main/                   # Entrypoint do aplicativo (Launcher / Main)
+├── model/                  # Regras de negócio e representação das entidades
+│   ├── classes/            # Definição das classes jogáveis
+│   ├── racas/              # Lógicas e hooks de eventos raciais
+│   ├── habilidades/        # Habilidades genéricas, de classe, raça e bosses
+│   ├── fantasmasnobres/    # Fantasmas Nobres
+│   ├── combat/             # Subsistemas de combate (DamageCalculator, Applicator, etc.)
+│   ├── map/                # Sistema de mapa e dados de terreno
+│   └── util/               # Utilitários (FileLoader, factories e ImageCache)
+├── controller/             # Lógica e coordenação das telas do JavaFX
+│   ├── service/            # Serviços delegados (BestiarioSpawn, CatalogoItens, UI)
+│   └── map/                # Renderizadores e manipuladores do mapa tático
+│
+src/main/resources/
+├── br/com/dantesrpg/view/  # Arquivos FXML e style.css global
+└── data/                   # Arquivos de persistência e catálogos (JSON)
+    ├── Lojas/              # Inventários das lojas
+    ├── players/            # Saves dos personagens jogadores
+    ├── armas.json          # Catálogo geral de armas
+    ├── armaduras.json      # Catálogo geral de armaduras
+    ├── amuletos.json       # Catálogo geral de amuletos
+    └── consumiveis.json    # Catálogo geral de consumíveis
 ```
 
 ---
 
-## 💡 Motivação
+## 🛠️ Tecnologias e Configuração
 
-Este projeto surgiu da vontade de criar uma experiência de RPG verdadeiramente personalizada onde as regras, o lore e a ficção fossem construídos do zero. O manager existe para que o Mestre foque no que importa: a narrativa. Toda a burocracia fica por conta do código.
+* **Java 21**
+* **JavaFX 21**
+* **Gson** (Google) para processamento de JSON
+* **Configuração de Dependências:** Configurado como um **build local do Eclipse** (sem Maven/Gradle), carregando as bibliotecas JavaFX e Gson localmente via User Libraries ou classpath configurado no `.classpath`.
+
+### Execução Externa
+Para rodar via linha de comando no terminal de desenvolvimento (com argumentos de módulo JavaFX):
+```powershell
+& 'C:\Program Files\Java\jdk-21.0.10\bin\java.exe' '@C:\Users\vixus\AppData\Local\Temp\cp_...' 'br.com.dantesrpg.main.Launcher'
+```
+
+---
+
+## 🗒️ Histórico de Versões
+
+### MK1 (v1.x)
+* Estrutura inicial do RPG Manager desenvolvida com Java Swing.
+
+### MK2 (v2.x)
+* Migração de interface para JavaFX com estilo customizado em CSS.
+* Introdução do mapa tático em grid e estruturação em JSON.
+* Criação do editor de personagens visual.
+
+### MK3 (v3.x) - *Versão Atual*
+* **Refatoração Arquitetural Completa:** Desmembramento do controller principal em Serviços dedicados e Coordinators de lógica.
+* **Otimização de Startup:** Divisão da inicialização em estágio leve e estágio pesado tardio com exibição imediata da janela principal sob um overlay de carregamento.
+* **Consolidação de Recursos:** Migração e limpeza de caminhos estáticos da raiz para a pasta padrão `src/main/resources`.
+* **Expandido de Recursos:** Inclusão de novas classes (10 totais) e raças (10 totais).
 
 ---
 
 ## 📄 Licença
-Projeto pessoal e de uso privado. Distribuição apenas com autorização do autor.
----
-
-*Feito com muito energetico, sessões longas e o espírito indomavel da raça humana para arrumar bugs que surgem a cada 4 linhas ou 2 segundos de sessão* 🔥
+Projeto pessoal e de uso privado para campanhas de RPG do autor. Distribuição e cópia não autorizadas.
