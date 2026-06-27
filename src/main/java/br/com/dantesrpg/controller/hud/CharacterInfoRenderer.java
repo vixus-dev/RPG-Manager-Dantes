@@ -61,12 +61,35 @@ public class CharacterInfoRenderer {
 
 		if (ator.isProtagonista()) {
 			labelHP.setText("?/?");
+			labelHP.setStyle("");
 			labelMP.setText("?/?");
 		} else if (ator.isPoderoso()) {
 			labelHP.setText("?/?");
+			labelHP.setStyle("");
 			labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
 		} else {
-			labelHP.setText(formatarNumero(ator.getVidaAtual()) + "/" + formatarNumero(ator.getVidaMaxima()));
+			double dividaContrato = br.com.dantesrpg.model.util.ContratoDeVidaUtils.getReducaoHpMaximoTotal(ator);
+			double reducaoInfernal = ator.getEscudoInfernalAtual();
+			double reducaoTotal = dividaContrato + reducaoInfernal;
+			String hpAtualTexto = formatarNumero(ator.getVidaAtual());
+			String hpMaxTexto = formatarNumero(ator.getVidaMaxima());
+
+			if (reducaoTotal > 0) {
+				if (ator.getEscudoAtual() > 0) {
+					String escudoTexto = formatarNumero(ator.getEscudoAtual());
+					labelHP.setText(escudoTexto + " / " + hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) reducaoTotal + ")");
+				} else {
+					labelHP.setText(hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) reducaoTotal + ")");
+				}
+				labelHP.setStyle("-fx-text-fill: #ffaaaa; -fx-font-weight: bold;");
+			} else if (ator.getEscudoAtual() > 0) {
+				String escudoTexto = formatarNumero(ator.getEscudoAtual());
+				labelHP.setText(escudoTexto + " / " + hpAtualTexto);
+				labelHP.setStyle("");
+			} else {
+				labelHP.setText(hpAtualTexto + "/" + hpMaxTexto);
+				labelHP.setStyle("");
+			}
 			labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
 		}
 		

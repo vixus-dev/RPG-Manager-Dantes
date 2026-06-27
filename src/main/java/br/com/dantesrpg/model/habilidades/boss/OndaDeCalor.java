@@ -25,7 +25,7 @@ public class OndaDeCalor extends Habilidade {
     public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
         
         // Aplica o efeito no próprio Sol
-        Efeito efeitoAtivo = new Efeito("Onda de Calor (Ativa)", TipoEfeito.BUFF, 100, new HashMap<>(), 0, 0);
+        Efeito efeitoAtivo = new Efeito("Onda de Calor (Ativa)", TipoEfeito.BUFF, 1000, new HashMap<>(), 0, 0);
         manager.aplicarEfeito(conjurador, efeitoAtivo);
         
         // Ativa o Domínio de Sobreposição de Chão (Heat Wave)

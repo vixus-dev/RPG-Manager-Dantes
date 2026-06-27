@@ -1,15 +1,15 @@
 {
   "iniciativaBase": 30,
   "atributosBase": {
-    "FORCA": 6,
     "SORTE": 2,
-    "INTELIGENCIA": 8,
     "ENDURANCE": 8,
-    "TOPOR": 5,
     "SAGACIDADE": 6,
+    "PERCEPCAO": 6,
     "DESTREZA": 10,
     "CARISMA": 7,
-    "PERCEPCAO": 6,
+    "INTELIGENCIA": 8,
+    "FORCA": 6,
+    "TOPOR": 5,
     "INSPIRACAO": 13
   },
   "escudoSangueAtual": 0.0,
@@ -44,7 +44,7 @@
   "nome": "Lilith",
   "segmentos": 0,
   "grau": 1,
-  "posX": 4,
+  "posX": 2,
   "posY": 5,
   "amuleto2": "Pingente de Cruz",
   "amuleto1": "Anel de Rei",

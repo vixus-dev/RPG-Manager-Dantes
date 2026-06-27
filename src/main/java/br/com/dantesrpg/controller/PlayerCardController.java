@@ -80,10 +80,18 @@ public class PlayerCardController {
 			String hpAtualTexto = formatarNumero(personagem.getVidaAtual());
 			String hpMaxTexto = formatarNumero(personagem.getVidaMaxima());
 
-			// Texto especial para qualquer personagem com contrato de vida ativo
-			double dividaTotal = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
-			if (dividaTotal > 0) {
-				labelHPShieldText.setText(hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) dividaTotal + ")");
+			// Redução total do teto (Contrato de Vida + Escudo Infernal)
+			double dividaContrato = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
+			double reducaoInfernal = personagem.getEscudoInfernalAtual();
+			double reducaoTotal = dividaContrato + reducaoInfernal;
+
+			if (reducaoTotal > 0) {
+				if (personagem.getEscudoAtual() > 0) {
+					String escudoTexto = formatarNumero(personagem.getEscudoAtual());
+					labelHPShieldText.setText(escudoTexto + " / " + hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) reducaoTotal + ")");
+				} else {
+					labelHPShieldText.setText(hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) reducaoTotal + ")");
+				}
 				labelHPShieldText.setStyle("-fx-text-fill: #ffaaaa; -fx-font-size: 10px; -fx-font-weight: bold;");
 			} else if (personagem.getEscudoAtual() > 0) {
 				String escudoTexto = formatarNumero(personagem.getEscudoAtual());
@@ -195,15 +203,16 @@ public class PlayerCardController {
 			if (labelContractCount != null)
 				labelContractCount.setVisible(false); // Reset
 
-			// Barra vermelha unificada: qualquer contrato de vida ativo (qualquer raça/fonte)
-			double dividaTotal = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
+			// Barra vermelha unificada: bloqueia HP máximo perdido (Contratos + Escudo Infernal)
+			double dividaContrato = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
+			double reducaoInfernal = personagem.getEscudoInfernalAtual();
+			double reducaoTotal = dividaContrato + reducaoInfernal;
 			double vidaBase = personagem.getVidaMaximaBase();
-			if (dividaTotal > 0 && vidaBase > 0) {
+			if (reducaoTotal > 0 && vidaBase > 0) {
 				contractBarPolygon.setVisible(true);
 
-				// Porcentagem bloqueada pela DÍVIDA (em relação ao HP base).
-				// Pode ficar "cheio" (100%) quando sobrecarregado.
-				double pctBlocked = Math.min(1.0, dividaTotal / vidaBase);
+				// Porcentagem bloqueada (em relação ao HP base).
+				double pctBlocked = Math.min(1.0, reducaoTotal / vidaBase);
 				double pctStart = 1.0 - pctBlocked; // Desenha da direita para esquerda
 
 				double x1 = startX + (fullWidthRect * pctStart);
@@ -215,35 +224,54 @@ public class PlayerCardController {
 
 				// Tooltip com detalhamento por fonte
 				StringBuilder info = new StringBuilder();
-				info.append("Contrato Ativo (Teto): -").append((int) dividaTotal).append(" HP Máx\n");
+				info.append("HP Máximo Reduzido: -").append((int) reducaoTotal).append(" HP Máx\n");
 				info.append("Fontes:\n");
-				boolean humanoAtivoVisto = false;
-				int humanosNaFila = 0;
-				for (ContratoDeVida c : personagem.getContratosDeVida()) {
-					if (c.isHumano()) {
-						if (!humanoAtivoVisto) {
+				
+				if (dividaContrato > 0) {
+					boolean humanoAtivoVisto = false;
+					int humanosNaFila = 0;
+					for (ContratoDeVida c : personagem.getContratosDeVida()) {
+						if (c.isHumano()) {
+							if (!humanoAtivoVisto) {
+								info.append("  • ").append(c.getFonte()).append(": -")
+										.append((int) c.getDividaRestante()).append("\n");
+								humanoAtivoVisto = true;
+							} else {
+								humanosNaFila++;
+							}
+						} else {
 							info.append("  • ").append(c.getFonte()).append(": -")
 									.append((int) c.getDividaRestante()).append("\n");
-							humanoAtivoVisto = true;
-						} else {
-							humanosNaFila++;
 						}
-					} else {
-						info.append("  • ").append(c.getFonte()).append(": -")
-								.append((int) c.getDividaRestante()).append("\n");
+					}
+					if (humanosNaFila > 0) {
+						info.append("Contratos Humanos na Fila: ").append(humanosNaFila).append("\n");
 					}
 				}
-				if (humanosNaFila > 0) {
-					info.append("Contratos Humanos na Fila: ").append(humanosNaFila);
+				if (reducaoInfernal > 0) {
+					info.append("  • Escudo Infernal: -").append((int) reducaoInfernal).append("\n");
 				}
 				if (ContratoDeVidaUtils.estaSobrecarregado(personagem)) {
-					info.append("\n⚠ SOBRECARGA: qualquer dano é letal!");
+					info.append("⚠ SOBRECARGA: qualquer dano é letal!\n");
 				}
-				Tooltip.install(contractBarPolygon, new Tooltip(info.toString()));
+				Tooltip.install(contractBarPolygon, new Tooltip(info.toString().trim()));
 
-				if (labelContractCount != null && humanosNaFila > 0) {
-					labelContractCount.setText("+" + humanosNaFila);
-					labelContractCount.setVisible(true);
+				if (labelContractCount != null) {
+					int humanosNaFila = 0;
+					boolean humanoAtivoVisto = false;
+					for (ContratoDeVida c : personagem.getContratosDeVida()) {
+						if (c.isHumano()) {
+							if (!humanoAtivoVisto) {
+								humanoAtivoVisto = true;
+							} else {
+								humanosNaFila++;
+							}
+						}
+					}
+					if (humanosNaFila > 0) {
+						labelContractCount.setText("+" + humanosNaFila);
+						labelContractCount.setVisible(true);
+					}
 				}
 			}
 		}

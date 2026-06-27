@@ -3168,15 +3168,15 @@
     "atributoMultiplicador": "FORCA",
     "modificadoresDeAtributo": {
       "FORCA": 16.0,
-      "INSPIRACAO" : 4,
-      "ENDURANCE" : 12,
-      "CARISMA" : 12,
-      "INTELIGENCIA": 10,
-      "DESTREZA" : 12,
-      "SORTE" : 10,
-      "SAGACIDADE" : 20,
-      "TOPOR" : 0,
-      "PERCEPCAO" : 12
+      "INSPIRACAO": 4.0,
+      "ENDURANCE": 12.0,
+      "CARISMA": 12.0,
+      "INTELIGENCIA": 10.0,
+      "DESTREZA": 12.0,
+      "SORTE": 10.0,
+      "SAGACIDADE": 20.0,
+      "TOPOR": 0.0,
+      "PERCEPCAO": 12.0
     },
     "custoTU": 125.0,
     "tipo": "Melee",
@@ -4007,18 +4007,18 @@
     "descricao": "Pistola que causa dano de fogo",
     "raridade": "COMUM",
     "andar": "",
-    "valorMoedas": 0,
+    "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 8,
-    "ticksDeDano": 1,
+    "danoBase": 8.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "SAGACIDADE",
-    "custoTU": 90,
+    "custoTU": 90.0,
     "tipo": "Ranged",
-    "alcance": 4,
-    "wielding": 1,
+    "alcance": 4.0,
+    "wielding": 1.0,
     "efeitoAoAcertar": "Queimação",
     "chanceEfeito": 0.25,
-    "municaoMaxima": 6
+    "municaoMaxima": 6.0
   },
   "Rita": {
     "nome": "Rita",
@@ -4028,20 +4028,20 @@
     "andar": "4",
     "valorMoedas": 50.0,
     "tipoMoeda": "OURO",
-    "danoBase": 35.0,
+    "danoBase": 20.0,
     "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
     "modificadoresDeAtributo": {
       "FORCA": 38.0,
-      "INSPIRACAO" : 4,
-      "ENDURANCE" : 12,
-      "CARISMA" : 12,
-      "INTELIGENCIA": 10,
-      "DESTREZA" : 12,
-      "SORTE" : 10,
-      "SAGACIDADE" : 20,
-      "TOPOR" : 0,
-      "PERCEPCAO" : 12
+      "INSPIRACAO": 4.0,
+      "ENDURANCE": 12.0,
+      "CARISMA": 12.0,
+      "INTELIGENCIA": 10.0,
+      "DESTREZA": 12.0,
+      "SORTE": 10.0,
+      "SAGACIDADE": 20.0,
+      "TOPOR": 0.0,
+      "PERCEPCAO": 12.0
     },
     "custoTU": 90.0,
     "tipo": "Melee",
@@ -4051,18 +4051,18 @@
     "efeitoAoAcertar": "Queimadura",
     "chanceEfeito": 0.15,
     "modificadoresStatus": {
-      "DANO_CRITICO": 0.50,
+      "DANO_CRITICO": 0.5,
       "TAXA_CRITICA": 0.25
     },
     "habilidadesConcedidas": [
-      "Auto-Guarda",
-      "Bash Strike",
-      "Corte de Apófis"
+      "Julgamento",
+      "Arremesso de Machado",
+      "Arremesso de Sol"
     ],
     "wielding": 2.0
   },
-  "Paz & Guerra": {
-    "nome": "Paz & Guerra",
+  "Paz \u0026 Guerra": {
+    "nome": "Paz \u0026 Guerra",
     "categoria": "Espada",
     "descricao": "Um par de lâminas belissimas, lâminas que podem cortar o universo",
     "raridade": "MITICO",
@@ -4074,23 +4074,43 @@
     "atributoMultiplicador": "FORCA",
     "modificadoresDeAtributo": {
       "FORCA": 178.0,
-      "INSPIRACAO" : 4,
-      "ENDURANCE" : 12,
-      "CARISMA" : 12,
-      "INTELIGENCIA": 10,
-      "DESTREZA" : 12,
-      "SORTE" : 10,
-      "SAGACIDADE" : 20,
-      "TOPOR" : 0,
-      "PERCEPCAO" : 12
+      "INSPIRACAO": 4.0,
+      "ENDURANCE": 12.0,
+      "CARISMA": 12.0,
+      "INTELIGENCIA": 10.0,
+      "DESTREZA": 12.0,
+      "SORTE": 10.0,
+      "SAGACIDADE": 20.0,
+      "TOPOR": 0.0,
+      "PERCEPCAO": 12.0
     },
     "custoTU": 40.0,
     "tipo": "Melee",
     "alcance": 5.0,
     "modificadoresStatus": {
-      "DANO_CRITICO": 100.00,
+      "DANO_CRITICO": 100.0,
       "TAXA_CRITICA": 0.25
     },
     "wielding": 2.0
+  },
+  "Espada de cristal corrompido": {
+    "nome": "Espada de cristal corrompido",
+    "categoria": "Custom",
+    "descricao": "Espada formada de cristais roxos estranhos?",
+    "raridade": "EPICO",
+    "andar": "4",
+    "valorMoedas": 250,
+    "tipoMoeda": "PRATA",
+    "danoBase": 22,
+    "ticksDeDano": 1,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 125,
+    "tipo": "Melee",
+    "alcance": 2,
+    "wielding": 1,
+    "tipoAlvo": "CONE",
+    "tamanhoArea": 135,
+    "efeitoAoAcertar": "Ruptura",
+    "chanceEfeito": 0.5
   }
 }
