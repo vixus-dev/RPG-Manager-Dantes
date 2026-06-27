@@ -155,51 +155,12 @@ public class LojaController {
 	private void carregarListaDeArquivosDeLoja() {
 		comboSelecaoLoja.getItems().clear();
 		try {
-			// Procura a pasta de lojas usando caminhos relativos ao projeto consolidados
-			File pastaLojas = null;
-			File opcaoMaven = new File("src/main/resources/data/Lojas");
-			File opcaoSrc = new File("src/data/Lojas");
-			
-			// Tenta também com minúsculas se necessário
-			File opcaoMavenMin = new File("src/main/resources/data/lojas");
-			File opcaoSrcMin = new File("src/data/lojas");
-
-			if (opcaoMaven.exists() && opcaoMaven.isDirectory()) {
-				pastaLojas = opcaoMaven;
-			} else if (opcaoSrc.exists() && opcaoSrc.isDirectory()) {
-				pastaLojas = opcaoSrc;
-			} else if (opcaoMavenMin.exists() && opcaoMavenMin.isDirectory()) {
-				pastaLojas = opcaoMavenMin;
-			} else if (opcaoSrcMin.exists() && opcaoSrcMin.isDirectory()) {
-				pastaLojas = opcaoSrcMin;
+			List<String> arquivos = FileLoader.listarArquivosDeDiretorio("/data/Lojas/", ".json");
+			if (arquivos.isEmpty()) {
+				arquivos = FileLoader.listarArquivosDeDiretorio("/data/lojas/", ".json");
 			}
-
-			if (pastaLojas != null) {
-				File[] listOfFiles = pastaLojas.listFiles();
-				if (listOfFiles != null) {
-					for (File file : listOfFiles) {
-						if (file.isFile() && file.getName().endsWith(".json")) {
-							comboSelecaoLoja.getItems().add(file.getName().replace(".json", ""));
-						}
-					}
-				}
-			} else {
-				// Fallback classpath
-				URL url = getClass().getResource("/data/Lojas/");
-				if (url == null) {
-					url = getClass().getResource("/data/lojas/");
-				}
-				if (url != null) {
-					File folder = new File(url.toURI());
-					File[] listOfFiles = folder.listFiles();
-					if (listOfFiles != null) {
-						for (File file : listOfFiles) {
-							if (file.isFile() && file.getName().endsWith(".json")) {
-								comboSelecaoLoja.getItems().add(file.getName().replace(".json", ""));
-							}
-						}
-					}
-				}
+			for (String nomeArquivo : arquivos) {
+				comboSelecaoLoja.getItems().add(nomeArquivo.replace(".json", ""));
 			}
 		} catch (Exception e) {
 			System.err.println("Erro ao listar arquivos de lojas:");

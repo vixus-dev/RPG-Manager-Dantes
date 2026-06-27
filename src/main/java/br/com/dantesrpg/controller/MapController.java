@@ -31,6 +31,8 @@ import br.com.dantesrpg.model.map.Dominio;
 
 import java.util.HashMap;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 import javafx.scene.input.MouseEvent;
@@ -896,13 +898,22 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	}
 
 	public void carregarMapaDeImagem(File mapaFile) {
-		System.out.println("MAPA: Carregando mapa de arena: " + mapaFile.getName());
+		try (FileInputStream fis = new FileInputStream(mapaFile)) {
+			carregarMapaDeImagem(fis, mapaFile.getName());
+		} catch (Exception e) {
+			System.err.println("Erro ao abrir arquivo do mapa: " + mapaFile.getName());
+			e.printStackTrace();
+			preencherComChaoPadrao();
+		}
+	}
+
+	public void carregarMapaDeImagem(InputStream is, String nomeMapa) {
+		System.out.println("MAPA: Carregando mapa de recurso/stream: " + nomeMapa);
 
 		try {
-			// Carrega a imagem a partir de um ARQUIVO, não de um recurso
-			Image mapaImage = new Image(new FileInputStream(mapaFile));
+			Image mapaImage = new Image(is);
 			if (mapaImage.isError())
-				throw new Exception("Falha ao carregar imagem: " + mapaFile.getName());
+				throw new Exception("Falha ao carregar imagem: " + nomeMapa);
 
 			PixelReader pixelReader = mapaImage.getPixelReader();
 

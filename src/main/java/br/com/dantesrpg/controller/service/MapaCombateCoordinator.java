@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import br.com.dantesrpg.model.map.TileDefinition;
+import br.com.dantesrpg.model.util.FileLoader;
 
 public class MapaCombateCoordinator {
 
@@ -175,6 +178,41 @@ EstadoCombate estado = estadoSupplier.get();
 		System.out.println("NOVA ARENA CARREGADA COM SUCESSO.");
 	}
 
+	public void carregarNovaArenaLogic(String caminhoRecurso) {
+		EstadoCombate estado = estadoSupplier.get();
+		encerrarEmprestimosOvertime();
+		encerrarContratosBarbaros();
+		limparClonesDoCombate();
+		estado.getCombatentes().removeIf(p -> !isPlayer.test(p));
+
+		try (InputStream is = FileLoader.carregarArquivo(caminhoRecurso)) {
+			if (is != null) {
+				String nomeMapa = caminhoRecurso.contains("/") ? caminhoRecurso.substring(caminhoRecurso.lastIndexOf('/') + 1) : caminhoRecurso;
+				forEachMap.accept(m -> m.carregarMapaDeImagem(is, nomeMapa));
+			} else {
+				System.err.println("Erro: Não foi possível carregar a imagem do mapa " + caminhoRecurso);
+			}
+		} catch (Exception e) {
+			System.err.println("Erro ao carregar mapa a partir do recurso: " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		// Carrega metadados JSON do recurso correspondente
+		carregarMetadadosDoMapa(caminhoRecurso);
+
+		estado.resetarIniciativa();
+
+		for (Personagem personagem : estado.getCombatentes()) {
+			personagem.setPosX(0);
+			personagem.setPosY(0);
+			personagem.setMovimentoRestanteTurno(personagem.getMovimento());
+		}
+
+		popularListasDeCombatentes.run();
+		atualizarTimelineTU.run();
+		System.out.println("NOVA ARENA CARREGADA COM SUCESSO A PARTIR DE RECURSO.");
+	}
+
 	public void limparClonesDoCombate() {
 		EstadoCombate estado = estadoSupplier.get();
 		if (estado == null) {
@@ -246,6 +284,23 @@ EstadoCombate estado = estadoSupplier.get();
 			}
 		} else {
 			System.out.println("MAPA: Nenhum JSON de metadados encontrado. Usando imagem pura.");
+		}
+	}
+
+	public void carregarMetadadosDoMapa(String caminhoRecurso) {
+		String pathJson = caminhoRecurso.substring(0, caminhoRecurso.lastIndexOf('.')) + ".json";
+		try (InputStream is = FileLoader.carregarArquivo(pathJson)) {
+			if (is != null) {
+				System.out.println("MAPA: Metadados encontrados no recurso: " + pathJson);
+				try (InputStreamReader reader = new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8)) {
+					MapMetadata meta = new Gson().fromJson(reader, MapMetadata.class);
+					forEachMap.accept(m -> m.aplicarMetadados(meta));
+				}
+			} else {
+				System.out.println("MAPA: Nenhum JSON de metadados encontrado no recurso. Usando imagem pura.");
+			}
+		} catch (Exception e) {
+			System.err.println("Erro ao ler JSON do recurso de mapa: " + e.getMessage());
 		}
 	}
 

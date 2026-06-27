@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import br.com.dantesrpg.controller.service.MapaCombateCoordinator;
 import br.com.dantesrpg.model.map.MapGenerator;
 import br.com.dantesrpg.model.map.TileDefinition;
+import br.com.dantesrpg.model.util.FileLoader;
 
 public class SeletorMapaController {
 
@@ -54,27 +55,15 @@ public class SeletorMapaController {
     }
 
     private void carregarListaArquivos() {
-        if (pastaMapas.exists() && pastaMapas.isDirectory()) {
-            List<String> names = new ArrayList<>();
-            adicionarArquivosRecursivamente(pastaMapas, "", names);
-            listaMapas.setItems(FXCollections.observableArrayList(names));
-        }
-    }
-
-    private void adicionarArquivosRecursivamente(File pasta, String prefixo, List<String> names) {
-        File[] files = pasta.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                if (f.isDirectory()) {
-                    adicionarArquivosRecursivamente(f, prefixo + f.getName() + "/", names);
-                } else {
-                    String name = f.getName();
-                    if (name.endsWith(".png") || name.endsWith(".jpg")) {
-                        names.add(prefixo + name);
-                    }
-                }
-            }
-        }
+        List<String> names = FileLoader.listarArquivosDeDiretorio("/mapas/", ".png", true);
+        List<String> jpgs = FileLoader.listarArquivosDeDiretorio("/mapas/", ".jpg", true);
+        names.addAll(jpgs);
+        
+        // Remove duplicatas e ordena
+        List<String> ordenados = new ArrayList<>(new java.util.HashSet<>(names));
+        java.util.Collections.sort(ordenados, String.CASE_INSENSITIVE_ORDER);
+        
+        listaMapas.setItems(FXCollections.observableArrayList(ordenados));
     }
 
     @FXML
@@ -83,8 +72,9 @@ public class SeletorMapaController {
         if (selecionado == null) {
             return;
         }
-        File selectedFile = new File(pastaMapas, selecionado);
-        mapaCoordinator.carregarNovaArenaLogic(selectedFile); // Supondo que usaremos o metodo direto
+        
+        // Carrega usando o caminho de recurso relativo consolidado
+        mapaCoordinator.carregarNovaArenaLogic("/mapas/" + selecionado);
         fecharJanela();
     }
 
