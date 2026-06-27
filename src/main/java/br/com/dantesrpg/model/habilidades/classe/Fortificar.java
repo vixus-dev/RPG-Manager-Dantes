@@ -22,7 +22,7 @@ public class Fortificar extends Habilidade {
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
 		int inspiracao = conjurador.getAtributosFinais().getOrDefault(Atributo.INSPIRACAO, 0);
 		double pct = Math.max(0.0, inspiracao) / 100.0;
-		double escudoSangue = conjurador.getVidaMaxima() * pct;
+		double escudoSangue = conjurador.getVidaMaxima() * (pct * 10);
 
 		System.out.println(conjurador.getNome() + " usa Fortificar! Escudo de Sangue de " + (int) escudoSangue + ".");
 

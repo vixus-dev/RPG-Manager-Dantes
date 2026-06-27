@@ -6,27 +6,31 @@ import java.io.InputStream;
 
 public class FileLoader {
 
+	// Cache do diretório de desenvolvimento resolvido na primeira chamada
+	private static String diretorioDevResolvido = null;
+	private static boolean diretorioDevJaResolvido = false;
+
 	public static InputStream carregarArquivo(String caminhoRelativo) {
 		try {
 			String caminhoLimpo = caminhoRelativo.startsWith("/") ? caminhoRelativo.substring(1) : caminhoRelativo;
 
-			File arquivoDev = null;
-
-			File opcaoMaven = new File("src/main/resources/" + caminhoLimpo);
-
-			File opcaoSimples = new File("resources/" + caminhoLimpo);
-			File opcaoSrc = new File("src/" + caminhoLimpo);
-
-			if (opcaoMaven.exists()) {
-				arquivoDev = opcaoMaven;
-			} else if (opcaoSimples.exists()) {
-				arquivoDev = opcaoSimples;
-			} else if (opcaoSrc.exists()) {
-				arquivoDev = opcaoSrc;
+			// Resolve o diretório de desenvolvimento apenas UMA VEZ
+			if (!diretorioDevJaResolvido) {
+				if (new File("src/main/resources/").isDirectory()) {
+					diretorioDevResolvido = "src/main/resources/";
+				} else if (new File("resources/").isDirectory()) {
+					diretorioDevResolvido = "resources/";
+				} else if (new File("src/").isDirectory()) {
+					diretorioDevResolvido = "src/";
+				}
+				diretorioDevJaResolvido = true;
 			}
 
-			if (arquivoDev != null) {
-				return new FileInputStream(arquivoDev);
+			if (diretorioDevResolvido != null) {
+				File arquivo = new File(diretorioDevResolvido + caminhoLimpo);
+				if (arquivo.exists()) {
+					return new FileInputStream(arquivo);
+				}
 			}
 
 		} catch (Exception e) {
@@ -35,7 +39,6 @@ public class FileLoader {
 		}
 
 		// 2. FALLBACK: TENTA LER DO CLASSPATH (Binário/Compilado)
-		System.out.println("[FileLoader] Lendo do BIN (Compilado): " + caminhoRelativo);
 		InputStream is = FileLoader.class.getResourceAsStream(caminhoRelativo);
 
 		if (is == null) {

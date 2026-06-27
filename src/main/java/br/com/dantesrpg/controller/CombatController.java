@@ -3,15 +3,24 @@ package br.com.dantesrpg.controller;
 // Imports JavaFX
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -185,8 +194,10 @@ public class CombatController {
 
 	@FXML
 	public void initialize() {
+		// Fase LEVE: apenas bindings de UI, sem I/O nem carregamento de dados.
+		// O trabalho pesado é feito em inicializacaoTardia(), chamado pelo Main.
 		this.combatViewCenterNode = rootPane.getCenter();
-		System.out.println("COMBATE: Iniciando...");
+		System.out.println("COMBATE: Interface pronta (aguardando inicialização tardia).");
 
 		// Clip mainCombatStack to prevent any child (like the map) from overflowing
 		if (mainCombatStack != null) {
@@ -196,60 +207,7 @@ public class CombatController {
 			mainCombatStack.setClip(stackClip);
 		}
 
-		// Make ScrollPane viewports ignore mouse events on transparent bounds
-		javafx.application.Platform.runLater(() -> {
-			if (playerScrollPane != null) {
-				playerScrollPane.setPickOnBounds(false);
-				Node playerViewport = playerScrollPane.lookup(".viewport");
-				if (playerViewport != null) {
-					playerViewport.setPickOnBounds(false);
-				}
-			}
-			if (enemyScrollPane != null) {
-				enemyScrollPane.setPickOnBounds(false);
-				Node enemyViewport = enemyScrollPane.lookup(".viewport");
-				if (enemyViewport != null) {
-					enemyViewport.setPickOnBounds(false);
-				}
-			}
-		});
-
-		loadArmoryDatabase();
-		loadItempediaDatabase();
-		loadBestiarioDatabase();
-
-		this.combatManager = new CombatManager(this);
-		List<Personagem> todosCombatentes = criarTodosOsCombatentes();
-
-		if (todosCombatentes.isEmpty()) {
-			System.err.println("Erro Crítico: Nenhum combatente carregado.");
-			btnIniciarTurno.setDisable(true);
-			return;
-		}
-		this.estadoCombate = new EstadoCombate(todosCombatentes);
-		this.estadoCombate.setCombatManager(combatManager);
-
-		for (Personagem p : estadoCombate.getCombatentes()) {
-			if (p.getArmaEquipada() != null) {
-				p.getArmaEquipada().onCombatStart(p, estadoCombate);
-			}
-			if (p.getFantasmaNobre() != null) {
-				p.getFantasmaNobre().onCombatStart(p, estadoCombate, combatManager);
-			}
-		}
-
-		rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
-			if (newScene != null) {
-				newScene.setOnKeyPressed(event -> {
-					if (event.getCode() == javafx.scene.input.KeyCode.SPACE) {
-						onSpacebarPressed();
-					}
-				});
-			}
-		});
-
-		setupEmbeddedMap();
-
+		// Timeline scroll horizontal
 		if (timelineScrollPane != null) {
 			timelineScrollPane.setOnScroll(event -> {
 				if (event.getDeltaY() != 0) {
@@ -264,11 +222,127 @@ public class CombatController {
 				}
 			});
 		}
+	}
 
-		popularListasDeCombatentes();
-		atualizarTimelineTU();
+	/**
+	 * Fase PESADA da inicialização — chamada pelo Main via Platform.runLater()
+	 * após a janela já estar visível. Exibe um overlay de loading enquanto
+	 * carrega JSONs, cria combatentes e configura o mapa.
+	 */
+	public void inicializacaoTardia() {
+		System.out.println("COMBATE: Iniciando carregamento de dados...");
 
-		onAbaCombateClick();
+		// --- Cria overlay de loading ---
+		StackPane overlayLoading = criarOverlayDeLoading();
+		rootPane.getChildren().add(overlayLoading);
+
+		// Usa Platform.runLater para que o overlay seja renderizado antes do trabalho pesado
+		javafx.application.Platform.runLater(() -> {
+			try {
+				// Make ScrollPane viewports ignore mouse events on transparent bounds
+				if (playerScrollPane != null) {
+					playerScrollPane.setPickOnBounds(false);
+					Node playerViewport = playerScrollPane.lookup(".viewport");
+					if (playerViewport != null) {
+						playerViewport.setPickOnBounds(false);
+					}
+				}
+				if (enemyScrollPane != null) {
+					enemyScrollPane.setPickOnBounds(false);
+					Node enemyViewport = enemyScrollPane.lookup(".viewport");
+					if (enemyViewport != null) {
+						enemyViewport.setPickOnBounds(false);
+					}
+				}
+
+				// Carregamento pesado de dados
+				loadArmoryDatabase();
+				loadItempediaDatabase();
+				loadBestiarioDatabase();
+
+				this.combatManager = new CombatManager(this);
+				List<Personagem> todosCombatentes = criarTodosOsCombatentes();
+
+				if (todosCombatentes.isEmpty()) {
+					System.err.println("Erro Crítico: Nenhum combatente carregado.");
+					btnIniciarTurno.setDisable(true);
+					rootPane.getChildren().remove(overlayLoading);
+					return;
+				}
+				this.estadoCombate = new EstadoCombate(todosCombatentes);
+				this.estadoCombate.setCombatManager(combatManager);
+
+				for (Personagem p : estadoCombate.getCombatentes()) {
+					if (p.getArmaEquipada() != null) {
+						p.getArmaEquipada().onCombatStart(p, estadoCombate);
+					}
+					if (p.getFantasmaNobre() != null) {
+						p.getFantasmaNobre().onCombatStart(p, estadoCombate, combatManager);
+					}
+				}
+
+				rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+					if (newScene != null) {
+						newScene.setOnKeyPressed(event -> {
+							if (event.getCode() == javafx.scene.input.KeyCode.SPACE) {
+								onSpacebarPressed();
+							}
+						});
+					}
+				});
+
+				setupEmbeddedMap();
+
+				popularListasDeCombatentes();
+				atualizarTimelineTU();
+
+				onAbaCombateClick();
+
+				System.out.println("COMBATE: Inicialização completa.");
+			} catch (Exception e) {
+				System.err.println("Erro durante inicialização tardia:");
+				e.printStackTrace();
+			} finally {
+				// Remove overlay de loading com fade-out
+				javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(
+						javafx.util.Duration.millis(300), overlayLoading);
+				fadeOut.setFromValue(1.0);
+				fadeOut.setToValue(0.0);
+				fadeOut.setOnFinished(e -> rootPane.getChildren().remove(overlayLoading));
+				fadeOut.play();
+			}
+		});
+	}
+
+	/**
+	 * Cria o overlay visual de carregamento (fundo escuro semi-transparente
+	 * com spinner e texto "Carregando...").
+	 */
+	private StackPane criarOverlayDeLoading() {
+		StackPane overlay = new StackPane();
+		overlay.setBackground(new Background(new BackgroundFill(
+				Color.rgb(10, 10, 10, 0.85), CornerRadii.EMPTY, Insets.EMPTY)));
+		overlay.setAlignment(Pos.CENTER);
+
+		// Garante que o overlay cubra toda a área do rootPane
+		overlay.prefWidthProperty().bind(rootPane.widthProperty());
+		overlay.prefHeightProperty().bind(rootPane.heightProperty());
+
+		VBox conteudo = new VBox(20);
+		conteudo.setAlignment(Pos.CENTER);
+
+		ProgressIndicator spinner = new ProgressIndicator();
+		spinner.setMaxSize(80, 80);
+		spinner.setStyle("-fx-progress-color: #cc3333;");
+
+		Label texto = new Label("Carregando...");
+		texto.setTextFill(Color.rgb(200, 200, 200));
+		texto.setFont(Font.font("System", 18));
+
+		conteudo.getChildren().addAll(spinner, texto);
+		overlay.getChildren().add(conteudo);
+
+		return overlay;
 	}
 
 	private void onSpacebarPressed() {
