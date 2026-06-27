@@ -458,13 +458,11 @@ public class CriarController {
 		// Procurar caminhos válidos do projeto
 		File file = new File(projectPath + "/src/main/resources/data/" + filename);
 		if (!file.exists()) {
-			file = new File(projectPath + "/resources/data/" + filename);
-		}
-		if (!file.exists()) {
 			file = new File(projectPath + "/src/data/" + filename);
 		}
 		if (!file.exists()) {
-			file = new File(projectPath + "/resources/data/" + filename);
+			// fallback para criar no local correto
+			file = new File(projectPath + "/src/main/resources/data/" + filename);
 		}
 
 		try {

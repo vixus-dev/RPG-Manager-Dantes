@@ -155,27 +155,21 @@ public class LojaController {
 	private void carregarListaDeArquivosDeLoja() {
 		comboSelecaoLoja.getItems().clear();
 		try {
-			// Procura a pasta de lojas usando caminhos relativos ao projeto (como o FileLoader faz)
+			// Procura a pasta de lojas usando caminhos relativos ao projeto consolidados
 			File pastaLojas = null;
 			File opcaoMaven = new File("src/main/resources/data/Lojas");
-			File opcaoSimples = new File("resources/data/Lojas");
 			File opcaoSrc = new File("src/data/Lojas");
 			
-			// Tenta também com minúsculas
+			// Tenta também com minúsculas se necessário
 			File opcaoMavenMin = new File("src/main/resources/data/lojas");
-			File opcaoSimplesMin = new File("resources/data/lojas");
 			File opcaoSrcMin = new File("src/data/lojas");
 
 			if (opcaoMaven.exists() && opcaoMaven.isDirectory()) {
 				pastaLojas = opcaoMaven;
-			} else if (opcaoSimples.exists() && opcaoSimples.isDirectory()) {
-				pastaLojas = opcaoSimples;
 			} else if (opcaoSrc.exists() && opcaoSrc.isDirectory()) {
 				pastaLojas = opcaoSrc;
 			} else if (opcaoMavenMin.exists() && opcaoMavenMin.isDirectory()) {
 				pastaLojas = opcaoMavenMin;
-			} else if (opcaoSimplesMin.exists() && opcaoSimplesMin.isDirectory()) {
-				pastaLojas = opcaoSimplesMin;
 			} else if (opcaoSrcMin.exists() && opcaoSrcMin.isDirectory()) {
 				pastaLojas = opcaoSrcMin;
 			}
@@ -190,7 +184,7 @@ public class LojaController {
 					}
 				}
 			} else {
-				// Fallback classpath (tentando com Lojas e lojas)
+				// Fallback classpath
 				URL url = getClass().getResource("/data/Lojas/");
 				if (url == null) {
 					url = getClass().getResource("/data/lojas/");

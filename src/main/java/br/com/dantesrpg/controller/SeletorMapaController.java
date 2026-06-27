@@ -34,12 +34,11 @@ public class SeletorMapaController {
         
         File opt1 = new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
                 + File.separator + "resources" + File.separator + "mapas");
-        File opt2 = new File(System.getProperty("user.dir") + File.separator + "resources" + File.separator + "mapas");
         
         if (opt1.exists() && opt1.isDirectory()) {
             pastaMapas = opt1;
         } else {
-            pastaMapas = opt2;
+            pastaMapas = new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "mapas");
         }
         
         carregarListaArquivos();

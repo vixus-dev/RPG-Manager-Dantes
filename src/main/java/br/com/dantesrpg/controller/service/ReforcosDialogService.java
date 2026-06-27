@@ -734,7 +734,6 @@ public class ReforcosDialogService {
 		String projectPath = System.getProperty("user.dir");
 		String[] caminhos = {
 				"/src/main/resources/data/players/",
-				"/resources/data/players/",
 				"/src/data/players/"
 		};
 		String nomeArquivo = personagem.getJsonFileName();
