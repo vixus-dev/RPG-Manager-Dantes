@@ -54,6 +54,16 @@
     </dependencies>
 
     <build>
+        <!-- Garante que todas as pastas de resources e assets sejam incluídas no build do JAR -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- Compiler Plugin -->
             <plugin>
@@ -75,6 +85,39 @@
                 <configuration>
                     <mainClass>br.com.dantesrpg.main.Launcher</mainClass>
                 </configuration>
+            </plugin>
+
+            <!-- Maven Shade Plugin (Gera o Fat JAR executável com dependências) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>br.com.dantesrpg.main.Launcher</mainClass>
+                                </transformer>
+                            </transformers>
+                            <!-- Filtro para evitar erros de assinaturas de jars externos -->
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
