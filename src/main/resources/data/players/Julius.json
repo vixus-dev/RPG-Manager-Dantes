@@ -1,16 +1,16 @@
 {
   "iniciativaBase": 10,
   "atributosBase": {
-    "SAGACIDADE": 2,
-    "CARISMA": 5,
-    "TOPOR": 8,
-    "ENDURANCE": 13,
-    "PERCEPCAO": 4,
-    "SORTE": 1,
     "FORCA": 10,
-    "INSPIRACAO": 3,
+    "PERCEPCAO": 4,
+    "ENDURANCE": 13,
+    "CARISMA": 5,
     "INTELIGENCIA": 4,
-    "DESTREZA": 8
+    "DESTREZA": 8,
+    "SORTE": 1,
+    "INSPIRACAO": 3,
+    "SAGACIDADE": 2,
+    "TOPOR": 8
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,

@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,7 +182,7 @@ public class PersonagemJsonService {
 
 	private Map<Atributo, Integer> lerAtributosBase(String nomeArquivo, Map<String, Object> data) {
 		Map<String, Double> atributosJsonDouble = (Map<String, Double>) data.get("atributosBase");
-		Map<Atributo, Integer> atributosBase = new HashMap<>();
+		Map<Atributo, Integer> atributosBase = new EnumMap<>(Atributo.class);
 		if (atributosJsonDouble != null) {
 			for (Map.Entry<String, Double> entry : atributosJsonDouble.entrySet()) {
 				try {

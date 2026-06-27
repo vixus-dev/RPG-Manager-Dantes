@@ -14,6 +14,7 @@ import br.com.dantesrpg.model.racas.Marionette;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +137,7 @@ public class Personagem {
 
 	public Personagem() {
 		this.nome = "Dummy";
-		this.atributosBase = new HashMap<>();
+		this.atributosBase = new EnumMap<>(Atributo.class);
 		for (br.com.dantesrpg.model.enums.Atributo a : br.com.dantesrpg.model.enums.Atributo.values()) {
 			this.atributosBase.put(a, 10);
 		}
@@ -263,7 +264,8 @@ public class Personagem {
 		this.reducaoDoTTopor = 0.0;
 		this.reducaoCuraPercentual = 0.0;
 		this.vidaMaxima = (double) this.vidaMaximaBase;
-		this.atributosFinais = new HashMap<>(this.atributosBase != null ? this.atributosBase : Collections.emptyMap());
+		this.atributosFinais = new EnumMap<>(Atributo.class);
+		if (this.atributosBase != null) this.atributosFinais.putAll(this.atributosBase);
 	}
 
 	private void aplicarModificadoresDeAtributo() {
@@ -1360,7 +1362,7 @@ public class Personagem {
 
 	public void setAtributoBase(Atributo atributo, int valor) {
 		if (this.atributosBase == null) {
-			this.atributosBase = new HashMap<>();
+			this.atributosBase = new EnumMap<>(Atributo.class);
 		}
 		this.atributosBase.put(atributo, valor);
 	}

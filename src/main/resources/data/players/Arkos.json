@@ -1,15 +1,15 @@
 {
   "iniciativaBase": 13,
   "atributosBase": {
-    "SAGACIDADE": 1,
-    "CARISMA": 1,
     "FORCA": 19,
-    "SORTE": 1,
     "PERCEPCAO": 1,
-    "DESTREZA": 20,
     "ENDURANCE": 15,
-    "INSPIRACAO": 1,
+    "CARISMA": 1,
     "INTELIGENCIA": 1,
+    "DESTREZA": 20,
+    "SORTE": 1,
+    "INSPIRACAO": 1,
+    "SAGACIDADE": 1,
     "TOPOR": 4
   },
   "escudoSangueAtual": 0,
