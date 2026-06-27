@@ -100,25 +100,15 @@ public class EstadoJogadoresService {
 
 	public List<String> listarArquivosPersonagens() {
 		List<String> nomes = new ArrayList<>();
-		String projectPath = System.getProperty("user.dir");
-		String[] caminhos = {
-				"/src/main/resources/data/players/",
-				"/src/data/players/"
-		};
-
-		Set<String> setNomes = new HashSet<>();
-		for (String caminho : caminhos) {
-			File dir = new File(projectPath + caminho);
-			if (dir.exists() && dir.isDirectory()) {
-				File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".json"));
-				if (files != null) {
-					for (File file : files) {
-						setNomes.add(file.getName().replace(".json", ""));
-					}
-				}
+		try {
+			List<String> arquivos = br.com.dantesrpg.model.util.FileLoader.listarArquivosDeDiretorio("/data/players/", ".json");
+			for (String arquivo : arquivos) {
+				nomes.add(arquivo.replace(".json", ""));
 			}
+		} catch (Exception e) {
+			System.err.println("Erro ao listar arquivos de personagens:");
+			e.printStackTrace();
 		}
-		nomes.addAll(setNomes);
 		nomes.sort(String.CASE_INSENSITIVE_ORDER);
 		return nomes;
 	}

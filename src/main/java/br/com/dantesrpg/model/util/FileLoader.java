@@ -47,6 +47,32 @@ public class FileLoader {
 		// 2. FALLBACK: TENTA LER DO CLASSPATH (Binário/Compilado)
 		InputStream is = FileLoader.class.getResourceAsStream(caminhoRelativo);
 
+		// Se falhar, tenta achar de forma case-insensitive no classpath (necessário para o JAR ZIP)
+		if (is == null) {
+			try {
+				String caminhoNormalizado = caminhoRelativo.replace("\\", "/");
+				int ultimoSlash = caminhoNormalizado.lastIndexOf('/');
+				if (ultimoSlash != -1) {
+					String diretorioPai = caminhoNormalizado.substring(0, ultimoSlash + 1);
+					String nomeArquivoProcurado = caminhoNormalizado.substring(ultimoSlash + 1);
+
+					List<String> arquivosNaPasta = listarArquivosDeDiretorio(diretorioPai, null);
+					for (String arquivoReal : arquivosNaPasta) {
+						if (arquivoReal.equalsIgnoreCase(nomeArquivoProcurado)) {
+							String caminhoCorreto = diretorioPai + arquivoReal;
+							is = FileLoader.class.getResourceAsStream(caminhoCorreto);
+							if (is != null) {
+								System.out.println("[FileLoader] Resolvido case-insensivel no JAR: " + caminhoRelativo + " -> " + caminhoCorreto);
+								break;
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+
 		if (is == null) {
 			System.err.println("[FileLoader] ERRO CRÍTICO: Arquivo não encontrado em lugar nenhum: " + caminhoRelativo);
 		}
