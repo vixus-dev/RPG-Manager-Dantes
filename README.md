@@ -80,18 +80,34 @@ src/main/resources/
 
 ---
 
-## 🛠️ Tecnologias e Configuração
+## 🛠️ Execução e Compilação
 
-* **Java 21**
-* **JavaFX 21**
-* **Gson** (Google) para processamento de JSON
-* **Configuração de Dependências:** Configurado como um **build local do Eclipse** (sem Maven/Gradle), carregando as bibliotecas JavaFX e Gson localmente via User Libraries ou classpath configurado no `.classpath`.
+O projeto está configurado para gerar um **JAR Executável Standalone** (tudo em um) utilizando o Maven, embutindo o runtime do JavaFX, a biblioteca Gson e todos os recursos de dados e imagem necessários.
 
-### Execução Externa
-Para rodar via linha de comando no terminal de desenvolvimento (com argumentos de módulo JavaFX):
-```powershell
-& 'C:\Program Files\Java\jdk-21.0.10\bin\java.exe' '@C:\Users\vixus\AppData\Local\Temp\cp_...' 'br.com.dantesrpg.main.Launcher'
-```
+### 🚀 Como Rodar o Aplicativo (Mais Fácil)
+Se você já possui o arquivo `.jar` compilado (como o disponível nas Releases do GitHub):
+1. Certifique-se de ter o **Java Runtime Environment (JRE) 21** ou superior instalado na sua máquina.
+2. Dê um **duplo clique** no arquivo executável:
+   `RPG_Manager_Decadencia_v3.0.0.jar`
+3. *Alternativamente*, você pode rodar pelo terminal usando o comando:
+   ```powershell
+   java -jar RPG_Manager_Decadencia_v3.0.0.jar
+   ```
+
+### 📦 Como Compilar e Empacotar (Para Desenvolvedores)
+Para fazer modificações no código e gerar um novo executável a partir do código fonte:
+1. Abra a pasta do projeto no VS Code ou terminal.
+2. Certifique-se de possuir o Maven instalado.
+3. Rode o comando de compilação:
+   ```powershell
+   mvn clean package
+   ```
+4. O Maven compilará e criará o arquivo JAR executável completo na pasta `target/` com o nome `rpg-dantes-inferno-1.0-SNAPSHOT.jar` (cerca de 114 MB devido ao acoplamento das imagens e dependências).
+
+### ⚙️ Execução em Ambiente de Desenvolvimento (Eclipse/VS Code)
+Caso queira apenas rodar e testar em tempo de desenvolvimento sem gerar o pacote JAR final:
+* **Via Maven:** `mvn javafx:run`
+* **Via Eclipse:** O projeto mantém a compatibilidade com a configuração de classpath local e User Libraries do Eclipse.
 
 ---
 
