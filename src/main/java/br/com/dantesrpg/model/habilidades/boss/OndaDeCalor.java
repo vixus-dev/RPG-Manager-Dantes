@@ -25,7 +25,7 @@ public class OndaDeCalor extends Habilidade {
     public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
         
         // Aplica o efeito no próprio Sol
-        Efeito efeitoAtivo = new Efeito("Onda de Calor (Ativa)", TipoEfeito.BUFF, 1000, new HashMap<>(), 0, 0);
+        Efeito efeitoAtivo = new Efeito("Onda de Calor (Ativa)", TipoEfeito.BUFF, 10000, new HashMap<>(), 0, 0);
         manager.aplicarEfeito(conjurador, efeitoAtivo);
         
         // Ativa o Domínio de Sobreposição de Chão (Heat Wave)
@@ -35,8 +35,9 @@ public class OndaDeCalor extends Habilidade {
             int cy = conjurador.getPosY() + (conjurador.getTamanhoY() / 2);
             
             Dominio heatWave = new Dominio(dominioId, "Heat Wave", conjurador,
-                    cx, cy, 9, "zona-heatwave");
+                    cx, cy, 15, "zona-heatwave");
             heatWave.setTexturePath("/effects/sun.png"); // Efeito PNG de chão
+            heatWave.setDisputavel(false); // Não entra em disputa de domínios
             
             // Ativa o domínio no mapa (atualizando visual e permitindo sobreposição)
             manager.getDomainManager().ativarDominioNoMapa(heatWave, conjurador, estado);

@@ -36,10 +36,17 @@ public class DomainManager {
 		if (getController() == null)
 			return;
 
+		if (!novoDominio.isDisputavel()) {
+			getController().registrarDominio(novoDominio);
+			return;
+		}
+
 		java.util.Map<String, Dominio> ativos = getController().getDominiosAtivos();
 		Dominio conflitante = null;
 
 		for (Dominio existente : ativos.values()) {
+			if (!existente.isDisputavel())
+				continue;
 			if (existente.getId().equals(novoDominio.getId()))
 				continue;
 			if (novoDominio.sobrepoe(existente)) {

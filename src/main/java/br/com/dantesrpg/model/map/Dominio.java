@@ -22,6 +22,7 @@ public class Dominio {
 	private final String cssClass; // Classe CSS para estilização visual
 	private String texturePath;   // Caminho do sprite overlay (ex: "/effects/sangue_negro.png"), null = sem overlay
 	private double overlayOpacity = 0.7; // Opacidade do sprite overlay (0.0 = transparente, 1.0 = opaco)
+	private boolean disputavel = true; // Define se o domínio entra em batalhas de expansão
 
 	// Coordenadas das células do domínio (para checagem rápida O(1))
 	private final Set<Long> coordenadas = new HashSet<>();
@@ -205,6 +206,14 @@ public class Dominio {
 
 	public void setOverlayOpacity(double overlayOpacity) {
 		this.overlayOpacity = Math.max(0.0, Math.min(1.0, overlayOpacity));
+	}
+
+	public boolean isDisputavel() {
+		return disputavel;
+	}
+
+	public void setDisputavel(boolean disputavel) {
+		this.disputavel = disputavel;
 	}
 
 	public boolean isFusao() {
