@@ -534,6 +534,12 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 						p.adicionarEscudoSangue(1);
 					}
 
+					// Gnosis de Fogo: ganha +10 escudo de sangue a cada 100 TU
+					if (nomeEfeito.equals("Gnosis de Fogo") && efeitoObj.getIntervaloTickTU() > 0
+							&& (tempoGlobalAtual % efeitoObj.getIntervaloTickTU() == 0)) {
+						p.adicionarEscudoSangue(10);
+					}
+
 					// Maldição do Gekkyūden: inimigo dentro do domínio de Lillith sofre 1 dano a cada 20 TU
 					if (nomeEfeito.equals("Maldição do Gekkyūden") && efeitoObj.getIntervaloTickTU() > 0
 							&& (tempoGlobalAtual % efeitoObj.getIntervaloTickTU() == 0)) {

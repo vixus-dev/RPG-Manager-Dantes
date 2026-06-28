@@ -3175,7 +3175,7 @@
       "DESTREZA": 12.0,
       "SORTE": 10.0,
       "SAGACIDADE": 20.0,
-      "TOPOR": 0.0,
+      "TOPOR": 10.0,
       "PERCEPCAO": 12.0
     },
     "custoTU": 125.0,
@@ -3192,7 +3192,8 @@
     "habilidadesConcedidas": [
       "Auto-Guarda",
       "Bash Strike",
-      "Corte de Apófis"
+      "Corte de Apófis",
+      "Bênção Solar"
     ],
     "wielding": 2.0
   },
@@ -4040,7 +4041,7 @@
       "DESTREZA": 12.0,
       "SORTE": 10.0,
       "SAGACIDADE": 20.0,
-      "TOPOR": 0.0,
+      "TOPOR": 10.0,
       "PERCEPCAO": 12.0
     },
     "custoTU": 90.0,

@@ -230,6 +230,46 @@ public class AuraManager {
 			}
 		}
 
+		// --- AURA ROCK DO SOL ---
+		Personagem portadorGnosis = estado.getCombatentes().stream()
+				.filter(p -> p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Gnosis de Fogo")).findFirst()
+				.orElse(null);
+
+		if (portadorGnosis != null) {
+			int raioRock = 3;
+			int gx = portadorGnosis.getPosX();
+			int gy = portadorGnosis.getPosY();
+
+			Map<String, Double> modsRock = new HashMap<>();
+			modsRock.put("TAXA_CRITICA", 0.05);
+			modsRock.put("DANO_CRITICO", 0.15);
+			modsRock.put("CUSTO_TU_PERCENTUAL", -0.10);
+
+			for (Personagem p : estado.getCombatentes()) {
+				if (!p.isAtivoNoCombate())
+					continue;
+
+				int dist = Math.max(Math.abs(p.getPosX() - gx), Math.abs(p.getPosY() - gy));
+				boolean temRock = p.getEfeitosAtivos().containsKey("Rock do Sol");
+
+				if (dist <= raioRock && !temRock) {
+					Efeito rockDoSol = new Efeito("Rock do Sol", TipoEfeito.BUFF, 9999, modsRock, 0, 0);
+					p.adicionarEfeito(rockDoSol);
+					p.recalcularAtributosEstatisticas();
+				} else if (dist > raioRock && temRock) {
+					p.removerEfeito("Rock do Sol");
+					p.recalcularAtributosEstatisticas();
+				}
+			}
+		} else {
+			for (Personagem p : estado.getCombatentes()) {
+				if (p.getEfeitosAtivos().containsKey("Rock do Sol")) {
+					p.removerEfeito("Rock do Sol");
+					p.recalcularAtributosEstatisticas();
+				}
+			}
+		}
+
 		// --- AURA DO INEFÁVEL SOL (Escanor / Sol) ---
 		Personagem sol = estado.getCombatentes().stream()
 				.filter(p -> p.isAtivoNoCombate() && p.getPropriedades().stream().anyMatch(prop -> prop.startsWith("AURA_INEFAVEL_SOL:")))

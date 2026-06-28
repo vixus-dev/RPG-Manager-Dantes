@@ -33,6 +33,7 @@ public class MapTokenRenderer {
 	private final List<Node> peoesAtuais = new ArrayList<>();
 	private final List<Personagem> peoesAtualmenteDestacados = new ArrayList<>();
 	private final List<Pane> celulasAuraDarrell = new ArrayList<>();
+	private final List<Pane> celulasAuraRockDoSol = new ArrayList<>();
 	private final List<Pane> celulasAuraZero = new ArrayList<>();
 	private final List<Pane> celulasAuraBadOmen = new ArrayList<>();
 	private final List<Pane> celulasAuraSangue = new ArrayList<>();
@@ -205,6 +206,18 @@ public class MapTokenRenderer {
 		}
 
 		for (Personagem p : combatentes) {
+			if (p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Gnosis de Fogo")) {
+				desenharAuraRockDoSol(p);
+				break;
+			}
+		}
+		boolean ninguemComRockDoSol = combatentes.stream().noneMatch(p -> p.getEfeitosAtivos().containsKey("Gnosis de Fogo"));
+		if (ninguemComRockDoSol && !celulasAuraRockDoSol.isEmpty()) {
+			for (Pane cell : celulasAuraRockDoSol) cell.getStyleClass().remove("zona-aura-rock-do-sol");
+			celulasAuraRockDoSol.clear();
+		}
+
+		for (Personagem p : combatentes) {
 			if (p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Aura do Zero")) {
 				desenharAuraZero(p);
 				break;
@@ -345,6 +358,22 @@ public class MapTokenRenderer {
 		}
 	}
 
+	public void desenharAuraRockDoSol(Personagem centro) {
+		for (Pane cell : celulasAuraRockDoSol) cell.getStyleClass().remove("zona-aura-rock-do-sol");
+		celulasAuraRockDoSol.clear();
+		int raio = 3;
+		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
+			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
+				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
+					Pane cell = celulasDoGrid[x][y];
+					if (cell != null) {
+						cell.getStyleClass().add("zona-aura-rock-do-sol");
+						celulasAuraRockDoSol.add(cell);
+					}
+				}
+			}
+		}
+	}
 	public void desenharAuraZero(Personagem centro) {
 		for (Pane cell : celulasAuraZero) cell.getStyleClass().remove("zona-aura-zero");
 		celulasAuraZero.clear();

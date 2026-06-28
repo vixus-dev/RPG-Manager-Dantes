@@ -401,6 +401,15 @@
     -fx-effect: innershadow(gaussian, rgba(0, 255, 100, 0.3), 15, 0.5, 0, 0);
 }
 
+/* --- AURA ROCK DO SOL --- */
+.zona-aura-rock-do-sol {
+    -fx-border-color: #FF0000;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    /* Brilho vermelho */
+    -fx-effect: innershadow(gaussian, rgba(255, 0, 0, 0.3), 15, 0.5, 0, 0);
+}
+
 /* --- AURA PRESENÇA DO ZERO (Zeraphon) --- */
 .zona-aura-zero {
     -fx-border-color: #6600CC;

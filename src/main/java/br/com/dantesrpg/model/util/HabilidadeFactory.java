@@ -139,6 +139,7 @@ public class HabilidadeFactory {
 		registro.put("Aprimorar Poção", AprimorarPocao::new);
 		registro.put("Arremessar Poção", ArremessarPocao::new);
 		registro.put("Mestre Filosofal", MestreFilosofal::new);
+		registro.put("Bênção Solar", br.com.dantesrpg.model.habilidades.BencaoSolar::new);
 
 		// KuangLi - Profeta de Behemoth
 		registro.put("Mergulho", Mergulho::new);
