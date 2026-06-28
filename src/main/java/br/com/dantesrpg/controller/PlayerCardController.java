@@ -246,9 +246,7 @@ public class PlayerCardController {
 						info.append("Contratos Humanos na Fila: ").append(humanosNaFila).append("\n");
 					}
 				}
-				if (reducaoInfernal > 0) {
-					info.append("  • Escudo Infernal: -").append((int) reducaoInfernal).append("\n");
-				}
+
 				if (ContratoDeVidaUtils.estaSobrecarregado(personagem)) {
 					info.append("⚠ SOBRECARGA: qualquer dano é letal!\n");
 				}

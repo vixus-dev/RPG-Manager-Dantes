@@ -277,7 +277,7 @@ public class AuraManager {
 						if (temMeioDia) {
 							Efeito meioDia = p.getEfeitosAtivos().get("Meio Dia");
 							if (meioDia != null && meioDia.getModificadores() != null) {
-								meioDia.getModificadores().put("DANO_BONUS_PERCENTUAL", 0.05 * totalEscudoInfernalGlobal);
+								meioDia.getModificadores().put("DANO_BONUS_PERCENTUAL", 0.001 * totalEscudoInfernalGlobal);
 							}
 							p.recalcularAtributosEstatisticas();
 						}
