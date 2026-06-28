@@ -53,6 +53,8 @@ public class HabilidadeFactory {
 		registro.put("Arremesso de Machado", ArremessoDeMachad::new);
 		registro.put("Julgamento", Julgamento::new);
 		registro.put("Arremesso de Sol", ArremessoDeSol::new);
+		registro.put("Rodar Sol", RodarSol::new);
+		registro.put("Destruição Sísmica", DestruicaoSismica::new);
 		registro.put("Sex in the air", SexInTheAir::new);
 		registro.put("True love!", TrueLove::new);
 		registro.put("Eternal Love!", EternalLove::new);

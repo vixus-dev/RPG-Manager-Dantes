@@ -112,7 +112,6 @@ EstadoCombate estado = estadoSupplier.get();
 		encerrarEmprestimosOvertime();
 		encerrarContratosBarbaros();
 		limparClonesDoCombate();
-		estado.getCombatentes().removeIf(p -> !isPlayer.test(p));
 		
 		arquivoMapaAtualSetter.accept(null); // Sem arquivo associado
 		
@@ -121,8 +120,6 @@ EstadoCombate estado = estadoSupplier.get();
 		estado.resetarIniciativa();
 
 		for (Personagem personagem : estado.getCombatentes()) {
-			personagem.setPosX(0);
-			personagem.setPosY(0);
 			personagem.setMovimentoRestanteTurno(personagem.getMovimento());
 		}
 
@@ -150,7 +147,6 @@ EstadoCombate estado = estadoSupplier.get();
 		encerrarContratosBarbaros();
 		encerrarPosturasAnao();
 		limparClonesDoCombate();
-		estado.getCombatentes().removeIf(p -> !isPlayer.test(p));
 		estado.resetarIniciativa();
 		popularListasDeCombatentes.run();
 		atualizarTimelineTU.run();
@@ -163,13 +159,10 @@ EstadoCombate estado = estadoSupplier.get();
 		encerrarEmprestimosOvertime();
 		encerrarContratosBarbaros();
 		limparClonesDoCombate();
-		estado.getCombatentes().removeIf(p -> !isPlayer.test(p));
 		forEachMap.accept(m -> m.carregarMapaDeImagem(mapaFile));
 		estado.resetarIniciativa();
 
 		for (Personagem personagem : estado.getCombatentes()) {
-			personagem.setPosX(0);
-			personagem.setPosY(0);
 			personagem.setMovimentoRestanteTurno(personagem.getMovimento());
 		}
 
@@ -183,7 +176,6 @@ EstadoCombate estado = estadoSupplier.get();
 		encerrarEmprestimosOvertime();
 		encerrarContratosBarbaros();
 		limparClonesDoCombate();
-		estado.getCombatentes().removeIf(p -> !isPlayer.test(p));
 
 		try (InputStream is = FileLoader.carregarArquivo(caminhoRecurso)) {
 			if (is != null) {
@@ -203,8 +195,6 @@ EstadoCombate estado = estadoSupplier.get();
 		estado.resetarIniciativa();
 
 		for (Personagem personagem : estado.getCombatentes()) {
-			personagem.setPosX(0);
-			personagem.setPosY(0);
 			personagem.setMovimentoRestanteTurno(personagem.getMovimento());
 		}
 
