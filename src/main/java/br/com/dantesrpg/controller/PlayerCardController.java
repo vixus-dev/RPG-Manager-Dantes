@@ -80,10 +80,9 @@ public class PlayerCardController {
 			String hpAtualTexto = formatarNumero(personagem.getVidaAtual());
 			String hpMaxTexto = formatarNumero(personagem.getVidaMaxima());
 
-			// Redução total do teto (Contrato de Vida + Escudo Infernal)
+			// Redução total do teto (Contrato de Vida)
 			double dividaContrato = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
-			double reducaoInfernal = personagem.getEscudoInfernalAtual();
-			double reducaoTotal = dividaContrato + reducaoInfernal;
+			double reducaoTotal = dividaContrato;
 
 			if (reducaoTotal > 0) {
 				if (personagem.getEscudoAtual() > 0) {
@@ -203,10 +202,9 @@ public class PlayerCardController {
 			if (labelContractCount != null)
 				labelContractCount.setVisible(false); // Reset
 
-			// Barra vermelha unificada: bloqueia HP máximo perdido (Contratos + Escudo Infernal)
+			// Barra vermelha unificada: bloqueia HP máximo perdido (Contratos)
 			double dividaContrato = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
-			double reducaoInfernal = personagem.getEscudoInfernalAtual();
-			double reducaoTotal = dividaContrato + reducaoInfernal;
+			double reducaoTotal = dividaContrato;
 			double vidaBase = personagem.getVidaMaximaBase();
 			if (reducaoTotal > 0 && vidaBase > 0) {
 				contractBarPolygon.setVisible(true);

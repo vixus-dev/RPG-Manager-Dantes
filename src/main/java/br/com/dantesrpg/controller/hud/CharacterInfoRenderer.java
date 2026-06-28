@@ -69,8 +69,7 @@ public class CharacterInfoRenderer {
 			labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
 		} else {
 			double dividaContrato = br.com.dantesrpg.model.util.ContratoDeVidaUtils.getReducaoHpMaximoTotal(ator);
-			double reducaoInfernal = ator.getEscudoInfernalAtual();
-			double reducaoTotal = dividaContrato + reducaoInfernal;
+			double reducaoTotal = dividaContrato;
 			String hpAtualTexto = formatarNumero(ator.getVidaAtual());
 			String hpMaxTexto = formatarNumero(ator.getVidaMaxima());
 

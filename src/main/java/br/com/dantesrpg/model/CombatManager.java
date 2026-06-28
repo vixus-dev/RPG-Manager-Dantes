@@ -558,10 +558,12 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 						}
 					}
 
-					// Queimadura Inefável (Escudo Infernal): a cada tick, adiciona +1 escudo infernal
+					// Queimadura Inefável (Escudo Infernal): a cada tick, adiciona +1 escudo infernal e +1 redução max HP via Contrato de Vida
 					if (nomeEfeito.equals("Queimadura Inefável") && efeitoObj.getIntervaloTickTU() > 0
 							&& (tempoGlobalAtual % efeitoObj.getIntervaloTickTU() == 0)) {
 						p.setEscudoInfernalAtual(p.getEscudoInfernalAtual() + 1);
+						br.com.dantesrpg.model.util.ContratoDeVida contrato = new br.com.dantesrpg.model.util.ContratoDeVida("Queimadura Inefável", 1.0, -1, false);
+						br.com.dantesrpg.model.util.ContratoDeVidaUtils.adicionarContrato(p, contrato);
 					}
 
 					// Bloco de Dano DoT

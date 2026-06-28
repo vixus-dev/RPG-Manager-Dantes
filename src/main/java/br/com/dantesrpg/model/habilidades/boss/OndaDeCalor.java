@@ -18,7 +18,7 @@ public class OndaDeCalor extends Habilidade {
 
     public OndaDeCalor() {
         super("Onda de calor", "Ativa a aura do Inefavel Sol, aplicando Meio Dia e Queimadura Inefável ao redor por 100 TU.",
-                TipoHabilidade.ATIVA, 0, 100, 1, TipoAlvo.SI_MESMO, 7, 0, 0, new ArrayList<>());
+                TipoHabilidade.ATIVA, 0, 10000, 1, TipoAlvo.SI_MESMO, 7, 0, 0, new ArrayList<>());
     }
 
     @Override

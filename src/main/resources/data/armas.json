@@ -4028,7 +4028,7 @@
     "andar": "4",
     "valorMoedas": 50.0,
     "tipoMoeda": "OURO",
-    "danoBase": 20.0,
+    "danoBase": 10.0,
     "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
     "modificadoresDeAtributo": {

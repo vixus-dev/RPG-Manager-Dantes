@@ -287,7 +287,9 @@ public class AuraManager {
 								|| (p.getFaccao() != null && p.getFaccao().equals(faccaoSol));
 						if (!mesmaFaccao) {
 							if (!temQueimadura) {
-								Efeito queimadura = new Efeito("Queimadura Inefável", TipoEfeito.DEBUFF, 9999, new HashMap<>(), 0, 20);
+								Map<String, Double> mods = new HashMap<>();
+								mods.put("REDUCAO_CURA", 0.50);
+								Efeito queimadura = new Efeito("Queimadura Inefável", TipoEfeito.DEBUFF, 9999, mods, 0, 20);
 								p.adicionarEfeito(queimadura);
 								p.recalcularAtributosEstatisticas();
 								System.out.println(">>> " + p.getNome() + " está queimando pela presença do Sol.");

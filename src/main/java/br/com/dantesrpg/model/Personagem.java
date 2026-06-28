@@ -426,10 +426,7 @@ public class Personagem {
 		// Contratos de Vida: reduzem teto de HP máximo
 		this.vidaMaxima -= br.com.dantesrpg.model.util.ContratoDeVidaUtils.getReducaoHpMaximoTotal(this);
 
-		// Escudo Infernal: Reduz HP máximo por ponto, até no mínimo 1.
-		if (this.escudoInfernalAtual > 0) {
-			this.vidaMaxima -= this.escudoInfernalAtual;
-		}
+
 	}
 
 	private void clampValoresFinais() {
