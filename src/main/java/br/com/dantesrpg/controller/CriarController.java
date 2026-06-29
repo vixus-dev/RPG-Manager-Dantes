@@ -101,7 +101,7 @@ public class CriarController {
 
 	// Efeitos consumíveis padrão do jogo
 	private static final String[] LISTA_EFEITOS_CONSUMIVEL = {
-		"CURA_HP", "CURA_MP", "ESCUDO", "REMOVE_VENENO", "REMOVE_TOXINA", 
+		"CURA_HP", "CURA_MP", "CURA_MARIONETTE", "ESCUDO", "REMOVE_VENENO", "REMOVE_TOXINA", 
 		"REMOVE_CHARM", "BUFF_FORCA", "BONUS_DANO", "DURACAO"
 	};
 

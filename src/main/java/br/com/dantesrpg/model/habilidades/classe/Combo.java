@@ -14,7 +14,7 @@ import java.util.List;
 public class Combo extends Habilidade {
 
 	public Combo() {
-		super("Combo!", "Durante 300 TU, todos os socos atacam uma segunda vez.", TipoHabilidade.ATIVA, 2, // Custo de Mana
+		super("Combo!", "Durante 300 TU, todos os ataques e habilidades causam um tick extra de dano.", TipoHabilidade.ATIVA, 2, // Custo de Mana
 				80, // Custo de TU
 				1, // Nível Necessário
 				TipoAlvo.SI_MESMO, 0, // Nenhum dano direto

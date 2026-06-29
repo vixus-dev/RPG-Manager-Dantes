@@ -12,7 +12,7 @@
     "SAGACIDADE": 10,
     "TOPOR": 10
   },
-  "escudoSangueAtual": 0.0,
+  "escudoSangueAtual": 27.0,
   "pontosParaDistribuir": 0,
   "escudoNormalAtual": 0.0,
   "carteira": {
@@ -21,8 +21,8 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 160.0,
-  "contadorTU": 0,
+  "vidaAtual": 149.99365084134598,
+  "contadorTU": 86,
   "fantasmaNobre": "JihoGekkyuden",
   "armaduraEquipada": "Couraça de Obsidiana",
   "armaEquipada": "Manoplas de Couro de Réptil SHINY",
@@ -36,8 +36,8 @@
   "nome": "Rena",
   "segmentos": 0,
   "grau": 0,
-  "posX": 5,
-  "posY": 4,
+  "posX": 30,
+  "posY": 3,
   "amuleto2": "Pingente do Coração do Deus do SOL",
   "amuleto1": "Cinto do Saqueador de Tumbas",
   "manaAtual": 11.5,

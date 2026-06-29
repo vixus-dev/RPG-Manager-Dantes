@@ -10,7 +10,7 @@ import br.com.dantesrpg.model.enums.Raridade;
 public class PunhoInfinito extends ArmaMelee {
 
 	public PunhoInfinito() {
-		super("Punho Infinito", "Manoplas", "manoplas espectrais que cobrem os punhos de Alexei", Raridade.UNICO, 0, 25,
+		super("Punho Infinito", "Manoplas", "manoplas espectrais que cobrem os punhos de Alexei", Raridade.UNICO, 0, 28,
 				1, Atributo.FORCA, 85, 1);
 				this.setWielding(2); 
 	}
@@ -24,9 +24,9 @@ public class PunhoInfinito extends ArmaMelee {
 	// Passiva 1: Ignorar Defesa — 5% base, +5% dentro do Ringue
 	@Override
 	public double getIgnorarDefesaPercentual(Personagem ator, Personagem alvo, EstadoCombate estado) {
-		double ignoreBase = ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0) * 0.05;
+		double ignoreBase = ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0) * 0.06;
 		if (isRingueAtivoEDentro(ator, estado)) {
-			ignoreBase += ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0) * 0.05;
+			ignoreBase += ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0) * 0.06;
 		}
 		return ignoreBase;
 	}
@@ -56,7 +56,7 @@ public class PunhoInfinito extends ArmaMelee {
 			double vidaAtual = ator.getVidaAtual();
 			double vidaMax = ator.getVidaMaxima();
 
-			if (vidaAtual <= (vidaMax * 0.75)) {
+			if (vidaAtual <= (vidaMax * 0.90)) {
 				int forca = ator.getAtributosFinais().getOrDefault(Atributo.FORCA, 0);
 				alvo.setContadorTU(alvo.getContadorTU() + forca);
 				System.out.println(

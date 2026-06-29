@@ -221,7 +221,7 @@ public class DamageCalculator {
 								isTiroEspecial, multiplicadorHabilidade));
 
 						// Eco (Combo)
-						if (ator.getEfeitosAtivos().containsKey("Combo!") && multiplicadorHabilidade == 1.0) {
+						if (ator.getEfeitosAtivos().containsKey("Combo!")) {
 							eventosDoAlvo.add(new DamageEvent(danoLiquido * 0.30, "Eco", false, null));
 						}
 						// Cascata Marionette
@@ -250,6 +250,11 @@ public class DamageCalculator {
 
 							eventosDoAlvo.add(criarEventoDano(danoLiquidoRajada, labelRajada, isCritRajada, ator, alvo,
 									armaDoTick, input, estado, isTiroEspecial, multiplicadorHabilidade));
+
+							// Eco (Combo)
+							if (ator.getEfeitosAtivos().containsKey("Combo!")) {
+								eventosDoAlvo.add(new DamageEvent(danoLiquidoRajada * 0.30, "Eco", false, null));
+							}
 						}
 					}
 				}
@@ -272,7 +277,7 @@ public class DamageCalculator {
 							isTiroEspecial, multiplicadorHabilidade));
 
 					// Eco (Combo)
-					if (ator.getEfeitosAtivos().containsKey("Combo!") && multiplicadorHabilidade == 1.0) {
+					if (ator.getEfeitosAtivos().containsKey("Combo!")) {
 						eventosDoAlvo.add(new DamageEvent(danoLiquido * 0.30, "Eco", false, null));
 					}
 				}
@@ -314,6 +319,12 @@ public class DamageCalculator {
 			List<DamageEvent> eventos = new ArrayList<>();
 			eventos.add(criarEventoDano(danoLiquido, "DeadEye", true, ator, alvo, arma, input, estado,
 					isTiroEspecial, habilidade.getMultiplicadorDeDano()));
+					
+			// Eco (Combo)
+			if (ator.getEfeitosAtivos().containsKey("Combo!")) {
+				eventos.add(new DamageEvent(danoLiquido * 0.30, "Eco", false, null));
+			}
+			
 			matrizDeDanos.put(alvo, eventos);
 		}
 
@@ -374,6 +385,12 @@ public class DamageCalculator {
 
 			List<DamageEvent> eventos = new ArrayList<>();
 			eventos.add(new DamageEvent(danoPosArmadura, estaNaLinhaCentral ? "EPICENTRO" : "ONDA", isCrit, null));
+			
+			// Eco (Combo)
+			if (ator.getEfeitosAtivos().containsKey("Combo!")) {
+				eventos.add(new DamageEvent(danoPosArmadura * 0.30, "Eco", false, null));
+			}
+			
 			matrizDeDanos.put(alvo, eventos);
 		}
 

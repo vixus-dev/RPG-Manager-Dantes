@@ -12,7 +12,7 @@
     "SAGACIDADE": 6,
     "TOPOR": 5
   },
-  "escudoSangueAtual": 0.0,
+  "escudoSangueAtual": 44.0,
   "pontosParaDistribuir": 0,
   "escudoNormalAtual": 0.0,
   "carteira": {
@@ -21,14 +21,16 @@
     "bronze": 5300
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 118.0,
-  "contadorTU": 2,
+  "vidaAtual": 83.59331665039065,
+  "contadorTU": 87,
   "fantasmaNobre": "InvocacaoSangrenta",
   "armaduraEquipada": "Colete Militar II",
   "armaEquipada": "Rubrum",
   "inventario": {
     "PocaoDeManaMédia": 2,
     "PocaoDeCuraPequena": 2,
+    "PedacoDeMadeira": 9,
+    "Papiro": 4,
     "OssoDeReparo": 2,
     "Adaga do Escorpião de Areia": 1,
     "Grimório da Carne e do Vento": 1,
@@ -44,7 +46,7 @@
   "nome": "Lilith",
   "segmentos": 0,
   "grau": 1,
-  "posX": 2,
+  "posX": 3,
   "posY": 5,
   "amuleto2": "Pingente de Cruz",
   "amuleto1": "Anel de Rei",

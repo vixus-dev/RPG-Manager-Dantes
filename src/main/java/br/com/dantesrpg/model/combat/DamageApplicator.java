@@ -168,7 +168,7 @@ public class DamageApplicator {
 			int areaGuarda = 3;
 
 			for (Personagem p : estado.getCombatentes()) {
-				if (p.getEfeitosAtivos().containsKey("Guardião") && faccaoDoAlvo.equals(p.getFaccao()) && p != alvo) {
+				if (p.getEfeitosAtivos().containsKey("Guardião") && faccaoDoAlvo.equals(p.getFaccao()) && p != alvo && p.isVivo()) {
 					int dist = Math.max(Math.abs(p.getPosX() - alvo.getPosX()),
 							Math.abs(p.getPosY() - alvo.getPosY()));
 					if (dist <= areaGuarda && dist < menorDistancia) {

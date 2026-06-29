@@ -30,12 +30,12 @@ public class RingOfTheUndyingWill extends FantasmaNobre {
 
 	@Override
 	public int getCustoTU() {
-		return 80;
+		return 50;
 	}
 
 	@Override
 	public int getCooldownTU() {
-		return 600;
+		return 400;
 	}
 
 	@Override

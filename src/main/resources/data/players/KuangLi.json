@@ -1,12 +1,12 @@
 {
   "iniciativaBase": 34,
   "atributosBase": {
-    "FORCA": 14,
+    "FORCA": 15,
     "PERCEPCAO": 5,
     "ENDURANCE": 11,
     "CARISMA": 1,
     "INTELIGENCIA": 4,
-    "DESTREZA": 5,
+    "DESTREZA": 6,
     "SORTE": 3,
     "INSPIRACAO": 5,
     "SAGACIDADE": 1,
@@ -14,7 +14,7 @@
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
-  "escudoNormalAtual": 0.0,
+  "escudoNormalAtual": 29.0,
   "carteira": {
     "prata": 0,
     "ouro": 1,
@@ -22,30 +22,31 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": 127.0,
-  "contadorTU": 4,
+  "contadorTU": 0,
   "fantasmaNobre": "ProfetaDeBehemoth",
   "armaduraEquipada": "Colete Militar",
-  "armaEquipada": "Bastão Primordial Behemoth",
+  "armaEquipada": "Machado Rita",
   "inventario": {
-    "PocaoDeCuraMédia": 1
+    "PocaoDeCuraMédia": 1,
+    "Bastão Primordial Behemoth": 1
   },
-  "xpAtual": 1600,
+  "xpAtual": 1650,
   "vidaMaximaBase": 82.0,
   "classe": "Campeão",
   "armasEquipadas": [
-    "Bastão Primordial Behemoth"
+    "Machado Rita"
   ],
   "nome": "KuangLi",
   "RaçaV2": true,
   "segmentos": 0,
   "grau": 1,
-  "posX": 2,
-  "posY": 6,
+  "posX": 6,
+  "posY": 9,
   "amuleto2": "Amuleto de Ferro",
   "amuleto1": "Nódulo de Carne Viva",
   "manaAtual": 9.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Lobisomem",
-  "nivel": 7,
+  "nivel": 8,
   "wieldingMaximo": 3
 }

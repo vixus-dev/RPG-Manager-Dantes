@@ -13,41 +13,42 @@
     "TOPOR": 2
   },
   "escudoSangueAtual": 0.0,
-  "pontosParaDistribuir": 0,
-  "escudoNormalAtual": 0.0,
+  "pontosParaDistribuir": 2,
+  "escudoNormalAtual": 44.0,
   "carteira": {
     "prata": 147,
     "ouro": 0,
     "bronze": 35935
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 228.0,
-  "contadorTU": 3,
+  "vidaAtual": 203.0,
+  "contadorTU": 1,
   "fantasmaNobre": "VigiliaEterna",
   "armaduraEquipada": "Armadura do Mestre",
-  "armaEquipada": "Devoradora Primordial",
+  "armaEquipada": "Pálida Vigília",
   "inventario": {
+    "Espada Selada": 1,
     "Lança Cesariana": 1,
     "PocaoDeCuraMédia": 1,
-    "PocaoDeCuraGrande": 1,
-    "Pálida Vigília": 1
+    "Devoradora Primordial": 1,
+    "PocaoDeCuraGrande": 1
   },
-  "xpAtual": 1607,
+  "xpAtual": 907,
   "vidaMaximaBase": 128.0,
   "classe": "Paladino",
   "armasEquipadas": [
-    "Devoradora Primordial"
+    "Pálida Vigília"
   ],
   "nome": "Eidan",
   "segmentos": 0,
   "grau": 2,
-  "posX": 2,
+  "posX": 7,
   "posY": 6,
   "amuleto2": "Nódulo de Carne Viva",
   "amuleto1": "Cranio de esqueleto shiny",
   "manaAtual": 13.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Half-Angel",
-  "nivel": 8,
+  "nivel": 9,
   "wieldingMaximo": 2
 }

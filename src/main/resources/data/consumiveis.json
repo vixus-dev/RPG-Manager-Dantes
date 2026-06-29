@@ -3,414 +3,501 @@
     "classeItem": "Consumivel",
     "nome": "Poção de Cura (PP)",
     "descricao": "Restaura 5 de HP.",
-    "valorMoedas": 150,
+    "valorMoedas": 150.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 20,
+    "custoTU": 20.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_HP": 5 }
+    "efeitos": {
+      "CURA_HP": 5.0
+    }
   },
   "PocaoDeCuraPequena": {
     "classeItem": "Consumivel",
     "nome": "Poção de Cura (P)",
     "descricao": "Restaura 10 de HP.",
-    "valorMoedas": 250,
+    "valorMoedas": 250.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 30,
+    "custoTU": 30.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_HP": 10 }
+    "efeitos": {
+      "CURA_HP": 10.0
+    }
   },
   "PocaoDeCuraMédia": {
     "classeItem": "Consumivel",
     "nome": "Poção de Cura (M)",
     "descricao": "Restaura 20 de HP.",
-    "valorMoedas": 500,
+    "valorMoedas": 500.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_HP": 20 }
+    "efeitos": {
+      "CURA_HP": 20.0
+    }
   },
   "PocaoDeCuraGrande": {
     "classeItem": "Consumivel",
     "nome": "Poção de Cura (G)",
     "descricao": "Restaura 35 de HP.",
-    "valorMoedas": 7,
+    "valorMoedas": 7.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 60,
+    "custoTU": 60.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_HP": 35 }
+    "efeitos": {
+      "CURA_HP": 35.0
+    }
   },
   "PocaoDeCuraMuitoGrande": {
     "classeItem": "Consumivel",
     "nome": "Poção de Cura (GG)",
     "descricao": "Restaura 50 de HP.",
-    "valorMoedas": 15,
+    "valorMoedas": 15.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 75,
+    "custoTU": 75.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_HP": 50 }
+    "efeitos": {
+      "CURA_HP": 50.0
+    }
   },
   "PocaoDeCuraGigante": {
     "classeItem": "Consumivel",
     "nome": "Poção de Cura (X)",
     "descricao": "Restaura 75 de HP.",
-    "valorMoedas": 25,
+    "valorMoedas": 25.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_HP": 75 }
+    "efeitos": {
+      "CURA_HP": 75.0
+    }
   },
   "PocaoDeCuraXL": {
     "classeItem": "Consumivel",
     "nome": "Poção de Cura (XL)",
     "descricao": "Restaura 100 de HP.",
-    "valorMoedas": 40,
+    "valorMoedas": 40.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_HP": 100 }
+    "efeitos": {
+      "CURA_HP": 100.0
+    }
   },
   "PocaoDeManaMuitoPequena": {
     "classeItem": "Consumivel",
     "nome": "Poção de Mana (PP)",
     "descricao": "Restaura 1 de Mana.",
-    "valorMoedas": 200,
+    "valorMoedas": 200.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 20,
+    "custoTU": 20.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MP": 1 }
+    "efeitos": {
+      "CURA_MP": 1.0
+    }
   },
   "PocaoDeManaPequena": {
     "classeItem": "Consumivel",
     "nome": "Poção de Mana (P)",
     "descricao": "Restaura 2 de Mana.",
-    "valorMoedas": 350,
+    "valorMoedas": 350.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 30,
+    "custoTU": 30.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MP": 2 }
+    "efeitos": {
+      "CURA_MP": 2.0
+    }
   },
   "PocaoDeManaMédia": {
     "classeItem": "Consumivel",
     "nome": "Poção de Mana (M)",
     "descricao": "Restaura 4 de Mana.",
-    "valorMoedas": 650,
+    "valorMoedas": 650.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MP": 4 }
+    "efeitos": {
+      "CURA_MP": 4.0
+    }
   },
   "PocaoDeManaGrande": {
     "classeItem": "Consumivel",
     "nome": "Poção de Mana (G)",
     "descricao": "Restaura 6 de Mana.",
-    "valorMoedas": 10,
+    "valorMoedas": 10.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 60,
+    "custoTU": 60.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MP": 6 }
+    "efeitos": {
+      "CURA_MP": 6.0
+    }
   },
   "PocaoDeManaMuitoGrande": {
     "classeItem": "Consumivel",
     "nome": "Poção de Mana (GG)",
     "descricao": "Restaura 8 de Mana.",
-    "valorMoedas": 20,
+    "valorMoedas": 20.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 75,
+    "custoTU": 75.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MP": 8 }
+    "efeitos": {
+      "CURA_MP": 8.0
+    }
   },
   "PocaoDeManaGigante": {
     "classeItem": "Consumivel",
     "nome": "Poção de Mana (X)",
     "descricao": "Restaura 10 de Mana.",
-    "valorMoedas": 35,
+    "valorMoedas": 35.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MP": 10 }
+    "efeitos": {
+      "CURA_MP": 10.0
+    }
   },
   "PocaoDeManaXL": {
     "classeItem": "Consumivel",
     "nome": "Poção de Mana (XL)",
     "descricao": "Restaura 12 de Mana.",
-    "valorMoedas": 50,
+    "valorMoedas": 50.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MP": 12 }
+    "efeitos": {
+      "CURA_MP": 12.0
+    }
   },
   "CambioBronzeParaPrata": {
     "classeItem": "Consumivel",
     "nome": "Comprar 1 Moeda de Prata",
     "descricao": "Troca 1000 Moedas de Bronze por 1 Moeda de Prata.",
-    "valorMoedas": 1000,
-    "custoTU": 0,
+    "valorMoedas": 1000.0,
+    "custoTU": 0.0,
     "usavelEmCombate": false,
-    "efeitos": { "RECEBE_PRATA": 1 }
+    "efeitos": {
+      "RECEBE_PRATA": 1.0
+    }
   },
   "CambioPrataParaOuro": {
     "classeItem": "Consumivel",
     "nome": "Comprar 1 Moeda de Ouro",
     "descricao": "Troca 1000 Moedas de Prata por 1 Moeda de Ouro.",
-    "valorMoedas": 1000,
+    "valorMoedas": 1000.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 0,
+    "custoTU": 0.0,
     "usavelEmCombate": false,
-    "efeitos": { "RECEBE_OURO": 1 }
+    "efeitos": {
+      "RECEBE_OURO": 1.0
+    }
   },
   "CambioPrataParaBronze": {
     "classeItem": "Consumivel",
     "nome": "Trocar 1 Prata por Bronze",
     "descricao": "Troca 1 Moeda de Prata por 800 Moedas de Bronze.",
-    "valorMoedas": 1,
+    "valorMoedas": 1.0,
     "tipoMoeda": "PRATA",
-    "custoTU": 0,
+    "custoTU": 0.0,
     "usavelEmCombate": false,
-    "efeitos": { "RECEBE_BRONZE": 800 }
+    "efeitos": {
+      "RECEBE_BRONZE": 800.0
+    }
   },
   "CambioOuroParaPrata": {
     "classeItem": "Consumivel",
     "nome": "Trocar 1 Ouro por Prata",
     "descricao": "Troca 1 Moeda de Ouro por 800 Moedas de Prata.",
-    "valorMoedas": 1,
+    "valorMoedas": 1.0,
     "tipoMoeda": "OURO",
-    "custoTU": 0,
+    "custoTU": 0.0,
     "usavelEmCombate": false,
-    "efeitos": { "RECEBE_PRATA": 800 }
+    "efeitos": {
+      "RECEBE_PRATA": 800.0
+    }
   },
   "Agua Benta": {
     "classeItem": "Consumivel",
     "nome": "Agua Benta",
     "descricao": "Purifica o corpo e a mente. Restaura vida e mana moderadamente.",
-    "valorMoedas": 5000,
+    "valorMoedas": 5000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 120,
+    "custoTU": 120.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_HP": 50, "CURA_MP": 5 }
+    "efeitos": {
+      "CURA_HP": 50.0,
+      "CURA_MP": 5.0
+    }
   },
   "OssoDeReparo": {
     "classeItem": "Consumivel",
     "nome": "Osso humano?",
     "descricao": "Um osso de algum ser vivo, aparenta ser de um humano. Repara marionetes.",
-    "valorMoedas": 1000,
+    "valorMoedas": 1000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MARIONETTE": 5 }
+    "efeitos": {
+      "CURA_MARIONETTE": 5.0
+    }
+  },
+  "PedacoDeMadeira": {
+    "classeItem": "Consumivel",
+    "nome": "Pedaço De Madeira",
+    "descricao": "fucking wood Repara marionetes.",
+    "valorMoedas": 1000.0,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 67.0,
+    "usavelEmCombate": true,
+    "efeitos": {
+      "CURA_MARIONETTE": 10.0
+    }
+  },
+  "Papiro": {
+    "classeItem": "Consumivel",
+    "nome": "papiro",
+    "descricao": "papel. Repara marionetes.",
+    "valorMoedas": 1000.0,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50.0,
+    "usavelEmCombate": true,
+    "efeitos": {
+      "CURA_MARIONETTE": 6.0
+    }
   },
   "EMP": {
     "classeItem": "Consumivel",
     "nome": "EMP",
     "descricao": "um dispositivo capaz de desativar correntes eletricas proximas por um tempo curto",
-    "valorMoedas": 2000,
+    "valorMoedas": 2000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MARIONETTE": 10 }
+    "efeitos": {
+      "CURA_MARIONETTE": 10.0
+    }
   },
   "Cranio do Mustaine": {
     "classeItem": "Consumivel",
     "nome": "Cranio do Mustaine",
     "descricao": "um crânio de um gato heroico",
-    "valorMoedas": 35000,
+    "valorMoedas": 35000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MARIONETTE": 99 }
+    "efeitos": {
+      "CURA_MARIONETTE": 99.0
+    }
   },
   "Caixa de Bailarina": {
     "classeItem": "Consumivel",
     "nome": "Caixa de Bailarina",
     "descricao": "uma caixa de madeira com uma balarina em cima dela",
-    "valorMoedas": 500,
+    "valorMoedas": 500.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MARIONETTE": 10 }
+    "efeitos": {
+      "CURA_MARIONETTE": 10.0
+    }
   },
   "Pacote de cocaina": {
     "classeItem": "Consumivel",
     "nome": "Pacote de cocaina",
     "descricao": "1 quilograma de cocaina, não deixe a policia te pegar com isso (se é que no inferno tem policia)",
-    "valorMoedas": 2500,
+    "valorMoedas": 2500.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MARIONETTE": 15 }
+    "efeitos": {
+      "CURA_MARIONETTE": 15.0
+    }
   },
-   "P E D R A": {
+  "P E D R A": {
     "classeItem": "Consumivel",
     "nome": "P E D R A",
     "descricao": "P E D R A",
-    "valorMoedas": 1,
+    "valorMoedas": 1.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MARIONETTE": 1 }
+    "efeitos": {
+      "CURA_MARIONETTE": 1.0
+    }
   },
   "OssoDeOuro": {
     "classeItem": "Consumivel",
     "nome": "OssoDeOuro",
     "descricao": "Um osso feito de Ouro ao literal",
-    "valorMoedas": 300,
+    "valorMoedas": 300.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MARIONETTE": 25 }
+    "efeitos": {
+      "CURA_MARIONETTE": 25.0
+    }
   },
   "MoedaDeAjuda": {
     "classeItem": "Consumivel",
     "nome": "Moeda De Ajuda",
     "descricao": "Um osso feito de Ouro ao literal",
-    "valorMoedas": 3,
+    "valorMoedas": 3.0,
     "tipoMoeda": "OURO",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": true,
-    "efeitos": { "CURA_MARIONETTE": 1 }
+    "efeitos": {
+      "CURA_MARIONETTE": 1.0
+    }
   },
   "BebidaAlcolica": {
-      "classeItem": "Consumivel",
-      "nome": "Garrafa alcolica",
-      "descricao": "uma garrafa com um liquido alcolico no seu interior.",
-      "valorMoedas": 20,
-      "tipoMoeda": "BRONZE",
-      "custoTU": 100,
-      "usavelEmCombate": true,
-      "efeitos": { "CURA_MARIONETTE": 1 }
-    },
-    "GarrafaOuro": {
-      "classeItem": "Consumivel",
-      "nome": "Garrafa com Ouro",
-      "descricao": "Plim plim brilha",
-      "custoTU": 100,
-      "valorMoedas": 6000,
-      "tipoMoeda": "BRONZE",
-      "usavelEmCombate": false,
-      "efeitos": {}
-    },
-    "DiamantePequeno": {
-      "classeItem": "Consumivel",
-      "nome": "Diamante pequeno",
-      "descricao": "Plim plim brilha e é transparente",
-      "custoTU": 100,
-      "valorMoedas": 4,
-      "tipoMoeda": "PRATA",
-      "usavelEmCombate": false,
-      "efeitos": {}
-    },
-    "SeringaAzulP": {
+    "classeItem": "Consumivel",
+    "nome": "Garrafa alcolica",
+    "descricao": "uma garrafa com um liquido alcolico no seu interior.",
+    "valorMoedas": 20.0,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 100.0,
+    "usavelEmCombate": true,
+    "efeitos": {
+      "CURA_MARIONETTE": 1.0
+    }
+  },
+  "GarrafaOuro": {
+    "classeItem": "Consumivel",
+    "nome": "Garrafa com Ouro",
+    "descricao": "Plim plim brilha",
+    "custoTU": 100.0,
+    "valorMoedas": 6000.0,
+    "tipoMoeda": "BRONZE",
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "DiamantePequeno": {
+    "classeItem": "Consumivel",
+    "nome": "Diamante pequeno",
+    "descricao": "Plim plim brilha e é transparente",
+    "custoTU": 100.0,
+    "valorMoedas": 4.0,
+    "tipoMoeda": "PRATA",
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "SeringaAzulP": {
     "classeItem": "Consumivel",
     "nome": "Seringa de X9-P1",
     "descricao": "uma seringa com um liquido experimental, faz o usuario transpirar e sua transpiração cria uma especie de revestimento ao redor da pele",
-    "valorMoedas": 5000,
+    "valorMoedas": 5000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": true,
-    "efeitos": { "ESCUDO": 10 }
+    "efeitos": {
+      "ESCUDO": 10.0
+    }
   },
   "SeringaAzulM": {
     "classeItem": "Consumivel",
     "nome": "Seringa de X9-P2",
     "descricao": "uma seringa com um liquido experimental, faz o usuario transpirar e sua transpiração cria uma especie de revestimento grosso ao redor da pele (Formula Atualizada)",
-    "valorMoedas": 12500,
+    "valorMoedas": 12500.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": true,
-    "efeitos": { "ESCUDO": 25 }
+    "efeitos": {
+      "ESCUDO": 25.0
+    }
   },
   "SeringaAzulG": {
     "classeItem": "Consumivel",
     "nome": "Seringa de X9-P3",
     "descricao": "uma seringa com um liquido experimental militar, faz o mesmo que os modelos anteriores só que melhor",
-    "valorMoedas": 2,
+    "valorMoedas": 2.0,
     "tipoMoeda": "OURO",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": true,
-    "efeitos": { "ESCUDO": 40 }
+    "efeitos": {
+      "ESCUDO": 40.0
+    }
   },
   "Antidoto": {
     "tipoId": "CONSUMIVEL",
     "nome": "Antídoto basico",
     "descricao": "Uma pequena seringa com um liquido viscoso antidoto para venenos mais leves",
-    "custoTU": 50,
-    "valorMoedas": 6600,
+    "custoTU": 50.0,
+    "valorMoedas": 6600.0,
     "tipoMoeda": "BRONZE",
     "usavelEmCombate": true,
     "efeitos": {
-        "REMOVE_VENENO": 1.0
+      "REMOVE_VENENO": 1.0
     }
   },
   "AntidotoForte": {
     "tipoId": "CONSUMIVEL",
     "nome": "Antídoto Avançado",
     "descricao": "Uma pequena seringa com um liquido antidoto para venenos dos mais variados tipos",
-    "custoTU": 5,
-    "valorMoedas": 2,
+    "custoTU": 5.0,
+    "valorMoedas": 2.0,
     "tipoMoeda": "OURO",
     "usavelEmCombate": true,
     "efeitos": {
-        "REMOVE_VENENO": 1.0,
-        "REMOVE_TOXINA": 1.0
+      "REMOVE_VENENO": 1.0,
+      "REMOVE_TOXINA": 1.0
     }
   },
   "SoroDaLucidez": {
     "tipoId": "CONSUMIVEL",
     "nome": "Soro da Lucidez",
     "descricao": "Um frasco pequeno com líquido azul-transparente. dizem que ele diminui impulsos sexuais",
-    "custoTU": 50,
-    "valorMoedas": 5,
+    "custoTU": 50.0,
+    "valorMoedas": 5.0,
     "tipoMoeda": "PRATA",
     "usavelEmCombate": true,
     "efeitos": {
-        "REMOVE_CHARM": 1.0
+      "REMOVE_CHARM": 1.0
     }
   },
   "PocaoForcaPequena": {
     "tipoId": "CONSUMIVEL",
     "nome": "Tônico da Fúria",
     "descricao": "Um pequeno frasco com estimulante que dilata os vasos sanguineos temporariamente, aumentando a força de quem bebe em uma quantia média",
-    "custoTU": 50,
-    "valorMoedas": 5,
+    "custoTU": 50.0,
+    "valorMoedas": 5.0,
     "tipoMoeda": "PRATA",
     "usavelEmCombate": true,
     "efeitos": {
-        "BUFF_FORCA": 2.0,
-        "DURACAO" : 200
+      "BUFF_FORCA": 2.0,
+      "DURACAO": 200.0
     }
   },
   "PocaoForcaMedia": {
     "tipoId": "CONSUMIVEL",
     "nome": "Tônico do Berseker",
     "descricao": "Um frasco com um estimulante poderoso. ao ingerir faz o usuario pensar menos porém amplia sua força em uma grande escala",
-    "custoTU": 50,
-    "valorMoedas": 25,
+    "custoTU": 50.0,
+    "valorMoedas": 25.0,
     "tipoMoeda": "PRATA",
     "usavelEmCombate": true,
     "efeitos": {
-        "BUFF_FORCA": 4.0,
-        "DURACAO" : 200
+      "BUFF_FORCA": 4.0,
+      "DURACAO": 200.0
     }
   },
   "PocaoDano": {
     "tipoId": "CONSUMIVEL",
     "nome": "Seringa de Violencia",
     "descricao": "uma seringa com um liquido vermelho semi-transparente. cria uma aura de energia vermelha ao redor do usuario",
-    "custoTU": 50,
-    "valorMoedas": 5,
+    "custoTU": 50.0,
+    "valorMoedas": 5.0,
     "tipoMoeda": "PRATA",
     "usavelEmCombate": true,
     "efeitos": {
-        "BONUS_DANO": 0.2,
-        "DURACAO" : 200
+      "BONUS_DANO": 0.2,
+      "DURACAO": 200.0
     }
   },
   "TokenDeOverclock": {
     "classeItem": "Consumivel",
     "nome": "Token de Overclock",
     "descricao": "Um cristal de energia concentrada. Entregue a um ferreiro especializado para aprimorar equipamentos. Cada token aumenta o grau de overclock em 1 nível (+25% dos atributos base). Máximo: 10 graus.",
-    "valorMoedas": 50000,
+    "valorMoedas": 50000.0,
     "tipoMoeda": "OURO",
-    "custoTU": 0,
+    "custoTU": 0.0,
     "usavelEmCombate": false,
     "efeitos": {}
   },
@@ -418,45 +505,45 @@
     "classeItem": "Consumivel",
     "nome": "Bálsamo de Oásis Falso",
     "descricao": "Um líquido azul e doce que refresca instantaneamente, mas deixa um gosto residual de areia na boca que confunde os sentidos.",
-    "valorMoedas": 15000,
+    "valorMoedas": 15000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 60,
+    "custoTU": 60.0,
     "usavelEmCombate": true,
     "efeitos": {
-      "CURA_HP": 30
+      "CURA_HP": 30.0
     }
   },
   "Pó de Miragem": {
     "classeItem": "Consumivel",
     "nome": "Pó de Miragem",
     "descricao": "Uma poeira cintilante e fina que, ao ser soprada no ar, distorce a luz ao redor e cria cópias ilusórias.",
-    "valorMoedas": 30000,
+    "valorMoedas": 30000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": true,
     "efeitos": {
-      "STEALTH": 1
+      "STEALTH": 1.0
     }
   },
   "Essência de Ouro Líquido": {
     "classeItem": "Consumivel",
     "nome": "Essência de Ouro Líquido",
     "descricao": "Um frasco pesado e morno. Beber isso parece um péssimo instinto, mas os efeitos da alquimia antiga são inegáveis.",
-    "valorMoedas": 50000,
+    "valorMoedas": 50000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": true,
     "efeitos": {
-      "ESCUDO": 100
+      "ESCUDO": 100.0
     }
   },
   "Kit de Arqueologia": {
     "classeItem": "Consumivel",
     "nome": "Kit de Arqueologia",
     "descricao": "Pincéis delicados, cinzéis de precisão e lentes de aumento, essenciais para lidar com relíquias sem ativá-las de forma errada.",
-    "valorMoedas": 8000,
+    "valorMoedas": 8000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": false,
     "efeitos": {}
   },
@@ -464,9 +551,9 @@
     "classeItem": "Consumivel",
     "nome": "Incenso de Alabastro",
     "descricao": "Uma resina perfumada, armazenada em um bloco mineral que afasta maldições psíquicas dos túmulos.",
-    "valorMoedas": 20000,
+    "valorMoedas": 20000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": false,
     "efeitos": {}
   },
@@ -474,9 +561,9 @@
     "classeItem": "Consumivel",
     "nome": "Escaravelho de Ouro Maciço",
     "descricao": "Um pequeno mecanismo dourado na forma de um inseto que parece vivo. Ao ser apertado no peito, ele perfura a pele e bombeia magia.",
-    "valorMoedas": 70000,
+    "valorMoedas": 70000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": true,
     "efeitos": {}
   },
@@ -484,9 +571,9 @@
     "classeItem": "Consumivel",
     "nome": "Papiro de Navegação",
     "descricao": "Um pergaminho rústico onde as linhas se desenham e apagam sozinhas de acordo com o movimento estelar, revelando corredores secretos.",
-    "valorMoedas": 25000,
+    "valorMoedas": 25000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": false,
     "efeitos": {}
   },
@@ -494,9 +581,9 @@
     "classeItem": "Consumivel",
     "nome": "Óleo.",
     "descricao": "Um óleo grosso, escuro e extremamente escorregadio, frequentemente usado nas engrenagens das antigas armadilhas egípcias.",
-    "valorMoedas": 4000,
+    "valorMoedas": 4000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
     "usavelEmCombate": false,
     "efeitos": {}
   },
@@ -504,9 +591,9 @@
     "classeItem": "Consumivel",
     "nome": "Caixa de Munição (P)",
     "descricao": "Pacote pequeno de munição. Concede 5 balas ao recarregar uma arma de fogo.",
-    "valorMoedas": 500,
+    "valorMoedas": 500.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 40,
+    "custoTU": 40.0,
     "usavelEmCombate": false,
     "efeitos": {}
   },
@@ -514,9 +601,9 @@
     "classeItem": "Consumivel",
     "nome": "Caixa de Munição (M)",
     "descricao": "Pacote médio de munição. Concede 10 balas ao recarregar uma arma de fogo.",
-    "valorMoedas": 900,
+    "valorMoedas": 900.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 60,
+    "custoTU": 60.0,
     "usavelEmCombate": false,
     "efeitos": {}
   },
@@ -524,9 +611,9 @@
     "classeItem": "Consumivel",
     "nome": "Caixa de Munição (G)",
     "descricao": "Pacote grande de munição. Concede 20 balas ao recarregar uma arma de fogo.",
-    "valorMoedas": 1600,
+    "valorMoedas": 1600.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "usavelEmCombate": false,
     "efeitos": {}
   },
@@ -534,9 +621,19 @@
     "classeItem": "Consumivel",
     "nome": "Caixa de Munição (GG)",
     "descricao": "Pacote completo de munição. Recarrega uma arma de fogo até a munição máxima.",
-    "valorMoedas": 3000,
+    "valorMoedas": 3000.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 160,
+    "custoTU": 160.0,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "Bilhete para \"homem do ceu\"": {
+    "classeItem": "Consumivel",
+    "nome": "Bilhete para \"homem do ceu\"",
+    "descricao": "um bilhete escrito em aramaico",
+    "valorMoedas": 1,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 50,
     "usavelEmCombate": false,
     "efeitos": {}
   }

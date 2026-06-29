@@ -4064,8 +4064,38 @@
     ],
     "wielding": 2.0
   },
-  "Paz & Guerra": {
-    "nome": "Paz & Guerra",
+  "Machado Rita": {
+    "nome": "Machado Rita",
+    "categoria": "Machado",
+    "descricao": "O Inefavel poder do sol na palma da mão",
+    "raridade": "MITICO",
+    "andar": "4",
+    "valorMoedas": 50.0,
+    "tipoMoeda": "OURO",
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "modificadoresDeAtributo": {
+    },
+    "custoTU": 90.0,
+    "tipo": "Melee",
+    "alcance": 3.0,
+    "tipoAlvo": "CONE",
+    "tamanhoArea": 135.0,
+    "efeitoAoAcertar": "HellFire",
+    "chanceEfeito": 0.25,
+    "modificadoresStatus": {
+      "DANO_CRITICO": 0.5,
+      "TAXA_CRITICA": 0.25
+    },
+    "habilidadesConcedidas": [
+      "Arremesso de Machado",
+      "Arremesso de Sol"
+    ],
+    "wielding": 2.0
+  },
+  "Paz \u0026 Guerra": {
+    "nome": "Paz \u0026 Guerra",
     "categoria": "Espada",
     "descricao": "Um par de lâminas belissimas, lâminas que podem cortar o universo",
     "raridade": "MITICO",
@@ -4102,18 +4132,36 @@
     "descricao": "Espada formada de cristais roxos estranhos?",
     "raridade": "EPICO",
     "andar": "4",
-    "valorMoedas": 250,
+    "valorMoedas": 250.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 22,
-    "ticksDeDano": 1,
+    "danoBase": 22.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 125,
+    "custoTU": 125.0,
     "tipo": "Melee",
-    "alcance": 2,
-    "wielding": 1,
+    "alcance": 2.0,
+    "wielding": 1.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 135,
+    "tamanhoArea": 135.0,
     "efeitoAoAcertar": "Ruptura",
     "chanceEfeito": 0.5
+  },
+  "Espada Selada": {
+    "nome": "Espada Selada",
+    "categoria": "Custom",
+    "descricao": "Uma espada amarrada com fitas vermelhas, talvez possa ser util",
+    "raridade": "LENDARIO",
+    "andar": "4",
+    "valorMoedas": 50,
+    "tipoMoeda": "PRATA",
+    "danoBase": 10,
+    "ticksDeDano": 1,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 100,
+    "tipo": "Melee",
+    "alcance": 2,
+    "wielding": 2,
+    "efeitoAoAcertar": "Ruptura",
+    "chanceEfeito": 0.25
   }
 }
