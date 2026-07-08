@@ -69,17 +69,27 @@ public class CharacterInfoRenderer {
 			labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
 		} else {
 			double dividaContrato = br.com.dantesrpg.model.util.ContratoDeVidaUtils.getReducaoHpMaximoTotal(ator);
-			double reducaoTotal = dividaContrato;
+			double pctMaldicao = br.com.dantesrpg.model.util.MaldicaoUtils.getReducaoPercentualTotal(ator);
 			String hpAtualTexto = formatarNumero(ator.getVidaAtual());
 			String hpMaxTexto = formatarNumero(ator.getVidaMaxima());
 
-			if (reducaoTotal > 0) {
+			if (dividaContrato > 0 || pctMaldicao > 0) {
+				StringBuilder text = new StringBuilder();
 				if (ator.getEscudoAtual() > 0) {
-					String escudoTexto = formatarNumero(ator.getEscudoAtual());
-					labelHP.setText(escudoTexto + " / " + hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) reducaoTotal + ")");
-				} else {
-					labelHP.setText(hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) reducaoTotal + ")");
+					text.append(formatarNumero(ator.getEscudoAtual())).append(" / ");
 				}
+				text.append(hpAtualTexto).append("/").append(hpMaxTexto).append(" (");
+				if (dividaContrato > 0) {
+					text.append("-").append((int) dividaContrato);
+				}
+				if (pctMaldicao > 0) {
+					if (dividaContrato > 0) {
+						text.append(" ");
+					}
+					text.append("-").append((int) Math.round(pctMaldicao * 100)).append("%");
+				}
+				text.append(")");
+				labelHP.setText(text.toString());
 				labelHP.setStyle("-fx-text-fill: #ffaaaa; -fx-font-weight: bold;");
 			} else if (ator.getEscudoAtual() > 0) {
 				String escudoTexto = formatarNumero(ator.getEscudoAtual());

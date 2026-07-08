@@ -131,6 +131,12 @@ public class EffectProcessor {
 					Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 20);
 					efeito.setStacks(1);
 					aplicarEfeito(alvo, efeito);
+				} else if (nomeEfeito.equalsIgnoreCase("Maldição") || nomeEfeito.equalsIgnoreCase("Maldicao")) {
+					// Aplica uma maldição padrão (20% de redução, duração 150 TU, vinda da arma)
+					br.com.dantesrpg.model.util.Maldicao mald = new br.com.dantesrpg.model.util.Maldicao(
+							arma != null ? arma.getNome() : "Sabre do Marinheiro", 0.20, 150, false);
+					br.com.dantesrpg.model.util.MaldicaoUtils.adicionarMaldicao(alvo, mald);
+					System.out.println(">>> Maldição ativada contra " + alvo.getNome() + " por acerto da arma!");
 				} else {
 					int danoDaSource = Math.max(1, (int) danoCausado);
 					Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito(nomeEfeito, 0, danoDaSource);

@@ -17,6 +17,7 @@
       <Polygon fx:id="passiveTrack" points="95,69, 250,69, 240,80, 95,80" styleClass="bar-track"/>
       <Polygon fx:id="hpBarPolygon" styleClass="hp-bar-fill"/>
       <Polygon fx:id="contractBarPolygon" styleClass="contract-bar-fill" visible="false"/>
+      <Polygon fx:id="curseBarPolygon" styleClass="curse-bar-fill" visible="false"/>
       <Label fx:id="labelContractCount" text="+1" visible="false" 
        layoutX="150.0" layoutY="25.0" 
        style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-effect: dropshadow(gaussian, black, 2, 1.0, 0, 0);" 

@@ -55,6 +55,10 @@
     -fx-fill: linear-gradient(from 0px 0px to 10px 10px, repeat, #330000 0%, #330000 49%, #550000 50%, #550000 100%);
     -fx-stroke: #AA0000; -fx-stroke-width: 1; -fx-effect: dropshadow(gaussian, black, 3, 0.5, 0, 0);
 }
+.curse-bar-fill {
+    -fx-fill: linear-gradient(from 0px 0px to 10px 10px, repeat, #002d33 0%, #002d33 49%, #004d54 50%, #004d54 100%);
+    -fx-stroke: #00f5d4; -fx-stroke-width: 1.2; -fx-effect: dropshadow(gaussian, rgba(0, 245, 212, 0.6), 5, 0.3, 0, 0);
+}
 .player-card .label-name { -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 2, 0.7, 0, 0); }
 .shield-track { -fx-fill: rgba(0, 0, 0, 0.3); -fx-stroke: transparent; }
 .shield-bar-fill { -fx-fill: linear-gradient(to right, #2B7FFF, #155DFC); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, blue, 5, 0.3, 0, 0); }

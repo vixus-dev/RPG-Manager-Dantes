@@ -14,7 +14,7 @@ import java.util.Map;
 public class PalidaVigilia extends ArmaMelee {
 
 	public PalidaVigilia() {
-		super("Pálida Vigília", "Foice", "Uma foice invocavel composta de um material angelical", Raridade.UNICO, 0, 18,
+		super("Pálida Vigília", "Foice", "Uma foice invocavel composta de um material angelical", Raridade.UNICO, 0, 22,
 				1, Atributo.FORCA, 110, 2);
 		this.setTipoAlvo(br.com.dantesrpg.model.enums.TipoAlvo.CONE);
 		this.setTamanhoArea(2);

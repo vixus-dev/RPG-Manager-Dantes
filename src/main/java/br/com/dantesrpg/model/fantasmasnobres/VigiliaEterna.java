@@ -32,12 +32,12 @@ public class VigiliaEterna extends FantasmaNobre {
 
 	@Override
 	public int getCustoTU() {
-		return 80;
+		return 50;
 	}
 
 	@Override
 	public int getCooldownTU() {
-		return 800;
+		return 600;
 	}
 
 	@Override
@@ -60,13 +60,13 @@ public class VigiliaEterna extends FantasmaNobre {
 			CombatManager manager) {
 		System.out.println(">>> " + conjurador.getNome() + " ativa VIGÍLIA ETERNA!");
 
-		int duracao = 400;
+		int duracao = 450;
 
 		// Buff Global (Armadura + Imunidade)
 		Map<String, Double> modsAliado = new HashMap<>();
 		modsAliado.put("ARMADURA_TOTAL", 50.0);
 		modsAliado.put("DANO_BONUS_PERCENTUAL", 0.25);
-		// A imunidade será checada pelo NOME do efeito no CombatManager
+		modsAliado.put("TAXA_CRITICA", 0.10);
 
 		@SuppressWarnings("unused")
 		Efeito buffGlobal = new Efeito("Bênção da Vigília", TipoEfeito.BUFF, duracao, modsAliado, 0, 0);
@@ -75,7 +75,7 @@ public class VigiliaEterna extends FantasmaNobre {
 		for (Personagem p : estado.getCombatentes()) {
 			if (p.isAtivoNoCombate() && p.getFaccao().equals(conjurador.getFaccao())) {
 				p.adicionarEfeito(new Efeito("Bênção da Vigília", TipoEfeito.BUFF, duracao, modsAliado, 0, 0));
-				p.setVidaAtual(p.getVidaAtual() + (p.getAtributosFinais().getOrDefault(Atributo.INSPIRACAO, 0) * 3));
+				p.setVidaAtual(p.getVidaAtual() + (p.getAtributosFinais().getOrDefault(Atributo.INSPIRACAO, 0) * 5));
 				p.recalcularAtributosEstatisticas();
 				System.out.println(">>> " + p.getNome() + " recebeu a Bênção.");
 			}
@@ -85,7 +85,7 @@ public class VigiliaEterna extends FantasmaNobre {
 		Map<String, Double> modsEidan = new HashMap<>();
 		modsEidan.put("TAXA_CRITICA", 0.25);
 		modsEidan.put("DANO_BONUS_PERCENTUAL", 0.25);
-		Efeito buffEidan = new Efeito("Vigília (Foco)", TipoEfeito.BUFF, duracao, modsEidan, 0, 0);
+		Efeito buffEidan = new Efeito("Vigília", TipoEfeito.BUFF, duracao, modsEidan, 0, 0);
 
 		conjurador.adicionarEfeito(buffEidan);
 		conjurador.recalcularAtributosEstatisticas();

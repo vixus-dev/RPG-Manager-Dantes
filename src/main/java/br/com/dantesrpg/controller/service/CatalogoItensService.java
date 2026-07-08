@@ -421,6 +421,41 @@ public class CatalogoItensService {
 				armaFinal.setWielding(wielding);
 				armaFinal.setModificadoresDeAtributo(modsFinais);
 				armaFinal.setModificadoresStatus(modsStatusFinais);
+
+				// --- Ataque Especial ---
+				Boolean hasSpecial = (Boolean) armaData.getOrDefault("HasSpecialAttack", false);
+				if (hasSpecial != null && hasSpecial) {
+					armaFinal.setHasSpecialAttack(true);
+
+					String specialName = (String) armaData.getOrDefault("SpecialAttackName", null);
+					if (specialName != null && !specialName.isEmpty()) {
+						armaFinal.setSpecialAttackName(specialName);
+					} else {
+						armaFinal.setSpecialAttackName("Ataque Especial");
+					}
+
+					Object dmgObj = armaData.get("SpecialAttackDMG");
+					if (dmgObj instanceof Number) {
+						armaFinal.setSpecialAttackDmg(((Number) dmgObj).doubleValue());
+					}
+
+					Object cdObj = armaData.get("SpecialAttackCD");
+					if (cdObj instanceof Number) {
+						armaFinal.setSpecialAttackCd(((Number) cdObj).doubleValue());
+					}
+
+					String specialType = (String) armaData.getOrDefault("SpecialAttackType", "INDIVIDUAL");
+					armaFinal.setSpecialAttackType(specialType);
+
+					Object sizeObj = armaData.get("specialAttackSize");
+					if (sizeObj instanceof Number) {
+						armaFinal.setSpecialAttackSize(((Number) sizeObj).intValue());
+					}
+
+					System.out.println("ARMORIA: Arma '" + nome + "' possui Ataque Especial: "
+							+ armaFinal.getSpecialAttackName());
+				}
+
 				return armaFinal;
 			}
 

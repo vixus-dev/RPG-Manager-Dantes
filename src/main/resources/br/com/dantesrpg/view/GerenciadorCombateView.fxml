@@ -14,6 +14,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -106,6 +107,10 @@
 
                             <Label text="TU:" style="-fx-text-fill: #ffcc44; -fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0" />
                             <TextField fx:id="inputTU" promptText="Turn Units" styleClass="editor-search-field" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+                            <Label text="Acúmulos:" style="-fx-text-fill: #ff5555; -fx-font-weight: bold;" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                            <TextField fx:id="inputAcumulos" promptText="Stacks Raça" styleClass="editor-search-field" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+                            <Label fx:id="lblAcumulosMax" style="-fx-text-fill: #888;" text="/ ???" GridPane.rowIndex="4" GridPane.columnIndex="2" />
                         </GridPane>
 
                         <HBox alignment="CENTER" spacing="8.0" style="-fx-padding: 5 0 0 0;">
@@ -226,7 +231,7 @@
                            <ComboBox fx:id="comboFiltroRaridade" prefWidth="120" promptText="Raridade..." style="-fx-font-size: 11px;" />
                         </HBox>
 
-                        <ListView fx:id="listaItensFiltrados" VBox.vgrow="ALWAYS" styleClass="editor-list-view" style="-fx-max-height: 160px;"/>
+                        <ListView fx:id="listaItensFiltrados" VBox.vgrow="ALWAYS" styleClass="editor-list-view" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
                             <Label text="Qtd:" style="-fx-text-fill: #aaa;" />
                             <TextField fx:id="inputQtdItem" prefWidth="50.0" text="1" styleClass="editor-search-field" />
@@ -304,13 +309,10 @@
                               <Label text="Stacks:" style="-fx-text-fill: #aaa; -fx-font-size: 11px;" />
                               <TextField fx:id="inputEditStacks" prefWidth="60" styleClass="editor-search-field" />
                            </HBox>
-                           <HBox spacing="6" alignment="CENTER_LEFT">
-                              <Label text="Mod. chave:" style="-fx-text-fill: #aaa; -fx-font-size: 11px;" />
-                              <TextField fx:id="inputEditModChave" prefWidth="100" promptText="ex: DANO_BONUS" styleClass="editor-search-field" />
-                              <Region HBox.hgrow="ALWAYS" />
-                              <Label text="Valor:" style="-fx-text-fill: #aaa; -fx-font-size: 11px;" />
-                              <TextField fx:id="inputEditModValor" prefWidth="60" styleClass="editor-search-field" />
-                           </HBox>
+                           <VBox spacing="4">
+                              <Label text="Modificadores (CHAVE=VALOR, 1 por linha):" style="-fx-text-fill: #aaa; -fx-font-size: 11px;" />
+                              <TextArea fx:id="inputEditModsTexto" prefHeight="60" promptText="FORCA = 5&#10;TAXA_CRITICA = 0.1" styleClass="editor-search-field" style="-fx-font-size: 11px;" wrapText="true"/>
+                           </VBox>
                            <HBox spacing="6" alignment="CENTER">
                               <Button onAction="#onSalvarEdicaoEfeitoClick" text="Salvar Alterações" style="-fx-background-color: rgba(0, 255, 136, 0.12); -fx-text-fill: #00ff88; -fx-background-radius: 5; -fx-border-color: rgba(0, 255, 136, 0.3); -fx-border-width: 1; -fx-font-size: 11px; -fx-cursor: hand;" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
                               <Button onAction="#onRemoverEfeitoClick" text="Remover Efeito" style="-fx-background-color: rgba(255, 75, 75, 0.12); -fx-text-fill: #ff4b4b; -fx-background-radius: 5; -fx-border-color: rgba(255, 75, 75, 0.3); -fx-border-width: 1; -fx-font-size: 11px; -fx-cursor: hand;" HBox.hgrow="ALWAYS" maxWidth="Infinity" />

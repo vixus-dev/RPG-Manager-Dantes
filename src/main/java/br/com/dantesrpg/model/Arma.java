@@ -36,6 +36,14 @@ public abstract class Arma extends Item {
 	private TipoAlvo tipoAlvo = TipoAlvo.INDIVIDUAL;
 	private int tamanhoArea = 0;
 
+	// --- Ataque Especial (configurável via JSON) ---
+	private boolean hasSpecialAttack = false;
+	private String specialAttackName;
+	private double specialAttackDmg = 1.0;
+	private double specialAttackCd = 1.0;
+	private String specialAttackType = "INDIVIDUAL";
+	private int specialAttackSize = 0;
+
 	// Construtor principal
 	public Arma(String nome, String categoria, String descricao, Raridade raridade, int valorMoedas, int danoBase,
 			int ticksDeDano, Atributo atributo, int custoTU, int alcance, Habilidade habilidadeDaArma, String tipo,
@@ -254,18 +262,31 @@ public abstract class Arma extends Item {
 	}
 
 	public boolean hasAtaqueAlternativoBasico() {
+		if (hasSpecialAttack) return true;
 		return isRequerMunicao();
 	}
 
 	public String getNomeAtaqueAlternativoBasico() {
+		if (hasSpecialAttack && specialAttackName != null && !specialAttackName.isEmpty()) {
+			return specialAttackName;
+		}
 		return "Coronhada";
 	}
 
 	public String getDescricaoAtaqueAlternativoBasico() {
+		if (hasSpecialAttack) {
+			String desc = String.format("%.2fx Dano, %.1fx TU", specialAttackDmg, specialAttackCd);
+			if (!"INDIVIDUAL".equalsIgnoreCase(specialAttackType)) {
+				desc += ", " + specialAttackType;
+				if (specialAttackSize > 0) desc += " " + specialAttackSize;
+			}
+			return desc;
+		}
 		return "0.5x Dano, alcance 1";
 	}
 
 	public double getMultiplicadorAtaqueAlternativoBasico() {
+		if (hasSpecialAttack) return specialAttackDmg;
 		return 0.50;
 	}
 
@@ -274,18 +295,31 @@ public abstract class Arma extends Item {
 	}
 
 	public TipoAlvo getTipoAlvoAtaqueAlternativoBasico() {
+		if (hasSpecialAttack && specialAttackType != null) {
+			try {
+				return TipoAlvo.valueOf(specialAttackType.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				// Tipo customizado (ex: "90º"), trata como AREA_QUADRADA
+				return TipoAlvo.AREA_QUADRADA;
+			}
+		}
 		return TipoAlvo.INDIVIDUAL;
 	}
 
 	public int getAnguloAtaqueAlternativoBasico() {
+		if (hasSpecialAttack && "CONE".equalsIgnoreCase(specialAttackType)) {
+			return specialAttackSize > 0 ? specialAttackSize : getAnguloCone();
+		}
 		return getAnguloCone();
 	}
 
 	public int getTamanhoAreaAtaqueAlternativoBasico() {
+		if (hasSpecialAttack) return specialAttackSize;
 		return 0;
 	}
 
 	public double getCustoTUMultiplierAtaqueAlternativo() {
+		if (hasSpecialAttack) return specialAttackCd;
 		return 1.0;
 	}
 
@@ -295,6 +329,56 @@ public abstract class Arma extends Item {
 	 */
 	public double getManaGainAtaqueAlternativo() {
 		return -1;
+	}
+
+	// --- Getters / Setters do Ataque Especial ---
+
+	public boolean isHasSpecialAttack() {
+		return hasSpecialAttack;
+	}
+
+	public void setHasSpecialAttack(boolean hasSpecialAttack) {
+		this.hasSpecialAttack = hasSpecialAttack;
+	}
+
+	public String getSpecialAttackName() {
+		return specialAttackName;
+	}
+
+	public void setSpecialAttackName(String specialAttackName) {
+		this.specialAttackName = specialAttackName;
+	}
+
+	public double getSpecialAttackDmg() {
+		return specialAttackDmg;
+	}
+
+	public void setSpecialAttackDmg(double specialAttackDmg) {
+		this.specialAttackDmg = specialAttackDmg;
+	}
+
+	public double getSpecialAttackCd() {
+		return specialAttackCd;
+	}
+
+	public void setSpecialAttackCd(double specialAttackCd) {
+		this.specialAttackCd = specialAttackCd;
+	}
+
+	public String getSpecialAttackType() {
+		return specialAttackType;
+	}
+
+	public void setSpecialAttackType(String specialAttackType) {
+		this.specialAttackType = specialAttackType;
+	}
+
+	public int getSpecialAttackSize() {
+		return specialAttackSize;
+	}
+
+	public void setSpecialAttackSize(int specialAttackSize) {
+		this.specialAttackSize = specialAttackSize;
 	}
 
 }

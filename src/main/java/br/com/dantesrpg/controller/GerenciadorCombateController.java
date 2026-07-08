@@ -53,6 +53,8 @@ public class GerenciadorCombateController {
 	@FXML private ListView<Personagem> listaTurnos;
 	@FXML private TextField inputMana;
 	@FXML private TextField inputTU;
+	@FXML private TextField inputAcumulos;
+	@FXML private Label lblAcumulosMax;
 	@FXML private Label lblVidaMax;
 	@FXML private Label lblManaMax;
 	@FXML private CheckBox checkAusente;
@@ -98,8 +100,7 @@ public class GerenciadorCombateController {
 	@FXML private TextField inputEditDanoPorTick;
 	@FXML private TextField inputEditIntervalo;
 	@FXML private TextField inputEditStacks;
-	@FXML private TextField inputEditModChave;
-	@FXML private TextField inputEditModValor;
+	@FXML private TextArea inputEditModsTexto;
 
 	// ========== BARRA SUPERIOR ==========
 	@FXML private ComboBox<String> comboEfeitoAndar;
@@ -445,6 +446,10 @@ public class GerenciadorCombateController {
 			selecionado.setManaAtual(parseDoubleSeguro(inputMana.getText()));
 			selecionado.setContadorTU(parseIntSeguro(inputTU.getText()));
 			
+			if (selecionado.getRaca() != null && inputAcumulos != null) {
+				selecionado.getRaca().setCurrentStacks(parseIntSeguro(inputAcumulos.getText()));
+			}
+			
 			if (selecionado.getInventario() != null) {
 				int totalOuro = parseIntSeguro(inputOuro.getText());
 				int totalPrata = parseIntSeguro(inputPrata.getText());
@@ -766,18 +771,26 @@ public class GerenciadorCombateController {
 				efeito.setStacks(parseIntSeguro(stacksText));
 			}
 
-			// Atualiza/adiciona modificador
-			String modChave = inputEditModChave.getText();
-			String modValorText = inputEditModValor.getText();
-			if (modChave != null && !modChave.trim().isEmpty() && modValorText != null && !modValorText.trim().isEmpty()) {
-				double modValor = parseDoubleSeguro(modValorText);
-				Map<String, Double> mods = efeito.getModificadores();
-				if (mods == null) {
-					mods = new HashMap<>();
-					efeito.setModificadores(mods);
+			// Atualiza/adiciona modificador a partir do TextArea
+			String modsText = inputEditModsTexto.getText();
+			Map<String, Double> novosMods = new HashMap<>();
+			if (modsText != null && !modsText.trim().isEmpty()) {
+				String[] linhas = modsText.split("\n");
+				for (String linha : linhas) {
+					if (linha.trim().isEmpty()) continue;
+					String[] partes = linha.split("=");
+					if (partes.length == 2) {
+						String chave = partes[0].trim().toUpperCase();
+						try {
+							double valor = parseDoubleSeguro(partes[1].trim());
+							novosMods.put(chave, valor);
+						} catch (Exception ex) {
+							System.err.println("Erro ao ler valor do modificador: " + partes[1]);
+						}
+					}
 				}
-				mods.put(modChave.toUpperCase(), modValor);
 			}
+			efeito.setModificadores(novosMods);
 
 			selecionado.recalcularAtributosEstatisticas();
 			atualizarListaEfeitosAtivos();
@@ -899,6 +912,16 @@ public class GerenciadorCombateController {
 			inputMana.setText(String.format("%.1f", selecionado.getManaAtual()));
 		if (!inputTU.isFocused())
 			inputTU.setText(String.valueOf(selecionado.getContadorTU()));
+
+		if (inputAcumulos != null && lblAcumulosMax != null && !inputAcumulos.isFocused()) {
+			if (selecionado.getRaca() != null) {
+				inputAcumulos.setText(String.valueOf(selecionado.getRaca().getCurrentStacks()));
+				lblAcumulosMax.setText("/ " + selecionado.getRaca().getMaxStacks());
+			} else {
+				inputAcumulos.setText("0");
+				lblAcumulosMax.setText("/ 0");
+			}
+		}
 
 		lblVidaMax.setText(selecionado.isPoderoso() ? "/ ?" : "/ " + String.format("%.0f", selecionado.getVidaMaxima()));
 		lblManaMax.setText("/ " + String.format("%.0f", selecionado.getManaMaxima()));
@@ -1032,14 +1055,15 @@ public class GerenciadorCombateController {
 			inputEditIntervalo.setText(String.valueOf(efeito.getIntervaloTickTU()));
 			inputEditStacks.setText(String.valueOf(efeito.getStacks()));
 
-			// Carrega primeiro modificador se existir
+			// Carrega todos os modificadores
 			if (efeito.getModificadores() != null && !efeito.getModificadores().isEmpty()) {
-				Map.Entry<String, Double> first = efeito.getModificadores().entrySet().iterator().next();
-				inputEditModChave.setText(first.getKey());
-				inputEditModValor.setText(String.format("%.4f", first.getValue()));
+				StringBuilder sb = new StringBuilder();
+				for (Map.Entry<String, Double> entry : efeito.getModificadores().entrySet()) {
+					sb.append(entry.getKey()).append(" = ").append(String.format("%.4f", entry.getValue())).append("\n");
+				}
+				inputEditModsTexto.setText(sb.toString().trim());
 			} else {
-				inputEditModChave.clear();
-				inputEditModValor.clear();
+				inputEditModsTexto.clear();
 			}
 		});
 	}

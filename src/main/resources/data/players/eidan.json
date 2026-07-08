@@ -1,19 +1,19 @@
 {
-  "iniciativaBase": 30,
+  "iniciativaBase": 43,
   "atributosBase": {
     "FORCA": 13,
-    "PERCEPCAO": 7,
+    "PERCEPCAO": 8,
     "ENDURANCE": 11,
     "CARISMA": 4,
     "INTELIGENCIA": 4,
-    "DESTREZA": 8,
+    "DESTREZA": 9,
     "SORTE": 3,
     "INSPIRACAO": 12,
     "SAGACIDADE": 5,
     "TOPOR": 2
   },
   "escudoSangueAtual": 0.0,
-  "pontosParaDistribuir": 2,
+  "pontosParaDistribuir": 0,
   "escudoNormalAtual": 44.0,
   "carteira": {
     "prata": 147,
@@ -21,8 +21,8 @@
     "bronze": 35935
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 203.0,
-  "contadorTU": 1,
+  "vidaAtual": 216.0,
+  "contadorTU": 0,
   "fantasmaNobre": "VigiliaEterna",
   "armaduraEquipada": "Armadura do Mestre",
   "armaEquipada": "Pálida Vigília",
@@ -34,7 +34,7 @@
     "PocaoDeCuraGrande": 1
   },
   "xpAtual": 907,
-  "vidaMaximaBase": 128.0,
+  "vidaMaximaBase": 141.0,
   "classe": "Paladino",
   "armasEquipadas": [
     "Pálida Vigília"
@@ -42,8 +42,8 @@
   "nome": "Eidan",
   "segmentos": 0,
   "grau": 2,
-  "posX": 7,
-  "posY": 6,
+  "posX": 6,
+  "posY": 4,
   "amuleto2": "Nódulo de Carne Viva",
   "amuleto1": "Cranio de esqueleto shiny",
   "manaAtual": 13.5,

@@ -55,11 +55,14 @@ public class PlayerCardController {
 	@FXML
 	private Polygon contractBarPolygon;
 	@FXML
+	private Polygon curseBarPolygon;
+	@FXML
 	private Label labelContractCount;
 	@FXML
 	private Pane hpBarContainer;
 
 	private Personagem personagem;
+	private javafx.animation.FadeTransition curseAnimation;
 
 	public void setPersonagem(Personagem personagem, String cardType) {
 		this.personagem = personagem;
@@ -80,17 +83,26 @@ public class PlayerCardController {
 			String hpAtualTexto = formatarNumero(personagem.getVidaAtual());
 			String hpMaxTexto = formatarNumero(personagem.getVidaMaxima());
 
-			// Redução total do teto (Contrato de Vida)
 			double dividaContrato = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
-			double reducaoTotal = dividaContrato;
+			double pctMaldicao = br.com.dantesrpg.model.util.MaldicaoUtils.getReducaoPercentualTotal(personagem);
 
-			if (reducaoTotal > 0) {
+			if (dividaContrato > 0 || pctMaldicao > 0) {
+				StringBuilder text = new StringBuilder();
 				if (personagem.getEscudoAtual() > 0) {
-					String escudoTexto = formatarNumero(personagem.getEscudoAtual());
-					labelHPShieldText.setText(escudoTexto + " / " + hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) reducaoTotal + ")");
-				} else {
-					labelHPShieldText.setText(hpAtualTexto + "/" + hpMaxTexto + " (-" + (int) reducaoTotal + ")");
+					text.append(formatarNumero(personagem.getEscudoAtual())).append(" / ");
 				}
+				text.append(hpAtualTexto).append("/").append(hpMaxTexto).append(" (");
+				if (dividaContrato > 0) {
+					text.append("-").append((int) dividaContrato);
+				}
+				if (pctMaldicao > 0) {
+					if (dividaContrato > 0) {
+						text.append(" ");
+					}
+					text.append("-").append((int) Math.round(pctMaldicao * 100)).append("%");
+				}
+				text.append(")");
+				labelHPShieldText.setText(text.toString());
 				labelHPShieldText.setStyle("-fx-text-fill: #ffaaaa; -fx-font-size: 10px; -fx-font-weight: bold;");
 			} else if (personagem.getEscudoAtual() > 0) {
 				String escudoTexto = formatarNumero(personagem.getEscudoAtual());
@@ -197,73 +209,96 @@ public class PlayerCardController {
 		double fullWidthRect = 155.0; // (250 - 95)
 		double fullWidthAngled = 165.0;
 
+		if (curseBarPolygon != null) {
+			curseBarPolygon.setVisible(false);
+		}
 		if (contractBarPolygon != null) {
 			contractBarPolygon.setVisible(false);
 			if (labelContractCount != null)
 				labelContractCount.setVisible(false); // Reset
+		}
 
-			// Barra vermelha unificada: bloqueia HP máximo perdido (Contratos)
+		double vidaBase = personagem.getVidaMaximaBase();
+		if (vidaBase > 0) {
+			double pctMaldicao = Math.min(1.0, br.com.dantesrpg.model.util.MaldicaoUtils.getReducaoPercentualTotal(personagem));
 			double dividaContrato = ContratoDeVidaUtils.getReducaoHpMaximoTotal(personagem);
-			double reducaoTotal = dividaContrato;
-			double vidaBase = personagem.getVidaMaximaBase();
-			if (reducaoTotal > 0 && vidaBase > 0) {
-				contractBarPolygon.setVisible(true);
+			double pctContrato = Math.min(1.0 - pctMaldicao, dividaContrato / vidaBase);
 
-				// Porcentagem bloqueada (em relação ao HP base).
-				double pctBlocked = Math.min(1.0, reducaoTotal / vidaBase);
-				double pctStart = 1.0 - pctBlocked; // Desenha da direita para esquerda
-
+			// 1) Desenha Maldição na extrema direita (de 1.0 - pctMaldicao até 1.0)
+			if (pctMaldicao > 0 && curseBarPolygon != null) {
+				curseBarPolygon.setVisible(true);
+				double pctStart = 1.0 - pctMaldicao;
 				double x1 = startX + (fullWidthRect * pctStart);
 				double x2 = startX + (fullWidthAngled * pctStart);
 				double xEndRect = startX + fullWidthRect;
 				double xEndAngled = startX + fullWidthAngled;
+				curseBarPolygon.getPoints().setAll(x1, topY, xEndRect, topY, xEndAngled, bottomY, x2, bottomY);
 
+				// Tooltip da Maldição
+				StringBuilder info = new StringBuilder();
+				info.append("Maldição (Reduz HP Máx): ").append((int) Math.round(pctMaldicao * 100)).append("%\n");
+				info.append("Fontes:\n");
+				for (br.com.dantesrpg.model.util.Maldicao m : personagem.getMaldicoes()) {
+					info.append("  • ").append(m.getFonte()).append(": ").append((int) Math.round(m.getPercentual() * 100))
+							.append("% (").append(m.getDuracaoTURestante()).append(" TU)\n");
+				}
+				Tooltip.install(curseBarPolygon, new Tooltip(info.toString().trim()));
+
+				if (curseAnimation == null) {
+					curseAnimation = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), curseBarPolygon);
+					curseAnimation.setFromValue(0.4);
+					curseAnimation.setToValue(0.95);
+					curseAnimation.setCycleCount(javafx.animation.Animation.INDEFINITE);
+					curseAnimation.setAutoReverse(true);
+				}
+				curseAnimation.play();
+			} else {
+				if (curseAnimation != null) {
+					curseAnimation.stop();
+				}
+				if (curseBarPolygon != null) {
+					curseBarPolygon.setOpacity(1.0);
+				}
+			}
+
+			// 2) Desenha Contrato de Vida à esquerda da Maldição (de 1.0 - pctMaldicao - pctContrato até 1.0 - pctMaldicao)
+			if (pctContrato > 0 && contractBarPolygon != null) {
+				contractBarPolygon.setVisible(true);
+				double pctStart = 1.0 - pctMaldicao - pctContrato;
+				double pctEnd = 1.0 - pctMaldicao;
+				double x1 = startX + (fullWidthRect * pctStart);
+				double x2 = startX + (fullWidthAngled * pctStart);
+				double xEndRect = startX + (fullWidthRect * pctEnd);
+				double xEndAngled = startX + (fullWidthAngled * pctEnd);
 				contractBarPolygon.getPoints().setAll(x1, topY, xEndRect, topY, xEndAngled, bottomY, x2, bottomY);
 
-				// Tooltip com detalhamento por fonte
+				// Tooltip do Contrato de Vida
 				StringBuilder info = new StringBuilder();
-				info.append("HP Máximo Reduzido: -").append((int) reducaoTotal).append(" HP Máx\n");
+				info.append("HP Máximo Reduzido: -").append((int) dividaContrato).append(" HP Máx\n");
 				info.append("Fontes:\n");
-				
-				if (dividaContrato > 0) {
-					boolean humanoAtivoVisto = false;
-					int humanosNaFila = 0;
-					for (ContratoDeVida c : personagem.getContratosDeVida()) {
-						if (c.isHumano()) {
-							if (!humanoAtivoVisto) {
-								info.append("  • ").append(c.getFonte()).append(": -")
-										.append((int) c.getDividaRestante()).append("\n");
-								humanoAtivoVisto = true;
-							} else {
-								humanosNaFila++;
-							}
+				boolean humanoAtivoVisto = false;
+				int humanosNaFila = 0;
+				for (ContratoDeVida c : personagem.getContratosDeVida()) {
+					if (c.isHumano()) {
+						if (!humanoAtivoVisto) {
+							info.append("  • ").append(c.getFonte()).append(": -").append((int) c.getDividaRestante()).append("\n");
+							humanoAtivoVisto = true;
 						} else {
-							info.append("  • ").append(c.getFonte()).append(": -")
-									.append((int) c.getDividaRestante()).append("\n");
+							humanosNaFila++;
 						}
-					}
-					if (humanosNaFila > 0) {
-						info.append("Contratos Humanos na Fila: ").append(humanosNaFila).append("\n");
+					} else {
+						info.append("  • ").append(c.getFonte()).append(": -").append((int) c.getDividaRestante()).append("\n");
 					}
 				}
-
+				if (humanosNaFila > 0) {
+					info.append("Contratos Humanos na Fila: ").append(humanosNaFila).append("\n");
+				}
 				if (ContratoDeVidaUtils.estaSobrecarregado(personagem)) {
 					info.append("⚠ SOBRECARGA: qualquer dano é letal!\n");
 				}
 				Tooltip.install(contractBarPolygon, new Tooltip(info.toString().trim()));
 
 				if (labelContractCount != null) {
-					int humanosNaFila = 0;
-					boolean humanoAtivoVisto = false;
-					for (ContratoDeVida c : personagem.getContratosDeVida()) {
-						if (c.isHumano()) {
-							if (!humanoAtivoVisto) {
-								humanoAtivoVisto = true;
-							} else {
-								humanosNaFila++;
-							}
-						}
-					}
 					if (humanosNaFila > 0) {
 						labelContractCount.setText("+" + humanosNaFila);
 						labelContractCount.setVisible(true);

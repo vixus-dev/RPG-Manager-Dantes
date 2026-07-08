@@ -45,6 +45,10 @@ public abstract class Raça {
 		return currentStacks;
 	}
 
+	public void setCurrentStacks(int stacks) {
+		this.currentStacks = stacks;
+	}
+
 	public int getMaxStacks() {
 		return maxStacks;
 	}

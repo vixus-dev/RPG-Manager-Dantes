@@ -122,6 +122,10 @@ public class Personagem {
 	/** Lista FIFO de contratos de vida de qualquer fonte (racial, skill, boss). */
 	private List<br.com.dantesrpg.model.util.ContratoDeVida> contratosDeVida = new ArrayList<>();
 
+	// === MALDIÇÕES ===
+	/** Lista de maldições ativas no personagem. */
+	private List<br.com.dantesrpg.model.util.Maldicao> maldicoes = new ArrayList<>();
+
 	// === SUBSISTEMAS (transient — não serializados pelo Gson) ===
 	private transient PersonagemEffects effectsManager;
 	private transient PersonagemHealth healthManager;
@@ -131,6 +135,13 @@ public class Personagem {
 			contratosDeVida = new ArrayList<>();
 		}
 		return contratosDeVida;
+	}
+
+	public List<br.com.dantesrpg.model.util.Maldicao> getMaldicoes() {
+		if (maldicoes == null) {
+			maldicoes = new ArrayList<>();
+		}
+		return maldicoes;
 	}
 
 	// ========== CONSTRUTORES ==========
@@ -425,6 +436,9 @@ public class Personagem {
 
 		// Contratos de Vida: reduzem teto de HP máximo
 		this.vidaMaxima -= br.com.dantesrpg.model.util.ContratoDeVidaUtils.getReducaoHpMaximoTotal(this);
+
+		// Maldições: reduzem teto de HP máximo por porcentagem
+		this.vidaMaxima -= br.com.dantesrpg.model.util.MaldicaoUtils.getReducaoHpMaximoTotal(this);
 
 
 	}

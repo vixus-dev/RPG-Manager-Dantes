@@ -49,6 +49,10 @@ public class Purificar extends Habilidade {
 			alvo.removerEfeito(nome);
 			System.out.println(">>> Purificado: " + nome + " removido de " + alvo.getNome());
 		}
+		
+		// Purifica todas as maldições ativas
+		br.com.dantesrpg.model.util.MaldicaoUtils.purificarMaldicoes(alvo);
+		
 		alvo.recalcularAtributosEstatisticas();
 	}
 }

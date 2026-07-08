@@ -428,7 +428,12 @@ public class DetailedTurnHUDController {
 			List<Arma> armas = obterArmasSelecionadasAtaque();
 			base = armas.stream().mapToInt(Arma::getCustoTU).sum();
 			if (armas.size() >= 2) base = (int) (base * 0.65);
-			if (toggleFraco.isSelected()) base = (int)(base * 0.80);
+			if (this.isModoCoronhadaSelecionado) {
+				Arma armaPrincipal = armas.isEmpty() ? (atorAtual != null ? atorAtual.getArmaEquipada() : null) : armas.get(0);
+				if (armaPrincipal != null) {
+					base = (int) (base * armaPrincipal.getCustoTUMultiplierAtaqueAlternativo());
+				}
+			} else if (toggleFraco.isSelected()) base = (int)(base * 0.80);
 			else if (toggleForte.isSelected()) base = (int)(base * 1.20);
 			if (boxRajada.isVisible()) {
 				int tirosExtras = (int) sliderRajada.getValue();

@@ -15,6 +15,25 @@
     "alcance": 1.0,
     "wielding": 1.0
   },
+  "Sabre do Marinheiro": {
+    "nome": "Sabre do Marinheiro",
+    "categoria": "Espada",
+    "descricao": "Versão shiny do Sabre. Corta o ar com precisão marítima e amaldiçoa aqueles que ousam desafiá-lo.",
+    "raridade": "UNICO",
+    "andar": "5",
+    "valorMoedas": 28800.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "DESTREZA",
+    "custoTU": 105.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "efeitoAoAcertar": "Maldição",
+    "chanceEfeito": 1.0,
+    "wielding": 1.0
+  },
   "cadete Estelar": {
     "nome": "cadete Estelar",
     "categoria": "NPC",

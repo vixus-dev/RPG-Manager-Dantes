@@ -125,6 +125,12 @@ public class PersonagemEffects {
 				reverterControleMental();
 			}
 
+			if ("Maldição".equals(nomeEfeito)) {
+				if (!personagem.getMaldicoes().isEmpty()) {
+					personagem.getMaldicoes().clear();
+				}
+			}
+
 			if ("Choque".equals(nomeEfeito)) {
 				if (removido.getModificadores() != null && removido.getModificadores().containsKey("TU_ADICIONADO")) {
 					double tuExtra = removido.getModificadores().get("TU_ADICIONADO");

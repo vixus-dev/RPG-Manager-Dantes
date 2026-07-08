@@ -471,6 +471,9 @@ Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 
 				if (p == null)
 					continue;
 
+				// Avança o tempo das maldições ativas
+				br.com.dantesrpg.model.util.MaldicaoUtils.avancarTempoMaldicoes(p, 1);
+
 				// CHECK DE TEMPO DA RAÇA (PRIORIDADE ABSOLUTA)
 				if (p.getRaca() != null) {
 					p.getRaca().onTimeAdvanced(p, estado, mainController);
