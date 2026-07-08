@@ -180,6 +180,17 @@ public class EffectFactory {
 			mods.put("REDUCAO_DANO_MODIFICADOR", -0.30);
 			return new Efeito("Armadura Quebrada", TipoEfeito.DEBUFF, duracao, mods, 0, 0);
 		});
+
+		presets.put("Congelamento", (duracao, valor) ->
+			new Efeito("Congelamento", TipoEfeito.DEBUFF, 1000, new HashMap<>(), 0, 0)
+		);
+
+		presets.put("Congelado", (duracao, valor) -> {
+			Map<String, Double> mods = new HashMap<>();
+			mods.put("BONUS_ARMADURA_PERCENTUAL", -0.30);
+			mods.put("DANO_BONUS_PERCENTUAL", -0.20);
+			return new Efeito("Congelado", TipoEfeito.DEBUFF, 600, mods, 0, 0);
+		});
 	}
 
 	// Helper para criar efeitos com um modificador simples

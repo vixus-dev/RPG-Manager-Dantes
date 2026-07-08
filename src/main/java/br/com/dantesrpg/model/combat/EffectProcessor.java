@@ -134,7 +134,7 @@ public class EffectProcessor {
 				} else if (nomeEfeito.equalsIgnoreCase("Maldição") || nomeEfeito.equalsIgnoreCase("Maldicao")) {
 					// Aplica uma maldição padrão (20% de redução, duração 150 TU, vinda da arma)
 					br.com.dantesrpg.model.util.Maldicao mald = new br.com.dantesrpg.model.util.Maldicao(
-							arma != null ? arma.getNome() : "Sabre do Marinheiro", 0.20, 150, false);
+							arma != null ? arma.getNome() : "Sabre do Marinheiro", 0.20, 1000, false);
 					br.com.dantesrpg.model.util.MaldicaoUtils.adicionarMaldicao(alvo, mald);
 					System.out.println(">>> Maldição ativada contra " + alvo.getNome() + " por acerto da arma!");
 				} else {
@@ -261,6 +261,24 @@ alvo.removerEfeito("Charm");
 		if (ator.getRaca() != null) {
 			ator.getRaca().onActionUsed(ator, tipoAcaoAnterior, tipoAcaoAtual, estado);
 		}
+
+		if (ator.getEfeitosAtivos().containsKey("Fimbulwinter")) {
+			CombatController controller = combatManager.getMainController();
+			if (controller != null) {
+				List<Personagem> combatentes = controller.getCombatentes();
+				if (combatentes != null) {
+					for (Personagem p : combatentes) {
+						if (p.isAtivoNoCombate() && p.getFaccao() != null && !p.getFaccao().equals(ator.getFaccao())) {
+							if (controller.isPersonagemNoDominio(p, "fimbulwinter_brunhilda")) {
+								p.setContadorTU(p.getContadorTU() + 20);
+								System.out.println(">>> Fimbulwinter: " + p.getNome() + " ganha +20 TU devido à ação de " + ator.getNome() + ".");
+							}
+						}
+					}
+				}
+			}
+		}
+
 		combatManager.setUltimoTipoAcao(ator, tipoAcaoAtual);
 	}
 

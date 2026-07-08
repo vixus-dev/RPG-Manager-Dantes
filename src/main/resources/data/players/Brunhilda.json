@@ -1,0 +1,44 @@
+{
+  "iniciativaBase": 0,
+  "atributosBase": {
+    "FORCA": 8,
+    "PERCEPCAO": 2,
+    "ENDURANCE": 10,
+    "CARISMA": 3,
+    "INTELIGENCIA": 1,
+    "DESTREZA": 5,
+    "SORTE": 1,
+    "INSPIRACAO": 3,
+    "SAGACIDADE": 2,
+    "TOPOR": 10
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 10.0,
+  "contadorTU": 4,
+  "fantasmaNobre": "Fimbulwinter",
+  "armaEquipada": "Terrore",
+  "inventario": {},
+  "xpAtual": 0,
+  "vidaMaximaBase": 10.0,
+  "classe": "Barbaro",
+  "armasEquipadas": [
+    "Terrore"
+  ],
+  "nome": "Brunhilda",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 4,
+  "posY": 4,
+  "manaAtual": 8.0,
+  "raca": "Orc",
+  "nivel": 1,
+  "wieldingMaximo": 2
+}

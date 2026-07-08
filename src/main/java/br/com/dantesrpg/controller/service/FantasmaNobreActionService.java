@@ -20,6 +20,7 @@ import br.com.dantesrpg.model.fantasmasnobres.AcertoDeContas;
 import br.com.dantesrpg.model.fantasmasnobres.AndJusticeForMySelf;
 import br.com.dantesrpg.model.fantasmasnobres.ApostadorIncansavel;
 import br.com.dantesrpg.model.fantasmasnobres.GodsWill;
+import br.com.dantesrpg.model.fantasmasnobres.Fimbulwinter;
 import br.com.dantesrpg.model.fantasmasnobres.InvocacaoMurasame;
 import br.com.dantesrpg.model.fantasmasnobres.InvocacaoSangrenta;
 import br.com.dantesrpg.model.fantasmasnobres.IraDeAnthyros;
@@ -122,6 +123,8 @@ ator.getInventario().removerItem(essencia);
 				return new ApostadorIncansavel();
 			case "GodsWill":
 				return new GodsWill();
+			case "Fimbulwinter":
+				return new Fimbulwinter();
 			case "InvocacaoMurasame":
 				return new InvocacaoMurasame();
 			case "InvocacaoSangrenta":

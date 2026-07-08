@@ -663,6 +663,16 @@ public class Personagem {
 		this.habilidadesExtras.clear();
 	}
 
+	public void removerHabilidadeExtraPorNome(String nome) {
+		if (this.habilidadesExtras != null) {
+			this.habilidadesExtras.removeIf(h -> h.getNome().equalsIgnoreCase(nome));
+		}
+	}
+
+	public List<Habilidade> getHabilidadesExtras() {
+		return habilidadesExtras;
+	}
+
 	public Habilidade getUltimaHabilidadeUsada() {
 		return ultimaHabilidadeUsada;
 	}

@@ -387,6 +387,16 @@
     -fx-effect: innershadow(gaussian, rgba(90, 0, 20, 0.65), 20, 0.6, 0, 0);
 }
 
+/* --- DOMÍNIO FIMBULWINTER (Brunhilda) — gelo eterno --- */
+.zona-dominio-fimbulwinter {
+    -fx-border-color: #00ddff;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    /* Transparente azulado gelado */
+    -fx-background-color: rgba(10, 40, 70, 0.45);
+    -fx-effect: innershadow(gaussian, rgba(0, 200, 255, 0.7), 25, 0.6, 0, 0);
+}
+
 /* --- FALSA JUSTIÇA (Justiceiro Cego) --- */
 .zona-dominio-justiceiro {
     -fx-border-color: #8B0000;

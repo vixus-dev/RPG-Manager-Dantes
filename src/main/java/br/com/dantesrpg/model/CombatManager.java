@@ -553,6 +553,12 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 								+ String.format("%.0f", dano) + " de dano (Maldição do Gekkyūden).");
 					}
 
+					// Maldição de Fimbulwinter: inimigo dentro do domínio de Brunhilda ganha 1 stack de Congelamento a cada 100 TU
+					if (nomeEfeito.equals("Maldição de Fimbulwinter") && efeitoObj.getIntervaloTickTU() > 0
+							&& (tempoGlobalAtual % efeitoObj.getIntervaloTickTU() == 0)) {
+						br.com.dantesrpg.model.fantasmasnobres.Fimbulwinter.aplicarCongelamento(p, this, 1);
+					}
+
 					// Drenagem de Efeitos: perde 1% de bônus de dano por TU
 					if (nomeEfeito.equals("Drenagem de Efeitos") && efeitoObj.getModificadores() != null) {
 						Double bonusAtual = efeitoObj.getModificadores().get("DANO_BONUS_PERCENTUAL");
@@ -715,6 +721,11 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 							if (nomeEfeito.equals("Lua Sombria") && mainController != null) {
 								mainController.removerDominio("lua_sombria");
 								domainManager.limparFusoesComDominio("lua_sombria");
+							}
+							if (nomeEfeito.equals("Fimbulwinter") && mainController != null) {
+								mainController.removerDominio("fimbulwinter_brunhilda");
+								domainManager.limparFusoesComDominio("fimbulwinter_brunhilda");
+								br.com.dantesrpg.model.fantasmasnobres.Fimbulwinter.reverterFimbulwinter(p);
 							}
 							if (nomeEfeito.equals("Modo Justiça")) {
 								br.com.dantesrpg.model.fantasmasnobres.ModoPolaris.reverterParaPolaris(p);

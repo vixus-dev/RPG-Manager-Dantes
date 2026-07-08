@@ -790,7 +790,7 @@ public class ReforcosDialogService {
 		ComboBox<String> cbFantasma = new ComboBox<>();
 		cbFantasma.getItems().add("(Nenhum)");
 		cbFantasma.getItems().addAll("AcertoDeContas", "AndJusticeForMySelf", "ApostadorIncansavel", "GodsWill",
-				"InvocacaoMurasame", "InvocacaoSangrenta", "IraDeAnthyros", "JihoGekkyuden", "LuaSombria",
+				"Fimbulwinter", "InvocacaoMurasame", "InvocacaoSangrenta", "IraDeAnthyros", "JihoGekkyuden", "LuaSombria",
 				"ModoPolaris", "ProfetaDeBehemoth", "RevelacaoDeYaweh", "RingOfTheUndyingWill", "Ritual", "TheMastersCall",
 				"VigiliaEterna");
 		cbFantasma.setValue("(Nenhum)");

@@ -230,6 +230,66 @@ public class AuraManager {
 			}
 		}
 
+		// --- DOMÍNIO FIMBULWINTER (Brunhilda) — efeitos por tile ---
+		if (getController() != null) {
+			Dominio fimbul = getController().getDominio("fimbulwinter_brunhilda");
+			if (fimbul != null) {
+				Personagem donoFimbul = fimbul.getDono();
+				String faccaoDono = (donoFimbul != null) ? donoFimbul.getFaccao() : null;
+
+				for (Personagem p : estado.getCombatentes()) {
+					if (!p.isAtivoNoCombate())
+						continue;
+
+					boolean dentro = fimbul.contemPersonagem(p);
+					boolean isAliado = faccaoDono != null && faccaoDono.equals(p.getFaccao());
+
+					if (isAliado) {
+						boolean temBuff = p.getEfeitosAtivos().containsKey("Bênção de Fimbulwinter");
+						if (dentro && !temBuff) {
+							Map<String, Double> modsBuff = new HashMap<>();
+							modsBuff.put("ARMADURA_TOTAL", 50.0);
+							modsBuff.put("DANO_BONUS_PERCENTUAL", 0.25);
+							Efeito buff = new Efeito("Bênção de Fimbulwinter", TipoEfeito.BUFF, 9999, modsBuff, 0, 0);
+							p.adicionarEfeito(buff);
+							p.recalcularAtributosEstatisticas();
+							System.out.println(">>> " + p.getNome() + " recebe Bênção de Fimbulwinter.");
+						} else if (!dentro && temBuff) {
+							p.removerEfeito("Bênção de Fimbulwinter");
+							p.recalcularAtributosEstatisticas();
+							System.out.println(">>> " + p.getNome() + " saiu do Fimbulwinter (Bênção removida).");
+						}
+					} else {
+						boolean temDebuff = p.getEfeitosAtivos().containsKey("Maldição de Fimbulwinter");
+						if (dentro && !temDebuff) {
+							Map<String, Double> modsDebuff = new HashMap<>();
+							modsDebuff.put("REDUCAO_CURA", 0.20);
+							// intervaloTickTU = 100 -> tick custom no CombatManager adiciona 1 stack de Congelamento a cada 100 TU.
+							Efeito debuff = new Efeito("Maldição de Fimbulwinter", TipoEfeito.DEBUFF, 9999, modsDebuff, 0, 100);
+							p.adicionarEfeito(debuff);
+							p.recalcularAtributosEstatisticas();
+							System.out.println(">>> " + p.getNome() + " recebe Maldição de Fimbulwinter.");
+						} else if (!dentro && temDebuff) {
+							p.removerEfeito("Maldição de Fimbulwinter");
+							p.recalcularAtributosEstatisticas();
+							System.out.println(">>> " + p.getNome() + " saiu do Fimbulwinter (Maldição removida).");
+						}
+					}
+				}
+			} else {
+				for (Personagem p : estado.getCombatentes()) {
+					if (p.getEfeitosAtivos().containsKey("Bênção de Fimbulwinter")) {
+						p.removerEfeito("Bênção de Fimbulwinter");
+						p.recalcularAtributosEstatisticas();
+					}
+					if (p.getEfeitosAtivos().containsKey("Maldição de Fimbulwinter")) {
+						p.removerEfeito("Maldição de Fimbulwinter");
+						p.recalcularAtributosEstatisticas();
+					}
+				}
+			}
+		}
+
 		// --- AURA ROCK DO SOL ---
 		Personagem portadorGnosis = estado.getCombatentes().stream()
 				.filter(p -> p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Gnosis de Fogo")).findFirst()
@@ -540,6 +600,23 @@ public class AuraManager {
 						ator.getPosX(), ator.getPosY(), 7, "zona-dominio-lillith");
 				jiho.setTexturePath("/effects/sangue_negro.png");
 				combatManager.getDomainManager().ativarDominioNoMapa(jiho, ator, estado);
+			}
+		}
+
+		// Domínio Fimbulwinter (Brunhilda)
+		if (ator.getEfeitosAtivos().containsKey("Fimbulwinter (Preparando)")) {
+			System.out.println(">>> Início do Turno: Ativando 'Fimbulwinter'!");
+
+			ator.removerEfeito("Fimbulwinter (Preparando)");
+
+			Efeito dominioMarker = new Efeito("Fimbulwinter", TipoEfeito.BUFF, 600, Map.of(), 0, 0);
+			combatManager.getEffectProcessor().aplicarEfeito(ator, dominioMarker);
+
+			if (getController() != null) {
+				Dominio fimbul = new Dominio("fimbulwinter_brunhilda", "Fimbulwinter", ator,
+						ator.getPosX(), ator.getPosY(), 7, "zona-dominio-fimbulwinter");
+				// Sem overlay texture para fimbulwinter já que a cor de fundo do CSS dá a atmosfera azul gelada
+				combatManager.getDomainManager().ativarDominioNoMapa(fimbul, ator, estado);
 			}
 		}
 
