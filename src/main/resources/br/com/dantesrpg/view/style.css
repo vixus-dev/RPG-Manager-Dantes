@@ -2059,3 +2059,10 @@
 .bestiary-spawn-button:hover {
     -fx-background-color: #2c8752;
 }
+
+.bestiary-field-error {
+    -fx-border-color: #ff4b4b;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 4;
+    -fx-effect: dropshadow(gaussian, rgba(255, 75, 75, 0.35), 6, 0.4, 0, 0);
+}

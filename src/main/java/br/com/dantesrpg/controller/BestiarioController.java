@@ -3,8 +3,10 @@ package br.com.dantesrpg.controller;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,12 +16,14 @@ import com.google.gson.GsonBuilder;
 
 import br.com.dantesrpg.model.Arma;
 import br.com.dantesrpg.model.enums.PesoEntidade;
+import br.com.dantesrpg.model.util.FileLoader;
 import br.com.dantesrpg.model.util.ImageCache;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -33,6 +37,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class BestiarioController {
+
+	private static final String CLASSE_CAMPO_INVALIDO = "bestiary-field-error";
 
 	private static final List<String> PROPRIEDADES_PADRAO = List.of(
 			"IMUNIDADE_CONTROLE",
@@ -115,6 +121,7 @@ public class BestiarioController {
 	private Map<String, Map<String, Object>> bestiarioData;
 	private Stage stage;
 	private String idSelecionado;
+	private boolean filtrosComListenersConfigurados;
 
 	@FXML
 	public void initialize() {
@@ -179,9 +186,13 @@ public class BestiarioController {
 		comboFiltroGrau.getItems().setAll(graus);
 		comboFiltroGrau.getSelectionModel().selectFirst();
 
+		if (filtrosComListenersConfigurados) {
+			return;
+		}
 		inputBusca.textProperty().addListener(o -> atualizarLista());
 		comboFiltroRaca.valueProperty().addListener(o -> atualizarLista());
 		comboFiltroGrau.valueProperty().addListener(o -> atualizarLista());
+		filtrosComListenersConfigurados = true;
 	}
 
 	private void atualizarLista() {
@@ -249,33 +260,101 @@ public class BestiarioController {
 	}
 
 	private Map<String, Object> coletarDadosDoFormulario() {
-		Map<String, Object> dados = new java.util.HashMap<>();
+		limparErrosFormulario();
+		List<String> erros = new ArrayList<>();
+		Map<String, Object> dados = new HashMap<>();
 		String idBase = (idSelecionado != null) ? idSelecionado : "CustomMob";
 
 		dados.put("id", idBase);
-		dados.put("nome", inputNome.getText());
-		dados.put("raca", inputRaca.getText());
+		dados.put("nome", lerTextoObrigatorio(inputNome, "Nome", erros));
+		dados.put("raca", lerTextoObrigatorio(inputRaca, "Raça", erros));
+		dados.put("grau", lerCampoNumerico(inputGrau, "Grau", 0, true, erros));
+		dados.put("vida", lerCampoNumerico(inputVida, "Vida máxima", 1, false, erros));
+		dados.put("mana", lerCampoNumerico(inputMana, "Mana máxima", 0, false, erros));
+		dados.put("agilidade", lerCampoNumerico(inputAgi, "Destreza", 0, true, erros));
+		dados.put("defesa", lerCampoNumerico(inputDef, "Topor", 0, true, erros));
+		dados.put("xpReward", lerCampoNumerico(inputXP, "XP", 0, true, erros));
+		dados.put("segmentos", lerCampoNumerico(inputSegmentos, "Segmentos", 0, true, erros));
+		dados.put("tamanhoX", lerCampoNumerico(inputTamanhoX, "Tamanho X", 1, true, erros));
+		dados.put("tamanhoY", lerCampoNumerico(inputTamanhoY, "Tamanho Y", 1, true, erros));
 
-		try {
-			dados.put("grau", Double.parseDouble(inputGrau.getText()));
-			dados.put("vida", Double.parseDouble(inputVida.getText()));
-			dados.put("mana", Double.parseDouble(inputMana.getText()));
-			dados.put("agilidade", Double.parseDouble(inputAgi.getText()));
-			dados.put("defesa", Double.parseDouble(inputDef.getText()));
-			dados.put("xpReward", Double.parseDouble(inputXP.getText()));
-			dados.put("segmentos", Double.parseDouble(inputSegmentos.getText()));
-			dados.put("tamanhoX", Double.parseDouble(inputTamanhoX.getText()));
-			dados.put("tamanhoY", Double.parseDouble(inputTamanhoY.getText()));
-		} catch (NumberFormatException e) {
-			System.err.println("Erro ao ler números do editor. Usando defaults.");
+		String peso = comboPeso.getValue();
+		if (peso == null || peso.isBlank()) {
+			marcarCampoInvalido(comboPeso);
+			erros.add("Peso deve ser selecionado.");
 		}
 
 		dados.put("arma", comboArma.getValue());
-		dados.put("peso", comboPeso.getValue());
+		dados.put("peso", peso);
 		dados.put("poderoso", chkPoderoso.isSelected());
 		dados.put("propriedades", obterPropriedadesSelecionadas());
 
+		if (!erros.isEmpty()) {
+			throw new IllegalArgumentException("Corrija os campos do Bestiário:\n- " + String.join("\n- ", erros));
+		}
 		return dados;
+	}
+
+	private String lerTextoObrigatorio(TextField campo, String rotulo, List<String> erros) {
+		String valor = campo.getText() == null ? "" : campo.getText().trim();
+		if (valor.isEmpty()) {
+			marcarCampoInvalido(campo);
+			erros.add(rotulo + " é obrigatório.");
+		}
+		return valor;
+	}
+
+	private double lerCampoNumerico(TextField campo, String rotulo, double minimo, boolean inteiroObrigatorio,
+			List<String> erros) {
+		String texto = campo.getText() == null ? "" : campo.getText().trim();
+		try {
+			double valor = Double.parseDouble(texto);
+			if (valor < minimo) {
+				marcarCampoInvalido(campo);
+				erros.add(rotulo + " deve ser maior ou igual a " + formatarMinimo(minimo) + ".");
+			}
+			if (inteiroObrigatorio && valor % 1 != 0) {
+				marcarCampoInvalido(campo);
+				erros.add(rotulo + " deve ser um número inteiro.");
+			}
+			return valor;
+		} catch (NumberFormatException e) {
+			marcarCampoInvalido(campo);
+			erros.add(rotulo + " deve ser numérico.");
+			return minimo;
+		}
+	}
+
+	private String formatarMinimo(double minimo) {
+		if (minimo % 1 == 0) {
+			return String.valueOf((int) minimo);
+		}
+		return String.valueOf(minimo);
+	}
+
+	private void limparErrosFormulario() {
+		limparCampoInvalido(inputNome);
+		limparCampoInvalido(inputRaca);
+		limparCampoInvalido(inputGrau);
+		limparCampoInvalido(inputVida);
+		limparCampoInvalido(inputMana);
+		limparCampoInvalido(inputAgi);
+		limparCampoInvalido(inputDef);
+		limparCampoInvalido(inputXP);
+		limparCampoInvalido(inputSegmentos);
+		limparCampoInvalido(inputTamanhoX);
+		limparCampoInvalido(inputTamanhoY);
+		limparCampoInvalido(comboPeso);
+	}
+
+	private void marcarCampoInvalido(Control campo) {
+		if (!campo.getStyleClass().contains(CLASSE_CAMPO_INVALIDO)) {
+			campo.getStyleClass().add(CLASSE_CAMPO_INVALIDO);
+		}
+	}
+
+	private void limparCampoInvalido(Control campo) {
+		campo.getStyleClass().remove(CLASSE_CAMPO_INVALIDO);
 	}
 
 	private void configurarListasDePropriedades() {
@@ -377,8 +456,7 @@ public class BestiarioController {
 	}
 
 	private void carregarImagem(String nomeMonstro) {
-		String nomeArquivo = nomeMonstro.toLowerCase().replace(" ", "_") + ".png";
-		String path = "/tokens/" + nomeArquivo;
+		String path = resolverCaminhoToken(nomeMonstro);
 		try {
 			Image img = ImageCache.get(path, 120, 120);
 			if (img != null && !img.isError()) {
@@ -389,6 +467,54 @@ public class BestiarioController {
 		} catch (Exception e) {
 			imgTokenPreview.setImage(null);
 		}
+	}
+
+	private String resolverCaminhoToken(String nomeMonstro) {
+		String nomeArquivoEsperado = normalizarNomeToken(nomeMonstro) + ".png";
+		List<String> arquivos = FileLoader.listarArquivosDeDiretorio("/tokens/", null);
+		for (String arquivo : arquivos) {
+			if (arquivo.equalsIgnoreCase(nomeArquivoEsperado)) {
+				return "/tokens/" + arquivo;
+			}
+		}
+
+		String baseEsperada = removerExtensao(nomeArquivoEsperado);
+		for (String arquivo : arquivos) {
+			String extensao = obterExtensao(arquivo);
+			if (extensao.equals(".png") || extensao.equals(".jpg") || extensao.equals(".jpeg")
+					|| extensao.equals(".webp")) {
+				String baseArquivo = normalizarNomeToken(removerExtensao(arquivo));
+				if (baseArquivo.equals(baseEsperada)) {
+					return "/tokens/" + arquivo;
+				}
+			}
+		}
+		return "/tokens/" + nomeArquivoEsperado;
+	}
+
+	private String normalizarNomeToken(String valor) {
+		if (valor == null) {
+			return "";
+		}
+		return valor.trim()
+				.toLowerCase(Locale.ROOT)
+				.replaceAll("\\s+", "_");
+	}
+
+	private String removerExtensao(String arquivo) {
+		int ponto = arquivo.lastIndexOf('.');
+		if (ponto <= 0) {
+			return arquivo;
+		}
+		return arquivo.substring(0, ponto);
+	}
+
+	private String obterExtensao(String arquivo) {
+		int ponto = arquivo.lastIndexOf('.');
+		if (ponto <= 0) {
+			return "";
+		}
+		return arquivo.substring(ponto).toLowerCase(Locale.ROOT);
 	}
 
 	private void atualizarHabilidadesArma(String nomeArma) {
@@ -419,30 +545,17 @@ public class BestiarioController {
 
 		try {
 			Map<String, Object> data = bestiarioData.get(idSelecionado);
-
-			data.put("nome", inputNome.getText());
-			data.put("raca", inputRaca.getText());
-			data.put("grau", Double.parseDouble(inputGrau.getText()));
-			data.put("vida", Double.parseDouble(inputVida.getText()));
-			data.put("mana", Double.parseDouble(inputMana.getText()));
-			data.put("agilidade", Double.parseDouble(inputAgi.getText()));
-			data.put("defesa", Double.parseDouble(inputDef.getText()));
-			data.put("xpReward", Double.parseDouble(inputXP.getText()));
-			data.put("segmentos", Double.parseDouble(inputSegmentos.getText()));
-			data.put("tamanhoX", Double.parseDouble(inputTamanhoX.getText()));
-			data.put("tamanhoY", Double.parseDouble(inputTamanhoY.getText()));
-			data.put("peso", comboPeso.getValue());
-			data.put("poderoso", chkPoderoso.isSelected());
-			data.put("arma", comboArma.getValue());
-			data.put("propriedades", obterPropriedadesSelecionadas());
+			data.putAll(coletarDadosDoFormulario());
 
 			salvarJsonNoDisco();
 
 			Alert alert = new Alert(Alert.AlertType.INFORMATION, "Monstro salvo com sucesso!");
 			alert.show();
 
+			String idAtual = idSelecionado;
 			configurarFiltros();
 			atualizarLista();
+			monstroListView.getSelectionModel().select(idAtual);
 		} catch (Exception e) {
 			Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar: " + e.getMessage());
 			alert.show();
@@ -478,7 +591,16 @@ public class BestiarioController {
 		dialog.setContentText("ID:");
 
 		dialog.showAndWait().ifPresent(id -> {
-			if (bestiarioData.containsKey(id)) {
+			String idLimpo = id == null ? "" : id.trim();
+			if (idLimpo.isEmpty()) {
+				new Alert(Alert.AlertType.ERROR, "ID não pode ficar vazio.").show();
+				return;
+			}
+			if (idLimpo.matches(".*\\s+.*")) {
+				new Alert(Alert.AlertType.ERROR, "ID não deve conter espaços.").show();
+				return;
+			}
+			if (bestiarioData.containsKey(idLimpo)) {
 				new Alert(Alert.AlertType.ERROR, "ID já existe!").show();
 				return;
 			}
@@ -500,9 +622,9 @@ public class BestiarioController {
 			novo.put("propriedades", new ArrayList<>());
 			novo.put("poderoso", false);
 
-			bestiarioData.put(id, novo);
+			bestiarioData.put(idLimpo, novo);
 			atualizarLista();
-			monstroListView.getSelectionModel().select(id);
+			monstroListView.getSelectionModel().select(idLimpo);
 		});
 	}
 
@@ -524,11 +646,16 @@ public class BestiarioController {
 
 	@FXML
 	private void onPrepararSpawnClick() {
-		Map<String, Object> dadosCustom = coletarDadosDoFormulario();
-		int qtd = (int) sliderSpawnQtd.getValue();
+		try {
+			Map<String, Object> dadosCustom = coletarDadosDoFormulario();
+			int qtd = (int) sliderSpawnQtd.getValue();
 
-		mainController.entrarModoSpawnMultiploCustom(dadosCustom, qtd);
+			mainController.entrarModoSpawnMultiploCustom(dadosCustom, qtd);
 
-		stage.setIconified(true);
+			stage.setIconified(true);
+		} catch (Exception e) {
+			Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao preparar spawn: " + e.getMessage());
+			alert.show();
+		}
 	}
 }
