@@ -107,7 +107,11 @@ public class EffectProcessor {
 			}
 		}
 
-		if (nomeEfeito != null && !nomeEfeito.isEmpty()) {
+		if (arma != null && !arma.getEfeitosOnHit().isEmpty()) {
+			for (EfeitoOnHit efeitoOnHit : arma.getEfeitosOnHit()) {
+				processarEfeitoOnHit(ator, alvo, arma, danoCausado, estado, efeitoOnHit);
+			}
+		} else if (nomeEfeito != null && !nomeEfeito.isEmpty()) {
 			if (Math.random() <= chance) {
 				System.out.println(">>> Efeito On-Hit ativado: " + nomeEfeito);
 
@@ -147,13 +151,6 @@ public class EffectProcessor {
 			}
 		}
 
-		if (arma != null) {
-			List<EfeitoOnHit> efeitosOnHit = arma.getEfeitosOnHit();
-			for (int i = 1; i < efeitosOnHit.size(); i++) {
-				processarEfeitoOnHitAdicional(ator, alvo, arma, danoCausado, estado, efeitosOnHit.get(i));
-			}
-		}
-
 		if (ator.getEfeitosAtivos().containsKey(BarbaroUtils.EFEITO_BALANCO_TEMERARIO) && Math.random() <= 0.50) {
 			Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 20);
 			aplicarEfeito(alvo, choque);
@@ -161,7 +158,7 @@ public class EffectProcessor {
 		}
 	}
 
-	private void processarEfeitoOnHitAdicional(Personagem ator, Personagem alvo, Arma arma, double danoCausado,
+	private void processarEfeitoOnHit(Personagem ator, Personagem alvo, Arma arma, double danoCausado,
 			EstadoCombate estado, EfeitoOnHit efeitoOnHit) {
 		if (efeitoOnHit == null || !efeitoOnHit.isValido() || Math.random() > efeitoOnHit.getChance()) {
 			return;
