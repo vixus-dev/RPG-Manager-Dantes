@@ -15,6 +15,7 @@ import br.com.dantesrpg.model.Efeito;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.util.CharacterImageResolver;
 import br.com.dantesrpg.model.util.ImageCache;
+import br.com.dantesrpg.model.util.EffectIconResolver;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -277,12 +278,7 @@ public class CombatUiRefresher {
 		dotImg.setFitHeight(16);
 		dotImg.setPreserveRatio(true);
 
-		String effectName = prediction.nomeEfeito.toLowerCase().replace(" ", "_");
-		if (effectName.equals("queimação")) effectName = "queimacao";
-		if (effectName.equals("bênção_do_gekkyūden")) effectName = "bencao_gekkyuden";
-		if (effectName.equals("maldição_do_gekkyūden")) effectName = "maldicao_gekkyuden";
-
-		String imagePath = "/effects/dot/" + effectName + ".png";
+		String imagePath = EffectIconResolver.getIconPath(prediction.nomeEfeito);
 		Image iconImage = ImageCache.get(imagePath, 16, 16);
 
 		if (iconImage == null || iconImage.isError()) {
