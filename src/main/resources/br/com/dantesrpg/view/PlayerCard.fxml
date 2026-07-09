@@ -54,6 +54,6 @@
       <Label fx:id="labelMPText" text="50/50" styleClass="bar-text" layoutX="125.0" layoutY="50.0"/>
       
       <HBox fx:id="cardEffectsContainer" alignment="CENTER_LEFT" spacing="3.0" layoutX="10.0" layoutY="68.0" maxWidth="100.0" AnchorPane.leftAnchor="10.0" AnchorPane.bottomAnchor="5.0"/>
-
+      <VBox fx:id="expandedEffectsContainer" visible="false" spacing="3.0" layoutX="10.0" prefWidth="26.0" styleClass="expanded-effects-box" AnchorPane.leftAnchor="10.0" AnchorPane.bottomAnchor="25.0"/>
    </children>
 </AnchorPane>

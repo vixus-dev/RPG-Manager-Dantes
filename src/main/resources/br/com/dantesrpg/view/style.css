@@ -88,6 +88,35 @@
 .effect-icon-debuff { -fx-background-color: lightcoral; -fx-text-fill: black; -fx-border-color: darkred; }
 .effect-icon-dot { -fx-background-color: violet; -fx-text-fill: black; -fx-border-color: purple; }
 
+.effect-icon-more {
+    -fx-background-color: #444444;
+    -fx-text-fill: #cccccc;
+    -fx-border-color: #666666;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
+    -fx-cursor: hand;
+}
+.effect-icon-more:hover {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+    -fx-border-color: #888888;
+}
+.expanded-effects-box {
+    -fx-background-color: rgba(26, 26, 46, 0.95);
+    -fx-border-color: #555555;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 4px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 8, 0, 0, 0);
+}
+
 /* Classe base para bordas das células */
 .map-cell {
     -fx-border-color: rgba(0,0,0,0.2);

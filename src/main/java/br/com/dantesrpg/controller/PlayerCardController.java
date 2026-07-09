@@ -14,7 +14,11 @@ import br.com.dantesrpg.model.util.ContratoDeVida;
 import br.com.dantesrpg.model.util.ContratoDeVidaUtils;
 import br.com.dantesrpg.model.util.EffectTooltipBuilder;
 import br.com.dantesrpg.model.util.ImageCache;
+import br.com.dantesrpg.model.util.EffectIconResolver;
 import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.Node;
 
 public class PlayerCardController {
 
@@ -40,6 +44,8 @@ public class PlayerCardController {
 	private Polygon passiveBarPolygon;
 	@FXML
 	private HBox cardEffectsContainer;
+	@FXML
+	private VBox expandedEffectsContainer;
 
 	@FXML
 	private Label labelHPShieldText;
@@ -537,60 +543,115 @@ public class PlayerCardController {
 		if (cardEffectsContainer == null)
 			return;
 
-		// Limpa a lista atual
 		cardEffectsContainer.getChildren().clear();
+		if (expandedEffectsContainer != null) {
+			expandedEffectsContainer.getChildren().clear();
+			expandedEffectsContainer.setVisible(false);
+			expandedEffectsContainer.setOnMouseExited(e -> expandedEffectsContainer.setVisible(false));
+		}
 
-		if (personagem.getEfeitosAtivos() != null) {
-			int maxIcons = 5;
-			int count = 0;
+		if (personagem.getEfeitosAtivos() == null || personagem.getEfeitosAtivos().isEmpty()) {
+			return;
+		}
 
-			// Cria uma lista temporária para evitar modificação concorrente se houver
-			java.util.List<Efeito> efeitosParaMostrar = new java.util.ArrayList<>(
-					personagem.getEfeitosAtivos().values());
+		// Cria uma lista temporária para evitar modificação concorrente se houver
+		java.util.List<Efeito> efeitosParaMostrar = new java.util.ArrayList<>(
+				personagem.getEfeitosAtivos().values());
 
-			for (Efeito efeito : efeitosParaMostrar) {
-				if (efeito != null && count < maxIcons) {
+		int totalEfeitos = efeitosParaMostrar.size();
 
-					// Lógica de Texto do Ícone
-					String textoIcone = efeito.getNome().substring(0, Math.min(efeito.getNome().length(), 2))
-							.toUpperCase();
-					if (efeito.getStacks() > 0) {
-						textoIcone += " " + efeito.getStacks();
+		if (totalEfeitos >= 4) {
+			// Mostra os 3 primeiros efeitos como ícones
+			for (int i = 0; i < 3; i++) {
+				Efeito efeito = efeitosParaMostrar.get(i);
+				if (efeito != null) {
+					cardEffectsContainer.getChildren().add(criarIconeEfeitoComStacks(efeito, 18.0));
+				}
+			}
+
+			// Cria o quadradinho cinza "..."
+			Label moreLabel = new Label("...");
+			moreLabel.getStyleClass().clear();
+			moreLabel.getStyleClass().add("effect-icon-more");
+			Tooltip tipMore = new Tooltip("Clique para ver todos os efeitos ativos");
+			tipMore.setStyle("-fx-font-size: 11px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 6;");
+			tipMore.setShowDelay(javafx.util.Duration.millis(200));
+			Tooltip.install(moreLabel, tipMore);
+
+			moreLabel.setOnMouseClicked(event -> {
+				if (expandedEffectsContainer != null) {
+					expandedEffectsContainer.setVisible(!expandedEffectsContainer.isVisible());
+					if (expandedEffectsContainer.isVisible()) {
+						expandedEffectsContainer.toFront();
 					}
+				}
+			});
 
-					// --- CRIAÇÃO DO LABEL---
-					Label effectIcon = new Label(textoIcone);
-					effectIcon.setMinWidth(18);
-					effectIcon.setMaxWidth(18);
-					effectIcon.setMinHeight(18);
-					effectIcon.setMaxHeight(18);
-					effectIcon.setAlignment(javafx.geometry.Pos.CENTER);
+			cardEffectsContainer.getChildren().add(moreLabel);
 
-					// Estilos
-					effectIcon.getStyleClass().clear();
-					effectIcon.getStyleClass().add("effect-icon");
-					if (efeito.getTipo() == TipoEfeito.BUFF)
-						effectIcon.getStyleClass().add("effect-icon-buff");
-					else if (efeito.getTipo() == TipoEfeito.DEBUFF)
-						effectIcon.getStyleClass().add("effect-icon-debuff");
-					else
-						effectIcon.getStyleClass().add("effect-icon-dot");
+			// Popula o container expandido com TODOS os efeitos
+			if (expandedEffectsContainer != null) {
+				for (Efeito efeito : efeitosParaMostrar) {
+					if (efeito != null) {
+						expandedEffectsContainer.getChildren().add(criarIconeEfeitoComStacks(efeito, 18.0));
+					}
+				}
+			}
 
-					// Tooltip detalhado
-					Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(efeito));
-					tip.setStyle("-fx-font-size: 11px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; -fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 6;");
-					tip.setShowDelay(javafx.util.Duration.millis(200));
-					tip.setMaxWidth(320);
-					tip.setWrapText(true);
-					Tooltip.install(effectIcon, tip);
-
-					// Adiciona ao container
-					cardEffectsContainer.getChildren().add(effectIcon);
-
-					count++;
+		} else {
+			// Mostra todos os efeitos (máximo de 3)
+			for (Efeito efeito : efeitosParaMostrar) {
+				if (efeito != null) {
+					cardEffectsContainer.getChildren().add(criarIconeEfeitoComStacks(efeito, 18.0));
 				}
 			}
 		}
+
+		cardEffectsContainer.toFront();
+		if (expandedEffectsContainer != null) {
+			expandedEffectsContainer.toFront();
+		}
+	}
+
+	private Node criarIconeEfeitoComStacks(Efeito efeito, double size) {
+		ImageView view = criarIconeEfeito(efeito, size);
+
+		if (efeito.getStacks() > 0) {
+			Label stackLabel = new Label(String.valueOf(efeito.getStacks()));
+			stackLabel.setStyle("-fx-font-family: 'Oxanium'; -fx-font-size: 8px; -fx-font-weight: bold; "
+					+ "-fx-text-fill: white; -fx-background-color: rgba(0,0,0,0.6); -fx-padding: 0 2; "
+					+ "-fx-background-radius: 2;");
+			StackPane stack = new StackPane(view, stackLabel);
+			StackPane.setAlignment(stackLabel, javafx.geometry.Pos.BOTTOM_RIGHT);
+			return stack;
+		}
+
+		return view;
+	}
+
+	private ImageView criarIconeEfeito(Efeito efeito, double size) {
+		String imagePath = EffectIconResolver.getIconPath(efeito.getNome(), efeito.getTipo());
+		Image img = ImageCache.get(imagePath, size, size);
+
+		ImageView view = new ImageView();
+		view.setFitWidth(size);
+		view.setFitHeight(size);
+		view.setPreserveRatio(true);
+
+		if (img != null && !img.isError()) {
+			view.setImage(img);
+		}
+
+		// Tooltip
+		Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(efeito));
+		tip.setStyle("-fx-font-size: 11px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; "
+				+ "-fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 6;");
+		tip.setShowDelay(javafx.util.Duration.millis(200));
+		tip.setMaxWidth(320);
+		tip.setWrapText(true);
+		Tooltip.install(view, tip);
+
+		return view;
 	}
 
 	private void configurarImagem(Personagem personagem, String cardType) {

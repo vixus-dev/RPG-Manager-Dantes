@@ -5,8 +5,12 @@ import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.util.DiceRoller;
 import br.com.dantesrpg.model.util.EffectTooltipBuilder;
+import br.com.dantesrpg.model.util.EffectIconResolver;
+import br.com.dantesrpg.model.util.ImageCache;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 
@@ -120,6 +124,18 @@ public class CharacterInfoRenderer {
 			Label lbl = new Label(texto + " [" + efeito.getDuracaoTURestante() + "]");
 			lbl.setMaxWidth(Double.MAX_VALUE);
 			lbl.setStyle(resolverEstiloEfeito(efeito.getTipo()));
+
+			// Resolução e injeção do ícone
+			String path = EffectIconResolver.getIconPath(efeito.getNome(), efeito.getTipo());
+			Image img = ImageCache.get(path, 14, 14);
+			if (img != null && !img.isError()) {
+				ImageView view = new ImageView(img);
+				view.setFitWidth(14);
+				view.setFitHeight(14);
+				view.setPreserveRatio(true);
+				lbl.setGraphic(view);
+				lbl.setGraphicTextGap(5);
+			}
 
 			Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(efeito));
 			tip.setStyle("-fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; "
