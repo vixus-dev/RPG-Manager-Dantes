@@ -436,10 +436,18 @@ public class ReforcosDialogService {
 			if (exists) {
 				nameAliado = nameBase + "_aliado";
 			}
+			String nomeBaseImagem = nameBase;
+			String idBestiarioSelecionado = lvBestiario.getSelectionModel().getSelectedItem();
+			if (idBestiarioSelecionado != null && bestiarioMap != null) {
+				Map<String, Object> data = bestiarioMap.get(idBestiarioSelecionado);
+				if (data != null) {
+					nomeBaseImagem = (String) data.getOrDefault("nomeBaseImagem", data.getOrDefault("nome", nameBase));
+				}
+			}
 			
 			Personagem aliado = criarInimigoAliado(nameAliado, tfRace.getText(), spGrau.getValue(), 
 				spHP.getValue(), spMana.getValue(), cbArmaEnemy.getValue(), cbPeso.getValue(), 
-				new ArrayList<>(lvSelecionadas.getItems()), spAgi.getValue(), spDef.getValue());
+				new ArrayList<>(lvSelecionadas.getItems()), spAgi.getValue(), spDef.getValue(), nomeBaseImagem);
 			
 			adicionarAoCombate(aliado);
 			refreshLists.run();
@@ -489,7 +497,7 @@ public class ReforcosDialogService {
 		}
 	}
 
-	private Personagem criarInimigoAliado(String nome, String racaStr, int grau, int vida, int mana, String armaStr, PesoEntidade peso, List<String> propriedades, int agilidade, int defesa) {
+	private Personagem criarInimigoAliado(String nome, String racaStr, int grau, int vida, int mana, String armaStr, PesoEntidade peso, List<String> propriedades, int agilidade, int defesa, String nomeBaseImagem) {
 		Raça racaObj = mapearRaca.apply(racaStr); 
 		Classe classeObj = mapearClasse.apply("Placeholder");
 		
@@ -503,6 +511,7 @@ public class ReforcosDialogService {
 		Personagem p = new Personagem(nome, racaObj, classeObj, 1, atrBase, vida, 0);
 		p.setGrau(grau);
 		p.setFaccao("JOGADOR");
+		p.setNomeBaseImagem(nomeBaseImagem);
 		p.setPesoEntidade(peso);
 		p.getPropriedades().addAll(propriedades);
 		

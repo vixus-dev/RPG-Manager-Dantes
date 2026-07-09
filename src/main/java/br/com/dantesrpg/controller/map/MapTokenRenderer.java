@@ -3,7 +3,7 @@ package br.com.dantesrpg.controller.map;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.fantasmasnobres.TheMastersCall;
 import br.com.dantesrpg.controller.CombatController;
-import br.com.dantesrpg.model.util.ImageCache;
+import br.com.dantesrpg.model.util.CharacterImageResolver;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -86,18 +86,11 @@ public class MapTokenRenderer {
 				peaoContainer.setMinSize(tamanhoTotalPixels, tamanhoTotalPixels);
 				peaoContainer.setMaxSize(tamanhoTotalPixels, tamanhoTotalPixels);
 
-				String nomeToken = "";
 				String numeroOverlay = "";
 				boolean isPlayer = mainController.isPlayer(p);
 				if (isPlayer) {
-					nomeToken = p.getNome().toLowerCase().replace(" ", "_") + ".png";
 					numeroOverlay = "";
 				} else {
-					String nomeOriginal = p.getNome().toLowerCase();
-					if (nomeOriginal.startsWith("servo: "))
-						nomeOriginal = nomeOriginal.replace("servo: ", "");
-					String nomeLimpo = nomeOriginal.replaceAll("\\s*\\d+$", "");
-					nomeToken = nomeLimpo.replace(" ", "_") + ".png";
 					if (p.getNome().matches(".*\\d+$")) {
 						String[] partes = p.getNome().split(" ");
 						numeroOverlay = partes[partes.length - 1];
@@ -106,9 +99,8 @@ public class MapTokenRenderer {
 					}
 				}
 
-				String imagePath = "/tokens/" + nomeToken;
 				try {
-					Image tokenImage = ImageCache.get(imagePath, tamanhoTotalPixels, tamanhoTotalPixels);
+					Image tokenImage = CharacterImageResolver.getToken(p, tamanhoTotalPixels, tamanhoTotalPixels);
 					if (tokenImage == null || tokenImage.isError()) throw new Exception("Erro imagem");
 
 					javafx.scene.image.ImageView tokenView = new javafx.scene.image.ImageView(tokenImage);

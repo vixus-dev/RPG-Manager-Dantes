@@ -97,6 +97,7 @@ public class Personagem {
 	private boolean fugiu = false;
 	private String faccao;
 	private String jsonFileName;
+	private String nomeBaseImagem;
 	private int segmentosVida = 0;
 	private int tamanhoX = 1;
 	private int tamanhoY = 1;
@@ -1082,6 +1083,10 @@ public class Personagem {
 		return jsonFileName;
 	}
 
+	public String getNomeBaseImagem() {
+		return nomeBaseImagem;
+	}
+
 	public int getXpReward() {
 		return xpReward;
 	}
@@ -1354,6 +1359,10 @@ public class Personagem {
 
 	public void setJsonFileName(String jsonFileName) {
 		this.jsonFileName = jsonFileName;
+	}
+
+	public void setNomeBaseImagem(String nomeBaseImagem) {
+		this.nomeBaseImagem = nomeBaseImagem;
 	}
 
 	public void setXpReward(int xp) {

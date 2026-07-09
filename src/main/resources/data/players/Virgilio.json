@@ -22,7 +22,7 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": 20000.0,
-  "contadorTU": 73,
+  "contadorTU": 100,
   "armaEquipada": "Espada Teste",
   "inventario": {
     "Master Katana": 1
@@ -37,8 +37,8 @@
   "RaçaV2": true,
   "segmentos": 0,
   "grau": 0,
-  "posX": 5,
-  "posY": 5,
+  "posX": 4,
+  "posY": 4,
   "amuleto2": "Medalhão da Virgilio",
   "amuleto1": "Medalhão da Virgilio",
   "manaAtual": 20.0,

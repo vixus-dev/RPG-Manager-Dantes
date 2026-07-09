@@ -13,6 +13,7 @@ import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.util.ContratoDeVida;
 import br.com.dantesrpg.model.util.ContratoDeVidaUtils;
 import br.com.dantesrpg.model.util.EffectTooltipBuilder;
+import br.com.dantesrpg.model.util.CharacterImageResolver;
 import br.com.dantesrpg.model.util.ImageCache;
 import br.com.dantesrpg.model.util.EffectIconResolver;
 import javafx.scene.image.Image;
@@ -658,16 +659,8 @@ public class PlayerCardController {
 	private void configurarImagem(Personagem personagem, String cardType) {
 		if (imgPersonagem == null)
 			return;
-		String nomeBase;
-		if ("player".equals(cardType)) {
-			nomeBase = personagem.getNome().toLowerCase().replace(" ", "_");
-		} else {
-			String nomeLimpo = personagem.getNome().toLowerCase().replace("servo: ", "").replaceAll("\\s*\\d+$", "");
-			nomeBase = nomeLimpo.replace(" ", "_");
-		}
-		String imagePath = "/portraits/" + nomeBase + ".png";
 		try {
-			Image portraitImage = ImageCache.get(imagePath, 120, 120);
+			Image portraitImage = CharacterImageResolver.getPortrait(personagem, 120, 120);
 			if (portraitImage == null || portraitImage.isError())
 				throw new Exception();
 			imgPersonagem.setImage(portraitImage);

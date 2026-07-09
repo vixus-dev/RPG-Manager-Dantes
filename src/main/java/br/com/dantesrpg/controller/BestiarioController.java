@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,8 +15,7 @@ import com.google.gson.GsonBuilder;
 
 import br.com.dantesrpg.model.Arma;
 import br.com.dantesrpg.model.enums.PesoEntidade;
-import br.com.dantesrpg.model.util.FileLoader;
-import br.com.dantesrpg.model.util.ImageCache;
+import br.com.dantesrpg.model.util.CharacterImageResolver;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -139,6 +137,7 @@ public class BestiarioController {
 			lblQtdSpawn.setText(String.format("%.0f", newVal));
 		});
 
+		inputNome.textProperty().addListener((obs, oldVal, newVal) -> carregarImagem(newVal));
 		comboArma.valueProperty().addListener((obs, oldVal, newVal) -> atualizarHabilidadesArma(newVal));
 	}
 
@@ -288,6 +287,10 @@ public class BestiarioController {
 		dados.put("peso", peso);
 		dados.put("poderoso", chkPoderoso.isSelected());
 		dados.put("propriedades", obterPropriedadesSelecionadas());
+		if (idSelecionado != null && bestiarioData.containsKey(idSelecionado)) {
+			Map<String, Object> original = bestiarioData.get(idSelecionado);
+			dados.put("nomeBaseImagem", original.getOrDefault("nomeBaseImagem", original.get("nome")));
+		}
 
 		if (!erros.isEmpty()) {
 			throw new IllegalArgumentException("Corrija os campos do Bestiário:\n- " + String.join("\n- ", erros));
@@ -456,9 +459,17 @@ public class BestiarioController {
 	}
 
 	private void carregarImagem(String nomeMonstro) {
-		String path = resolverCaminhoToken(nomeMonstro);
 		try {
-			Image img = ImageCache.get(path, 120, 120);
+			List<String> nomes = new ArrayList<>();
+			nomes.add(nomeMonstro);
+			if (idSelecionado != null && bestiarioData != null && bestiarioData.containsKey(idSelecionado)) {
+				Map<String, Object> original = bestiarioData.get(idSelecionado);
+				Object nomeBaseImagem = original.getOrDefault("nomeBaseImagem", original.get("nome"));
+				if (nomeBaseImagem instanceof String) {
+					nomes.add((String) nomeBaseImagem);
+				}
+			}
+			Image img = CharacterImageResolver.getTokenPorNomes(nomes, 120, 120);
 			if (img != null && !img.isError()) {
 				imgTokenPreview.setImage(img);
 			} else {
@@ -467,54 +478,6 @@ public class BestiarioController {
 		} catch (Exception e) {
 			imgTokenPreview.setImage(null);
 		}
-	}
-
-	private String resolverCaminhoToken(String nomeMonstro) {
-		String nomeArquivoEsperado = normalizarNomeToken(nomeMonstro) + ".png";
-		List<String> arquivos = FileLoader.listarArquivosDeDiretorio("/tokens/", null);
-		for (String arquivo : arquivos) {
-			if (arquivo.equalsIgnoreCase(nomeArquivoEsperado)) {
-				return "/tokens/" + arquivo;
-			}
-		}
-
-		String baseEsperada = removerExtensao(nomeArquivoEsperado);
-		for (String arquivo : arquivos) {
-			String extensao = obterExtensao(arquivo);
-			if (extensao.equals(".png") || extensao.equals(".jpg") || extensao.equals(".jpeg")
-					|| extensao.equals(".webp")) {
-				String baseArquivo = normalizarNomeToken(removerExtensao(arquivo));
-				if (baseArquivo.equals(baseEsperada)) {
-					return "/tokens/" + arquivo;
-				}
-			}
-		}
-		return "/tokens/" + nomeArquivoEsperado;
-	}
-
-	private String normalizarNomeToken(String valor) {
-		if (valor == null) {
-			return "";
-		}
-		return valor.trim()
-				.toLowerCase(Locale.ROOT)
-				.replaceAll("\\s+", "_");
-	}
-
-	private String removerExtensao(String arquivo) {
-		int ponto = arquivo.lastIndexOf('.');
-		if (ponto <= 0) {
-			return arquivo;
-		}
-		return arquivo.substring(0, ponto);
-	}
-
-	private String obterExtensao(String arquivo) {
-		int ponto = arquivo.lastIndexOf('.');
-		if (ponto <= 0) {
-			return "";
-		}
-		return arquivo.substring(ponto).toLowerCase(Locale.ROOT);
 	}
 
 	private void atualizarHabilidadesArma(String nomeArma) {

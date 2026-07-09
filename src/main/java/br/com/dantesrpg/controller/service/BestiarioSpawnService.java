@@ -110,6 +110,7 @@ public class BestiarioSpawnService {
 
 		Map<String, Object> data = bestiarioDatabase.get(idMonstro);
 		String nomeBase = (String) data.getOrDefault("nome", idMonstro);
+		String nomeBaseImagem = (String) data.getOrDefault("nomeBaseImagem", nomeBase);
 		int vidaMax = ((Double) data.getOrDefault("vida", 10.0)).intValue();
 		int agilidade = ((Double) data.getOrDefault("agilidade", 1.0)).intValue();
 		int defesa = ((Double) data.getOrDefault("defesa", 0.0)).intValue();
@@ -129,6 +130,7 @@ public class BestiarioSpawnService {
 		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1, atributos,
 				vidaMax, 0);
 		monstro.setFaccao("INIMIGO");
+		monstro.setNomeBaseImagem(nomeBaseImagem);
 		monstro.setXpReward(xpReward);
 		monstro.setPosX(x);
 		monstro.setPosY(y);
@@ -176,6 +178,7 @@ public class BestiarioSpawnService {
 		}
 
 		String nome = (String) dadosMonstro.getOrDefault("nome", idMonstro);
+		String nomeBaseImagem = (String) dadosMonstro.getOrDefault("nomeBaseImagem", nome);
 		double vida = ((Number) dadosMonstro.getOrDefault("vida", 10.0)).doubleValue();
 		double mana = ((Number) dadosMonstro.getOrDefault("mana", 0.0)).doubleValue();
 		int agilidade = lerAgilidade(dadosMonstro);
@@ -221,6 +224,7 @@ public class BestiarioSpawnService {
 		monstro.setPosX(x);
 		monstro.setPosY(y);
 		monstro.setFaccao("INIMIGO");
+		monstro.setNomeBaseImagem(nomeBaseImagem);
 		monstro.setPropriedades(props);
 		
 		boolean poderoso = dadosMonstro.containsKey("poderoso") && (Boolean) dadosMonstro.get("poderoso");

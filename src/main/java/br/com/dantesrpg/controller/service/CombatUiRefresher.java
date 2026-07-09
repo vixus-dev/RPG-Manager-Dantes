@@ -13,6 +13,7 @@ import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.Efeito;
 import br.com.dantesrpg.model.enums.TipoEfeito;
+import br.com.dantesrpg.model.util.CharacterImageResolver;
 import br.com.dantesrpg.model.util.ImageCache;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -131,16 +132,7 @@ public class CombatUiRefresher {
 		img.setFitHeight(36);
 		img.setPreserveRatio(true);
 
-		// Load portrait
-		String nomeBase = personagem.getNome().toLowerCase().replace(" ", "_");
-		if (personagem.isClone()) {
-			Personagem criador = personagem.getCriador();
-			if (criador != null) {
-				nomeBase = criador.getNome().toLowerCase().replace(" ", "_");
-			}
-		}
-		String imagePath = "/portraits/" + nomeBase + ".png";
-		Image portraitImage = ImageCache.get(imagePath, 36, 36);
+		Image portraitImage = CharacterImageResolver.getPortrait(personagem, 36, 36);
 
 		// Fallback portrait (colored circle with initials)
 		if (portraitImage == null || portraitImage.isError()) {
@@ -323,9 +315,7 @@ public class CombatUiRefresher {
 		charImg.setFitHeight(14);
 		charImg.setPreserveRatio(true);
 
-		String charNameBase = prediction.alvo.getNome().toLowerCase().replace(" ", "_");
-		String charImagePath = "/portraits/" + charNameBase + ".png";
-		Image charImage = ImageCache.get(charImagePath, 14, 14);
+		Image charImage = CharacterImageResolver.getPortrait(prediction.alvo, 14, 14);
 
 		if (charImage != null && !charImage.isError()) {
 			charImg.setImage(charImage);
