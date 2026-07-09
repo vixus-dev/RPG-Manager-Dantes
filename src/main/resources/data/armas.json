@@ -4116,7 +4116,7 @@
   "Machado Jötunbani": {
     "nome": "Machado Jötunbani",
     "categoria": "Machado",
-    "descricao": "O poder do gelo concentrado",
+    "descricao": "O poder do gelo nórdico concentrado em um machado histórico",
     "raridade": "Unico",
     "andar": "5",
     "valorMoedas": 20.0,
@@ -4128,7 +4128,7 @@
     },
     "custoTU": 90.0,
     "tipo": "Melee",
-    "alcance": 3.0,
+    "alcance": 2.0,
     "tipoAlvo": "CONE",
     "tamanhoArea": 135.0,
     "modificadoresStatus": {
@@ -4136,6 +4136,8 @@
     "habilidadesConcedidas": [
       "Arremesso de Machado"
     ],
+    "efeitoAoAcertar": "Congelamento",
+    "chanceEfeito": 0.5,
     "wielding": 2.0
   },
   "Paz \u0026 Guerra": {

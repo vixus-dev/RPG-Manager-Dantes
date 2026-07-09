@@ -1,6 +1,9 @@
 package br.com.dantesrpg.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import br.com.dantesrpg.controller.CombatController;
@@ -27,6 +30,7 @@ public abstract class Arma extends Item {
 
 	private String nomeEfeitoOnHit; // Ex: "Sangramento", "Veneno"
 	private double chanceEfeitoOnHit;
+	private List<EfeitoOnHit> efeitosOnHit = new ArrayList<>();
 
 	private Map<Atributo, Integer> modificadoresDeAtributo;
 	private Map<String, Double> modificadoresStatus = new HashMap<>();
@@ -166,6 +170,7 @@ public abstract class Arma extends Item {
 
 	public void setNomeEfeitoOnHit(String nome) {
 		this.nomeEfeitoOnHit = nome;
+		sincronizarListaEfeitoLegado();
 	}
 
 	public double getChanceEfeitoOnHit() {
@@ -174,6 +179,58 @@ public abstract class Arma extends Item {
 
 	public void setChanceEfeitoOnHit(double chance) {
 		this.chanceEfeitoOnHit = chance;
+		sincronizarListaEfeitoLegado();
+	}
+
+	public List<EfeitoOnHit> getEfeitosOnHit() {
+		if (efeitosOnHit == null) {
+			efeitosOnHit = new ArrayList<>();
+			sincronizarListaEfeitoLegado();
+		}
+		return Collections.unmodifiableList(efeitosOnHit);
+	}
+
+	public void setEfeitosOnHit(List<EfeitoOnHit> efeitosOnHit) {
+		this.efeitosOnHit = new ArrayList<>();
+		if (efeitosOnHit != null) {
+			for (EfeitoOnHit efeito : efeitosOnHit) {
+				if (efeito != null && efeito.isValido()) {
+					this.efeitosOnHit.add(efeito);
+				}
+			}
+		}
+		sincronizarCamposLegados();
+	}
+
+	public void adicionarEfeitoOnHit(EfeitoOnHit efeito) {
+		if (efeitosOnHit == null) {
+			efeitosOnHit = new ArrayList<>();
+		}
+		if (efeito != null && efeito.isValido()) {
+			efeitosOnHit.add(efeito);
+			sincronizarCamposLegados();
+		}
+	}
+
+	private void sincronizarListaEfeitoLegado() {
+		if (efeitosOnHit == null) {
+			efeitosOnHit = new ArrayList<>();
+		}
+		efeitosOnHit.clear();
+		if (nomeEfeitoOnHit != null && !nomeEfeitoOnHit.isBlank() && chanceEfeitoOnHit > 0.0) {
+			efeitosOnHit.add(new EfeitoOnHit(nomeEfeitoOnHit, chanceEfeitoOnHit));
+		}
+	}
+
+	private void sincronizarCamposLegados() {
+		if (efeitosOnHit == null || efeitosOnHit.isEmpty()) {
+			this.nomeEfeitoOnHit = null;
+			this.chanceEfeitoOnHit = 0.0;
+			return;
+		}
+		EfeitoOnHit primeiroEfeito = efeitosOnHit.get(0);
+		this.nomeEfeitoOnHit = primeiroEfeito.getNome();
+		this.chanceEfeitoOnHit = primeiroEfeito.getChance();
 	}
 
 	public void setModificadoresDeAtributo(Map<Atributo, Integer> mods) {

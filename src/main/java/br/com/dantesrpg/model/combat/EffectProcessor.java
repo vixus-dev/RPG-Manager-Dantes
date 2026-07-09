@@ -5,6 +5,7 @@ import br.com.dantesrpg.model.AcaoMestreInput;
 import br.com.dantesrpg.model.Arma;
 import br.com.dantesrpg.model.CombatManager;
 import br.com.dantesrpg.model.Efeito;
+import br.com.dantesrpg.model.EfeitoOnHit;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
@@ -77,8 +78,8 @@ public class EffectProcessor {
 		if (danoCausado <= 0)
 			return;
 
-		String nomeEfeito = arma.getNomeEfeitoOnHit();
-		double chance = arma.getChanceEfeitoOnHit();
+		String nomeEfeito = arma != null ? arma.getNomeEfeitoOnHit() : null;
+		double chance = arma != null ? arma.getChanceEfeitoOnHit() : 0.0;
 
 		// Yaweh unique weapon special on-hit effect (Chama Divina)
 		if (arma != null && "Yaweh".equalsIgnoreCase(arma.getNome())) {
@@ -146,11 +147,67 @@ public class EffectProcessor {
 			}
 		}
 
+		if (arma != null) {
+			List<EfeitoOnHit> efeitosOnHit = arma.getEfeitosOnHit();
+			for (int i = 1; i < efeitosOnHit.size(); i++) {
+				processarEfeitoOnHitAdicional(ator, alvo, arma, danoCausado, estado, efeitosOnHit.get(i));
+			}
+		}
+
 		if (ator.getEfeitosAtivos().containsKey(BarbaroUtils.EFEITO_BALANCO_TEMERARIO) && Math.random() <= 0.50) {
 			Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 20);
 			aplicarEfeito(alvo, choque);
 			System.out.println(">>> Balanço Temerário aplicou Choque em " + alvo.getNome() + " (+20 TU no próximo TU).");
 		}
+	}
+
+	private void processarEfeitoOnHitAdicional(Personagem ator, Personagem alvo, Arma arma, double danoCausado,
+			EstadoCombate estado, EfeitoOnHit efeitoOnHit) {
+		if (efeitoOnHit == null || !efeitoOnHit.isValido() || Math.random() > efeitoOnHit.getChance()) {
+			return;
+		}
+
+		String nomeEfeito = efeitoOnHit.getNome();
+		System.out.println(">>> Efeito On-Hit ativado: " + nomeEfeito);
+
+		if (nomeEfeito.equalsIgnoreCase("Charm")) {
+			int carismaAtor = ator.getAtributosFinais()
+					.getOrDefault(Atributo.CARISMA, 1);
+			int stacksAplicados = Math.max(1, carismaAtor);
+
+			System.out.println(">>> CHARM! " + alvo.getNome() + " recebe " + stacksAplicados
+					+ " acÃºmulos (Baseado em CAR " + carismaAtor + ")");
+
+			Efeito charmEffect = new Efeito("Charm", TipoEfeito.DEBUFF, 9999, null, 0, 0);
+			charmEffect.setStacks(stacksAplicados);
+			alvo.adicionarEfeito(charmEffect);
+
+			Efeito charmAtual = alvo.getEfeitosAtivos().get("Charm");
+			if (charmAtual != null && charmAtual.getStacks() >= 100) {
+				aplicarControleMental(alvo, estado);
+			}
+			return;
+		}
+
+		if (nomeEfeito.equalsIgnoreCase("Choque")) {
+			Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 20);
+			efeito.setStacks(1);
+			aplicarEfeito(alvo, efeito);
+			return;
+		}
+
+		if (nomeEfeito.equalsIgnoreCase("Maldição") || nomeEfeito.equalsIgnoreCase("Maldicao")) {
+			br.com.dantesrpg.model.util.Maldicao mald = new br.com.dantesrpg.model.util.Maldicao(
+					arma.getNome(), 0.20, 1000, false);
+			br.com.dantesrpg.model.util.MaldicaoUtils.adicionarMaldicao(alvo, mald);
+			System.out.println(">>> Maldição ativada contra " + alvo.getNome() + " por acerto da arma!");
+			return;
+		}
+
+		int danoDaSource = Math.max(1, (int) danoCausado);
+		Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito(nomeEfeito, 0, danoDaSource);
+		efeito.setStacks(1);
+		aplicarEfeito(alvo, efeito);
 	}
 
 	// ========== CONTROLE MENTAL ==========

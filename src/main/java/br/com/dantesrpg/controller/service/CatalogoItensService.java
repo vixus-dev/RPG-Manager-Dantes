@@ -25,6 +25,7 @@ import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.ArmaMelee;
 import br.com.dantesrpg.model.ArmaRanged;
 import br.com.dantesrpg.model.classes.ClassePlaceholder;
+import br.com.dantesrpg.model.EfeitoOnHit;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.Raridade;
 import br.com.dantesrpg.model.enums.TipoAlvo;
@@ -331,12 +332,7 @@ public class CatalogoItensService {
 			int custoTU = ((Double) armaData.getOrDefault("custoTU", 100.0)).intValue();
 			int wielding = ((Double) armaData.getOrDefault("wielding", 1.0)).intValue();
 
-			String efeitoHit = (String) armaData.getOrDefault("efeitoAoAcertar", null);
-			double chanceHit = 0.0;
-			Object chanceObj = armaData.get("chanceEfeito");
-			if (chanceObj instanceof Number) {
-				chanceHit = ((Number) chanceObj).doubleValue();
-			}
+			List<EfeitoOnHit> efeitosOnHit = parseEfeitosOnHit(armaData);
 
 			int alcanceJson = -1;
 			if (armaData.containsKey("alcance")) {
@@ -393,8 +389,7 @@ public class CatalogoItensService {
 			}
 
 			if (armaFinal != null) {
-				armaFinal.setNomeEfeitoOnHit(efeitoHit);
-				armaFinal.setChanceEfeitoOnHit(chanceHit);
+				armaFinal.setEfeitosOnHit(efeitosOnHit);
 
 				String habilidadeUnica = (String) armaData.getOrDefault("habilidadeConcedida", null);
 				if (habilidadeUnica != null) {
@@ -550,6 +545,34 @@ public class CatalogoItensService {
 		if (input == null)
 			return new HashMap<>();
 		return new HashMap<>(input);
+	}
+
+	private List<EfeitoOnHit> parseEfeitosOnHit(Map<String, Object> armaData) {
+		List<EfeitoOnHit> efeitos = new ArrayList<>();
+		Object efeitosNovos = armaData.get("efeitosAoAcertar");
+
+		if (efeitosNovos instanceof List<?>) {
+			for (Object item : (List<?>) efeitosNovos) {
+				if (!(item instanceof Map<?, ?>)) {
+					continue;
+				}
+				Map<?, ?> efeitoData = (Map<?, ?>) item;
+				Object nomeObj = efeitoData.containsKey("efeito") ? efeitoData.get("efeito") : efeitoData.get("nome");
+				Object chanceObj = efeitoData.get("chance");
+
+				if (nomeObj instanceof String && chanceObj instanceof Number) {
+					efeitos.add(new EfeitoOnHit((String) nomeObj, ((Number) chanceObj).doubleValue()));
+				}
+			}
+			return efeitos;
+		}
+
+		String efeitoLegado = (String) armaData.getOrDefault("efeitoAoAcertar", null);
+		Object chanceObj = armaData.get("chanceEfeito");
+		if (efeitoLegado != null && !efeitoLegado.isBlank() && chanceObj instanceof Number) {
+			efeitos.add(new EfeitoOnHit(efeitoLegado, ((Number) chanceObj).doubleValue()));
+		}
+		return efeitos;
 	}
 
 	public Arma criarCopiaDaArma(Arma original) {
