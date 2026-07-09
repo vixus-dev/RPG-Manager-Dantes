@@ -547,6 +547,7 @@ public class PlayerCardController {
 		if (expandedEffectsContainer != null) {
 			expandedEffectsContainer.getChildren().clear();
 			expandedEffectsContainer.setVisible(false);
+			expandedEffectsContainer.setManaged(false);
 			expandedEffectsContainer.setOnMouseExited(e -> expandedEffectsContainer.setVisible(false));
 		}
 

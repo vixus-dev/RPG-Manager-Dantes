@@ -1867,3 +1867,195 @@
     -fx-text-fill: black;
     -fx-effect: dropshadow(gaussian, rgba(0, 240, 255, 0.4), 6, 0.5, 0, 0);
 }
+
+/* --- BESTIÁRIO --- */
+.bestiary-root {
+    -fx-background-color: #101017;
+}
+
+.bestiary-header {
+    -fx-padding: 14 18;
+    -fx-background-color: #171722;
+    -fx-border-color: transparent transparent #2b2b3a transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.bestiary-title {
+    -fx-text-fill: #f1c75b;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.bestiary-subtitle {
+    -fx-text-fill: #a6a6b8;
+    -fx-font-size: 12px;
+}
+
+.bestiary-split {
+    -fx-background-color: transparent;
+}
+
+.bestiary-split .split-pane-divider {
+    -fx-background-color: #2b2b3a;
+    -fx-padding: 0 1 0 1;
+}
+
+.bestiary-sidebar {
+    -fx-padding: 14;
+    -fx-background-color: #14141f;
+    -fx-border-color: transparent #262636 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.bestiary-detail {
+    -fx-padding: 18;
+    -fx-background-color: #101017;
+}
+
+.bestiary-scroll,
+.bestiary-scroll > .viewport {
+    -fx-background-color: #101017;
+}
+
+.bestiary-identity-section,
+.bestiary-section,
+.bestiary-spawn-section {
+    -fx-background-color: #171722;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 14;
+}
+
+.bestiary-token-frame {
+    -fx-min-width: 128;
+    -fx-min-height: 128;
+    -fx-background-color: #0b0b11;
+    -fx-border-color: #00d7e8;
+    -fx-border-width: 1.5;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.bestiary-field-label {
+    -fx-text-fill: #9fa0b5;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.bestiary-form-grid .label,
+.bestiary-spawn-section .label {
+    -fx-text-fill: #d8d8e6;
+}
+
+.bestiary-name-field {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.bestiary-readonly-field {
+    -fx-background-color: #222232;
+    -fx-text-fill: #8f90a5;
+}
+
+.bestiary-list,
+.bestiary-property-list {
+    -fx-background-color: #101017;
+    -fx-control-inner-background: #101017;
+    -fx-border-color: #2a2a3a;
+    -fx-border-width: 1;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.bestiary-list .list-cell,
+.bestiary-property-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #eeeeff;
+    -fx-padding: 7 9;
+    -fx-border-color: transparent transparent #1f1f2c transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.bestiary-list .list-cell:filled:hover,
+.bestiary-property-list .list-cell:filled:hover {
+    -fx-background-color: #222233;
+}
+
+.bestiary-list .list-cell:filled:selected,
+.bestiary-property-list .list-cell:filled:selected {
+    -fx-background-color: #2a3042;
+    -fx-text-fill: white;
+    -fx-border-color: transparent transparent #e94560 transparent;
+}
+
+.bestiary-weapon-skills {
+    -fx-text-fill: #f1c75b;
+    -fx-font-style: italic;
+    -fx-padding: 4 0 0 0;
+}
+
+.bestiary-secondary-button,
+.bestiary-icon-button,
+.bestiary-save-button,
+.bestiary-spawn-button {
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.bestiary-secondary-button {
+    -fx-background-color: #2b2b3a;
+    -fx-text-fill: #eeeeff;
+    -fx-border-color: #3a3a4d;
+    -fx-border-width: 1;
+}
+
+.bestiary-secondary-button:hover {
+    -fx-background-color: #353548;
+    -fx-border-color: #00d7e8;
+}
+
+.bestiary-icon-button {
+    -fx-background-color: #222232;
+    -fx-text-fill: #00d7e8;
+    -fx-min-width: 36;
+    -fx-min-height: 32;
+}
+
+.bestiary-icon-button:hover {
+    -fx-background-color: #2f3045;
+}
+
+.bestiary-save-button {
+    -fx-background-color: #253a66;
+    -fx-text-fill: white;
+    -fx-padding: 9 16;
+}
+
+.bestiary-save-button:hover {
+    -fx-background-color: #31508d;
+}
+
+.bestiary-spawn-section {
+    -fx-border-color: #2f7d4b;
+}
+
+.bestiary-spawn-count {
+    -fx-text-fill: #41d47c;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.bestiary-spawn-button {
+    -fx-background-color: #1f6b3f;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 14;
+}
+
+.bestiary-spawn-button:hover {
+    -fx-background-color: #2c8752;
+}
