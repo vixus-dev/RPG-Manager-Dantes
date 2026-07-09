@@ -4234,8 +4234,26 @@
       { "efeito": "Hemorragia", "chance": 1.00 },
       { "efeito": "Maldição Umbraum", "chance": 1.00 },
       { "efeito": "Choque", "chance": 1.00 },
-      { "efeito": "Bênção do Gekkyūden", "chance": 1.00 },
-      { "efeito": "Maldição do Gekkyūden", "chance": 1.00 }
+      { "efeito": "Armadura Quebrada", "chance": 1.00 },
+      { "efeito": "Charm", "chance": 1.00 },
+      { "efeito": "Congelado", "chance": 1.00 },
+      { "efeito": "Congelamento", "chance": 1.00 },
+      { "efeito": "Controle Mental", "chance": 1.00 },
+      { "efeito": "Corta Cura", "chance": 1.00 },
+      { "efeito": "Dilaceramento", "chance": 1.00 },
+      { "efeito": "Dormindo", "chance": 1.00 },
+      { "efeito": "Enraizado", "chance": 1.00 },
+      { "efeito": "Falsa Justiça", "chance": 1.00 },
+      { "efeito": "HellFire", "chance": 1.00 },
+      { "efeito": "Lento", "chance": 1.00 },
+      { "efeito": "Maldição", "chance": 1.00 },
+      { "efeito": "Névoa Opressiva", "chance": 1.00 },
+      { "efeito": "Ouvidos Sangrando", "chance": 1.00 },
+      { "efeito": "Pesadelo", "chance": 1.00 },
+      { "efeito": "Ruptura", "chance": 1.00 },
+      { "efeito": "Sono", "chance": 1.00 },
+      { "efeito": "STUN", "chance": 1.00 },
+      { "efeito": "Vento Congelante", "chance": 1.00 }
     ]
   }
 }
