@@ -1,120 +1,158 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import java.net.URL?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" styleClass="root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.BestiarioController">
+<BorderPane prefHeight="720.0" prefWidth="1120.0" styleClass="root, bestiary-root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.BestiarioController">
     <stylesheets>
         <URL value="@style.css" />
     </stylesheets>
-    
+
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-padding: 10; -fx-background-color: #222; -fx-border-color: #444; -fx-border-width: 0 0 1 0;">
-            <Label text="BESTIÁRIO &amp; EDITOR" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: gold;" />
+        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="bestiary-header">
+            <Label styleClass="bestiary-title" text="Bestiário" />
+            <Label styleClass="bestiary-subtitle" text="Editor de inimigos e preparação de spawn" />
         </HBox>
     </top>
 
     <center>
-        <SplitPane dividerPositions="0.35">
-            <VBox spacing="5.0" style="-fx-padding: 10;">
-                <Label text="Filtros" styleClass="header-label" />
-                <TextField fx:id="inputBusca" promptText="Buscar por nome..." />
-                <HBox spacing="5.0">
-                    <ComboBox fx:id="comboFiltroRaca" promptText="Todas as Raças" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
-                    <ComboBox fx:id="comboFiltroGrau" promptText="Grau" prefWidth="80.0"/>
+        <SplitPane dividerPositions="0.32" styleClass="bestiary-split">
+            <VBox spacing="12.0" styleClass="bestiary-sidebar">
+                <Label styleClass="header-label" text="Filtros" />
+                <TextField fx:id="inputBusca" promptText="Buscar por nome ou ID" />
+                <HBox spacing="8.0">
+                    <ComboBox fx:id="comboFiltroRaca" maxWidth="Infinity" promptText="Todas as Raças" HBox.hgrow="ALWAYS" />
+                    <ComboBox fx:id="comboFiltroGrau" prefWidth="96.0" promptText="Grau" />
                 </HBox>
-                
-                <ListView fx:id="monstroListView" VBox.vgrow="ALWAYS" styleClass="list-view" />
-                
-                <Button text="+ Novo Monstro" onAction="#onNovoMonstroClick" maxWidth="Infinity" style="-fx-background-color: #444; -fx-text-fill: white;"/>
+
+                <ListView fx:id="monstroListView" styleClass="bestiary-list" VBox.vgrow="ALWAYS" />
+
+                <Button maxWidth="Infinity" onAction="#onNovoMonstroClick" styleClass="bestiary-secondary-button" text="+ Novo Monstro" />
             </VBox>
 
-            <ScrollPane fitToWidth="true">
-                <VBox fx:id="painelDetalhes" spacing="15.0" style="-fx-padding: 20;">
-                    
-                    <HBox spacing="20.0" alignment="CENTER_LEFT">
-                        <VBox style="-fx-border-color: cyan; -fx-border-width: 2; -fx-padding: 2;">
-                            <ImageView fx:id="imgTokenPreview" fitWidth="100.0" fitHeight="100.0" preserveRatio="true" />
+            <ScrollPane fitToWidth="true" styleClass="bestiary-scroll">
+                <VBox fx:id="painelDetalhes" spacing="18.0" styleClass="bestiary-detail">
+                    <HBox alignment="CENTER_LEFT" spacing="18.0" styleClass="bestiary-identity-section">
+                        <VBox alignment="CENTER" styleClass="bestiary-token-frame">
+                            <ImageView fx:id="imgTokenPreview" fitHeight="112.0" fitWidth="112.0" preserveRatio="true" />
                         </VBox>
-                        <VBox spacing="5.0">
-                            <Label text="ID (Chave JSON):" style="-fx-text-fill: gray; -fx-font-size: 10px;"/>
-                            <TextField fx:id="inputID" editable="false" style="-fx-background-color: #333; -fx-text-fill: gray;" />
-                            <Label text="Nome de Exibição:" style="-fx-text-fill: cyan;"/>
-                            <TextField fx:id="inputNome" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
-                        </VBox>
+                        <GridPane hgap="10.0" vgap="8.0" HBox.hgrow="ALWAYS">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="25.0" />
+                                <ColumnConstraints percentWidth="75.0" />
+                            </columnConstraints>
+                            <Label styleClass="bestiary-field-label" text="ID JSON" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <TextField fx:id="inputID" editable="false" styleClass="bestiary-readonly-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                            <Label styleClass="bestiary-field-label" text="Nome" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <TextField fx:id="inputNome" styleClass="bestiary-name-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        </GridPane>
                     </HBox>
 
-                    <GridPane hgap="10.0" vgap="10.0">
-                        <columnConstraints>
-                            <ColumnConstraints percentWidth="15" />
-                            <ColumnConstraints percentWidth="35" />
-                            <ColumnConstraints percentWidth="15" />
-                            <ColumnConstraints percentWidth="35" />
-                        </columnConstraints>
-                        
-                        <Label text="Raça:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
-                        <TextField fx:id="inputRaca" GridPane.rowIndex="0" GridPane.columnIndex="1" />
-                        
-                        <Label text="Grau:" GridPane.rowIndex="0" GridPane.columnIndex="2" />
-                        <TextField fx:id="inputGrau" GridPane.rowIndex="0" GridPane.columnIndex="3" />
+                    <VBox spacing="10.0" styleClass="bestiary-section">
+                        <Label styleClass="header-label" text="Ficha de Combate" />
+                        <GridPane hgap="12.0" vgap="10.0" styleClass="bestiary-form-grid">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="16.0" />
+                                <ColumnConstraints percentWidth="34.0" />
+                                <ColumnConstraints percentWidth="16.0" />
+                                <ColumnConstraints percentWidth="34.0" />
+                            </columnConstraints>
 
-                        <Label text="Vida Máx:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill: lightgreen;"/>
-                        <TextField fx:id="inputVida" GridPane.rowIndex="1" GridPane.columnIndex="1" />
-                        
-                        <Label text="Mana Máx:" GridPane.rowIndex="1" GridPane.columnIndex="2" style="-fx-text-fill: lightblue;"/>
-                        <TextField fx:id="inputMana" GridPane.rowIndex="1" GridPane.columnIndex="3" />
+                            <Label text="Raça" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <TextField fx:id="inputRaca" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                            <Label text="Grau" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                            <TextField fx:id="inputGrau" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
-                        <Label text="AGI (Inic.):" GridPane.rowIndex="2" GridPane.columnIndex="0" />
-                        <TextField fx:id="inputAgi" GridPane.rowIndex="2" GridPane.columnIndex="1" />
-                        
-                        <Label text="DEF (Topor):" GridPane.rowIndex="2" GridPane.columnIndex="2" />
-                        <TextField fx:id="inputDef" GridPane.rowIndex="2" GridPane.columnIndex="3" />
-                        
-                        <Label text="XP Reward:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-text-fill: violet;" />
-                        <TextField fx:id="inputXP" GridPane.rowIndex="3" GridPane.columnIndex="1" />
-                        
-                        <Label text="Arma:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-text-fill: orange;"/>
-                        <ComboBox fx:id="comboArma" maxWidth="Infinity" editable="true" GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
-                    </GridPane>
-                    
-                    <Label text="Habilidades da Arma:" style="-fx-font-weight: bold; -fx-text-fill: gold;" />
-                    <Label fx:id="lblHabilidadesArma" text="Nenhuma" wrapText="true" style="-fx-font-style: italic; -fx-text-fill: white;" />
+                            <Label text="Vida Máx." GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <TextField fx:id="inputVida" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                            <Label text="Mana Máx." GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                            <TextField fx:id="inputMana" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
-                    <Label text="Propriedades Especiais (separar por vírgula):" styleClass="header-label" />
-                    <TextArea fx:id="inputPropriedades" prefHeight="60.0" wrapText="true" promptText="Ex: Explodir, Voar, Imune a Fogo" />
+                            <Label text="Destreza" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                            <TextField fx:id="inputAgi" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                            <Label text="Topor" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                            <TextField fx:id="inputDef" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
-                    <HBox alignment="CENTER_RIGHT" spacing="10.0">
-                        <Button text="Salvar Alterações no JSON" onAction="#onSalvarClick" style="-fx-background-color: blue; -fx-text-fill: white; -fx-font-weight: bold;" />
-                    </HBox>
+                            <Label text="XP" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                            <TextField fx:id="inputXP" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                            <Label text="Segmentos" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                            <TextField fx:id="inputSegmentos" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 
-                    <padding><Insets bottom="20" /></padding>
-                    <Label text="CONTROLE DE SPAWN" styleClass="header-label" style="-fx-text-fill: lime;" />
-                    <VBox spacing="5.0" style="-fx-border-color: lime; -fx-padding: 10; -fx-border-radius: 5;">
-                        <HBox spacing="10.0" alignment="CENTER_LEFT">
-                            <Label text="Quantidade (Cliques):" />
-                            <Label fx:id="lblQtdSpawn" text="1" style="-fx-font-weight: bold; -fx-text-fill: lime;" />
-                        </HBox>
-                        <Slider fx:id="sliderSpawnQtd" min="1" max="10" value="1" majorTickUnit="1" minorTickCount="0" snapToTicks="true" showTickMarks="true" />
-                        
-                        <Button fx:id="btnPrepararSpawn" text="ATIVAR MODO SPAWN" onAction="#onPrepararSpawnClick" maxWidth="Infinity" style="-fx-background-color: #006600; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" />
+                            <Label text="Peso" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                            <ComboBox fx:id="comboPeso" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                            <Label text="Tamanho" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                            <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                <TextField fx:id="inputTamanhoX" promptText="X" />
+                                <Label text="x" />
+                                <TextField fx:id="inputTamanhoY" promptText="Y" />
+                            </HBox>
+
+                            <Label text="Arma" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                            <ComboBox fx:id="comboArma" editable="true" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5" />
+
+                            <CheckBox fx:id="chkPoderoso" text="Poderoso" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
+                        </GridPane>
                     </VBox>
 
+                    <VBox spacing="8.0" styleClass="bestiary-section">
+                        <Label styleClass="header-label" text="Habilidades da Arma" />
+                        <Label fx:id="lblHabilidadesArma" styleClass="bestiary-weapon-skills" text="Nenhuma" wrapText="true" />
+                    </VBox>
+
+                    <VBox spacing="10.0" styleClass="bestiary-section">
+                        <Label styleClass="header-label" text="Propriedades" />
+                        <HBox spacing="12.0">
+                            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                <Label styleClass="bestiary-field-label" text="Disponíveis" />
+                                <ListView fx:id="listaPropsDisponiveis" prefHeight="150.0" styleClass="bestiary-property-list" />
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="8.0">
+                                <Button onAction="#onAdicionarPropriedadeClick" styleClass="bestiary-icon-button" text=">" />
+                                <Button onAction="#onRemoverPropriedadeClick" styleClass="bestiary-icon-button" text="&lt;" />
+                            </VBox>
+                            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                <Label styleClass="bestiary-field-label" text="Selecionadas" />
+                                <ListView fx:id="listaPropsSelecionadas" prefHeight="150.0" styleClass="bestiary-property-list" />
+                            </VBox>
+                        </HBox>
+                        <HBox spacing="8.0">
+                            <TextField fx:id="inputPropriedadeCustom" promptText="Propriedade customizada, ex: BLINDADO:2" HBox.hgrow="ALWAYS" />
+                            <Button onAction="#onAdicionarPropriedadeCustomClick" styleClass="bestiary-secondary-button" text="Adicionar" />
+                        </HBox>
+                    </VBox>
+
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button onAction="#onSalvarClick" styleClass="bestiary-save-button" text="Salvar Alterações no JSON" />
+                    </HBox>
+
+                    <VBox spacing="10.0" styleClass="bestiary-spawn-section">
+                        <Label styleClass="header-label" text="Controle de Spawn" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="Quantidade" />
+                            <Label fx:id="lblQtdSpawn" styleClass="bestiary-spawn-count" text="1" />
+                        </HBox>
+                        <Slider fx:id="sliderSpawnQtd" majorTickUnit="1" max="10" min="1" minorTickCount="0" showTickMarks="true" snapToTicks="true" value="1" />
+                        <Button fx:id="btnPrepararSpawn" maxWidth="Infinity" onAction="#onPrepararSpawnClick" styleClass="bestiary-spawn-button" text="Ativar Modo Spawn" />
+                    </VBox>
+
+                    <padding>
+                        <Insets bottom="24.0" />
+                    </padding>
                 </VBox>
             </ScrollPane>
         </SplitPane>
