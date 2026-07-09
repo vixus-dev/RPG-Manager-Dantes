@@ -2185,6 +2185,12 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		return gridEfeitos[x][y];
 	}
 
+	public TipoTerreno getTerreno(int x, int y) {
+		if (!dentroDoGrid(x, y) || gridTerreno == null)
+			return TipoTerreno.PADRAO;
+		return gridTerreno[x][y];
+	}
+
 	private void limparHitboxesExtras() {
 		if (tokenRenderer != null)
 			tokenRenderer.limparHitboxesExtras();

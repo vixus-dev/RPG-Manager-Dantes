@@ -1,9 +1,9 @@
 {
-  "iniciativaBase": 0,
+  "iniciativaBase": 22,
   "atributosBase": {
-    "FORCA": 8,
+    "FORCA": 13,
     "PERCEPCAO": 2,
-    "ENDURANCE": 10,
+    "ENDURANCE": 20,
     "CARISMA": 3,
     "INTELIGENCIA": 1,
     "DESTREZA": 5,
@@ -21,16 +21,16 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 10.0,
+  "vidaAtual": 105.0,
   "contadorTU": 4,
   "fantasmaNobre": "Fimbulwinter",
-  "armaEquipada": "Terrore",
+  "armaEquipada": "Machado Jötunbani",
   "inventario": {},
   "xpAtual": 0,
-  "vidaMaximaBase": 10.0,
+  "vidaMaximaBase": 105.0,
   "classe": "Barbaro",
   "armasEquipadas": [
-    "Terrore"
+    "Machado Jötunbani"
   ],
   "nome": "Brunhilda",
   "segmentos": 0,

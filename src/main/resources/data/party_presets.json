@@ -1,13 +1,14 @@
 {
-  "equippedSlotName": "Beta",
+  "equippedSlotName": "Equipe 1",
   "presets": [
     {
       "name": "Equipe 1",
       "characterNames": [
-        "Pinocchio",
         "alexei",
         "eidan",
-        "KuangLi"
+        "KuangLi",
+        "darrell",
+        "Brunhilda"
       ]
     },
     {

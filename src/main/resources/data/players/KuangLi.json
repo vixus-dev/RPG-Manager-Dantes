@@ -1,9 +1,9 @@
 {
-  "iniciativaBase": 34,
+  "iniciativaBase": 45,
   "atributosBase": {
     "FORCA": 15,
     "PERCEPCAO": 5,
-    "ENDURANCE": 12,
+    "ENDURANCE": 14,
     "CARISMA": 1,
     "INTELIGENCIA": 4,
     "DESTREZA": 7,
@@ -14,15 +14,15 @@
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
-  "escudoNormalAtual": 29.0,
+  "escudoNormalAtual": 0.0,
   "carteira": {
     "prata": 0,
     "ouro": 1,
     "bronze": 28160
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 127.0,
-  "contadorTU": 2,
+  "vidaAtual": 138.0,
+  "contadorTU": 1,
   "fantasmaNobre": "ProfetaDeBehemoth",
   "armaduraEquipada": "Colete Militar",
   "armaEquipada": "Machado Rita",
@@ -30,8 +30,8 @@
     "PocaoDeCuraMédia": 1,
     "Bastão Primordial Behemoth": 1
   },
-  "xpAtual": 1650,
-  "vidaMaximaBase": 82.0,
+  "xpAtual": 450,
+  "vidaMaximaBase": 93.0,
   "classe": "Campeão",
   "armasEquipadas": [
     "Machado Rita"
@@ -40,13 +40,13 @@
   "RaçaV2": true,
   "segmentos": 0,
   "grau": 1,
-  "posX": 4,
-  "posY": 5,
+  "posX": 6,
+  "posY": 4,
   "amuleto2": "Amuleto de Ferro",
   "amuleto1": "Nódulo de Carne Viva",
   "manaAtual": 9.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Lobisomem",
-  "nivel": 8,
+  "nivel": 9,
   "wieldingMaximo": 3
 }

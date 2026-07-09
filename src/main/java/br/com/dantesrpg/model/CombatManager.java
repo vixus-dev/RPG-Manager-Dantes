@@ -482,9 +482,10 @@ Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 
 				if (!p.isAtivoNoCombate())
 					continue;
 
-				// Efeitos de Terreno Constantes (como Areia)
+				// Efeitos de Terreno Constantes (como Areia e Água)
 				if (mainController != null && mainController.getMapController() != null) {
-					br.com.dantesrpg.model.map.TerrainData.EfeitoInstance efeitoChao = mainController.getMapController().getEfeitoNoSolo(p.getPosX(), p.getPosY());
+					br.com.dantesrpg.controller.MapController map = mainController.getMapController();
+					br.com.dantesrpg.model.map.TerrainData.EfeitoInstance efeitoChao = map.getEfeitoNoSolo(p.getPosX(), p.getPosY());
 					if (efeitoChao != null && efeitoChao.getTipo() == TipoEfeitoSolo.AREIA && (tempoGlobalAtual % 30 == 0)) {
 						System.out.println(">>> " + p.getNome() + " sofreu 2 de dano por estar na Areia.");
 						double vidaAntes = p.getVidaAtual();
@@ -494,6 +495,37 @@ Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 
 
 if (mainController != null) mainController.atualizarInterfaceAposMorte();
 						}
+					}
+
+					// Efeito de Água
+					if (map.getTerreno(p.getPosX(), p.getPosY()) == br.com.dantesrpg.model.map.TerrainData.TipoTerreno.AGUA) {
+						int lentoTu = p.getValorPropriedade("AGUA_LENTO_TU") + 1;
+						int maldicaoTu = p.getValorPropriedade("AGUA_MALDICAO_TU") + 1;
+
+						p.getPropriedades().removeIf(prop -> prop.startsWith("AGUA_LENTO_TU:"));
+						p.getPropriedades().add("AGUA_LENTO_TU:" + lentoTu);
+
+						p.getPropriedades().removeIf(prop -> prop.startsWith("AGUA_MALDICAO_TU:"));
+						p.getPropriedades().add("AGUA_MALDICAO_TU:" + maldicaoTu);
+
+						if (lentoTu >= 100) {
+							p.getPropriedades().removeIf(prop -> prop.startsWith("AGUA_LENTO_TU:"));
+							System.out.println(">>> " + p.getNome() + " permaneceu na água por 100 TU e recebeu Lento!");
+							Efeito lento = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Lento", 300, 0);
+							effectProcessor.aplicarEfeito(p, lento);
+						}
+
+						if (maldicaoTu >= 80) {
+							p.getPropriedades().removeIf(prop -> prop.startsWith("AGUA_MALDICAO_TU:"));
+							System.out.println(">>> " + p.getNome() + " permaneceu na água por 80 TU e recebeu Maldição (5%)!");
+							br.com.dantesrpg.model.util.Maldicao mald = new br.com.dantesrpg.model.util.Maldicao(
+									"Água", 0.05, 1000, false);
+							br.com.dantesrpg.model.util.MaldicaoUtils.adicionarMaldicao(p, mald);
+						}
+					} else {
+						// Limpa acúmulos se sair da água
+						p.getPropriedades().removeIf(prop -> prop.startsWith("AGUA_LENTO_TU:"));
+						p.getPropriedades().removeIf(prop -> prop.startsWith("AGUA_MALDICAO_TU:"));
 					}
 				}
 

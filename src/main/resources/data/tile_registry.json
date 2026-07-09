@@ -490,6 +490,38 @@
       "category": "Parede",
       "texturePath": "sandStone.png",
       "effect": null
+    },
+    {
+      "id": "areia",
+      "name": "Areia",
+      "cssClass": "map-areia",
+      "rgb": {
+        "r": 235,
+        "g": 200,
+        "b": 150
+      },
+      "terrainType": "PADRAO",
+      "walkable": true,
+      "wall": false,
+      "category": "Chão",
+      "texturePath": "areia.png",
+      "effect": null
+    },
+    {
+      "id": "agua",
+      "name": "Água",
+      "cssClass": "map-agua",
+      "rgb": {
+        "r": 50,
+        "g": 150,
+        "b": 250
+      },
+      "terrainType": "AGUA",
+      "walkable": true,
+      "wall": false,
+      "category": "Chão",
+      "texturePath": "agua.png",
+      "effect": null
     }
   ]
 }

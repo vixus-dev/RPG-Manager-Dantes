@@ -9,6 +9,43 @@ public class MapGenerator {
 		Random rand = new Random();
 		TileRegistry registry = TileRegistry.getInstance();
 
+		if ("Ira Externo".equalsIgnoreCase(bioma)) {
+			TileDefinition tileAreia = registry.getById("areia");
+			TileDefinition tileAgua = registry.getById("agua");
+			if (tileAreia == null) tileAreia = registry.getDefault();
+			if (tileAgua == null) tileAgua = registry.getDefault();
+			boolean dividirVertical = rand.nextBoolean();
+			double percentualCorte = 0.45 + rand.nextDouble() * 0.10; // 45% a 55%
+			boolean areiaPrimeiraMetade = rand.nextBoolean();
+			int limiteCorte = (int) (dividirVertical ? (largura * percentualCorte) : (altura * percentualCorte));
+			for (int x = 0; x < largura; x++) {
+				for (int y = 0; y < altura; y++) {
+					if (x == 0 || y == 0 || x == largura - 1 || y == altura - 1) {
+						TileDefinition paredeStone = registry.getById("sandStone");
+						mapa[x][y] = (paredeStone != null) ? paredeStone : registry.getDefault();
+					} else {
+						boolean isPrimeiraMetade = dividirVertical ? (x < limiteCorte) : (y < limiteCorte);
+						if (isPrimeiraMetade) {
+							mapa[x][y] = areiaPrimeiraMetade ? tileAreia : tileAgua;
+						} else {
+							mapa[x][y] = areiaPrimeiraMetade ? tileAgua : tileAreia;
+						}
+					}
+				}
+			}
+			// Limpa o centro do mapa para spawn seguro dos personagens
+			int meioX = largura / 2;
+			int meioY = altura / 2;
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					if (meioX + i > 0 && meioX + i < largura - 1 && meioY + j > 0 && meioY + j < altura - 1) {
+						mapa[meioX + i][meioY + j] = tileAreia;
+					}
+				}
+			}
+			return mapa;
+		}
+
 		String idChaoBase = null;
 		String idChaoSecundario = null;
 		String idParede = null;
@@ -74,6 +111,14 @@ public class MapGenerator {
 		case "Ganacia Interno":
 			idChaoBase = "SandBrick";
 			idParede = "sandStone";
+			break;
+		case "Ira Interno":
+			idChaoBase = "floor6";
+			idParede = "wall7";
+			break;
+		case "Ira Externo":
+			idChaoBase = "areia";
+			idEfeito = "agua";
 			break;
 		case "Exemple":
 			idChaoBase = "floor7";

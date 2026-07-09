@@ -287,6 +287,23 @@
     -fx-background-color: #a0825a;
     -fx-background-image: url('../textures/sandStone.png');
     -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+}
+
+/* Areia (Cap 5) */
+.map-areia {
+    -fx-background-color: #e3cfa5;
+    -fx-background-image: url('../textures/areia.png');
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+}
+
+/* Água */
+.map-agua {
+    -fx-background-color: #3b8ad9;
+    -fx-background-image: url('../textures/agua.png');
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
 }
 
 /* Efeito de Fogo (Overlay Básico) */

@@ -14,7 +14,7 @@
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
-  "escudoNormalAtual": 64.0,
+  "escudoNormalAtual": 0.0,
   "armaOverclock": 1,
   "carteira": {
     "prata": 64,
@@ -45,7 +45,7 @@
   "nome": "Alexei",
   "segmentos": 0,
   "grau": 2,
-  "posX": 5,
+  "posX": 4,
   "posY": 4,
   "amuleto2": "Anel Esofágico",
   "amuleto1": "Medalhão da Promessa SHINY",
@@ -55,8 +55,8 @@
   "nivel": 9,
   "racaData": {
     "contratoAtivoDividaRestante": 0.0,
-    "estadoEmprestimo": "RECUPERADO",
-    "vidaNegativaAcumulada": 10.196429419202268,
+    "estadoEmprestimo": "NENHUM",
+    "vidaNegativaAcumulada": 0.0,
     "contratoAtivoValorTotal": 0.0,
     "filaContratos": []
   },

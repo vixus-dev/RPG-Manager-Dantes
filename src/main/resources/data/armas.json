@@ -4113,6 +4113,31 @@
     ],
     "wielding": 2.0
   },
+  "Machado Jötunbani": {
+    "nome": "Machado Jötunbani",
+    "categoria": "Machado",
+    "descricao": "O poder do gelo concentrado",
+    "raridade": "Unico",
+    "andar": "5",
+    "valorMoedas": 20.0,
+    "tipoMoeda": "OURO",
+    "danoBase": 17.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "modificadoresDeAtributo": {
+    },
+    "custoTU": 90.0,
+    "tipo": "Melee",
+    "alcance": 3.0,
+    "tipoAlvo": "CONE",
+    "tamanhoArea": 135.0,
+    "modificadoresStatus": {
+    },
+    "habilidadesConcedidas": [
+      "Arremesso de Machado"
+    ],
+    "wielding": 2.0
+  },
   "Paz \u0026 Guerra": {
     "nome": "Paz \u0026 Guerra",
     "categoria": "Espada",

@@ -1,8 +1,5 @@
 {
-  "xpAtual": 406,
   "iniciativaBase": 32,
-  "vidaMaximaBase": 36,
-  "classe": "Ilusionista",
   "atributosBase": {
     "FORCA": 4,
     "PERCEPCAO": 5,
@@ -15,26 +12,19 @@
     "SAGACIDADE": 1,
     "TOPOR": 1
   },
-  "nome": "Darrell",
+  "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
-  "segmentos": 0,
-  "grau": 0,
-  "posX": 5,
-  "posY": 5,
-  "amuleto2": "Pingente do Olhar Desejado",
-  "amuleto1": "Seixo da Absolvição",
-  "manaAtual": 11,
-  "raca": "Anjo-Caido",
+  "escudoNormalAtual": 0.0,
   "carteira": {
     "prata": 5,
     "ouro": 0,
     "bronze": 392
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 96,
-  "contadorTU": 0,
+  "vidaAtual": 96.0,
+  "contadorTU": 2,
+  "fantasmaNobre": "ModoPolaris",
   "armaduraEquipada": "Nano-Armadura MK1",
-  "nivel": 6,
   "armaEquipada": "Thompson",
   "inventario": {
     "PocaoDeManaMédia": 1,
@@ -52,9 +42,22 @@
     "Cajado Eólico da Luxúria": 1,
     "PocaoDeCuraGrande": 3
   },
-  "escudoAtual": 0,
-  "wieldingMaximo": 2,
+  "xpAtual": 406,
+  "vidaMaximaBase": 36.0,
+  "classe": "Ilusionista",
   "armasEquipadas": [
     "Thompson"
-  ]
+  ],
+  "nome": "Darrell",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 4,
+  "posY": 5,
+  "amuleto2": "Pingente do Olhar Desejado",
+  "amuleto1": "Seixo da Absolvição",
+  "manaAtual": 3.0,
+  "escudoDivinoAtual": 0.0,
+  "raca": "Anjo-Caido",
+  "nivel": 6,
+  "wieldingMaximo": 2
 }
