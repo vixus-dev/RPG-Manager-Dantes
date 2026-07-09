@@ -21,22 +21,24 @@
     "bronze": 318
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 7200.0,
+  "vidaAtual": 20000.0,
   "contadorTU": 73,
-  "armaEquipada": "Master Katana",
-  "inventario": {},
+  "armaEquipada": "Espada Teste",
+  "inventario": {
+    "Master Katana": 1
+  },
   "xpAtual": 1300,
   "vidaMaximaBase": 20000.0,
   "classe": "Ladino",
   "armasEquipadas": [
-    "Master Katana"
+    "Espada Teste"
   ],
   "nome": "Virgilio",
   "RaçaV2": true,
   "segmentos": 0,
   "grau": 0,
-  "posX": 4,
-  "posY": 4,
+  "posX": 5,
+  "posY": 5,
   "amuleto2": "Medalhão da Virgilio",
   "amuleto1": "Medalhão da Virgilio",
   "manaAtual": 20.0,

@@ -36,7 +36,7 @@
   },
   "cadete Estelar": {
     "nome": "cadete Estelar",
-    "categoria": "NPC",
+    "categoria": "Arco",
     "descricao": "Uma arma mágica estelar da Lua Profana.",
     "raridade": "LENDARIO",
     "andar": "3",
@@ -400,7 +400,7 @@
   },
   "Cano de Metal": {
     "nome": "Cano de Metal",
-    "categoria": "Contundente",
+    "categoria": "Exotica",
     "descricao": "TENG TENG TENG",
     "raridade": "COMUM",
     "andar": "2",
@@ -635,7 +635,7 @@
   },
   "Bazooka": {
     "nome": "Bazooka",
-    "categoria": "Pesada",
+    "categoria": "Canhão de Duas Mãos",
     "descricao": "Um bom e velho lança foguetes",
     "raridade": "INCOMUM",
     "andar": "1",
@@ -656,7 +656,7 @@
   },
   "Broca": {
     "nome": "Broca",
-    "categoria": "Pesada",
+    "categoria": "Exotica",
     "descricao": "Capáz de minerar materiais extremamente resistentes",
     "raridade": "INCOMUM",
     "andar": "0",
@@ -933,7 +933,7 @@
   },
   "Lança-Chamas": {
     "nome": "Lança-Chamas",
-    "categoria": "Pesada",
+    "categoria": "Exotica",
     "descricao": "Acoplada a um tanque de combustivel, gera um calor intenso e controlavel",
     "raridade": "RARO",
     "andar": "0",
@@ -950,7 +950,7 @@
   },
   "Canhão Drone": {
     "nome": "Canhão Drone",
-    "categoria": "Pesada",
+    "categoria": "Canhão de Mão",
     "descricao": "Um canhão versatil que pode virar uma metralhadora",
     "raridade": "RARO",
     "andar": "0",
@@ -993,7 +993,7 @@
   },
   "Orbe Cerberus": {
     "nome": "Orbe Cerberus",
-    "categoria": "Pesada",
+    "categoria": "Catalisador",
     "descricao": "uma orbe de energia infernal",
     "raridade": "RARO",
     "andar": "0",
@@ -1013,7 +1013,7 @@
   },
   "Orbe Cerberus2": {
     "nome": "Orbe Cerberus2",
-    "categoria": "Pesada",
+    "categoria": "Catalisador",
     "descricao": "uma orbe de energia sangrenta",
     "raridade": "RARO",
     "andar": "3",
@@ -1285,7 +1285,7 @@
   },
   "Correntes da Custódia": {
     "nome": "Correntes da Custódia",
-    "categoria": "Mangual",
+    "categoria": "Exotica",
     "descricao": "Um mangual curioso, ao invés de ser feito de metal ele usa marmore, será que tem a mesma resistencia?",
     "raridade": "RARO",
     "andar": "1.5",
@@ -1303,7 +1303,7 @@
   },
   "Correntes do Prazer": {
     "nome": "Correntes do Prazer",
-    "categoria": "Mangual",
+    "categoria": "Exotica",
     "descricao": "Um mangual em formato de disco. parece uma lua minguante",
     "raridade": "RARO",
     "andar": "2",
@@ -1327,7 +1327,7 @@
   },
   "Correntes eletricas": {
     "nome": "Correntes do Prazer",
-    "categoria": "Contundente",
+    "categoria": "Exotica",
     "descricao": "Correntes com uma descarga eletrica constante",
     "raridade": "RARO",
     "andar": "2",
@@ -1599,7 +1599,7 @@
   },
   "Aurela-Sagrada": {
     "nome": "Aurela-Sagrada",
-    "categoria": "PUNHOS",
+    "categoria": "Catalisador",
     "descricao": "CONSUMIR, ADAPTAR",
     "raridade": "RARO",
     "andar": "3",
@@ -1754,7 +1754,7 @@
   },
   "Super-Bazooka": {
     "nome": "Super-Bazooka",
-    "categoria": "Pesada",
+    "categoria": "Canhão de Duas Mãos",
     "descricao": "um lança foguetes com esteroides",
     "raridade": "LENDARIO",
     "andar": "0",
@@ -1780,7 +1780,7 @@
   },
   "MassaSobreEscrita": {
     "nome": "MassaSobreEscrita",
-    "categoria": "Pesada",
+    "categoria": "Exotica",
     "descricao": "Carne.",
     "raridade": "LENDARIO",
     "andar": "1",
@@ -1806,7 +1806,7 @@
   },
   "MassaSobreEscrita2": {
     "nome": "MassaSobreEscrita2",
-    "categoria": "Pesada",
+    "categoria": "Exotica",
     "descricao": "Mais Carne.",
     "raridade": "LENDARIO",
     "andar": "3",
@@ -1832,7 +1832,7 @@
   },
   "Gadanha da Tolice": {
     "nome": "Gadanha da Tolice",
-    "categoria": "Pesada",
+    "categoria": "Foice",
     "descricao": "Todos os seus pecados reunidos em uma só arma, quem diria que vai haver uma especia de surpresa no final?",
     "raridade": "LENDARIO",
     "andar": "9",
@@ -1987,7 +1987,7 @@
   },
   "Lança de Eros": {
     "nome": "Lança de Eros",
-    "categoria": "Exotica",
+    "categoria": "Lança",
     "descricao": "um arco branco, suas cordas lembram que um dia um anjo o tocou",
     "raridade": "LENDARIO",
     "andar": "2",
@@ -2068,7 +2068,7 @@
   },
   "Torre": {
     "nome": "Torre",
-    "categoria": "Torre",
+    "categoria": "Exotica",
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "andar": "2",
@@ -2090,7 +2090,7 @@
   },
   "Torre2": {
     "nome": "Torre2",
-    "categoria": "Torre",
+    "categoria": "Exotica",
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "andar": "2",
@@ -2112,7 +2112,7 @@
   },
   "Torre3": {
     "nome": "Torre3",
-    "categoria": "Torre",
+    "categoria": "Exotica",
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "andar": "2",
@@ -2186,7 +2186,7 @@
   },
   "LivroDeMorghul": {
     "nome": "LivroDeMorghul",
-    "categoria": "Grimorio",
+    "categoria": "Livro",
     "descricao": "Um livro de um mago magro",
     "raridade": "LENDARIO",
     "andar": "3",
@@ -2211,7 +2211,7 @@
   },
   "Faca de Vértebra Serrilhada": {
     "nome": "Faca de Vértebra Serrilhada",
-    "categoria": "Adaga",
+    "categoria": "Espada",
     "descricao": "Feita de uma vértebra afiada, ainda pulsa levemente",
     "raridade": "COMUM",
     "andar": "3",
@@ -2246,7 +2246,7 @@
   },
   "Bastão de Tendão Enrijecido": {
     "nome": "Bastão de Tendão Enrijecido",
-    "categoria": "Contundente",
+    "categoria": "Exotica",
     "descricao": "Um feixe de tendões endurecidos com vapor",
     "raridade": "COMUM",
     "andar": "3",
@@ -2523,7 +2523,7 @@
   },
   "tentaculoSangue": {
     "nome": "tentaculoSangue",
-    "categoria": "Natural",
+    "categoria": "NPC",
     "descricao": "Tentáculo de sangue coagulado que se ergue do chão como uma serpente cega.",
     "raridade": "LENDARIO",
     "andar": "3",
@@ -2822,7 +2822,7 @@
   },
   "Clava de Arenito": {
     "nome": "Clava de Arenito",
-    "categoria": "Contundente",
+    "categoria": "Exotica",
     "descricao": "Pesada e bruta, tende a se esfarelar após muitos impactos.",
     "raridade": "COMUM",
     "andar": "4",
@@ -3152,7 +3152,7 @@
   },
   "A Thousand Blazing Suns": {
     "nome": "A Thousand Blazing Suns",
-    "categoria": "Pesada",
+    "categoria": "Espada",
     "descricao": "Talvez até o sol não passe de uma estrela tênue diante da noite profunda e longa.",
     "raridade": "LENDARIO",
     "andar": "4",
@@ -3176,7 +3176,7 @@
   },
   "A Thousand Blazing Suns2": {
     "nome": "A Thousand Blazing Suns2",
-    "categoria": "Pesada",
+    "categoria": "Espada",
     "descricao": "Talvez até o sol não passe de uma estrela tênue diante da noite profunda e longa.",
     "raridade": "LENDARIO",
     "andar": "4",
@@ -3238,7 +3238,7 @@
   },
   "prisão": {
     "nome": "prisão",
-    "categoria": "Pesada",
+    "categoria": "Catalisador",
     "descricao": "Arma da Prisão de Carne",
     "raridade": "LENDARIO",
     "andar": "P1",
@@ -3261,7 +3261,7 @@
   },
   "salvação": {
     "nome": "salvação",
-    "categoria": "Melee",
+    "categoria": "NPC",
     "descricao": "Arma da salvação do Minos Prime",
     "raridade": "LENDARIO",
     "andar": "P1",
@@ -3380,7 +3380,7 @@
   },
   "Shotgun": {
     "nome": "Shotgun",
-    "categoria": "Custom",
+    "categoria": "Espingarda",
     "descricao": "Uma bela shotgun de carga unica, ótima para massacrar alvos no corpo a corpo",
     "raridade": "RARO",
     "andar": "4",
@@ -3432,7 +3432,7 @@
   },
   "Cachiporra de Costela de Camelo": {
     "nome": "Cachiporra de Costela de Camelo",
-    "categoria": "Contundente",
+    "categoria": "Exotica",
     "descricao": "Um osso longo e petrificado, muito pesado, com tiras de couro na base.",
     "raridade": "COMUM",
     "andar": "4",
@@ -3941,7 +3941,7 @@
   },
   "Metralhadora \u0027Tempestade de Areia\u0027": {
     "nome": "Metralhadora \u0027Tempestade de Areia\u0027",
-    "categoria": "Custom",
+    "categoria": "Metralhadora",
     "descricao": "Metralhadora militar pesada adaptada para rajadas de poeira e balas.",
     "raridade": "EPICO",
     "andar": "4",
@@ -4023,7 +4023,7 @@
   },
   "Pistola de fogo": {
     "nome": "Pistola de fogo",
-    "categoria": "Custom",
+    "categoria": "Pistolas",
     "descricao": "Pistola que causa dano de fogo",
     "raridade": "COMUM",
     "andar": "",
@@ -4174,7 +4174,7 @@
   },
   "Espada de cristal corrompido": {
     "nome": "Espada de cristal corrompido",
-    "categoria": "Custom",
+    "categoria": "Espada",
     "descricao": "Espada formada de cristais roxos estranhos?",
     "raridade": "EPICO",
     "andar": "4",
@@ -4194,7 +4194,7 @@
   },
   "Espada Selada": {
     "nome": "Espada Selada",
-    "categoria": "Custom",
+    "categoria": "Espada",
     "descricao": "Uma espada amarrada com fitas vermelhas, talvez possa ser util",
     "raridade": "LENDARIO",
     "andar": "4",
@@ -4209,5 +4209,33 @@
     "wielding": 2,
     "efeitoAoAcertar": "Ruptura",
     "chanceEfeito": 0.25
+  },
+  "Espada Teste": {
+    "nome": "Espada Teste",
+    "categoria": "Espada",
+    "descricao": "Espada Suprema",
+    "raridade": "LENDARIO",
+    "andar": "9",
+    "valorMoedas": 50,
+    "tipoMoeda": "OURO",
+    "danoBase": 10,
+    "ticksDeDano": 1,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 80,
+    "tipo": "Melee",
+    "alcance": 2,
+    "wielding": 1,
+    "efeitosAoAcertar": [
+      { "efeito": "Toxina", "chance": 1.00 },
+      { "efeito": "Sangramento", "chance": 1.00 },
+      { "efeito": "Veneno", "chance": 1.00 },
+      { "efeito": "Queimação", "chance": 1.00 },
+      { "efeito": "Chama Divina", "chance": 1.00 },
+      { "efeito": "Hemorragia", "chance": 1.00 },
+      { "efeito": "Maldição Umbraum", "chance": 1.00 },
+      { "efeito": "Choque", "chance": 1.00 },
+      { "efeito": "Bênção do Gekkyūden", "chance": 1.00 },
+      { "efeito": "Maldição do Gekkyūden", "chance": 1.00 }
+    ]
   }
 }
