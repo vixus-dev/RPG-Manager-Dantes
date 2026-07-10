@@ -5,6 +5,7 @@ import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.Raridade;
 import br.com.dantesrpg.model.items.Consumivel;
 import br.com.dantesrpg.model.util.ImageCache;
+import br.com.dantesrpg.controller.util.ItemVisualUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -626,6 +627,7 @@ public class EditorJogadorController {
         } else {
             lblNome.setStyle("-fx-text-fill: white;");
         }
+		ItemVisualUtils.aplicarPulsacaoEquipado(lblNome, item);
         HBox.setHgrow(lblNome, Priority.ALWAYS);
 
         Button btnRemover = new Button("X");
@@ -1008,6 +1010,7 @@ public class EditorJogadorController {
         lblNome.setStyle(
             "-fx-text-fill: " + corRaridade + "; -fx-font-size: 12px;"
         );
+		ItemVisualUtils.aplicarBrilhoNoInventario(lblNome, item);
         HBox.setHgrow(lblNome, Priority.ALWAYS);
 
         Label lblQtd = new Label("x" + quantidade);
@@ -1022,7 +1025,14 @@ public class EditorJogadorController {
             Raridade r = ((Arma) item).getRaridade();
             if (r != null) return getCorRaridade(r);
         }
-        // Armaduras e amuletos não têm raridade no modelo atual
+		if (item instanceof Armadura) {
+			Raridade r = ((Armadura) item).getRaridade();
+			if (r != null) return getCorRaridade(r);
+		}
+		if (item instanceof Amuleto) {
+			Raridade r = ((Amuleto) item).getRaridade();
+			if (r != null) return getCorRaridade(r);
+		}
         return "#c0c0c0";
     }
 
