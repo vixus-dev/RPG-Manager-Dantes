@@ -32,5 +32,8 @@
     -rpg-rarity-unique: #86E8F2;
 
     -fx-font-family: 'Oxanium';
+}
+
+.root {
     -fx-background-color: -rpg-bg-canvas;
 }

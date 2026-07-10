@@ -41,35 +41,35 @@
 
 /* Player Card */
 .player-card { -fx-font-family: 'Oxanium'; }
-.diamond-shape { -fx-fill: -rpg-surface-base; -fx-stroke-width: 2; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 5, 0.1, 0, 1); }
-.diamond-shape-player { -fx-stroke: -rpg-accent-tactical; }
-.diamond-shape-enemy { -fx-stroke: -rpg-danger; }
-.diamond-shape-highlighted { -fx-stroke: -rpg-accent-command; -fx-stroke-width: 3; }
+.diamond-shape { -fx-fill: #3a3a3a; -fx-stroke-width: 2; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 5, 0.1, 0, 1); }
+.diamond-shape-player { -fx-stroke: cyan; }
+.diamond-shape-enemy { -fx-stroke: #FF4444; }
+.diamond-shape-highlighted { -fx-stroke: yellow; -fx-stroke-width: 3; }
 
-.bar-text { -fx-fill: -rpg-text-primary; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 0 0 0 5; -fx-effect: dropshadow(gaussian, black, 2, 0.8, 0, 0); }
-.bar-track { -fx-fill: #07090D; -fx-stroke: -rpg-border-subtle; -fx-stroke-width: 0.5; }
-.hp-bar-fill { -fx-fill: linear-gradient(to right, -rpg-life, #2E8A51); -fx-stroke: transparent; }
-.mp-bar-fill { -fx-fill: linear-gradient(to right, -rpg-mana, #315EAF); -fx-stroke: transparent; }
-.passive-bar-fill { -fx-fill: -rpg-text-muted; -fx-stroke: transparent; }
-.passive-bar-fill.race-elf { -fx-fill: linear-gradient(to right, #D7B45A, #A98238); }
-.passive-bar-fill.race-half-angel { -fx-fill: linear-gradient(to right, #F0F0E4, #D7C887); }
-.passive-bar-fill.race-fallen-angel { -fx-fill: linear-gradient(to right, #75D3E1, #3D93A5); }
-.passive-bar-fill.race-half-demon { -fx-fill: linear-gradient(to right, #D75561, #8E303A); }
-.passive-bar-fill.race-werewolf { -fx-fill: linear-gradient(to right, #A7B8CF, #6D809A); }
+.bar-text { -fx-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 0 0 0 5; -fx-effect: dropshadow(gaussian, black, 2, 0.8, 0, 0); }
+.bar-track { -fx-fill: black; -fx-stroke: transparent; }
+.hp-bar-fill { -fx-fill: linear-gradient(to right, #00FF00, #33AA33); -fx-stroke: transparent; }
+.mp-bar-fill { -fx-fill: linear-gradient(to right, #00FFFF, #0077FF); -fx-stroke: transparent; }
+.passive-bar-fill { -fx-fill: linear-gradient(to right, #FFFF00, #FFAA00); -fx-stroke: transparent; }
+.passive-bar-fill.race-elf { -fx-fill: linear-gradient(to right, #FFD700, #FFAA00); }
+.passive-bar-fill.race-half-angel { -fx-fill: linear-gradient(to right, #FFFFFF, #F6E7A8); }
+.passive-bar-fill.race-fallen-angel { -fx-fill: linear-gradient(to right, #00FFFF, #0099CC); }
+.passive-bar-fill.race-half-demon { -fx-fill: linear-gradient(to right, #FF3B4D, #8B0000); }
+.passive-bar-fill.race-werewolf { -fx-fill: linear-gradient(to right, #E4F1FF, #8193B8); }
 .contract-bar-fill {
     -fx-fill: linear-gradient(from 0px 0px to 10px 10px, repeat, #330000 0%, #330000 49%, #550000 50%, #550000 100%);
     -fx-stroke: #AA0000; -fx-stroke-width: 1; -fx-effect: dropshadow(gaussian, black, 3, 0.5, 0, 0);
 }
 .curse-bar-fill {
-    -fx-fill: linear-gradient(from 0px 0px to 10px 10px, repeat, #123F46 0%, #123F46 49%, #1D5B62 50%, #1D5B62 100%);
-    -fx-stroke: -rpg-accent-tactical; -fx-stroke-width: 1.2;
+    -fx-fill: linear-gradient(from 0px 0px to 10px 10px, repeat, #002d33 0%, #002d33 49%, #004d54 50%, #004d54 100%);
+    -fx-stroke: #00f5d4; -fx-stroke-width: 1.2; -fx-effect: dropshadow(gaussian, rgba(0, 245, 212, 0.6), 5, 0.3, 0, 0);
 }
 .player-card .label-name { -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 2, 0.7, 0, 0); }
-.shield-track { -fx-fill: rgba(7, 9, 13, 0.75); -fx-stroke: transparent; }
-.shield-bar-fill { -fx-fill: linear-gradient(to right, -rpg-shield, #527786); -fx-stroke: transparent; }
-.blood-shield-bar-fill { -fx-fill: linear-gradient(to right, #7A2734, -rpg-shield-blood); -fx-stroke: transparent; }
-.divine-shield-bar-fill { -fx-fill: linear-gradient(to right, -rpg-shield-divine, #88B8C2); -fx-stroke: transparent; }
-.infernal-shield-bar-fill { -fx-fill: linear-gradient(to right, #D65336, -rpg-shield-infernal); -fx-stroke: transparent; }
+.shield-track { -fx-fill: rgba(0, 0, 0, 0.3); -fx-stroke: transparent; }
+.shield-bar-fill { -fx-fill: linear-gradient(to right, #2B7FFF, #155DFC); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, blue, 5, 0.3, 0, 0); }
+.blood-shield-bar-fill { -fx-fill: linear-gradient(to right, #8B0000, #FF0000); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, red, 5, 0.3, 0, 0); }
+.divine-shield-bar-fill { -fx-fill: linear-gradient(to right, #cdf8fa, #a0e5e8); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, #cdf8fa, 5, 0.3, 0, 0); }
+.infernal-shield-bar-fill { -fx-fill: linear-gradient(to right, #ff4500, #ff8c00); -fx-stroke: transparent; }
 .debt-bar-fill { -fx-fill: linear-gradient(to right, #FF4444, #AA0000); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, red, 5, 0.3, 0, 0); }
 
 /* Detailed HUD */
