@@ -10,16 +10,20 @@ import javafx.stage.Stage;
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.model.map.TileRegistry;
 import br.com.dantesrpg.model.util.FileLoader;
+import atlantafx.base.theme.PrimerDark;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
         try {
+            Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/com/dantesrpg/view/CombatView.fxml"));
             Parent root = loader.load();
 
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(
+                    getClass().getResource("/br/com/dantesrpg/view/grimorio.css").toExternalForm());
 
             primaryStage.setTitle("A Decadencia Combat Manager");
             primaryStage.setScene(scene);

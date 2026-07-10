@@ -1,0 +1,36 @@
+/* Tokens globais do Grimório de Comando que complementam o Primer Dark. */
+.root,
+.player-card,
+.turn-hud-root,
+.editor-background,
+.loja-background {
+    -rpg-bg-canvas: #0B0E13;
+    -rpg-bg-navigation: #10151D;
+    -rpg-surface-base: #171D27;
+    -rpg-surface-raised: #202936;
+    -rpg-surface-hover: #283444;
+    -rpg-surface-pressed: #303D4E;
+    -rpg-border-default: #354254;
+    -rpg-border-subtle: #26303D;
+    -rpg-border-focus: #47BED2;
+    -rpg-text-primary: #EEF2F5;
+    -rpg-text-secondary: #AAB5C4;
+    -rpg-text-muted: #738096;
+    -rpg-accent-command: #C79A52;
+    -rpg-accent-tactical: #47BED2;
+    -rpg-accent-arcane: #9B7BD3;
+    -rpg-success: #4FBB7A;
+    -rpg-warning: #E0A943;
+    -rpg-danger: #D65C65;
+    -rpg-life: #55BF78;
+    -rpg-mana: #4C85D8;
+    -rpg-shield: #7FA6B5;
+    -rpg-shield-blood: #A84250;
+    -rpg-shield-divine: #C9E5E7;
+    -rpg-shield-infernal: #FF7A3D;
+    -rpg-rarity-mythic: #FF3B4D;
+    -rpg-rarity-unique: #86E8F2;
+
+    -fx-font-family: 'Oxanium';
+    -fx-background-color: -rpg-bg-canvas;
+}

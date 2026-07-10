@@ -12,9 +12,9 @@
     "SAGACIDADE": 20,
     "TOPOR": 20
   },
-  "escudoSangueAtual": 0.0,
+  "escudoSangueAtual": 9.7,
   "pontosParaDistribuir": 0,
-  "escudoNormalAtual": 0.0,
+  "escudoNormalAtual": 20.0,
   "carteira": {
     "prata": 16,
     "ouro": 2,
@@ -22,7 +22,7 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": 20000.0,
-  "contadorTU": 100,
+  "contadorTU": 200,
   "armaEquipada": "Espada Teste",
   "inventario": {
     "Master Katana": 1
@@ -37,11 +37,11 @@
   "RaçaV2": true,
   "segmentos": 0,
   "grau": 0,
-  "posX": 4,
-  "posY": 4,
+  "posX": 5,
+  "posY": 3,
   "amuleto2": "Medalhão da Virgilio",
   "amuleto1": "Medalhão da Virgilio",
-  "manaAtual": 20.0,
+  "manaAtual": 18.0,
   "escudoDivinoAtual": 0.0,
   "raca": "Half-Demon",
   "nivel": 20,

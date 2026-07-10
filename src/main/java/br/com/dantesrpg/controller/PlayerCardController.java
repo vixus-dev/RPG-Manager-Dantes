@@ -69,7 +69,6 @@ public class PlayerCardController {
 	private Pane hpBarContainer;
 
 	private Personagem personagem;
-	private javafx.animation.FadeTransition curseAnimation;
 
 	public void setPersonagem(Personagem personagem, String cardType) {
 		this.personagem = personagem;
@@ -251,18 +250,7 @@ public class PlayerCardController {
 				}
 				Tooltip.install(curseBarPolygon, new Tooltip(info.toString().trim()));
 
-				if (curseAnimation == null) {
-					curseAnimation = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), curseBarPolygon);
-					curseAnimation.setFromValue(0.4);
-					curseAnimation.setToValue(0.95);
-					curseAnimation.setCycleCount(javafx.animation.Animation.INDEFINITE);
-					curseAnimation.setAutoReverse(true);
-				}
-				curseAnimation.play();
 			} else {
-				if (curseAnimation != null) {
-					curseAnimation.stop();
-				}
 				if (curseBarPolygon != null) {
 					curseBarPolygon.setOpacity(1.0);
 				}
@@ -395,7 +383,7 @@ public class PlayerCardController {
 		// 0. INFERNAL (Laranja/Fogo)
 		if (infernalShieldBarPolygon == null && shieldBarPolygon != null && shieldBarPolygon.getParent() instanceof javafx.scene.layout.Pane) {
 			infernalShieldBarPolygon = new Polygon();
-			infernalShieldBarPolygon.setStyle("-fx-fill: linear-gradient(to right, #ff4500, #ff8c00);");
+			infernalShieldBarPolygon.getStyleClass().add("infernal-shield-bar-fill");
 			((javafx.scene.layout.Pane) shieldBarPolygon.getParent()).getChildren().add(infernalShieldBarPolygon);
 			infernalShieldBarPolygon.toFront();
 		}
@@ -507,6 +495,7 @@ public class PlayerCardController {
 			passiveBarPolygon.setVisible(usarBarra);
 
 		if (usarBarra) {
+			aplicarEstiloBarraRacial();
 			int current = personagem.getRaca().getCurrentStacks();
 			double progress = (max <= 0) ? 0 : Math.max(0, Math.min(1, (double) current / max));
 			double startX = 95.0;
@@ -527,6 +516,25 @@ public class PlayerCardController {
 		} else {
 			if (passiveBarPolygon != null)
 				passiveBarPolygon.getPoints().clear();
+		}
+	}
+
+	private void aplicarEstiloBarraRacial() {
+		passiveBarPolygon.getStyleClass().removeAll(
+				"race-elf", "race-half-angel", "race-fallen-angel", "race-half-demon", "race-werewolf");
+
+		String nomeDaRaca = personagem.getRaca().getClass().getSimpleName();
+		String classeRacial = switch (nomeDaRaca) {
+		case "Elfo" -> "race-elf";
+		case "HalfAngel" -> "race-half-angel";
+		case "AnjoCaido" -> "race-fallen-angel";
+		case "HalfDemon" -> "race-half-demon";
+		case "Lobisomem" -> "race-werewolf";
+		default -> null;
+		};
+
+		if (classeRacial != null) {
+			passiveBarPolygon.getStyleClass().add(classeRacial);
 		}
 	}
 
