@@ -5,6 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -84,6 +85,10 @@
                                 <Label text="Andar" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
                                 <TextField fx:id="txtAndar" promptText="Ex: 1" styleClass="editor-search-field" />
                             </VBox>
+
+                            <!-- Propriedade especial de equipamentos -->
+                            <CheckBox fx:id="chkShiny" text="Shiny ✦" GridPane.columnIndex="0" GridPane.rowIndex="4"
+                                      style="-fx-text-fill: #ffd700; -fx-font-weight: bold;" />
                         </children>
                     </GridPane>
                 </VBox>
