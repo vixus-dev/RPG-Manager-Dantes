@@ -158,9 +158,9 @@
     "classeItem": "Armadura",
     "nome": "Colete Militar",
     "descricao": "Leve e flexível, ótimo para soldados.",
-    "raridade": "0.5",
+    "raridade": "RARO",
+    "andar": "0.5",
     "shiny": false,
-    "andar": "RARO",
     "valorMoedas": 5000,
     "tipoMoeda": "BRONZE",
     "armaduraBase": 20,
@@ -217,7 +217,7 @@
     "nome": "Couraça do Vento Proibido SHINY",
     "descricao": "uma couraça dourada e branca que possui símbolos de vento espalhados em seu corpo",
     "raridade": "INCOMUM",
-    "shiny": false,
+    "shiny": true,
     "andar": "2",
     "valorMoedas": 15000,
     "tipoMoeda": "BRONZE",
@@ -456,7 +456,7 @@
       "DESTREZA": -1
     },
     "modificadoresStatus": {
-      "RESISTENCIA_DOT": 15.0
+      "RESISTENCIA_DOT": 0.15
     }
   },
   "Manto de Areia Estagnada": {
@@ -474,7 +474,7 @@
     },
     "modificadoresStatus": {
       "DANO_BONUS_PERCENTUAL": 0.10,
-      "RESISTENCIA_DOT": 10.0
+      "RESISTENCIA_DOT": 0.10
     }
   },
   "Couraça de Obsidiana": {
@@ -491,7 +491,7 @@
       "DESTREZA": -2
     },
     "modificadoresStatus": {
-      "RESISTENCIA_DOT": -5.0,
+      "RESISTENCIA_DOT": 0.05,
       "DANO_BONUS_PERCENTUAL": 0.05
     }
   },
@@ -500,7 +500,7 @@
     "nome": "Couraça de Obsidiana Vulcânica",
     "descricao": "Variação aquecida da couraça de obsidiana, irradiando um calor constante que repele magias glaciais e queima quem toca.",
     "raridade": "Epica",
-    "shiny": false,
+    "shiny": true,
     "andar": "4",
     "valorMoedas": 36000,
     "tipoMoeda": "BRONZE",
@@ -509,7 +509,7 @@
       "DESTREZA": -1
     },
     "modificadoresStatus": {
-      "RESISTENCIA_DOT": 15.0,
+      "RESISTENCIA_DOT": 0.15,
       "DANO_BONUS_PERCENTUAL": 0.15,
       "TAXA_CRITICA": 0.05,
       "DANO_CRITICO": 0.15
