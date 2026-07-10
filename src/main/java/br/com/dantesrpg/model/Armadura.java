@@ -1,11 +1,13 @@
 package br.com.dantesrpg.model;
 
 import br.com.dantesrpg.model.enums.Atributo;
+import br.com.dantesrpg.model.enums.Raridade;
 import java.util.Map;
 import java.util.HashMap;
 
 public class Armadura extends Item {
 	private int armaduraBase;
+	private Raridade raridade;
 	private Map<Atributo, Integer> modificadoresDeAtributo;
 
 	private Map<String, Double> modificadoresStatus;
@@ -28,6 +30,14 @@ public class Armadura extends Item {
 
 	public int getArmaduraBaseOriginal() {
 		return armaduraBase;
+	}
+
+	public Raridade getRaridade() {
+		return raridade;
+	}
+
+	public void setRaridade(Raridade raridade) {
+		this.raridade = raridade;
 	}
 
 	public Map<Atributo, Integer> getModificadoresDeAtributo() {
