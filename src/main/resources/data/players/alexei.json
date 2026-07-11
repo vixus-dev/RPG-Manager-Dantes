@@ -22,13 +22,13 @@
     "bronze": 17308
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 124.0,
-  "contadorTU": 3,
+  "vidaAtual": 122.4,
+  "contadorTU": 0,
   "fantasmaNobre": "RingOfTheUndyingWill",
   "armaduraEquipada": "Peitoral da Guarda de Marfim",
   "armaEquipada": "Punho Infinito",
   "inventario": {
-    "PocaoDeCuraMédia": 1,
+    "Espada Atômica": 1,
     "Colar de Tinta Seca": 1,
     "Medalhão da Promessa": 1,
     "MoedaDeAjuda": 1
@@ -45,7 +45,7 @@
   "nome": "Alexei",
   "segmentos": 0,
   "grau": 2,
-  "posX": 4,
+  "posX": 3,
   "posY": 4,
   "amuleto2": "Anel Esofágico",
   "amuleto1": "Medalhão da Promessa SHINY",

@@ -13,7 +13,7 @@ import br.com.dantesrpg.model.enums.TipoHabilidade;
 public class Ilusao extends Habilidade {
 
 	public Ilusao() {
-		super("Ilusao", "Cria um clone sombrio que imita os ataques do jogador.", // Descrição
+		super("Ilusão", "Cria um clone sombrio que imita os ataques do jogador.", // Descrição
 				TipoHabilidade.ATIVA, 2, 150, 1, TipoAlvo.SI_MESMO, 0, 0, Collections.emptyList());
 	}
 

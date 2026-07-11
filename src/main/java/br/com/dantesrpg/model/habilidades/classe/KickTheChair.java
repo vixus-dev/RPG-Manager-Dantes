@@ -6,7 +6,7 @@ import java.util.*;
 
 public class KickTheChair extends Habilidade {
 	public KickTheChair() {
-		super("Kick The Chair",
+		super("Hell Awaits",
 				"Explode clones. Causa dano 3x3 e cura aliados. Cura Darrell por clone (Overheal vira Escudo x2).",
 				TipoHabilidade.ATIVA, 4, 150, 1, TipoAlvo.SI_MESMO, 0, 0, Collections.emptyList());
 	}

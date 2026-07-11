@@ -49,6 +49,10 @@ ui-ux-pro-max-skill-2.5.0/
 # Maven Build
 target/
 
+# arquivos temporários
+tmp/
+outputs/
+
 # Agent/AI Working Directories
 scratch/
 design-system/

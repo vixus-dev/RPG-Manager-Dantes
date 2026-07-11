@@ -200,7 +200,10 @@ public class JanelasCombateCoordinator {
 			Stage stage = new Stage();
 			stage.setTitle("Painel do Mestre");
 			stage.setScene(new Scene(root));
-			stage.setOnCloseRequest(e -> gerenciadoresAtivos.remove(painelController));
+			stage.setOnHidden(e -> {
+				gerenciadoresAtivos.remove(painelController);
+				painelController.descartar();
+			});
 			stage.show();
 		} catch (Exception e) {
 			e.printStackTrace();

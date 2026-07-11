@@ -308,7 +308,7 @@ public class DamageApplicator {
 			alvo.setVidaAtual(vidaNova, estado, getController());
 			double danoReal = vidaPre - alvo.getVidaAtual();
 
-			alvo.registrarDanoSofrido(danoReal, estado.getTempoGlobalCombate());
+			alvo.registrarDanoSofrido(danoReal, estado.getTickCounter());
 
 			System.out.println(
 					">>> DANO APLICADO: " + alvo.getNome() + " -" + String.format("%.1f", danoReal) + " HP.");

@@ -631,9 +631,19 @@
     "classeItem": "Consumivel",
     "nome": "Bilhete para \"homem do ceu\"",
     "descricao": "um bilhete escrito em aramaico",
-    "valorMoedas": 1,
+    "valorMoedas": 1.0,
     "tipoMoeda": "BRONZE",
-    "custoTU": 50,
+    "custoTU": 50.0,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "Barril de Sal especial": {
+    "classeItem": "Consumivel",
+    "nome": "Barril de Sal especial",
+    "descricao": "Barriel de sal fodastico que explode em contato com a agua e brilha com energia branca",
+    "valorMoedas": 1200,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 100,
     "usavelEmCombate": false,
     "efeitos": {}
   }

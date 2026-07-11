@@ -14,6 +14,8 @@ import br.com.dantesrpg.model.enums.ModoAtaque;
 import br.com.dantesrpg.model.enums.TipoAcao;
 import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.util.BarbaroUtils;
+import br.com.dantesrpg.model.util.Maldicao;
+import br.com.dantesrpg.model.util.MaldicaoUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -137,11 +139,7 @@ public class EffectProcessor {
 					efeito.setStacks(1);
 					aplicarEfeito(alvo, efeito);
 				} else if (nomeEfeito.equalsIgnoreCase("Maldição") || nomeEfeito.equalsIgnoreCase("Maldicao")) {
-					// Aplica uma maldição padrão (20% de redução, duração 150 TU, vinda da arma)
-					br.com.dantesrpg.model.util.Maldicao mald = new br.com.dantesrpg.model.util.Maldicao(
-							arma != null ? arma.getNome() : "Sabre do Marinheiro", 0.20, 1000, false);
-					br.com.dantesrpg.model.util.MaldicaoUtils.adicionarMaldicao(alvo, mald);
-					System.out.println(">>> Maldição ativada contra " + alvo.getNome() + " por acerto da arma!");
+					aplicarMaldicaoDaArma(alvo, arma);
 				} else {
 					int danoDaSource = Math.max(1, (int) danoCausado);
 					Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito(nomeEfeito, 0, danoDaSource);
@@ -194,10 +192,7 @@ public class EffectProcessor {
 		}
 
 		if (nomeEfeito.equalsIgnoreCase("Maldição") || nomeEfeito.equalsIgnoreCase("Maldicao")) {
-			br.com.dantesrpg.model.util.Maldicao mald = new br.com.dantesrpg.model.util.Maldicao(
-					arma.getNome(), 0.20, 1000, false);
-			br.com.dantesrpg.model.util.MaldicaoUtils.adicionarMaldicao(alvo, mald);
-			System.out.println(">>> Maldição ativada contra " + alvo.getNome() + " por acerto da arma!");
+			aplicarMaldicaoDaArma(alvo, arma);
 			return;
 		}
 
@@ -205,6 +200,28 @@ public class EffectProcessor {
 		Efeito efeito = br.com.dantesrpg.model.util.EffectFactory.criarEfeito(nomeEfeito, 0, danoDaSource);
 		efeito.setStacks(1);
 		aplicarEfeito(alvo, efeito);
+	}
+
+	private void aplicarMaldicaoDaArma(Personagem alvo, Arma arma) {
+		String fonte = arma != null ? arma.getNome() : "Arma desconhecida";
+		double percentual = obterPercentualMaldicao(fonte);
+		Maldicao maldicao = new Maldicao(fonte, percentual, 1000, false);
+		MaldicaoUtils.adicionarMaldicao(alvo, maldicao);
+		System.out.println(">>> Maldição ativada contra " + alvo.getNome() + " por acerto de " + fonte
+				+ " (" + (percentual * 100.0) + "% de redução de vida máxima).");
+	}
+
+	private double obterPercentualMaldicao(String nomeArma) {
+		if (nomeArma == null) {
+			return 0.20;
+		}
+
+		return switch (nomeArma) {
+		case "Sabre do Kraken" -> 0.075;
+		case "Lâminas Gêmeas Maré Alta" -> 0.05;
+		case "Dreadnought" -> 0.10;
+		default -> 0.20;
+		};
 	}
 
 	// ========== CONTROLE MENTAL ==========

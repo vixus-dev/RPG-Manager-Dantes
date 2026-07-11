@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -40,6 +41,7 @@ public class CriarController {
 	@FXML private TextField txtValorMoedas;
 	@FXML private ComboBox<String> comboTipoMoeda;
 	@FXML private ComboBox<String> comboRaridade;
+	@FXML private CheckBox chkShiny;
 	@FXML private TextField txtAndar;
 
 	// --- Abas de Categorias ---
@@ -126,6 +128,7 @@ public class CriarController {
 			comboRaridade.getItems().add(r.name());
 		}
 		comboRaridade.setValue(Raridade.COMUM.name());
+		chkShiny.setSelected(false);
 
 		// 2. Configurar ComboBoxes Arma
 		comboArmaTipo.getItems().addAll("Melee", "Ranged", "Magico", "Grimorio");
@@ -237,6 +240,10 @@ public class CriarController {
 
 		paneConsumivel.setVisible("Consumivel".equals(novaCategoria));
 		paneConsumivel.setManaged("Consumivel".equals(novaCategoria));
+
+		boolean equipamento = !"Consumivel".equals(novaCategoria);
+		chkShiny.setVisible(equipamento);
+		chkShiny.setManaged(equipamento);
 	}
 
 	@FXML
@@ -248,6 +255,7 @@ public class CriarController {
 		comboCategoria.setValue("Arma");
 		comboTipoMoeda.setValue("BRONZE");
 		comboRaridade.setValue(Raridade.COMUM.name());
+		chkShiny.setSelected(false);
 
 		comboArmaTipo.setValue("Melee");
 		comboArmaAtributo.setValue(Atributo.FORCA.name());
@@ -308,6 +316,7 @@ public class CriarController {
 				data.put("andar", andar);
 				data.put("valorMoedas", valor);
 				data.put("tipoMoeda", moeda);
+				data.put("shiny", chkShiny.isSelected());
 
 				int dano = parseInteger(txtArmaDano.getText(), 5);
 				int ticks = parseInteger(txtArmaTicks.getText(), 1);
@@ -363,6 +372,7 @@ public class CriarController {
 				data.put("andar", andar);
 				data.put("valorMoedas", valor);
 				data.put("tipoMoeda", moeda);
+				data.put("shiny", chkShiny.isSelected());
 
 				int defVal = parseInteger(txtDefesaBase.getText(), 10);
 				if ("Armadura".equals(categoria)) {

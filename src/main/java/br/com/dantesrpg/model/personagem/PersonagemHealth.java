@@ -13,6 +13,8 @@ import java.util.Queue;
  * e verificações de estado vital (vivo, ativo no combate).
  */
 public class PersonagemHealth {
+	private static final int DURACAO_MAXIMA_HISTORICO_DANO_TU = 300;
+
 
 	private final Personagem personagem;
 
@@ -190,25 +192,31 @@ public class PersonagemHealth {
 
 	// ========== HISTÓRICO DE DANO ==========
 
-	public void registrarDanoSofrido(double valor, int tempoGlobalTU) {
+	public void registrarDanoSofrido(double valor, int tickAtual) {
 		if (valor > 0) {
-			personagem.getHistoricoDano().add(new Personagem.DanoSofrido(valor, tempoGlobalTU));
+			Queue<Personagem.DanoSofrido> historico = personagem.getHistoricoDano();
+			removerDanosAnterioresAoTick(historico, tickAtual - DURACAO_MAXIMA_HISTORICO_DANO_TU);
+			historico.add(new Personagem.DanoSofrido(valor, tickAtual));
 		}
 	}
 
-	public double getDanoSofridoRecentemente(int duracaoTU, int tempoGlobalAtual) {
+	public double getDanoSofridoRecentemente(int duracaoTU, int tickAtual) {
 		Queue<Personagem.DanoSofrido> historico = personagem.getHistoricoDano();
-		int tempoLimite = tempoGlobalAtual - duracaoTU;
+		int tempoLimite = tickAtual - duracaoTU;
 		double danoTotalRecente = 0.0;
 
-		while (historico.peek() != null && historico.peek().tempoGlobalTU < tempoLimite) {
-			historico.poll();
-		}
+		removerDanosAnterioresAoTick(historico, tempoLimite);
 
 		for (Personagem.DanoSofrido evento : historico) {
 			danoTotalRecente += evento.valor;
 		}
 		return danoTotalRecente;
+	}
+
+	private void removerDanosAnterioresAoTick(Queue<Personagem.DanoSofrido> historico, int tempoLimite) {
+		while (historico.peek() != null && historico.peek().tempoGlobalTU < tempoLimite) {
+			historico.poll();
+		}
 	}
 
 	// ========== ESTADO VITAL ==========

@@ -6,7 +6,7 @@ import java.util.*;
 
 public class DistortedSolo extends Habilidade {
 	public DistortedSolo() {
-		super("Distorted Solo", "1d20 (IS). 1-10: 50% Dano. 11-20: Choque + Debuff.", TipoHabilidade.ATIVA, 2, 100, 1,
+		super("Screeched Solo", "1d20 (IS). 1-10: 50% Dano. 11-20: Choque + Debuff.", TipoHabilidade.ATIVA, 2, 100, 1,
 				TipoAlvo.INDIVIDUAL, 1.0, 1, Collections.emptyList());
 	}
 

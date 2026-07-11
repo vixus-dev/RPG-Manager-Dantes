@@ -6,7 +6,7 @@ import java.util.*;
 
 public class WhaWhaSolo extends Habilidade {
 	public WhaWhaSolo() {
-		super("Wha-Wha Solo", "1d20 (IS). Queimação ou Choque+Queimação.", TipoHabilidade.ATIVA, 2, 100, 1,
+		super("Sonic Slide", "1d20 (IS). Queimação ou Choque+Queimação.", TipoHabilidade.ATIVA, 2, 100, 1,
 				TipoAlvo.INDIVIDUAL, 0, 1, Collections.emptyList());
 	}
 

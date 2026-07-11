@@ -7,6 +7,7 @@ public abstract class Item {
 	private String tipoMoeda = "BRONZE";
 	private boolean usavelEmCombate;
 	private int grauOverclock = 0;
+	private boolean shiny = false;
 
 	public static final int OVERCLOCK_MAXIMO = 10;
 	public static final double OVERCLOCK_BONUS_POR_GRAU = 0.25;
@@ -48,6 +49,14 @@ public abstract class Item {
 
 	public boolean isOverclockado() {
 		return grauOverclock > 0;
+	}
+
+	public boolean isShiny() {
+		return shiny;
+	}
+
+	public void setShiny(boolean shiny) {
+		this.shiny = shiny;
 	}
 
 	// --- Getters ---

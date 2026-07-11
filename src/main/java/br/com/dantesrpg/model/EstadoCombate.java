@@ -10,7 +10,6 @@ public class EstadoCombate {
 	private List<Personagem> combatentes;
 	private Personagem atorAtual;
 	private int tickCounter; // Contador para gerenciar os ticks de DoT
-	private int tempoGlobalCombate = 0;
 	private int xpAcumuladoPool = 0;
 	private CombatManager combatManager;
 
@@ -86,14 +85,6 @@ public class EstadoCombate {
 
 	public void setCombateAtivo(boolean combateAtivo) {
 		this.combateAtivo = combateAtivo;
-	}
-
-	public int getTempoGlobalCombate() {
-		return tempoGlobalCombate;
-	}
-
-	public void avancarTempoGlobal(int tempo) {
-		this.tempoGlobalCombate += tempo;
 	}
 
 	public CombatManager getCombatManager() {

@@ -9,7 +9,7 @@ public class ModoPolaris extends FantasmaNobre {
 
 	@Override
 	public String getNome() {
-		return "...And Justice For All";
+		return "Raining Blood";
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class ModoPolaris extends FantasmaNobre {
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, AcaoMestreInput input,
 			CombatManager manager) {
-		System.out.println(">>> DARRELL ATIVA: ...AND JUSTICE FOR ALL!");
+		System.out.println(">>> DARRELL ATIVA: RAINING BLOOD!");
 
 		// Troca as Habilidades
 		conjurador.limparHabilidadesExtras();

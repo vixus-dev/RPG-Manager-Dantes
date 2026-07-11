@@ -9,6 +9,7 @@ import br.com.dantesrpg.model.Armadura;
 import br.com.dantesrpg.model.Amuleto;
 import br.com.dantesrpg.model.items.Consumivel;
 import br.com.dantesrpg.model.util.FileLoader;
+import br.com.dantesrpg.controller.util.ItemVisualUtils;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.Raridade;
 
@@ -466,6 +467,7 @@ public class LojaController {
 			lblNome.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; -fx-font-size: 12px; "
 					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
 		}
+		ItemVisualUtils.aplicarBrilhoNoInventario(lblNome, oferta.item);
 
 		// Badge de desconto
 		HBox nomeBox = new HBox(6);
@@ -688,6 +690,7 @@ public class LojaController {
 			lblNome.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; -fx-font-size: 12px; "
 					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
 		}
+		ItemVisualUtils.aplicarBrilhoNoInventario(lblNome, item);
 
 		// Quantidade
 		Label lblQtd = new Label("x" + quantidade);
@@ -745,6 +748,11 @@ public class LojaController {
 					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
 		} else {
 			lblNome.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px;");
+		}
+		if (slotNome.contains("Inv")) {
+			ItemVisualUtils.aplicarBrilhoNoInventario(lblNome, equipamento);
+		} else {
+			ItemVisualUtils.aplicarPulsacaoEquipado(lblNome, equipamento);
 		}
 		HBox.setHgrow(lblNome, Priority.ALWAYS);
 

@@ -389,6 +389,7 @@ public class CatalogoItensService {
 			}
 
 			if (armaFinal != null) {
+				armaFinal.setShiny(Boolean.TRUE.equals(armaData.get("shiny")));
 				armaFinal.setEfeitosOnHit(efeitosOnHit);
 
 				String habilidadeUnica = (String) armaData.getOrDefault("habilidadeConcedida", null);
@@ -470,6 +471,7 @@ public class CatalogoItensService {
 			String nome = (String) data.getOrDefault("nome", "Armadura Desconhecida");
 			String descricao = (String) data.getOrDefault("descricao", "Uma armadura resistente.");
 			String tipoMoeda = (String) data.getOrDefault("tipoMoeda", "BRONZE");
+			Raridade raridade = parseRaridade(data.get("raridade"));
 			int valor = data.containsKey("valorMoedas") ? ((Double) data.get("valorMoedas")).intValue() : 0;
 			int armaduraBase = ((Double) data.getOrDefault("armaduraBase", 0.0)).intValue();
 
@@ -478,6 +480,8 @@ public class CatalogoItensService {
 			Map<String, Double> modStatus = parseModificadoresStatus(
 					(Map<String, Double>) data.get("modificadoresStatus"));
 			Armadura armadura = new Armadura(nome, descricao, valor, armaduraBase, modificadores, modStatus);
+			armadura.setRaridade(raridade);
+			armadura.setShiny(Boolean.TRUE.equals(data.get("shiny")));
 			armadura.setTipoMoeda(tipoMoeda);
 
 			if (data.containsKey("efeitoAoTomarDano")) {
@@ -514,6 +518,7 @@ public class CatalogoItensService {
 			String nome = (String) data.getOrDefault("nome", "Amuleto Desconhecido");
 			String descricao = (String) data.getOrDefault("descricao", "Sem descrição.");
 			String tipoMoeda = (String) data.getOrDefault("tipoMoeda", "BRONZE");
+			Raridade raridade = parseRaridade(data.get("raridade"));
 			int valor = data.containsKey("valorMoedas") ? ((Double) data.get("valorMoedas")).intValue() : 0;
 			int armaduraBonus = ((Double) data.getOrDefault("armaduraBonus", 0.0)).intValue();
 
@@ -522,6 +527,8 @@ public class CatalogoItensService {
 			Map<String, Double> modStatus = parseModificadoresStatus(
 					(Map<String, Double>) data.get("modificadoresStatus"));
 			Amuleto amuleto = new Amuleto(nome, descricao, valor, armaduraBonus, modificadores, modStatus);
+			amuleto.setRaridade(raridade);
+			amuleto.setShiny(Boolean.TRUE.equals(data.get("shiny")));
 			amuleto.setTipoMoeda(tipoMoeda);
 
 			if (data.containsKey("habilidadesConcedidas")) {
@@ -545,6 +552,17 @@ public class CatalogoItensService {
 		if (input == null)
 			return new HashMap<>();
 		return new HashMap<>(input);
+	}
+
+	private Raridade parseRaridade(Object valor) {
+		if (!(valor instanceof String) || ((String) valor).isBlank()) {
+			return null;
+		}
+		try {
+			return Raridade.valueOf(((String) valor).toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 
 	private List<EfeitoOnHit> parseEfeitosOnHit(Map<String, Object> armaData) {
