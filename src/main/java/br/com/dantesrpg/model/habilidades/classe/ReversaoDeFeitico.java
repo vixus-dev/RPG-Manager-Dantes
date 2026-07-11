@@ -31,7 +31,7 @@ public class ReversaoDeFeitico extends Habilidade {
 		}
 
 		// Pega o dano sofrido nos últimos 300 TU
-		double vidaARecuperar = conjurador.getDanoSofridoRecentemente(300, estado.getTempoGlobalCombate());
+		double vidaARecuperar = conjurador.getDanoSofridoRecentemente(300, estado.getTickCounter());
 
 		if (vidaARecuperar > 0) {
 			// Usa o setVidaAtual que passa o 'estado' (para regras de Humano/Marionette)

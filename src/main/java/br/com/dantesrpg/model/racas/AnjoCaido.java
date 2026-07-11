@@ -180,8 +180,8 @@ public class AnjoCaido extends Raça {
 			return;
 
 		// Manutenção: -1 stack a cada 100TU
-		int tempoGlobal = estado.getTempoGlobalCombate();
-		if (tempoGlobal % 100 == 0 && tempoGlobal > 0) {
+		int tickAtual = estado.getTickCounter();
+		if (tickAtual % 100 == 0 && tickAtual > 0) {
 			this.currentStacks--;
 			System.out.println(">>> ΤΕΛΕΙΑ ΑΡΜΟΝΙΑ: -1 Harmonia (manutenção). Restam: " + this.currentStacks);
 
