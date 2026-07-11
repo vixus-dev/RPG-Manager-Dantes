@@ -121,6 +121,16 @@ public class GerenciadorCombateController {
 
 	private Timeline refreshTimer;
 
+	/**
+	 * Encerra tarefas periódicas antes de a janela do painel ser descartada.
+	 */
+	public void descartar() {
+		if (refreshTimer != null) {
+			refreshTimer.stop();
+			refreshTimer = null;
+		}
+	}
+
 	// Classe auxiliar para filtros de item
 	private static class ItemInfo {
 		String chave;

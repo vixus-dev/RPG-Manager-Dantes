@@ -71,6 +71,17 @@ public class PlayerCardController {
 	private Personagem personagem;
 	private javafx.animation.FadeTransition curseAnimation;
 
+	/**
+	 * Libera recursos visuais que continuam registrados no motor de animação do JavaFX.
+	 * Deve ser chamado antes de o card ser removido da cena.
+	 */
+	public void descartar() {
+		if (curseAnimation != null) {
+			curseAnimation.stop();
+			curseAnimation = null;
+		}
+	}
+
 	public void setPersonagem(Personagem personagem, String cardType) {
 		this.personagem = personagem;
 		if (personagem == null) {

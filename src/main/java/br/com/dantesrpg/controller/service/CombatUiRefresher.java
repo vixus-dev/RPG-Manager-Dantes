@@ -74,8 +74,8 @@ public class CombatUiRefresher {
 			return;
 		}
 
-		playerListContainer.getChildren().clear();
-		enemyListContainer.getChildren().clear();
+		descartarCards(playerListContainer);
+		descartarCards(enemyListContainer);
 		controller.forEachMap(m -> m.desenharPeoes(new ArrayList<>()));
 
 		int playerIndex = 0;
@@ -113,6 +113,15 @@ public class CombatUiRefresher {
 		}
 
 		controller.forEachMap(m -> m.desenharPeoes(estado.getCombatentes()));
+	}
+
+	private void descartarCards(VBox listaDeCards) {
+		for (Node node : listaDeCards.getChildren()) {
+			if (node.getUserData() instanceof PlayerCardController) {
+				((PlayerCardController) node.getUserData()).descartar();
+			}
+		}
+		listaDeCards.getChildren().clear();
 	}
 
 	private VBox criarTokenVisivel(Personagem personagem, int tuExibido, boolean isPreview) {
