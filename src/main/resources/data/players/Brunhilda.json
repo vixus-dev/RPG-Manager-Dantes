@@ -21,11 +21,13 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 105.0,
-  "contadorTU": 4,
+  "vidaAtual": 92.5,
+  "contadorTU": 1,
   "fantasmaNobre": "Fimbulwinter",
   "armaEquipada": "Machado Jötunbani",
-  "inventario": {},
+  "inventario": {
+    "Sabre do Kraken": 1
+  },
   "xpAtual": 0,
   "vidaMaximaBase": 105.0,
   "classe": "Barbaro",
@@ -35,9 +37,10 @@
   "nome": "Brunhilda",
   "segmentos": 0,
   "grau": 0,
-  "posX": 4,
-  "posY": 4,
-  "manaAtual": 8.0,
+  "posX": 3,
+  "posY": 6,
+  "manaAtual": 6.5,
+  "escudoDivinoAtual": 0.0,
   "raca": "Orc",
   "nivel": 1,
   "wieldingMaximo": 2

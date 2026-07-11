@@ -1,10 +1,10 @@
 {
-  "iniciativaBase": 32,
+  "iniciativaBase": 44,
   "atributosBase": {
     "FORCA": 4,
     "PERCEPCAO": 5,
     "ENDURANCE": 1,
-    "CARISMA": 10,
+    "CARISMA": 14,
     "INTELIGENCIA": 9,
     "DESTREZA": 10,
     "SORTE": 1,
@@ -21,11 +21,11 @@
     "bronze": 392
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 96.0,
-  "contadorTU": 2,
+  "vidaAtual": 109.0,
+  "contadorTU": 77,
   "fantasmaNobre": "ModoPolaris",
   "armaduraEquipada": "Nano-Armadura MK1",
-  "armaEquipada": "Thompson",
+  "armaEquipada": "Adaga da Alma",
   "inventario": {
     "PocaoDeManaMédia": 1,
     "Exoesqueleto do Êxtase Controlado": 1,
@@ -34,19 +34,19 @@
     "Besta Pesada": 1,
     "Souna, o Chicote do Primeiro Desejo": 1,
     "Colt M1911": 1,
-    "Adaga da Alma": 1,
     "P E D R A": 1,
     "PocaoForcaPequena": 2,
     "Faca de Brinquedo": 1,
     "Caixa de Bailarina": 1,
     "Cajado Eólico da Luxúria": 1,
-    "PocaoDeCuraGrande": 3
+    "Thompson": 1,
+    "Rifle Submersível XM-12": 1
   },
   "xpAtual": 406,
-  "vidaMaximaBase": 36.0,
+  "vidaMaximaBase": 49.0,
   "classe": "Ilusionista",
   "armasEquipadas": [
-    "Thompson"
+    "Adaga da Alma"
   ],
   "nome": "Darrell",
   "segmentos": 0,
@@ -55,9 +55,9 @@
   "posY": 5,
   "amuleto2": "Pingente do Olhar Desejado",
   "amuleto1": "Seixo da Absolvição",
-  "manaAtual": 3.0,
+  "manaAtual": 5.0,
   "escudoDivinoAtual": 0.0,
   "raca": "Anjo-Caido",
-  "nivel": 6,
+  "nivel": 8,
   "wieldingMaximo": 2
 }
