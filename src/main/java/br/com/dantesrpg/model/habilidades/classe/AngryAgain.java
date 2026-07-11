@@ -6,7 +6,7 @@ import java.util.*;
 
 public class AngryAgain extends Habilidade {
 	public AngryAgain() {
-		super("Angry Again", "Aumenta o dano do próximo ataque de um aliado (5% por ponto de IS).",
+		super("Dissident Aggressor", "Aumenta o dano do próximo ataque de um aliado (5% por ponto de IS).",
 				TipoHabilidade.ATIVA, 3, 100, 1, TipoAlvo.INDIVIDUAL, 0, 0, Collections.emptyList());
 	}
 
