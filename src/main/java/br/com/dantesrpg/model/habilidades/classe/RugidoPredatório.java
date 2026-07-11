@@ -17,7 +17,7 @@ import java.util.Map; // Import necessário
 public class RugidoPredatório extends Habilidade {
 
 	public RugidoPredatório() {
-		super("Rugido predatório", // Nome
+		super("Rugido Predatório", // Nome
 				"Causa dano e reduz a armadura do alvo por 200 TU.", // Descrição
 				TipoHabilidade.ATIVA, 2, // Custo de Mana
 				90, // Custo de TU

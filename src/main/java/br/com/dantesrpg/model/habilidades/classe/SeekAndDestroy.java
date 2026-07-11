@@ -6,7 +6,7 @@ import java.util.*;
 
 public class SeekAndDestroy extends Habilidade {
 	public SeekAndDestroy() {
-		super("Seek and Destroy", "Aumenta o dano de todos os aliados em 30%.", TipoHabilidade.ATIVA, 5, 100, 1,
+		super("Fight Till Death", "Aumenta o dano de todos os aliados em 30%.", TipoHabilidade.ATIVA, 5, 100, 1,
 				TipoAlvo.EQUIPE, 4, 0, 0, Collections.emptyList());
 	}
 

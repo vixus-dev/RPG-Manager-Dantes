@@ -6,7 +6,7 @@ import java.util.*;
 
 public class PoisonWasTheCure extends Habilidade {
 	public PoisonWasTheCure() {
-		super("Poison was the Cure", "Cura um aliado em 10% + (2 * IS).", TipoHabilidade.ATIVA, 4, 100, 1,
+		super("Black Magic", "Cura um aliado em 10% + (2 * IS).", TipoHabilidade.ATIVA, 4, 100, 1,
 				TipoAlvo.INDIVIDUAL, 0, 0, Collections.emptyList());
 	}
 

@@ -6,7 +6,7 @@ import java.util.*;
 
 public class PlainSolo extends Habilidade {
 	public PlainSolo() {
-		super("Plain Solo", "1d20 (IS). Sono ou Sono 2x.", TipoHabilidade.ATIVA, 1, 100, 1, TipoAlvo.INDIVIDUAL, 0, 1,
+		super("Divine Vocal", "1d20 (IS). Sono ou Sono 2x.", TipoHabilidade.ATIVA, 1, 100, 1, TipoAlvo.INDIVIDUAL, 0, 1,
 				Collections.emptyList());
 	}
 
