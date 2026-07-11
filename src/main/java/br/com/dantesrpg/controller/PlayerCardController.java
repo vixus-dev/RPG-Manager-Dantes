@@ -75,10 +75,7 @@ public class PlayerCardController {
 	 * Deve ser chamado antes de o card ser removido da cena.
 	 */
 	public void descartar() {
-		if (curseAnimation != null) {
-			curseAnimation.stop();
-			curseAnimation = null;
-		}
+		// Mantido como ponto de ciclo de vida para os controladores que descartam os cards.
 	}
 
 	public void setPersonagem(Personagem personagem, String cardType) {
