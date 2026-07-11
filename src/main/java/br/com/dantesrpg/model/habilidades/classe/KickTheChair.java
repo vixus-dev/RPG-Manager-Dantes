@@ -2,6 +2,7 @@ package br.com.dantesrpg.model.habilidades.classe;
 
 import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.enums.*;
+import br.com.dantesrpg.model.fantasmasnobres.ModoPolaris;
 import java.util.*;
 
 public class KickTheChair extends Habilidade {
@@ -86,6 +87,6 @@ public class KickTheChair extends Habilidade {
 		}
 
 		conjurador.recalcularAtributosEstatisticas();
-		br.com.dantesrpg.model.fantasmasnobres.ModoPolaris.reverterParaPolaris(conjurador);
+		ModoPolaris.reverterParaPolaris(conjurador);
 	}
 }
