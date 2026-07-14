@@ -514,5 +514,215 @@
       "TAXA_CRITICA": 0.05,
       "DANO_CRITICO": 0.15
     }
+  },
+  "Armadura de Couro Impermeável": {
+    "classeItem": "Armadura",
+    "nome": "Armadura de Couro Impermeável",
+    "descricao": "Couro tratado contra água, maresia e infiltrações.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 8000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 25,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "TAXA_CRITICA": 0.05
+    }
+  },
+  "Couraça do Capitão": {
+    "classeItem": "Armadura",
+    "nome": "Couraça do Capitão",
+    "descricao": "Couraça de comando, reforçada para liderar na linha de frente.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 9000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 25,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 20
+    }
+  },
+  "Couraça do Capitão Naufragado": {
+    "classeItem": "Armadura",
+    "nome": "Couraça do Capitão Naufragado",
+    "descricao": "A couraça de um capitão perdido no abismo, ainda marcada por sua última batalha.",
+    "raridade": "COMUM",
+    "shiny": true,
+    "andar": "5",
+    "valorMoedas": 12000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 40,
+    "modificadoresDeAtributo": {
+      "TOPOR": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 30
+    }
+  },
+  "Armadura de Mergulho": {
+    "classeItem": "Armadura",
+    "nome": "Armadura de Mergulho",
+    "descricao": "Equipamento pesado para suportar a pressão das águas profundas.",
+    "raridade": "INCOMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 18000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 35,
+    "modificadoresDeAtributo": {
+      "ENDURANCE": 1
+    },
+    "modificadoresStatus": {
+      "MOVIMENTO": -1
+    }
+  },
+  "Armadura de Mergulho Militar": {
+    "classeItem": "Armadura",
+    "nome": "Armadura de Mergulho Militar",
+    "descricao": "Versão militar aprimorada, preparada para operações navais de alto risco.",
+    "raridade": "INCOMUM",
+    "shiny": true,
+    "andar": "5",
+    "valorMoedas": 25000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 55,
+    "modificadoresDeAtributo": {
+      "ENDURANCE": 1,
+      "TOPOR": 1
+    },
+    "modificadoresStatus": {
+      "MOVIMENTO": -1,
+      "HP_MAXIMO": 30
+    }
+  },
+  "Casaco Anti-Balistico": {
+    "classeItem": "Armadura",
+    "nome": "Casaco Anti-Balistico",
+    "descricao": "Casaco naval com camadas resistentes a impacto e contaminação.",
+    "raridade": "INCOMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 16000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 40,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "RESISTENCIA_DOT": 0.075,
+      "HP_MAXIMO": 20
+    }
+  },
+  "Casaco Anti-Balistico Naval": {
+    "classeItem": "Armadura",
+    "nome": "Casaco Anti-Balistico Naval",
+    "descricao": "Modelo naval brilhante com proteção reforçada contra toxinas e projéteis.",
+    "raridade": "INCOMUM",
+    "shiny": true,
+    "andar": "5",
+    "valorMoedas": 30000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 70,
+    "modificadoresDeAtributo": {
+      "TOPOR": 1
+    },
+    "modificadoresStatus": {
+      "RESISTENCIA_DOT": 0.15,
+      "HP_MAXIMO": 40
+    }
+  },
+  "Exoesqueleto Oceânico": {
+    "classeItem": "Armadura",
+    "nome": "Exoesqueleto Oceânico",
+    "descricao": "Estrutura biomecânica adaptada à pressão e à violência do oceano profundo.",
+    "raridade": "RARO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 30000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 40,
+    "modificadoresDeAtributo": {
+      "FORCA": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 20,
+      "DANO_BONUS_PERCENTUAL": 0.15
+    }
+  },
+  "Traje Tático \"Nautilus MK-I\"": {
+    "classeItem": "Armadura",
+    "nome": "Traje Tático \"Nautilus MK-I\"",
+    "descricao": "Traje experimental de reconhecimento e combate subaquático.",
+    "raridade": "RARO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 32000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 40,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 25,
+      "MP_MAXIMO": 1
+    }
+  },
+  "Traje Tático \"Nautilus MK-II\"": {
+    "classeItem": "Armadura",
+    "nome": "Traje Tático \"Nautilus MK-II\"",
+    "descricao": "Segunda geração do traje Nautilus, com blindagem e sistemas ampliados.",
+    "raridade": "EPICO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 45000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 50,
+    "modificadoresDeAtributo": {
+      "ENDURANCE": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 50,
+      "MP_MAXIMO": 1,
+      "DANO_BONUS_PERCENTUAL": 0.10
+    }
+  },
+  "Casaco do Corsário": {
+    "classeItem": "Armadura",
+    "nome": "Casaco do Corsário",
+    "descricao": "Casaco elegante de um saqueador dos mares, feito para golpes decisivos.",
+    "raridade": "EPICO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 40000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 25,
+    "modificadoresDeAtributo": {
+      "SAGACIDADE": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": -15,
+      "TAXA_CRITICA": 0.075,
+      "DANO_CRITICO": 0.20
+    }
+  },
+  "Armadura Leviatã": {
+    "classeItem": "Armadura",
+    "nome": "Armadura Leviatã",
+    "descricao": "Armadura lendária moldada para suportar a fúria de uma criatura abissal.",
+    "raridade": "LENDARIO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 80000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBase": 75,
+    "modificadoresDeAtributo": {
+      "FORCA": 1,
+      "SAGACIDADE": 1,
+      "INSPIRACAO": -1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 100,
+      "TAXA_CRITICA": 0.10,
+      "DANO_CRITICO": 0.25
+    }
   }
 }

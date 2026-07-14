@@ -716,5 +716,227 @@
       "REDUCAO_DANO_MODIFICADOR": 0.15,
       "DANO_BONUS_PERCENTUAL": 0.15
     }
+  },
+  "Botas de Convés": {
+    "classeItem": "Amuleto",
+    "nome": "Botas de Convés",
+    "descricao": "Botas firmes para atravessar um convés molhado sem perder o equilíbrio.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 3000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 5,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MOVIMENTO": 1
+    }
+  },
+  "Bússola do Navegador": {
+    "classeItem": "Amuleto",
+    "nome": "Bússola do Navegador",
+    "descricao": "Uma bússola que aponta para rotas ocultas e perigos ainda não descobertos.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 4000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 0,
+    "modificadoresDeAtributo": {
+      "PERCEPCAO": 1
+    },
+    "modificadoresStatus": {}
+  },
+  "Pingente Coralino": {
+    "classeItem": "Amuleto",
+    "nome": "Pingente Coralino",
+    "descricao": "Fragmento de coral que conserva a resistência das profundezas.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 5000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 10,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 15,
+      "RESISTENCIA_DOT": 0.05
+    }
+  },
+  "Luvas de Cabo": {
+    "classeItem": "Amuleto",
+    "nome": "Luvas de Cabo",
+    "descricao": "Luvas reforçadas para trabalhar com cordas, ganchos e cabos sob pressão.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 6000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 5,
+    "modificadoresDeAtributo": {
+      "DESTREZA": 1
+    },
+    "modificadoresStatus": {
+      "MOVIMENTO": 1
+    }
+  },
+  "Medalhão da Maré": {
+    "classeItem": "Amuleto",
+    "nome": "Medalhão da Maré",
+    "descricao": "Medalhão que pulsa no ritmo das marés e revigora seu portador.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 7000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 15,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "HP_MAXIMO": 10,
+      "MP_MAXIMO": 1
+    }
+  },
+  "Colar da Baleia Azul": {
+    "classeItem": "Amuleto",
+    "nome": "Colar da Baleia Azul",
+    "descricao": "Colar feito com um fragmento azul de uma criatura colossal do oceano.",
+    "raridade": "INCOMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 14000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 25,
+    "modificadoresDeAtributo": {
+      "ENDURANCE": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 30
+    }
+  },
+  "Ampulheta das Marés": {
+    "classeItem": "Amuleto",
+    "nome": "Ampulheta das Marés",
+    "descricao": "A areia interna sobe e desce como uma maré impossível de deter.",
+    "raridade": "INCOMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 15000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 15,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MP_MAXIMO": 2,
+      "RESISTENCIA_DOT": 0.10,
+      "MOVIMENTO": -1
+    }
+  },
+  "Coração de Coral Vivo": {
+    "classeItem": "Amuleto",
+    "nome": "Coração de Coral Vivo",
+    "descricao": "Núcleo de coral pulsante que cresce e se regenera continuamente.",
+    "raridade": "INCOMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 18000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 30,
+    "modificadoresDeAtributo": {
+      "ENDURANCE": 1
+    },
+    "modificadoresStatus": {
+      "HP_MAXIMO": 35,
+      "RESISTENCIA_DOT": 0.10
+    }
+  },
+  "Anel da Correnteza": {
+    "classeItem": "Amuleto",
+    "nome": "Anel da Correnteza",
+    "descricao": "Anel que conduz o corpo pela correnteza e transforma movimento em impulso.",
+    "raridade": "INCOMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 12000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 10,
+    "modificadoresDeAtributo": {},
+    "modificadoresStatus": {
+      "MOVIMENTO": 2,
+      "DANO_BONUS_PERCENTUAL": 0.075
+    }
+  },
+  "Monóculo do Navegador Abissal": {
+    "classeItem": "Amuleto",
+    "nome": "Monóculo do Navegador Abissal",
+    "descricao": "Lente escura capaz de revelar silhuetas e rotas nas regiões mais profundas.",
+    "raridade": "RARO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 25000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 15,
+    "modificadoresDeAtributo": {
+      "PERCEPCAO": 2
+    },
+    "modificadoresStatus": {
+      "TAXA_CRITICA": 0.05,
+      "MP_MAXIMO": 1
+    }
+  },
+  "Medalhão da Tempestade": {
+    "classeItem": "Amuleto",
+    "nome": "Medalhão da Tempestade",
+    "descricao": "Medalhão carregado pela energia de uma tempestade que nunca termina.",
+    "raridade": "RARO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 30000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 25,
+    "modificadoresDeAtributo": {
+      "SORTE": 1
+    },
+    "modificadoresStatus": {
+      "TAXA_CRITICA": 0.10,
+      "DANO_CRITICO": 0.15
+    }
+  },
+  "Relógio de Bolso do Mar": {
+    "classeItem": "Amuleto",
+    "nome": "Relógio de Bolso do Mar",
+    "descricao": "Relógio náutico que mantém seu portador no compasso das ondas.",
+    "raridade": "EPICO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 40000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 30,
+    "modificadoresDeAtributo": {
+      "SAGACIDADE": 1
+    },
+    "modificadoresStatus": {
+      "MP_MAXIMO": 2,
+      "MOVIMENTO": 1,
+      "DANO_BONUS_PERCENTUAL": 0.10
+    }
+  },
+  "Relógio de Bolso do Mar Infinito": {
+    "classeItem": "Amuleto",
+    "nome": "Relógio de Bolso do Mar Infinito",
+    "descricao": "Versão shiny do relógio náutico, sincronizada com um oceano sem fim.",
+    "raridade": "EPICO",
+    "shiny": true,
+    "andar": "5",
+    "valorMoedas": 55000,
+    "tipoMoeda": "BRONZE",
+    "armaduraBonus": 40,
+    "modificadoresDeAtributo": {
+      "SAGACIDADE": 1
+    },
+    "modificadoresStatus": {
+      "MP_MAXIMO": 2,
+      "MOVIMENTO": 1,
+      "DANO_BONUS_PERCENTUAL": 0.15,
+      "DANO_CRITICO": 0.10
+    }
   }
 }
