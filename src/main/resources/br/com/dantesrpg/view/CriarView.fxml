@@ -182,8 +182,14 @@
                                 <TextField fx:id="txtArmaSlots" promptText="Ex: 3" styleClass="editor-search-field" />
                             </VBox>
                             
+                            <!-- Penetracao de Armadura -->
+                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                                <Label text="Penetração de Armadura (%)" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                                <TextField fx:id="txtArmaPenetracao" promptText="Ex: 15" styleClass="editor-search-field" />
+                            </VBox>
+
                             <!-- Habilidades Concedidas -->
-                            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="3">
+                            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.columnSpan="2">
                                 <Label text="Habilidades Concedidas (separadas por vírgula)" style="-fx-text-fill: #808090; -fx-font-size: 11px; -fx-font-weight: bold;" />
                                 <TextField fx:id="txtArmaHabilidades" promptText="Ex: Auto-Guarda, Bash Strike" styleClass="editor-search-field" />
                             </VBox>

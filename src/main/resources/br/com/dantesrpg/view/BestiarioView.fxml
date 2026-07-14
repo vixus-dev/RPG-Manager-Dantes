@@ -85,7 +85,7 @@
 
                             <Label text="Destreza" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                             <TextField fx:id="inputAgi" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                            <Label text="Topor" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                            <Label text="Resistência (%)" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                             <TextField fx:id="inputDef" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
                             <Label text="XP" GridPane.columnIndex="0" GridPane.rowIndex="3" />
