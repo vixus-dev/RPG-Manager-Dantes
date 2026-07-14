@@ -11,6 +11,7 @@ import br.com.dantesrpg.model.racas.HalfAngel;
 import br.com.dantesrpg.model.racas.HalfDemon;
 import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.racas.Marionette;
+import br.com.dantesrpg.model.util.ArmaduraUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +57,7 @@ public class Personagem {
 	private double escudoDivinoAtual;
 	private double escudoDivinoMaximo;
 	private double escudoInfernalAtual = 0.0;
+	private int armaduraNatural;
 	private int armaduraTotal;
 	private double reducaoDanoArmadura;
 
@@ -270,7 +272,7 @@ public class Personagem {
 
 	private void resetarStats() {
 		this.bonusDanoPercentual = 0.0;
-		this.armaduraTotal = 0;
+		this.armaduraTotal = Math.max(0, this.armaduraNatural);
 		this.movimento = 0;
 		this.reducaoDanoTopor = 0.0;
 		this.reducaoDoTTopor = 0.0;
@@ -451,7 +453,7 @@ public class Personagem {
 		this.manaAtual = Math.min(this.manaAtual, this.manaMaxima);
 		this.armaduraTotal = Math.max(0, this.armaduraTotal);
 
-		this.reducaoDanoArmadura = (double) this.armaduraTotal / (100.0 + this.armaduraTotal);
+		this.reducaoDanoArmadura = ArmaduraUtils.calcularReducaoPorPontos(this.armaduraTotal);
 
 		// Converte excesso de redução de dano (acima de 90%) em bônus de dano
 		double reducaoTotal = this.reducaoDanoArmadura + this.reducaoDanoTopor;
@@ -953,6 +955,15 @@ public class Personagem {
 
 	public int getArmaduraTotal() {
 		return armaduraTotal;
+	}
+
+	public int getArmaduraNatural() {
+		return armaduraNatural;
+	}
+
+	public void setArmaduraNatural(int armaduraNatural) {
+		this.armaduraNatural = Math.max(0, armaduraNatural);
+		recalcularAtributosEstatisticas();
 	}
 
 	public double getReducaoDanoArmadura() {

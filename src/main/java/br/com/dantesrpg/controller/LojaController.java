@@ -1323,6 +1323,10 @@ mainController.salvarEstadoJogadores();
 		// Stats base
 		addPreviewStat("Dano Base: " + arma.getDanoBase() + " (x" + ticks + ")", "#e74c3c");
 		addPreviewStat("Wielding: " + arma.getWielding(), "#cccccc");
+		if (arma.getPenetracaoArmadura() > 0.0) {
+			addPreviewStat(String.format("Penetração de Armadura: %.0f%%",
+					arma.getPenetracaoArmadura() * 100.0), "#f39c12");
+		}
 		addPreviewStat("Alcance: " + arma.getAlcance(), "#f1c40f");
 		addPreviewStat("Custo TU: " + arma.getCustoTU(), "#3498db");
 

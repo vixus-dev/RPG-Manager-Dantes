@@ -717,6 +717,9 @@ public class EditorJogadorController {
         if (item instanceof Arma) {
             Arma a = (Arma) item;
             sb.append("Dano: ").append(a.getDanoBase()).append("\n");
+            if (a.getPenetracaoArmadura() > 0.0) {
+                sb.append(String.format("Penetração de armadura: %.0f%%\n", a.getPenetracaoArmadura() * 100.0));
+            }
             List<String> habs = a.getHabilidadesConcedidasNomes();
             if (habs != null) {
                 for (String hab : habs) {
@@ -1718,6 +1721,9 @@ public class EditorJogadorController {
             Arma a = (Arma) item;
             sb.append("Dano: ").append(a.getDanoBase()).append("\n");
             sb.append("Wielding: ").append(a.getWielding()).append("\n");
+            if (a.getPenetracaoArmadura() > 0.0) {
+                sb.append(String.format("Penetração de armadura: %.0f%%\n", a.getPenetracaoArmadura() * 100.0));
+            }
             sb.append("Atributo: ")
                 .append(a.getAtributoMultiplicador())
                 .append("\n");

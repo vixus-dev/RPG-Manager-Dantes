@@ -54,6 +54,7 @@ public class CriarController {
 	@FXML private ComboBox<String> comboArmaAtributo;
 	@FXML private ComboBox<String> comboArmaWielding;
 	@FXML private TextField txtArmaDano;
+	@FXML private TextField txtArmaPenetracao;
 	@FXML private TextField txtArmaTicks;
 	@FXML private TextField txtArmaTU;
 	@FXML private TextField txtArmaAlcance;
@@ -261,6 +262,7 @@ public class CriarController {
 		comboArmaAtributo.setValue(Atributo.FORCA.name());
 		comboArmaWielding.setValue("1 Mão");
 		txtArmaDano.clear();
+		txtArmaPenetracao.clear();
 		txtArmaTicks.clear();
 		txtArmaTU.clear();
 		txtArmaAlcance.clear();
@@ -332,6 +334,10 @@ public class CriarController {
 				data.put("tipo", armaTipo);
 				data.put("alcance", alcance);
 				data.put("wielding", hands);
+				double penetracao = Math.max(0.0, Math.min(parseDouble(txtArmaPenetracao.getText(), 0.0), 100.0));
+				if (penetracao > 0.0) {
+					data.put("penetracaoArmadura", penetracao / 100.0);
+				}
 
 				String aoe = comboArmaAlvo.getValue();
 				if (!TipoAlvo.INDIVIDUAL.name().equals(aoe)) {

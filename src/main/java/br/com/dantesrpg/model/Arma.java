@@ -22,6 +22,7 @@ public abstract class Arma extends Item {
 	private int custoTU;
 	private int alcance;
 	private int wielding = 1;
+	private double penetracaoArmadura;
 
 	protected String tipo;
 	protected int municaoMaxima;
@@ -273,6 +274,28 @@ public abstract class Arma extends Item {
 		this.municaoAtual = this.municaoMaxima;
 	}
 
+	/**
+	 * Penetracao configurada na arma, em formato decimal (0.15 = 15%).
+	 */
+	public double getPenetracaoArmadura() {
+		return Math.max(0.0, Math.min(penetracaoArmadura, 1.0));
+	}
+
+	public void setPenetracaoArmadura(double penetracaoArmadura) {
+		this.penetracaoArmadura = Math.max(0.0, Math.min(penetracaoArmadura, 1.0));
+	}
+
+	/**
+	 * Combina a penetracao declarada no JSON com passivas especificas da arma.
+	 */
+	public double getPenetracaoArmaduraPercentual(Personagem ator, Personagem alvo, EstadoCombate estado) {
+		double penetracaoTotal = getPenetracaoArmadura() + getIgnorarDefesaPercentual(ator, alvo, estado);
+		return Math.max(0.0, Math.min(penetracaoTotal, 1.0));
+	}
+
+	/**
+	 * Hook legado para armas unicas que possuem penetracao dinamica.
+	 */
 	public double getIgnorarDefesaPercentual(Personagem ator, Personagem alvo, EstadoCombate estado) {
 		return 0.0; // Padrão
 	}
