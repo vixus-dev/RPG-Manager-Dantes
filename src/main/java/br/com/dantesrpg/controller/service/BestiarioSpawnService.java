@@ -23,6 +23,7 @@ import br.com.dantesrpg.model.classes.ClassePlaceholder;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.PesoEntidade;
 import br.com.dantesrpg.model.racas.RaçaPlaceholder;
+import br.com.dantesrpg.model.util.ArmaduraUtils;
 import br.com.dantesrpg.model.util.FileLoader;
 
 public class BestiarioSpawnService {
@@ -122,13 +123,14 @@ public class BestiarioSpawnService {
 		int grau = ((Number) data.getOrDefault("grau", 0.0)).intValue();
 		String pesoStr = (String) data.getOrDefault("peso", "medio_padrao");
 
-		Map<Atributo, Integer> atributos = atributosBase(agilidade, defesa);
+		Map<Atributo, Integer> atributos = atributosBase(agilidade);
 		long qtdExistente = estado.getCombatentes().stream().filter(p -> p.getNome().startsWith(nomeBase)).count();
 		String nomeFinal = nomeBase + " " + (qtdExistente + 1);
 
 		String racaStr = (String) data.getOrDefault("raca", "Criatura");
 		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1, atributos,
 				vidaMax, 0);
+		monstro.setArmaduraNatural(ArmaduraUtils.calcularPontosParaReducaoPercentual(defesa));
 		monstro.setFaccao("INIMIGO");
 		monstro.setNomeBaseImagem(nomeBaseImagem);
 		monstro.setXpReward(xpReward);
@@ -209,7 +211,8 @@ public class BestiarioSpawnService {
 
 		String racaStr = (String) dadosMonstro.getOrDefault("raca", "Criatura");
 		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1,
-				atributosBase(agilidade, defesa), vida, 0);
+				atributosBase(agilidade), vida, 0);
+		monstro.setArmaduraNatural(ArmaduraUtils.calcularPontosParaReducaoPercentual(defesa));
 		monstro.setVidaMaxima(vida);
 		monstro.setVidaAtual(vida);
 		monstro.setManaMaxima(mana);
@@ -247,13 +250,12 @@ public class BestiarioSpawnService {
 		return estadoSupplier.get();
 	}
 
-	private Map<Atributo, Integer> atributosBase(int agilidade, int defesa) {
+	private Map<Atributo, Integer> atributosBase(int agilidade) {
 		Map<Atributo, Integer> atributos = new HashMap<>();
 		for (Atributo atributo : Atributo.values()) {
 			atributos.put(atributo, 1);
 		}
 		atributos.put(Atributo.DESTREZA, agilidade);
-		atributos.put(Atributo.TOPOR, defesa);
 		return atributos;
 	}
 

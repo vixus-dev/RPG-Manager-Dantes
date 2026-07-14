@@ -14,6 +14,7 @@ import br.com.dantesrpg.model.enums.TipoAcao;
 import br.com.dantesrpg.model.racas.Marionette;
 import br.com.dantesrpg.model.util.DamageEvent;
 import br.com.dantesrpg.model.util.DiceRoller;
+import br.com.dantesrpg.model.util.ArmaduraUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -488,16 +489,19 @@ public class DamageCalculator {
 	public double aplicarReducaoArmadura(double danoBruto, Personagem ator, Personagem alvo, EstadoCombate estado,
 			Arma arma) {
 		double danoAjustado = aplicarReducaoDanoPreArmadura(danoBruto, ator, alvo, estado);
-		double reducaoArmadura = alvo.getReducaoDanoArmadura() + alvo.getReducaoDanoTopor();
-		reducaoArmadura = Math.min(reducaoArmadura, 0.90);
-		double pularDefesa = 0.0;
+		double penetracaoArmadura = 0.0;
 		if (ator != null && arma != null) {
-			pularDefesa = arma.getIgnorarDefesaPercentual(ator, alvo, estado);
+			penetracaoArmadura = arma.getPenetracaoArmaduraPercentual(ator, alvo, estado);
 		}
-		reducaoArmadura -= (reducaoArmadura * pularDefesa);
+
+		double armaduraEfetiva = ArmaduraUtils.calcularPontosAposPenetracao(
+				alvo.getArmaduraTotal(), penetracaoArmadura);
+		double reducaoArmadura = ArmaduraUtils.calcularReducaoPorPontos(armaduraEfetiva);
+		double reducaoTotal = reducaoArmadura + alvo.getReducaoDanoTopor();
+		reducaoTotal = Math.max(0.0, Math.min(reducaoTotal, ArmaduraUtils.REDUCAO_MAXIMA));
 		if (alvo.getEfeitosAtivos().containsKey("Ruptura"))
-			reducaoArmadura -= 0.25;
-		return Math.max(0, danoAjustado * (1.0 - reducaoArmadura));
+			reducaoTotal = Math.max(0.0, reducaoTotal - 0.25);
+		return Math.max(0, danoAjustado * (1.0 - reducaoTotal));
 	}
 
 	public double aplicarReducaoDanoPreArmadura(double danoBruto, Personagem ator, Personagem alvo,

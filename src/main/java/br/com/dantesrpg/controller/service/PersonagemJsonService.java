@@ -107,6 +107,9 @@ public class PersonagemJsonService {
 
 				Personagem personagem = new Personagem(nome, raca, classe, nivel, atributosBase, vidaMaximaBase,
 						iniciativaBase);
+				if (data.containsKey("armaduraNatural")) {
+					personagem.setArmaduraNatural(((Number) data.get("armaduraNatural")).intValue());
+				}
 				personagem.setXpAtual(xpSalvo);
 				personagem.setGrau(grau);
 				personagem.setSegmentosVida(segmentos);
@@ -479,6 +482,9 @@ public class PersonagemJsonService {
 		data.put("vidaMaximaBase", personagem.getVidaMaximaBase());
 		data.put("grau", personagem.getGrau());
 		data.put("segmentos", personagem.getSegmentosVida());
+		if (personagem.getArmaduraNatural() > 0) {
+			data.put("armaduraNatural", personagem.getArmaduraNatural());
+		}
 		if (personagem.getRaca() != null && personagem.getRaca().isV2()) {
 			data.put("RaçaV2", true);
 		}

@@ -33,6 +33,7 @@ import br.com.dantesrpg.model.items.Consumivel;
 import br.com.dantesrpg.model.items.EssenciaInimigo;
 import br.com.dantesrpg.model.items.PocaoAlquimica;
 import br.com.dantesrpg.model.racas.RaçaPlaceholder;
+import br.com.dantesrpg.model.util.ArmaduraUtils;
 import br.com.dantesrpg.model.util.FileLoader;
 import br.com.dantesrpg.model.util.HabilidadeFactory;
 
@@ -233,17 +234,18 @@ public class CatalogoItensService {
 		if (dadosMonstro != null) {
 			int vida = ((Double) dadosMonstro.getOrDefault("vida", 10.0)).intValue();
 			int def = ((Double) dadosMonstro.getOrDefault("defesa", 0.0)).intValue();
+			int agilidade = ((Number) dadosMonstro.getOrDefault("agilidade", 1.0)).intValue();
 			String nomeArma = (String) dadosMonstro.getOrDefault("arma", null);
 
 			Map<Atributo, Integer> atr = new HashMap<>();
 			for (Atributo atributo : Atributo.values()) {
 				atr.put(atributo, 1);
 			}
-			atr.put(Atributo.DESTREZA, def);
-			atr.put(Atributo.TOPOR, def);
+			atr.put(Atributo.DESTREZA, agilidade);
 
 			Classe classe = new ClassePlaceholder();
 			Personagem dummy = new Personagem(nomeMonstroAlvo, new RaçaPlaceholder(), classe, 1, atr, vida, 0);
+			dummy.setArmaduraNatural(ArmaduraUtils.calcularPontosParaReducaoPercentual(def));
 			if (nomeArma != null) {
 				dummy.setArmaEquipada(getArma(nomeArma));
 			}
@@ -391,6 +393,14 @@ public class CatalogoItensService {
 			if (armaFinal != null) {
 				armaFinal.setShiny(Boolean.TRUE.equals(armaData.get("shiny")));
 				armaFinal.setEfeitosOnHit(efeitosOnHit);
+				Object penetracaoObj = armaData.get("penetracaoArmadura");
+				if (penetracaoObj instanceof Number) {
+					double penetracao = ((Number) penetracaoObj).doubleValue();
+					if (penetracao > 1.0) {
+						penetracao /= 100.0;
+					}
+					armaFinal.setPenetracaoArmadura(penetracao);
+				}
 
 				String habilidadeUnica = (String) armaData.getOrDefault("habilidadeConcedida", null);
 				if (habilidadeUnica != null) {

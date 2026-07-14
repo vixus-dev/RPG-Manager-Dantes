@@ -17,6 +17,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.SelectionMode;
 import br.com.dantesrpg.model.util.PartyPreset;
 import br.com.dantesrpg.model.util.PartyPresetsData;
+import br.com.dantesrpg.model.util.ArmaduraUtils;
 
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.controller.MapController;
@@ -251,7 +252,7 @@ public class ReforcosDialogService {
 		spMana.setEditable(true);
 		Spinner<Integer> spAgi = new Spinner<>(0, 1000, 10);
 		spAgi.setEditable(true);
-		Spinner<Integer> spDef = new Spinner<>(0, 1000, 0);
+		Spinner<Integer> spDef = new Spinner<>(0, 90, 0);
 		spDef.setEditable(true);
 		
 		ComboBox<String> cbArmaEnemy = new ComboBox<>();
@@ -342,7 +343,7 @@ public class ReforcosDialogService {
 		Label lblAg = new Label("Agilidade:"); lblAg.setStyle("-fx-text-fill: white;");
 		gridEdit.add(lblAg, 0, r); gridEdit.add(spAgi, 1, r++);
 		
-		Label lblDf = new Label("Defesa:"); lblDf.setStyle("-fx-text-fill: white;");
+		Label lblDf = new Label("Resistência (%):"); lblDf.setStyle("-fx-text-fill: white;");
 		gridEdit.add(lblDf, 0, r); gridEdit.add(spDef, 1, r++);
 		
 		Label lblA = new Label("Arma:"); lblA.setStyle("-fx-text-fill: white;");
@@ -506,9 +507,10 @@ public class ReforcosDialogService {
 			atrBase.put(atr, 10);
 		}
 		atrBase.put(Atributo.DESTREZA, agilidade);
-		atrBase.put(Atributo.TOPOR, defesa);
+		atrBase.put(Atributo.TOPOR, 1);
 		
 		Personagem p = new Personagem(nome, racaObj, classeObj, 1, atrBase, vida, 0);
+		p.setArmaduraNatural(ArmaduraUtils.calcularPontosParaReducaoPercentual(defesa));
 		p.setGrau(grau);
 		p.setFaccao("JOGADOR");
 		p.setNomeBaseImagem(nomeBaseImagem);

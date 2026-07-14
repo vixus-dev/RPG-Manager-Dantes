@@ -271,7 +271,11 @@ public class BestiarioController {
 		dados.put("vida", lerCampoNumerico(inputVida, "Vida máxima", 1, false, erros));
 		dados.put("mana", lerCampoNumerico(inputMana, "Mana máxima", 0, false, erros));
 		dados.put("agilidade", lerCampoNumerico(inputAgi, "Destreza", 0, true, erros));
-		dados.put("defesa", lerCampoNumerico(inputDef, "Topor", 0, true, erros));
+		double resistencia = lerCampoNumerico(inputDef, "Resistência (%)", 0, true, erros);
+		if (resistencia > 90) {
+			erros.add("Resistência (%) deve ser no máximo 90.");
+		}
+		dados.put("defesa", resistencia);
 		dados.put("xpReward", lerCampoNumerico(inputXP, "XP", 0, true, erros));
 		dados.put("segmentos", lerCampoNumerico(inputSegmentos, "Segmentos", 0, true, erros));
 		dados.put("tamanhoX", lerCampoNumerico(inputTamanhoX, "Tamanho X", 1, true, erros));
