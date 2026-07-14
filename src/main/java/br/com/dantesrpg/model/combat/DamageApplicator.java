@@ -374,10 +374,11 @@ public class DamageApplicator {
 				}
 
 				// Explosivo
-				if (alvo.getPropriedades().contains("EXPLOSIVO")) {
+				int nivelExplosivo = alvo.getValorPropriedade("EXPLOSIVO");
+				if (nivelExplosivo > 0) {
 					System.out.println(">>> PROPRIEDADE ATIVADA: " + alvo.getNome() + " EXPLODIU!");
 
-int danoExplosao = (int) (alvo.getVidaMaximaBase() * 0.50);
+					int danoExplosao = (int) (alvo.getVidaMaximaBase() * 0.50 * nivelExplosivo);
 
 					Habilidade explosaoDummy = new Habilidade("Explosão", "Dano ao morrer", null, 0, 0, 0,
 							TipoAlvo.AREA_QUADRADA, 3, 0, 0, null) {
@@ -398,7 +399,7 @@ int danoExplosao = (int) (alvo.getVidaMaximaBase() * 0.50);
 				}
 
 				// Explodir em Chamas
-				if (alvo.getPropriedades().contains("EXPLODIR") || alvo.getNome().contains("Larva")) {
+				if (alvo.getValorPropriedade("EXPLODIR") > 0 || alvo.getNome().contains("Larva")) {
 					System.out.println(">>> " + alvo.getNome() + " EXPLODIU EM CHAMAS!");
 
 if (getController() != null && getController().getMapController() != null) {

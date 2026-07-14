@@ -45,13 +45,11 @@ public class EffectProcessor {
 			return;
 
 		String nomeEf = efeito.getNome().toLowerCase();
-		List<String> props = alvo.getPropriedades();
-
-		if (props.contains("IMUNIDADE_DOT") && efeito.getTipo() == TipoEfeito.DOT) {
+		if (alvo.getValorPropriedade("IMUNIDADE_DOT") > 0 && efeito.getTipo() == TipoEfeito.DOT) {
 			System.out.println(">>> IMUNE! " + alvo.getNome() + " é imune a DoT: " + efeito.getNome());
 			return;
 		}
-		if (props.contains("IMUNIDADE_CONTROLE")) {
+		if (alvo.getValorPropriedade("IMUNIDADE_CONTROLE") > 0) {
 			if (nomeEf.contains("sono") || nomeEf.contains("dormindo") || nomeEf.contains("atordoado")
 					|| nomeEf.contains("stun") || nomeEf.contains("medo") || nomeEf.contains("paralisia")
 					|| nomeEf.contains("congelado")) {

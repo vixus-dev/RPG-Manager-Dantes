@@ -130,10 +130,6 @@
                                 <ListView fx:id="listaPropsSelecionadas" prefHeight="150.0" styleClass="bestiary-property-list" />
                             </VBox>
                         </HBox>
-                        <HBox spacing="8.0">
-                            <TextField fx:id="inputPropriedadeCustom" promptText="Propriedade customizada, ex: BLINDADO:2" HBox.hgrow="ALWAYS" />
-                            <Button onAction="#onAdicionarPropriedadeCustomClick" styleClass="bestiary-secondary-button" text="Adicionar" />
-                        </HBox>
                     </VBox>
 
                     <HBox alignment="CENTER_RIGHT">

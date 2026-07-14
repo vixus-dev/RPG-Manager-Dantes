@@ -232,8 +232,9 @@ public class CombatManager {
 		}
 
 		// Regeneração
-		if (atual.getPropriedades().contains("REGENERACAO") && atual.isVivo()) {
-			double cura = atual.getVidaMaxima() * 0.10;
+		int nivelRegeneracao = atual.getValorPropriedade("REGENERACAO");
+		if (nivelRegeneracao > 0 && atual.isVivo()) {
+			double cura = atual.getVidaMaxima() * (0.10 * nivelRegeneracao);
 			if (atual.getVidaAtual() < atual.getVidaMaxima()) {
 				double novaVida = Math.min(atual.getVidaMaxima(), atual.getVidaAtual() + cura);
 				atual.setVidaAtual(novaVida, estado, mainController);

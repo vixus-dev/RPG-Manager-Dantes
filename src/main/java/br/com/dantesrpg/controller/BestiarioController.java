@@ -27,10 +27,12 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -102,8 +104,6 @@ public class BestiarioController {
 	private ListView<String> listaPropsDisponiveis;
 	@FXML
 	private ListView<String> listaPropsSelecionadas;
-	@FXML
-	private TextField inputPropriedadeCustom;
 
 	// Spawn
 	@FXML
@@ -365,8 +365,8 @@ public class BestiarioController {
 	}
 
 	private void configurarListasDePropriedades() {
-		listaPropsDisponiveis.setCellFactory(lv -> criarCelulaPropriedade());
-		listaPropsSelecionadas.setCellFactory(lv -> criarCelulaPropriedade());
+		listaPropsDisponiveis.setCellFactory(lv -> criarCelulaPropriedade(false));
+		listaPropsSelecionadas.setCellFactory(lv -> criarCelulaPropriedade(true));
 		listaPropsDisponiveis.setOnMouseClicked(event -> {
 			if (event.getClickCount() == 2) {
 				moverPropriedade(listaPropsDisponiveis, listaPropsSelecionadas);
@@ -380,18 +380,50 @@ public class BestiarioController {
 		atualizarPropriedadesDisponiveis(List.of());
 	}
 
-	private ListCell<String> criarCelulaPropriedade() {
+	private ListCell<String> criarCelulaPropriedade(boolean permiteGrau) {
 		return new ListCell<>() {
 			@Override
 			protected void updateItem(String item, boolean empty) {
 				super.updateItem(item, empty);
 				if (empty || item == null) {
 					setText(null);
+					setGraphic(null);
 					setTooltip(null);
 					return;
 				}
-				setText(item);
-				setTooltip(new Tooltip(getDescricaoPropriedade(item)));
+
+				String nomePropriedade = extrairNomePropriedade(item);
+				Tooltip tooltip = new Tooltip(getDescricaoPropriedade(item));
+				setTooltip(tooltip);
+
+				if (!permiteGrau) {
+					setText(nomePropriedade);
+					setGraphic(null);
+					return;
+				}
+
+				Label nome = new Label(nomePropriedade);
+				TextField inputGrauPropriedade = new TextField(extrairGrauInformado(item));
+				inputGrauPropriedade.setPromptText("1");
+				inputGrauPropriedade.setPrefWidth(46);
+				inputGrauPropriedade.setMaxWidth(46);
+				inputGrauPropriedade.setTextFormatter(new TextFormatter<String>(mudanca ->
+						mudanca.getControlNewText().matches("|[1-9]\\d*") ? mudanca : null));
+				inputGrauPropriedade.textProperty().addListener((obs, antigo, novo) -> {
+					tooltip.setText(getDescricaoPropriedade(montarPropriedade(nomePropriedade, novo)));
+				});
+				inputGrauPropriedade.focusedProperty().addListener((obs, tinhaFoco, temFoco) -> {
+					if (!temFoco) {
+						atualizarPropriedadeComGrau(getIndex(), nomePropriedade, inputGrauPropriedade.getText());
+					}
+				});
+				inputGrauPropriedade.setOnAction(event ->
+						atualizarPropriedadeComGrau(getIndex(), nomePropriedade, inputGrauPropriedade.getText()));
+
+				HBox conteudo = new HBox(8, nome, inputGrauPropriedade);
+				Tooltip.install(conteudo, tooltip);
+				setText(null);
+				setGraphic(conteudo);
 			}
 		};
 	}
@@ -411,7 +443,9 @@ public class BestiarioController {
 	}
 
 	private void atualizarPropriedadesDisponiveis(List<String> selecionadas) {
-		Set<String> selecionadasSet = new LinkedHashSet<>(selecionadas);
+		Set<String> selecionadasSet = selecionadas.stream()
+				.map(this::extrairNomePropriedade)
+				.collect(Collectors.toCollection(LinkedHashSet::new));
 		List<String> disponiveis = PROPRIEDADES_PADRAO.stream()
 				.filter(prop -> !selecionadasSet.contains(prop))
 				.collect(Collectors.toList());
@@ -427,39 +461,74 @@ public class BestiarioController {
 		if (selecionada == null) {
 			return;
 		}
+		String nomePropriedade = extrairNomePropriedade(selecionada);
 		origem.getItems().remove(selecionada);
-		if (!destino.getItems().contains(selecionada)) {
-			destino.getItems().add(selecionada);
+		if (destino == listaPropsSelecionadas) {
+			if (destino.getItems().stream().noneMatch(prop -> extrairNomePropriedade(prop).equals(nomePropriedade))) {
+				destino.getItems().add(nomePropriedade);
+			}
+		} else if (!destino.getItems().contains(nomePropriedade)) {
+			destino.getItems().add(nomePropriedade);
 		}
 	}
 
-	private void adicionarPropriedadeSelecionada(String propriedade) {
-		if (propriedade == null || propriedade.isBlank()) {
+	private void atualizarPropriedadeComGrau(int indice, String nomePropriedade, String grau) {
+		if (indice < 0 || indice >= listaPropsSelecionadas.getItems().size()) {
 			return;
 		}
-		String normalizada = propriedade.trim();
-		if (!listaPropsSelecionadas.getItems().contains(normalizada)) {
-			listaPropsSelecionadas.getItems().add(normalizada);
-		}
-		listaPropsDisponiveis.getItems().remove(normalizada);
+		listaPropsSelecionadas.getItems().set(indice, montarPropriedade(nomePropriedade, grau));
 	}
 
 	private String getDescricaoPropriedade(String propriedade) {
+		String nomePropriedade = extrairNomePropriedade(propriedade);
+		int grau = extrairGrauPropriedade(propriedade);
+		String descricao = switch (nomePropriedade) {
+			case "IMUNIDADE_CONTROLE" -> "Imunidade a Stun, Lento e Sono.";
+			case "IMUNIDADE_DOT" -> "Imunidade a DoTs como Veneno, Sangramento e Queimação.";
+			case "EXPLODIR" -> "Ao morrer, cria uma área de fogo de raio 1 por 8 TU.";
+			case "EXPLOSIVO" -> "Ao morrer, causa " + (grau * 50) + "% da vida máxima como dano em área de raio 3.";
+			case "VAMPIRISMO" -> "Cura " + grau + "% do dano causado.";
+			case "BLINDADO" -> "Concede escudo normal de " + (grau * 20) + "% da vida máxima.";
+			case "ARMADURADO" -> "Concede escudo normal de " + (grau * 50) + "% da vida máxima.";
+			case "REGENERACAO" -> "No início do turno, recupera " + (grau * 10) + "% da vida máxima.";
+			case "IMUNE_KNOCKBACK" -> "Ignora movimento forçado.";
+			default -> "Propriedade especial do personagem.";
+		};
+		return descricao + " (Nível " + grau + ").";
+	}
+
+	private String extrairNomePropriedade(String propriedade) {
 		if (propriedade == null) {
 			return "";
 		}
-		return switch (propriedade) {
-			case "IMUNIDADE_CONTROLE" -> "Imunidade a Stun, Lento e Sono.";
-			case "IMUNIDADE_DOT" -> "Imunidade a DoTs como Veneno, Sangramento e Queimação.";
-			case "EXPLODIR" -> "Explode em chamas ao morrer.";
-			case "EXPLOSIVO" -> "Detona efeito explosivo ao morrer.";
-			case "VAMPIRISMO" -> "Cura parte do dano causado.";
-			case "BLINDADO" -> "Concede escudo normal baseado na vida máxima. Aceita BLINDADO:N.";
-			case "ARMADURADO" -> "Concede escudo maior baseado na vida máxima. Aceita ARMADURADO:N.";
-			case "REGENERACAO" -> "Regenera HP no início do turno.";
-			case "IMUNE_KNOCKBACK" -> "Ignora movimento forçado.";
-			default -> "Propriedade customizada do personagem.";
-		};
+		int separador = propriedade.indexOf(':');
+		return (separador >= 0 ? propriedade.substring(0, separador) : propriedade).trim();
+	}
+
+	private String extrairGrauInformado(String propriedade) {
+		if (propriedade == null) {
+			return "";
+		}
+		int separador = propriedade.indexOf(':');
+		return separador >= 0 ? propriedade.substring(separador + 1).trim() : "";
+	}
+
+	private int extrairGrauPropriedade(String propriedade) {
+		String grauInformado = extrairGrauInformado(propriedade);
+		if (grauInformado.isBlank()) {
+			return 1;
+		}
+		try {
+			int grau = Integer.parseInt(grauInformado);
+			return grau > 0 ? grau : 1;
+		} catch (NumberFormatException e) {
+			return 1;
+		}
+	}
+
+	private String montarPropriedade(String nomePropriedade, String grau) {
+		String grauLimpo = grau == null ? "" : grau.trim();
+		return grauLimpo.isEmpty() ? nomePropriedade : nomePropriedade + ":" + grauLimpo;
 	}
 
 	private void carregarImagem(String nomeMonstro) {
@@ -603,12 +672,6 @@ public class BestiarioController {
 	@FXML
 	private void onRemoverPropriedadeClick() {
 		moverPropriedade(listaPropsSelecionadas, listaPropsDisponiveis);
-	}
-
-	@FXML
-	private void onAdicionarPropriedadeCustomClick() {
-		adicionarPropriedadeSelecionada(inputPropriedadeCustom.getText());
-		inputPropriedadeCustom.clear();
 	}
 
 	@FXML
