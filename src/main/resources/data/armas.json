@@ -38,7 +38,7 @@
   },
   "cadete Estelar": {
     "nome": "cadete Estelar",
-    "categoria": "Arco",
+    "categoria": "NPC",
     "descricao": "Uma arma mágica estelar da Lua Profana.",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -332,9 +332,28 @@
     "tamanhoArea": 60.0,
     "wielding": 2.0
   },
+  "MachadoBrutamontes[inimigo]": {
+    "nome": "MachadoBrutamontes[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Um bom e velho machado",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 120.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 23.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 130.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "CONE",
+    "tamanhoArea": 60.0,
+    "wielding": 2.0
+  },
   "Machado Abominação": {
     "nome": "Machado da Abominação",
-    "categoria": "Machado",
+    "categoria": "NPC",
     "descricao": "Um machado feito de carne, ele se extende baseado na carne consumida",
     "raridade": "COMUM",
     "shiny": false,
@@ -353,7 +372,7 @@
   },
   "Machado Abominação2": {
     "nome": "Machado da Abominação2",
-    "categoria": "Machado",
+    "categoria": "NPC",
     "descricao": "Um machado feito de carne, ele se extende baseado na carne consumida",
     "raridade": "COMUM",
     "shiny": false,
@@ -379,7 +398,7 @@
   },
   "EspadaFalsoSentinela": {
     "nome": "EspadaFalsoSentinela",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "espada de um falso crente",
     "raridade": "COMUM",
     "shiny": false,
@@ -667,9 +686,9 @@
     "habilidadesConcedidas": [],
     "wielding": 1.0
   },
-  "Bazooka": {
-    "nome": "Bazooka",
-    "categoria": "Canhão de Duas Mãos",
+  "Bazooka[inimigo]": {
+    "nome": "Bazooka[inimigo]",
+    "categoria": "NPC",
     "descricao": "Um bom e velho lança foguetes",
     "raridade": "INCOMUM",
     "shiny": false,
@@ -689,9 +708,28 @@
     ],
     "wielding": 2.0
   },
+  "Bazooka": {
+    "nome": "Bazooka",
+    "categoria": "Canhão de Mão",
+    "descricao": "UMA BAZOOKA",
+    "raridade": "INCOMUM",
+    "shiny": false,
+    "andar": "1",
+    "valorMoedas": 2500.0,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 200.0,
+    "tipo": "Melee",
+    "alcance": 5.0,
+    "tipoAlvo": "AREA_QUADRADA",
+    "tamanhoArea": 3.0,
+    "tipoMoeda": "BRONZE",
+    "wielding": 2.0
+  },
   "Broca": {
     "nome": "Broca",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Capáz de minerar materiais extremamente resistentes",
     "raridade": "INCOMUM",
     "shiny": false,
@@ -715,14 +753,14 @@
   },
   "Faca de Brinquedo": {
     "nome": "Faca de Brinquedo",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "uma faca de brinquedo... isso te enche de determinação",
     "raridade": "INCOMUM",
     "shiny": false,
     "andar": "0",
     "valorMoedas": 10.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 2.147483646E9,
+    "danoBase": 2,
     "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
     "custoTU": 1.0,
@@ -983,7 +1021,7 @@
   },
   "Lança-Chamas": {
     "nome": "Lança-Chamas",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Acoplada a um tanque de combustivel, gera um calor intenso e controlavel",
     "raridade": "RARO",
     "shiny": false,
@@ -1019,7 +1057,7 @@
   },
   "Cajado SUCCUBUS": {
     "nome": "Cajado SUCCUBUS",
-    "categoria": "Catalisador",
+    "categoria": "NPC",
     "descricao": "um cajado de metal, ele brilha por dentro, seria led ou magia?",
     "raridade": "RARO",
     "shiny": false,
@@ -1046,7 +1084,7 @@
   },
   "Orbe Cerberus": {
     "nome": "Orbe Cerberus",
-    "categoria": "Catalisador",
+    "categoria": "NPC",
     "descricao": "uma orbe de energia infernal",
     "raridade": "RARO",
     "shiny": false,
@@ -1067,7 +1105,7 @@
   },
   "Orbe Cerberus2": {
     "nome": "Orbe Cerberus2",
-    "categoria": "Catalisador",
+    "categoria": "NPC",
     "descricao": "uma orbe de energia sangrenta",
     "raridade": "RARO",
     "shiny": false,
@@ -1092,7 +1130,7 @@
   },
   "Orbe Sangrenta": {
     "nome": "Orbe Sangrenta",
-    "categoria": "Catalisador",
+    "categoria": "NPC",
     "descricao": "uma esfera de carne revestida de sangue",
     "raridade": "INCOMUM",
     "shiny": false,
@@ -1170,7 +1208,7 @@
     "tipo": "Melee",
     "alcance": 1.0,
     "modificadoresDeAtributo": {
-      "INTELIGENCIA": 4.0
+      "INTELIGENCIA": 2.0
     },
     "wielding": 1.0
   },
@@ -1290,7 +1328,7 @@
   },
   "Espada-Livro da Serpente": {
     "nome": "Espada-Livro da Serpente",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Uma espada em que a guarda foi substituida por UM LIVRO???? QUEM FOI O MANIACO QUE FEZ ISSO??? enfim, a lamina relembra uma serpente",
     "raridade": "RARO",
     "shiny": true,
@@ -1397,7 +1435,7 @@
   },
   "Correntes eletricas": {
     "nome": "Correntes do Prazer",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Correntes com uma descarga eletrica constante",
     "raridade": "RARO",
     "shiny": false,
@@ -1466,7 +1504,7 @@
   },
   "Neo MagnaEspada de Plasma": {
     "nome": "Neo MagnaEspada de Plasma",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "uma espada feita de plasma AZUL",
     "raridade": "RARO",
     "shiny": false,
@@ -1587,7 +1625,7 @@
   },
   "Pistola Carmesim do VícioEX": {
     "nome": "Pistola Carmesim do Vício",
-    "categoria": "Pistolas",
+    "categoria": "NPC",
     "descricao": "uma pistola vermelha com chifres",
     "raridade": "RARO",
     "shiny": true,
@@ -1681,7 +1719,7 @@
   },
   "Aurela-Sagrada": {
     "nome": "Aurela-Sagrada",
-    "categoria": "Catalisador",
+    "categoria": "NPC",
     "descricao": "CONSUMIR, ADAPTAR",
     "raridade": "RARO",
     "shiny": false,
@@ -1797,7 +1835,7 @@
   },
   "Thompson da Madame": {
     "nome": "Thompson da Madame",
-    "categoria": "Metralhadora",
+    "categoria": "NPC",
     "descricao": "Metralhadora de jericó TURURUTURUTUR",
     "raridade": "EPICO",
     "shiny": false,
@@ -1843,7 +1881,7 @@
   },
   "Super-Bazooka": {
     "nome": "Super-Bazooka",
-    "categoria": "Canhão de Duas Mãos",
+    "categoria": "NPC",
     "descricao": "um lança foguetes com esteroides",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -1870,7 +1908,7 @@
   },
   "MassaSobreEscrita": {
     "nome": "MassaSobreEscrita",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Carne.",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -1897,7 +1935,7 @@
   },
   "MassaSobreEscrita2": {
     "nome": "MassaSobreEscrita2",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Mais Carne.",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -1924,7 +1962,7 @@
   },
   "Gadanha da Tolice": {
     "nome": "Gadanha da Tolice",
-    "categoria": "Foice",
+    "categoria": "NPC",
     "descricao": "Todos os seus pecados reunidos em uma só arma, quem diria que vai haver uma especia de surpresa no final?",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2000,7 +2038,7 @@
   },
   "Semenin, A espada da submissão": {
     "nome": "Souna, o Chicote do Primeiro Desejo",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "uma espada preta, sua lamina brilha com uma energia rosa",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2085,7 +2123,7 @@
   },
   "Lança de Eros": {
     "nome": "Lança de Eros",
-    "categoria": "Lança",
+    "categoria": "NPC",
     "descricao": "um arco branco, suas cordas lembram que um dia um anjo o tocou",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2169,7 +2207,7 @@
   },
   "Torre": {
     "nome": "Torre",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2192,7 +2230,7 @@
   },
   "Torre2": {
     "nome": "Torre2",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2215,7 +2253,7 @@
   },
   "Torre3": {
     "nome": "Torre3",
-    "categoria": "Exotica",
+    "categoria": "NPC",
     "descricao": "Um prédio",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2292,7 +2330,7 @@
   },
   "LivroDeMorghul": {
     "nome": "LivroDeMorghul",
-    "categoria": "Livro",
+    "categoria": "NPC",
     "descricao": "Um livro de um mago magro",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2617,7 +2655,7 @@
   },
   "Cajado da Imperatriz (Boss)": {
     "nome": "Cajado da Imperatriz (Boss)",
-    "categoria": "Catalisador",
+    "categoria": "NPC",
     "descricao": "A versão intacta carregada por Lillith — A Terceira. Sangue negro coagulado escorre pelas runas sem nunca cair no chão.",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2672,7 +2710,7 @@
   },
   "Livro de Malkaresh": {
     "nome": "Livro de Malkaresh",
-    "categoria": "Grimorio",
+    "categoria": "NPC",
     "descricao": "Um grimório profano que emana uma aura de falsa justiça divina",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -2694,7 +2732,7 @@
   },
   "pistola do deserto[inimigo]": {
     "nome": "pistola do deserto[inimigo]",
-    "categoria": "Pistolas",
+    "categoria": "NPC",
     "descricao": "Arma ranged do pistoleiro inimigo",
     "raridade": "COMUM",
     "shiny": false,
@@ -2717,7 +2755,7 @@
   },
   "Espada Curva[inimigo]": {
     "nome": "Espada Curva[inimigo]",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "Espada curva letal do guardião dessecado",
     "raridade": "COMUM",
     "shiny": false,
@@ -2742,7 +2780,7 @@
   },
   "Espada Longa[inimigo]": {
     "nome": "Espada Longa[inimigo]",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "Espada usada pelos batedores de areia",
     "raridade": "COMUM",
     "shiny": false,
@@ -2765,7 +2803,7 @@
   },
   "Virtude[inimigo]": {
     "nome": "Virtude[inimigo]",
-    "categoria": "Catalisador",
+    "categoria": "NPC",
     "descricao": "Arma da Virtude",
     "raridade": "COMUM",
     "shiny": false,
@@ -2922,7 +2960,7 @@
   },
   "Adaga de Ritual Complexo2": {
     "nome": "Adaga de Ritual Complexo2",
-    "categoria": "Adaga",
+    "categoria": "NPC",
     "descricao": "Uma faca de bronze usada em embalsamamentos maiores",
     "raridade": "COMUM",
     "shiny": false,
@@ -3014,7 +3052,7 @@
   },
   "Cimitarra dos Guardiões": {
     "nome": "Cimitarra dos Guardiões",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "Lâmina encantada que causa dano extra contra seres de carne",
     "raridade": "INCOMUM",
     "shiny": false,
@@ -3331,7 +3369,7 @@
   },
   "A Thousand Blazing Suns2": {
     "nome": "A Thousand Blazing Suns2",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "Talvez até o sol não passe de uma estrela tênue diante da noite profunda e longa.",
     "raridade": "LENDARIO",
     "shiny": true,
@@ -3395,7 +3433,7 @@
   },
   "prisão": {
     "nome": "prisão",
-    "categoria": "Catalisador",
+    "categoria": "NPC",
     "descricao": "Arma da Prisão de Carne",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -3445,7 +3483,7 @@
   },
   "espada de elion": {
     "nome": "espada de elion",
-    "categoria": "Espada",
+    "categoria": "NPC",
     "descricao": "insira qualquer coisa",
     "raridade": "LENDARIO",
     "shiny": false,
@@ -4239,7 +4277,7 @@
   },
   "Rita": {
     "nome": "Rita",
-    "categoria": "Machado",
+    "categoria": "NPC",
     "descricao": "O Inefavel poder do sol na palma da mão",
     "raridade": "MITICO",
     "shiny": false,
@@ -4475,6 +4513,42 @@
     "custoTU": 100.0,
     "tipo": "Melee",
     "alcance": 1.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "wielding": 1.0
+  },
+  "Sabre[inimigo]": {
+    "nome": "Sabre[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Uma lâmina curva leve e prática, marcada pela maresia.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 7200.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 20.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 100.0,
+    "tipo": "Melee",
+    "alcance": 1.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "wielding": 1.0
+  },
+  "trabuco[inimigo]": {
+    "nome": "trabuco[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Uma pistola leve e prática, marcada pela maresia.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 7200.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 90.0,
+    "tipo": "Melee",
+    "alcance": 4.0,
     "tipoAlvo": "INDIVIDUAL",
     "wielding": 1.0
   },
@@ -5011,6 +5085,112 @@
       { "efeito": "Maldição", "chance": 0.20 }
     ],
     "wielding": 2.0
+  },
+  "SabreMaldito[inimigo]": {
+    "nome": "SabreMaldito[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Uma lâmina curva leve e prática mas amaldiçoada",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 7200.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 25.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 100.0,
+    "tipo": "Melee",
+    "alcance": 1.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "wielding": 1.0,
+    "efeitosAoAcertar": [
+      { "efeito": "Maldição", "chance": 0.25 }
+    ]
+  },
+  "trabucoMaldito[inimigo]": {
+    "nome": "trabucoMaldito[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Uma pistola curva leve e prática mas amaldiçoada",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 7200.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 22.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 100.0,
+    "tipo": "Melee",
+    "alcance": 4.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "wielding": 1.0,
+    "efeitosAoAcertar": [
+      { "efeito": "Maldição", "chance": 0.25 }
+    ]
+  },
+  "MachadoBrutamontesmaldito[inimigo]": {
+    "nome": "MachadoBrutamontesmaldito[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Um bom e velho machado mas amaldiçoado",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 120.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 130.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "CONE",
+    "tamanhoArea": 90.0,
+    "wielding": 2.0,
+    "efeitosAoAcertar": [
+      { "efeito": "Maldição", "chance": 0.25 }
+    ]
+  },
+  "MandibulaCoral": {
+    "nome": "MandibulaCoral",
+    "categoria": "NPC",
+    "descricao": "corais que mordem",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 0.0,
+    "tipoMoeda": "PRATA",
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 80.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "habilidadeConcedida": "Mordida",
+    "efeitoAoAcertar": "Ruptura",
+    "chanceEfeito": 0.30,
+    "wielding": 1.0
+  },
+  "MandibulaCoralMaldita": {
+    "nome": "MandibulaCoralMaldita",
+    "categoria": "NPC",
+    "descricao": "corais que mordem",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 0.0,
+    "tipoMoeda": "PRATA",
+    "danoBase": 18.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 80.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "habilidadeConcedida": "Mordida",
+    "wielding": 1.0,
+    "efeitosAoAcertar": [
+      { "efeito": "Maldição", "chance": 1.00 },
+      { "efeito": "Ruptura", "chance": 0.25 }
+    ]
   },
   "Espada de Pressão": {
     "nome": "Espada de Pressão",
