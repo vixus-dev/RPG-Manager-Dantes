@@ -21,25 +21,30 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 92.5,
-  "contadorTU": 1,
+  "vidaAtual": 26.33488828502415,
+  "contadorTU": 0,
   "fantasmaNobre": "Fimbulwinter",
-  "armaEquipada": "Machado Jötunbani",
+  "armaduraEquipada": "Peitoral da Guarda de Marfim",
+  "armaEquipada": "Tridente",
   "inventario": {
-    "Sabre do Kraken": 1
+    "P E D R A": 6,
+    "Sabre do Kraken": 1,
+    "Machado Jötunbani": 1
   },
-  "xpAtual": 0,
+  "xpAtual": 100,
   "vidaMaximaBase": 105.0,
   "classe": "Barbaro",
   "armasEquipadas": [
-    "Machado Jötunbani"
+    "Tridente"
   ],
   "nome": "Brunhilda",
   "segmentos": 0,
   "grau": 0,
-  "posX": 3,
+  "posX": 8,
   "posY": 6,
-  "manaAtual": 6.5,
+  "amuleto2": "Colar de Tinta Seca",
+  "amuleto1": "Medalhão da Promessa",
+  "manaAtual": 5.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Orc",
   "nivel": 8,
