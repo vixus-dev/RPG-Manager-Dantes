@@ -71,6 +71,8 @@ public class Personagem {
 	private double poolRegeneracao = 0.0;
 	private double reducaoCuraPercentual = 0.0;
 	private double manaMaximaBase = 6.0;
+	private int pecado = 0;
+	private int vidas = 0;
 
 	// === EQUIPAMENTO ===
 	private Arma armaEquipada;
@@ -1118,6 +1120,14 @@ public class Personagem {
 		return segmentosVida;
 	}
 
+	public int getPecado() {
+		return pecado;
+	}
+
+	public int getVidas() {
+		return vidas;
+	}
+
 	// ========== SETTERS SIMPLES ==========
 
 	public void setNome(String nome) {
@@ -1390,6 +1400,14 @@ public class Personagem {
 
 	public void setSegmentosVida(int segmentos) {
 		this.segmentosVida = segmentos;
+	}
+
+	public void setPecado(int pecado) {
+		this.pecado = Math.max(0, pecado);
+	}
+
+	public void setVidas(int vidas) {
+		this.vidas = Math.max(0, Math.min(vidas, 3));
 	}
 
 	public void setIniciativaBase(int valor) {

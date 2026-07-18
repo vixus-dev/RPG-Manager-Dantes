@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -65,6 +67,74 @@ public class BestiarioSpawnService {
 
 	public Map<String, Map<String, Object>> getBestiarioDatabase() {
 		return bestiarioDatabase;
+	}
+
+	/**
+	 * Substitui os dados de combate de um inimigo morto pela variante maldita
+	 * correspondente do bestiário, mantendo a mesma instância no combate.
+	 */
+	public boolean aplicarVersaoMaldita(Personagem monstro) {
+		if (monstro == null) {
+			return false;
+		}
+
+		Map<String, Object> dadosMalditos = localizarVersaoMaldita(monstro);
+		if (dadosMalditos == null) {
+			return false;
+		}
+
+		String nomeMaldito = (String) dadosMalditos.getOrDefault("nome", monstro.getNome() + " Maldito");
+		monstro.setNome(aplicarSufixoDeInstancia(monstro.getNome(), nomeMaldito));
+		monstro.setNomeBaseImagem((String) dadosMalditos.getOrDefault("nomeBaseImagem", nomeMaldito));
+
+		double vida = ((Number) dadosMalditos.getOrDefault("vida", monstro.getVidaMaxima())).doubleValue();
+		double mana = ((Number) dadosMalditos.getOrDefault("mana", 0.0)).doubleValue();
+		int agilidade = lerAgilidade(dadosMalditos);
+		int defesa = ((Number) dadosMalditos.getOrDefault("defesa", 0.0)).intValue();
+
+		if (monstro.getAtributosBase() != null) {
+			monstro.getAtributosBase().put(Atributo.DESTREZA, agilidade);
+		}
+		monstro.setVidaMaximaBase(vida);
+		monstro.setArmaduraNatural(ArmaduraUtils.calcularPontosParaReducaoPercentual(defesa));
+		monstro.setXpReward(((Number) dadosMalditos.getOrDefault("xpReward", monstro.getXpReward())).intValue());
+		monstro.setGrau(((Number) dadosMalditos.getOrDefault("grau", 0.0)).intValue());
+		monstro.setSegmentosVida(((Number) dadosMalditos.getOrDefault("segmentos", 0.0)).intValue());
+		monstro.setPesoEntidade(PesoEntidade.fromJsonId((String) dadosMalditos.getOrDefault("peso", "medio_padrao")));
+		monstro.setTamanhoX(((Number) dadosMalditos.getOrDefault("tamanhoX", 1.0)).intValue());
+		monstro.setTamanhoY(((Number) dadosMalditos.getOrDefault("tamanhoY", 1.0)).intValue());
+		monstro.setPropriedades(lerPropriedades(dadosMalditos));
+		monstro.setPoderoso(Boolean.TRUE.equals(dadosMalditos.get("poderoso")));
+
+		equiparArma(monstro, (String) dadosMalditos.getOrDefault("arma", null));
+		monstro.recalcularAtributosEstatisticas();
+		monstro.setVidaAtual(monstro.getVidaMaxima());
+		monstro.setManaMaxima(mana);
+		monstro.setManaAtual(mana);
+		aplicarEscudosDePropriedade(monstro, vida);
+		return true;
+	}
+
+	private Map<String, Object> localizarVersaoMaldita(Personagem monstro) {
+		String nomeBase = monstro.getNomeBaseImagem();
+		if (nomeBase == null || nomeBase.isBlank()) {
+			nomeBase = monstro.getNome().replaceFirst("\\s+\\d+$", "");
+		}
+
+		String nomeEsperado = nomeBase.trim() + " maldito";
+		for (Map.Entry<String, Map<String, Object>> entrada : bestiarioDatabase.entrySet()) {
+			Map<String, Object> dados = entrada.getValue();
+			String nome = (String) dados.getOrDefault("nome", entrada.getKey());
+			if (nomeEsperado.equalsIgnoreCase(nome) || nomeEsperado.equalsIgnoreCase(entrada.getKey())) {
+				return dados;
+			}
+		}
+		return null;
+	}
+
+	private String aplicarSufixoDeInstancia(String nomeAtual, String nomeBaseMaldito) {
+		Matcher matcher = Pattern.compile("\\s+(\\d+)$").matcher(nomeAtual == null ? "" : nomeAtual);
+		return matcher.find() ? nomeBaseMaldito + " " + matcher.group(1) : nomeBaseMaldito;
 	}
 
 	public void entrarModoSpawnMultiploCustom(Map<String, Object> dadosCustom, int quantidade) {
