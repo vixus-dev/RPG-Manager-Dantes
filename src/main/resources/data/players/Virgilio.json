@@ -23,6 +23,8 @@
   "faccao": "JOGADOR",
   "vidaAtual": 20000.0,
   "contadorTU": 200,
+  "pecado": 99,
+  "vidas": 0,
   "armaEquipada": "Espada Teste",
   "inventario": {
     "Master Katana": 1

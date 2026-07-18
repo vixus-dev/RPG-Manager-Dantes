@@ -23,6 +23,8 @@
   "faccao": "JOGADOR",
   "vidaAtual": 5.0,
   "contadorTU": 1,
+  "pecado": 6,
+  "vidas": 0,
   "armaduraEquipada": "Manto do Mestre",
   "armaEquipada": {
     "magiasSalvas": [

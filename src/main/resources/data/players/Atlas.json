@@ -22,6 +22,8 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": -260.0,
+  "pecado": 3,
+  "vidas": 0,
   "contadorTU": 1,
   "armaduraEquipada": "Armadura do Mestre",
   "armaEquipada": "Ataduras de Ferro",

@@ -22,6 +22,8 @@
   "amuleto2": "Anel de Rei",
   "amuleto1": "Anel de Rei",
   "manaAtual": 8,
+  "pecado": 3,
+  "vidas": 0,
   "raca": "Humano",
   "carteira": {
     "prata": 351,

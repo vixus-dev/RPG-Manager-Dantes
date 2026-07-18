@@ -23,6 +23,8 @@
   "faccao": "JOGADOR",
   "vidaAtual": 17.0,
   "contadorTU": 1,
+  "pecado": 4,
+  "vidas": 3,
   "fantasmaNobre": "InvocacaoMurasame",
   "armaEquipada": "Murasame",
   "inventario": {

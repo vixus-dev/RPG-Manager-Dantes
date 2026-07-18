@@ -23,6 +23,8 @@
   "faccao": "JOGADOR",
   "vidaAtual": 40.0,
   "contadorTU": 2,
+  "pecado": 2,
+  "vidas": 0,
   "armaduraEquipada": "Armadura do Mestre",
   "armaEquipada": "Espada Longa",
   "inventario": {

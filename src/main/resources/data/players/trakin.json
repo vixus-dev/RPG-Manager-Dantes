@@ -23,6 +23,8 @@
   "faccao": "JOGADOR",
   "vidaAtual": 5.0,
   "contadorTU": 4,
+  "pecado": 2,
+  "vidas": 3,
   "fantasmaNobre": "AcertoDeContas",
   "armaEquipada": "Terrore",
   "inventario": {},

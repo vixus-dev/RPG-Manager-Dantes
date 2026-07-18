@@ -39,6 +39,8 @@
   "nome": "KuangLi",
   "RaçaV2": true,
   "segmentos": 0,
+  "pecado": 5,
+  "vidas": 3,
   "grau": 1,
   "posX": 4,
   "posY": 6,

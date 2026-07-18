@@ -36,6 +36,8 @@
   },
   "inventario": {},
   "xpAtual": 120,
+  "pecado": 0,
+  "vidas": 2,
   "vidaMaximaBase": 33.0,
   "classe": "Alquimista",
   "armasEquipadas": [
