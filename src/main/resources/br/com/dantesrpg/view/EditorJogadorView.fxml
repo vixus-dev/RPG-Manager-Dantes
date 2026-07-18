@@ -84,12 +84,15 @@
                                     <Pane fx:id="radarChartPlaceholder" VBox.vgrow="ALWAYS" styleClass="radar-chart-pane" />
                                 </VBox>
                                 
-                                <!-- Combat Stats -->
-                                <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="320.0" spacing="12.0">
-                                    <Label text="Atributos de Combate" styleClass="header-label"/>
-                                    <ScrollPane fx:id="detailedAttributesScrollPane" VBox.vgrow="ALWAYS" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
-                                        <VBox fx:id="detailedAttributesPane" spacing="6.0" />
-                                    </ScrollPane>
+                                <!-- Atributos de Combate e retrato de vidas -->
+                                <VBox HBox.hgrow="ALWAYS" prefWidth="320.0" spacing="12.0">
+                                    <VBox styleClass="editor-column, bento-card" spacing="12.0">
+                                        <Label text="Atributos de Combate" styleClass="header-label"/>
+                                        <ScrollPane fx:id="detailedAttributesScrollPane" prefHeight="300.0" maxHeight="300.0" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+                                            <VBox fx:id="detailedAttributesPane" spacing="6.0" />
+                                        </ScrollPane>
+                                    </VBox>
+                                    <StackPane fx:id="vidasContainer" minWidth="120.0" minHeight="120.0" prefWidth="120.0" prefHeight="120.0" maxWidth="120.0" maxHeight="120.0" styleClass="bento-card" style="-fx-padding: 0;" />
                                 </VBox>
                             </HBox>
                         </content>

@@ -99,6 +99,9 @@ public class EditorJogadorController {
     @FXML
     private VBox detailedAttributesPane;
 
+    @FXML
+    private StackPane vidasContainer;
+
     // --- Coluna 3: Inventário + Habilidades ---
     @FXML
     private ListView<Item> inventarioListView;
@@ -913,10 +916,12 @@ public class EditorJogadorController {
             ),
             "red"
         );
-        adicionarPecado(jogadorSelecionado.getPecado());
-        detailedAttributesPane.getChildren().add(
-            VidasPortraitRenderer.criar(jogadorSelecionado.getVidas())
+        adicionarStatRow(
+            "Pecado",
+            String.valueOf(jogadorSelecionado.getPecado()),
+            "purple"
         );
+        VidasPortraitRenderer.atualizar(vidasContainer, jogadorSelecionado.getVidas());
     }
 
     private StackPane criarBarraStat(
@@ -981,15 +986,11 @@ public class EditorJogadorController {
         else if ("yellow".equals(corTipo)) lblValor
             .getStyleClass()
             .add("editor-stat-value-yellow");
+        else if ("purple".equals(corTipo)) lblValor
+            .setStyle("-fx-text-fill: #b56cff;");
 
         row.getChildren().addAll(lblNome, lblValor);
         detailedAttributesPane.getChildren().add(row);
-    }
-
-    private void adicionarPecado(int pecado) {
-        Label valor = new Label(String.valueOf(pecado));
-        valor.setStyle("-fx-text-fill: #b56cff; -fx-font-weight: bold;");
-        detailedAttributesPane.getChildren().add(valor);
     }
 
     // =============================================

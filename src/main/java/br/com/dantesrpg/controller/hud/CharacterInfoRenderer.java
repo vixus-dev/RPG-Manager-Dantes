@@ -236,9 +236,13 @@ public class CharacterInfoRenderer {
 	}
 
 	private void adicionarPecado(int pecado) {
+		HBox row = new HBox(10);
+		Label titulo = new Label("Pecado:");
+		titulo.setStyle("-fx-text-fill: cyan;");
 		Label valor = new Label(String.valueOf(pecado));
 		valor.setStyle("-fx-text-fill: #b56cff; -fx-font-weight: bold;");
-		detailedPane.getChildren().add(valor);
+		row.getChildren().addAll(titulo, valor);
+		detailedPane.getChildren().add(row);
 	}
 
 	private String resolverEstiloEfeito(TipoEfeito tipo) {
