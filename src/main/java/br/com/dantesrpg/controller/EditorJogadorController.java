@@ -4,7 +4,7 @@ import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.Raridade;
 import br.com.dantesrpg.model.items.Consumivel;
-import br.com.dantesrpg.model.util.ImageCache;
+import br.com.dantesrpg.model.util.CharacterImageResolver;
 import br.com.dantesrpg.controller.hud.VidasPortraitRenderer;
 import br.com.dantesrpg.controller.util.ItemVisualUtils;
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -268,23 +267,25 @@ public class EditorJogadorController {
     private void popularListaJogadores() {
         playerListContainer.getChildren().clear();
         for (Personagem p : todosOsJogadores) {
-            VBox btnContent = new VBox(0);
+            HBox btnContent = new HBox(10);
             btnContent.setAlignment(Pos.CENTER_LEFT);
 
-            Label lblNome = new Label(p.getNome());
-            lblNome.setStyle(
-                "-fx-text-fill: inherit; -fx-font-size: 12px; -fx-font-weight: bold;"
+            ImageView imgJogador = new ImageView(
+                CharacterImageResolver.getPortrait(p, 42, 42)
             );
+            imgJogador.setFitWidth(42);
+            imgJogador.setFitHeight(42);
+            imgJogador.setPreserveRatio(true);
+            imgJogador.setSmooth(true);
 
-            String classeRaca = "";
-            if (p.getClasse() != null) classeRaca += p.getClasse().getNome();
-            if (p.getRaca() != null) classeRaca +=
-                " | " + p.getRaca().getNome();
+            StackPane cardRetrato = new StackPane(imgJogador);
+            cardRetrato.getStyleClass().add("player-select-portrait");
 
-            Label lblInfo = new Label(classeRaca);
-            lblInfo.setStyle("-fx-text-fill: #808090; -fx-font-size: 9px;");
+            Label lblNome = new Label(p.getNome());
+            lblNome.getStyleClass().add("player-select-name");
+            lblNome.setWrapText(true);
 
-            btnContent.getChildren().addAll(lblNome, lblInfo);
+            btnContent.getChildren().addAll(cardRetrato, lblNome);
 
             Button btnJogador = new Button();
             btnJogador.setGraphic(btnContent);
@@ -392,20 +393,9 @@ public class EditorJogadorController {
 
     private void carregarPortrait() {
         if (imgPortrait == null) return;
-        String nomeBase = jogadorSelecionado
-            .getNome()
-            .toLowerCase()
-            .replace(" ", "_");
-        String imagePath = "/portraits/" + nomeBase + ".png";
-        try {
-            Image portraitImage = ImageCache.get(imagePath, 120, 120);
-            if (
-                portraitImage == null || portraitImage.isError()
-            ) throw new Exception();
-            imgPortrait.setImage(portraitImage);
-        } catch (Exception e) {
-            imgPortrait.setImage(null);
-        }
+        imgPortrait.setImage(
+            CharacterImageResolver.getPortrait(jogadorSelecionado, 120, 120)
+        );
     }
 
     // =============================================
