@@ -7,7 +7,9 @@ import br.com.dantesrpg.model.Item;
 import br.com.dantesrpg.model.enums.Raridade;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
 public final class ItemVisualUtils {
@@ -18,20 +20,24 @@ public final class ItemVisualUtils {
 	private ItemVisualUtils() {
 	}
 
-	public static String obterCorRaridade(Item item) {
-		Raridade raridade = null;
+	public static Raridade obterRaridade(Item item) {
 		if (item instanceof Arma) {
-			raridade = ((Arma) item).getRaridade();
+			return ((Arma) item).getRaridade();
 		} else if (item instanceof Armadura) {
-			raridade = ((Armadura) item).getRaridade();
+			return ((Armadura) item).getRaridade();
 		} else if (item instanceof Amuleto) {
-			raridade = ((Amuleto) item).getRaridade();
+			return ((Amuleto) item).getRaridade();
 		}
+		return null;
+	}
 
-		if (raridade == null) return "#c0c0c0";
+	public static String obterCorRaridade(Item item) {
+		Raridade raridade = obterRaridade(item);
+
+		if (raridade == null) return "#ffffff";
 		switch (raridade) {
 			case COMUM:
-				return "#c0c0c0";
+				return "#ffffff";
 			case INCOMUM:
 				return "#2ecc71";
 			case RARO:
@@ -39,13 +45,13 @@ public final class ItemVisualUtils {
 			case EPICO:
 				return "#9b59b6";
 			case LENDARIO:
-				return "#f39c12";
+				return "#f1c40f";
 			case UNICO:
-				return "#e74c3c";
+				return "#00e5ff";
 			case MITICO:
-				return "#ff00ff";
+				return "#e74c3c";
 			default:
-				return "#c0c0c0";
+				return "#ffffff";
 		}
 	}
 
@@ -73,15 +79,36 @@ public final class ItemVisualUtils {
 		timeline.play();
 	}
 
+	public static void aplicarBordaShinyPulsante(Region card, Item item) {
+		if (card == null || item == null || !item.isShiny()) return;
+		pararAnimacao(card);
+
+		String bordaSuave = criarEstiloBordaShiny("rgba(255, 215, 0, 0.35)", "rgba(255, 215, 0, 0.15)", 5);
+		String bordaIntensa = criarEstiloBordaShiny(COR_SHINY, "rgba(255, 215, 0, 0.9)", 12);
+		Timeline timeline = new Timeline(
+				new KeyFrame(Duration.ZERO, event -> card.setStyle(bordaSuave)),
+				new KeyFrame(Duration.seconds(0.75), event -> card.setStyle(bordaIntensa)),
+				new KeyFrame(Duration.seconds(1.5), event -> card.setStyle(bordaSuave)));
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		card.getProperties().put(TIMELINE_KEY, timeline);
+		timeline.play();
+	}
+
+	public static void pararAnimacao(Node node) {
+		if (node == null) return;
+		Object existente = node.getProperties().remove(TIMELINE_KEY);
+		if (existente instanceof Timeline) {
+			((Timeline) existente).stop();
+		}
+	}
+
 	private static String criarEstiloEquipado(String cor) {
 		return "-fx-text-fill: " + cor + "; -fx-font-weight: bold; -fx-font-size: 12px; "
 				+ "-fx-effect: dropshadow(gaussian, " + COR_SHINY + ", 5, 0.6, 0, 0);";
 	}
 
-	private static void pararAnimacao(Label label) {
-		Object existente = label.getProperties().remove(TIMELINE_KEY);
-		if (existente instanceof Timeline) {
-			((Timeline) existente).stop();
-		}
+	private static String criarEstiloBordaShiny(String corBorda, String corBrilho, int raioBrilho) {
+		return "-fx-border-color: " + corBorda + "; -fx-effect: dropshadow(gaussian, " + corBrilho + ", "
+				+ raioBrilho + ", 0.7, 0, 0);";
 	}
 }

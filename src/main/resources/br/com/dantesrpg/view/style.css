@@ -828,13 +828,13 @@
 }
 
 /* Bordas por raridade */
-.rarity-comum { -fx-border-color: #888888; }
+.rarity-comum { -fx-border-color: #ffffff; }
 .rarity-incomum { -fx-border-color: #2ecc71; }
 .rarity-raro { -fx-border-color: #3498db; -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 6, 0, 0, 0); }
 .rarity-epico { -fx-border-color: #9b59b6; -fx-effect: dropshadow(gaussian, rgba(155, 89, 182, 0.3), 6, 0, 0, 0); }
-.rarity-lendario { -fx-border-color: #f39c12; -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.4), 8, 0, 0, 0); }
-.rarity-unico { -fx-border-color: #e74c3c; -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.4), 8, 0, 0, 0); }
-.rarity-mitico { -fx-border-color: #ff00ff; -fx-effect: dropshadow(gaussian, rgba(255, 0, 255, 0.5), 10, 0, 0, 0); }
+.rarity-lendario { -fx-border-color: #f1c40f; -fx-effect: dropshadow(gaussian, rgba(241, 196, 15, 0.4), 8, 0, 0, 0); }
+.rarity-unico { -fx-border-color: #00e5ff; -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.4), 8, 0, 0, 0); }
+.rarity-mitico { -fx-border-color: #e74c3c; -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.5), 10, 0, 0, 0); }
 
 .equipment-slot-label {
     -fx-text-fill: #808090;
@@ -849,13 +849,36 @@
 }
 
 /* Nomes por raridade */
-.name-comum { -fx-text-fill: #c0c0c0; }
+.name-comum { -fx-text-fill: #ffffff; }
 .name-incomum { -fx-text-fill: #2ecc71; }
 .name-raro { -fx-text-fill: #3498db; }
 .name-epico { -fx-text-fill: #9b59b6; }
-.name-lendario { -fx-text-fill: #f39c12; }
-.name-unico { -fx-text-fill: #e74c3c; }
-.name-mitico { -fx-text-fill: #ff00ff; }
+.name-lendario { -fx-text-fill: #f1c40f; }
+.name-unico { -fx-text-fill: #00e5ff; }
+.name-mitico { -fx-text-fill: #e74c3c; }
+
+.equipment-item-description {
+    -fx-text-fill: #b6b6c9;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+.equipment-stat {
+    -fx-text-fill: #c9cad8;
+    -fx-font-size: 11px;
+}
+
+.equipment-stat-primary {
+    -fx-text-fill: #f4f5ff;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-color: #29293a;
+    -fx-background-radius: 3;
+    -fx-padding: 2 5;
+}
+
+.equipment-stat-positive { -fx-text-fill: #2ecc71; }
+.equipment-stat-negative { -fx-text-fill: #e74c3c; }
 
 .btn-unequip {
     -fx-background-color: #3a1a1a;

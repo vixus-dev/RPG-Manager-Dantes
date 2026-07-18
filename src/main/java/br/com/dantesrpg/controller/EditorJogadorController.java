@@ -521,6 +521,9 @@ public class EditorJogadorController {
     // =============================================
 
     private void atualizarEquipamento() {
+        equipmentContainer
+            .getChildren()
+            .forEach(ItemVisualUtils::pararAnimacao);
         equipmentContainer.getChildren().clear();
 
         // Arma
@@ -531,7 +534,6 @@ public class EditorJogadorController {
                     criarCardEquipamento(
                         "Arma (" + arma.getWielding() + "W)",
                         arma,
-                        arma.getRaridade(),
                         e -> onDesequiparArmaClick(arma)
                     )
                 );
@@ -550,7 +552,6 @@ public class EditorJogadorController {
                             jogadorSelecionado.getWieldingDisponivel() +
                             "W)",
                         null,
-                        null,
                         e -> {}
                     )
                 );
@@ -562,7 +563,7 @@ public class EditorJogadorController {
         equipmentContainer
             .getChildren()
             .add(
-                criarCardEquipamento("Armadura", armadura, null, e ->
+                criarCardEquipamento("Armadura", armadura, e ->
                     onDesequiparArmaduraClick()
                 )
             );
@@ -572,7 +573,7 @@ public class EditorJogadorController {
         equipmentContainer
             .getChildren()
             .add(
-                criarCardEquipamento("Amuleto 1", am1, null, e ->
+                criarCardEquipamento("Amuleto 1", am1, e ->
                     onDesequiparAmuleto1Click()
                 )
             );
@@ -582,7 +583,7 @@ public class EditorJogadorController {
         equipmentContainer
             .getChildren()
             .add(
-                criarCardEquipamento("Amuleto 2", am2, null, e ->
+                criarCardEquipamento("Amuleto 2", am2, e ->
                     onDesequiparAmuleto2Click()
                 )
             );
@@ -591,7 +592,6 @@ public class EditorJogadorController {
     private VBox criarCardEquipamento(
         String slotName,
         Item item,
-        Raridade raridade,
         javafx.event.EventHandler<javafx.event.ActionEvent> onUnequip
     ) {
         VBox card = new VBox(3);
@@ -611,6 +611,7 @@ public class EditorJogadorController {
 
         // Slot preenchido
         card.getStyleClass().add("equipment-card");
+        Raridade raridade = ItemVisualUtils.obterRaridade(item);
         if (raridade != null) {
             card.getStyleClass().add("rarity-" + raridade.name().toLowerCase());
         }
@@ -631,7 +632,6 @@ public class EditorJogadorController {
         } else {
             lblNome.setStyle("-fx-text-fill: white;");
         }
-		ItemVisualUtils.aplicarPulsacaoEquipado(lblNome, item);
         HBox.setHgrow(lblNome, Priority.ALWAYS);
 
         Button btnRemover = new Button("X");
@@ -641,6 +641,8 @@ public class EditorJogadorController {
         headerRow.getChildren().addAll(lblNome, btnRemover);
 
         card.getChildren().addAll(lblSlot, headerRow);
+		adicionarDescricaoItem(card, item);
+		ItemVisualUtils.aplicarBordaShinyPulsante(card, item);
 
         // Stats do item
         String detalhes = gerarTextoDetalhesItemCompacto(item);
@@ -648,23 +650,31 @@ public class EditorJogadorController {
             for (String linha : detalhes.split("\n")) {
                 if (linha.isEmpty()) continue;
                 Label lblStat = new Label(linha);
-                lblStat.setStyle(
-                    "-fx-text-fill: #a0a0b0; -fx-font-size: 10px;"
-                );
+                lblStat.getStyleClass().add("equipment-stat");
+                if (linha.startsWith("Dano:") || linha.startsWith("Defesa:")) {
+                    lblStat.getStyleClass().add("equipment-stat-primary");
+                }
                 if (linha.startsWith("+") || linha.contains("Hab:")) {
-                    lblStat.setStyle(
-                        "-fx-text-fill: #2ecc71; -fx-font-size: 10px;"
-                    );
+                    lblStat.getStyleClass().add("equipment-stat-positive");
                 } else if (linha.startsWith("-")) {
-                    lblStat.setStyle(
-                        "-fx-text-fill: #e74c3c; -fx-font-size: 10px;"
-                    );
+                    lblStat.getStyleClass().add("equipment-stat-negative");
                 }
                 card.getChildren().add(lblStat);
             }
         }
 
         return card;
+    }
+
+    private void adicionarDescricaoItem(VBox card, Item item) {
+        String descricao = item.getDescricao();
+        if (descricao == null || descricao.isBlank()) return;
+
+        Label lblDescricao = new Label(descricao);
+        lblDescricao.setWrapText(true);
+        lblDescricao.setMaxWidth(Double.MAX_VALUE);
+        lblDescricao.getStyleClass().add("equipment-item-description");
+        card.getChildren().add(lblDescricao);
     }
 
     private VBox criarGrimorioSection(Grimorio grimorio) {
