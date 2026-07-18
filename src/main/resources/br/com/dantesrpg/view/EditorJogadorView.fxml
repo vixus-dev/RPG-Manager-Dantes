@@ -92,7 +92,7 @@
                                             <VBox fx:id="detailedAttributesPane" spacing="6.0" />
                                         </ScrollPane>
                                     </VBox>
-                                    <StackPane fx:id="vidasContainer" minWidth="120.0" minHeight="120.0" prefWidth="200.0" prefHeight="200.0" maxWidth="350.0" maxHeight="350.0" styleClass="bento-card" style="-fx-padding: 0;" />
+                                    <StackPane fx:id="vidasContainer" minWidth="120.0" minHeight="120.0" prefWidth="180.0" prefHeight="265.0" maxWidth="350.0" maxHeight="350.0" styleClass="bento-card" style="-fx-padding: 0;" />
                                 </VBox>
                             </HBox>
                         </content>

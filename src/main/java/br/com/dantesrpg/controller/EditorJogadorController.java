@@ -40,11 +40,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class EditorJogadorController {
+
+    private static final double TAMANHO_RETRATO_LISTA = 42;
 
     // --- Header ---
     @FXML
@@ -271,15 +274,34 @@ public class EditorJogadorController {
             btnContent.setAlignment(Pos.CENTER_LEFT);
 
             ImageView imgJogador = new ImageView(
-                CharacterImageResolver.getPortrait(p, 42, 42)
+                CharacterImageResolver.getPortrait(
+                    p,
+                    TAMANHO_RETRATO_LISTA,
+                    TAMANHO_RETRATO_LISTA
+                )
             );
-            imgJogador.setFitWidth(42);
-            imgJogador.setFitHeight(42);
+            imgJogador.setFitWidth(TAMANHO_RETRATO_LISTA);
+            imgJogador.setFitHeight(TAMANHO_RETRATO_LISTA);
             imgJogador.setPreserveRatio(false);
             imgJogador.setSmooth(true);
 
-            StackPane cardRetrato = new StackPane(imgJogador);
+            Rectangle recorteRetrato = new Rectangle(
+                TAMANHO_RETRATO_LISTA,
+                TAMANHO_RETRATO_LISTA
+            );
+            recorteRetrato.setArcWidth(10);
+            recorteRetrato.setArcHeight(10);
+
+            StackPane imagemRecortada = new StackPane(imgJogador);
+            imagemRecortada.setClip(recorteRetrato);
+
+            StackPane cardRetrato = new StackPane(imagemRecortada);
             cardRetrato.getStyleClass().add("player-select-portrait");
+
+            Region bordaRetrato = new Region();
+            bordaRetrato.setMouseTransparent(true);
+            bordaRetrato.getStyleClass().add("player-select-portrait-border");
+            cardRetrato.getChildren().add(bordaRetrato);
 
             Label lblNome = new Label(p.getNome());
             lblNome.getStyleClass().add("player-select-name");

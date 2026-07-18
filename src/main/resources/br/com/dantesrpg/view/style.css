@@ -801,6 +801,11 @@
     -fx-max-height: 42;
     -fx-background-color: #100f1d;
     -fx-background-radius: 6;
+}
+
+.player-select-portrait-border {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
     -fx-border-color: rgba(233, 69, 96, 0.45);
     -fx-border-radius: 6;
     -fx-border-width: 1;
