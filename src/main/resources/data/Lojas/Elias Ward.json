@@ -1,0 +1,68 @@
+{
+  "itensOfertados": [
+    {
+      "id": "Sabre",
+      "desconto": 0.0
+    },
+    {
+      "id": "Revolver Náutico",
+      "desconto": 0.0
+    },
+    {
+      "id": "Faca de Mergulho",
+      "desconto": 0.0
+    },
+    {
+      "id": "Sabre Serrilhado",
+      "desconto": 0.0
+    },
+    {
+      "id": "Besta Naval",
+      "desconto": 0.0
+    },
+    {
+      "id": "Canhão de Bolhas",
+      "desconto": 0.0
+    },
+    {
+      "id": "Corrente do Carcereiro",
+      "desconto": 0.0
+    },
+    {
+      "id": "Katana das Ondas",
+      "desconto": 0.0
+    },
+    {
+      "id": "Núcleo Abissal",
+      "desconto": 0.0
+    },
+    {
+      "id": "Armadura de Couro Impermeável",
+      "desconto": 0.0
+    },
+    {
+      "id": "Armadura de Mergulho",
+      "desconto": 0.0
+    },
+    {
+      "id": "Traje Tático \"Nautilus MK-I\"",
+      "desconto": 0.0
+    },
+    {
+      "id": "Bússola do Navegador",
+      "desconto": 0.0
+    },
+    {
+      "id": "Colar da Baleia Azul",
+      "desconto": 0.0
+    },
+    {
+      "id": "Medalhão da Tempestade",
+      "desconto": 0.0
+    },
+    {
+      "id": "Relógio de Bolso do Mar Infinito",
+      "desconto": 0.0
+    }
+  ]
+}

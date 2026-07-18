@@ -1,0 +1,80 @@
+{
+  "itensOfertados": [
+    {
+      "id": "Canhão de Arpão",
+      "desconto": 0.0
+    },
+    {
+      "id": "Mosquete de Abordagem",
+      "desconto": 0.0
+    },
+    {
+      "id": "Pistola de Pederneira",
+      "desconto": 0.0
+    },
+    {
+      "id": "Pistola de Pederneira reforçada",
+      "desconto": 0.0
+    },
+    {
+      "id": "Lança-Arpão",
+      "desconto": 0.0
+    },
+    {
+      "id": "Arpão Explosivo",
+      "desconto": 0.0
+    },
+    {
+      "id": "Trabuco",
+      "desconto": 0.0
+    },
+    {
+      "id": "Espingarda Salina",
+      "desconto": 0.0
+    },
+    {
+      "id": "Rifle Submersível XM-12",
+      "desconto": 0.0
+    },
+    {
+      "id": "Canhão de Pressão",
+      "desconto": 0.0
+    },
+    {
+      "id": "Rifle Gauss Atlante",
+      "desconto": 0.0
+    },
+    {
+      "id": "Dreadnought",
+      "desconto": 0.0
+    },
+    {
+      "id": "Couraça do Capitão",
+      "desconto": 0.0
+    },
+    {
+      "id": "Casaco Anti-Balistico",
+      "desconto": 0.0
+    },
+    {
+      "id": "Casaco Anti-Balistico Naval",
+      "desconto": 0.0
+    },
+    {
+      "id": "Luvas de Cabo",
+      "desconto": 0.0
+    },
+    {
+      "id": "Ampulheta das Marés",
+      "desconto": 0.0
+    },
+    {
+      "id": "Monóculo do Navegador Abissal",
+      "desconto": 0.0
+    },
+    {
+      "id": "Relógio de Bolso do Mar",
+      "desconto": 0.0
+    }
+  ]
+}
