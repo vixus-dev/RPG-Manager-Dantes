@@ -43,6 +43,8 @@ public class BestiarioController {
 	private static final List<String> PROPRIEDADES_PADRAO = List.of(
 			"IMUNIDADE_CONTROLE",
 			"IMUNIDADE_DOT",
+			"MALDICAO_AO_MORRER",
+			"MALDITO",
 			"EXPLODIR",
 			"EXPLOSIVO",
 			"VAMPIRISMO",
@@ -485,6 +487,8 @@ public class BestiarioController {
 		String descricao = switch (nomePropriedade) {
 			case "IMUNIDADE_CONTROLE" -> "Imunidade a Stun, Lento e Sono.";
 			case "IMUNIDADE_DOT" -> "Imunidade a DoTs como Veneno, Sangramento e Queimação.";
+			case "MALDICAO_AO_MORRER" -> "Ao chegar a 0 HP, aguarda o ARISE para retornar como Maldito.";
+			case "MALDITO" -> "Vida exibida em ciano; imune a Maldição e a qualquer DoT.";
 			case "EXPLODIR" -> "Ao morrer, cria uma área de fogo de raio 1 por 8 TU.";
 			case "EXPLOSIVO" -> "Ao morrer, causa " + (grau * 50) + "% da vida máxima como dano em área de raio 3.";
 			case "VAMPIRISMO" -> "Cura " + grau + "% do dano causado.";

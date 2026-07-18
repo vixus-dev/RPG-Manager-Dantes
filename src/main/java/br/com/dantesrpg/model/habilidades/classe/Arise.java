@@ -13,6 +13,10 @@ public class Arise extends Habilidade {
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
 		System.out.println(">>> " + conjurador.getNome() + " comanda: ARISE!");
+		int inimigosRevividos = manager.ativarArise(estado);
+		if (inimigosRevividos > 0) {
+			System.out.println(">>> ARISE reviveu " + inimigosRevividos + " inimigo(s) amaldiçoado(s).");
+		}
 
 		List<Personagem> clones = conjurador.getClonesAtivos();
 		int percepção = conjurador.getAtributosFinais().getOrDefault(Atributo.PERCEPCAO, 0);

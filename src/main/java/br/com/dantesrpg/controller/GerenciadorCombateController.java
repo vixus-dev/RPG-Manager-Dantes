@@ -498,6 +498,7 @@ public class GerenciadorCombateController {
 	private void onMatarClick() {
 		if (selecionado != null) {
 			selecionado.setVidaAtual(0.0, estadoCombate, mainController);
+			mainController.getCombatManager().colocarEmEsperaParaArise(selecionado, estadoCombate);
 			atualizarCamposInput();
 			autoSaveAndRefresh();
 		}
@@ -855,6 +856,18 @@ public class GerenciadorCombateController {
 
 	@FXML
 	private void onRefreshClick() {
+		refreshCompleto();
+	}
+
+	@FXML
+	private void onAriseClick() {
+		if (estadoCombate == null || mainController == null) {
+			return;
+		}
+		int revividos = mainController.getCombatManager().ativarArise(estadoCombate);
+		if (revividos == 0) {
+			new Alert(Alert.AlertType.INFORMATION, "Não há inimigos aguardando o ARISE.", ButtonType.OK).showAndWait();
+		}
 		refreshCompleto();
 	}
 

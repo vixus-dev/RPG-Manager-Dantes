@@ -25,6 +25,10 @@ public final class MaldicaoUtils {
 	public static void adicionarMaldicao(Personagem p, Maldicao maldicao) {
 		if (p == null || maldicao == null || maldicao.getPercentual() <= 0)
 			return;
+		if (p.getValorPropriedade("MALDITO") > 0) {
+			System.out.println(">>> IMUNE! " + p.getNome() + " é imune a Maldição.");
+			return;
+		}
 
 		p.getMaldicoes().add(maldicao);
 		sincronizarEfeitoVisual(p);
@@ -32,6 +36,14 @@ public final class MaldicaoUtils {
 
 		if (p.getVidaAtual() > p.getVidaMaxima()) {
 			p.setVidaAtualInterno(p.getVidaMaxima());
+		}
+		if (getReducaoPercentualTotal(p) >= 1.0) {
+			p.setEscudoNormalAtual(0);
+			p.setEscudoSangueAtual(0);
+			p.setEscudoDivinoAtual(0);
+			p.setEscudoInfernalAtual(0);
+			p.setVidaAtual(0);
+			System.out.println(">>> MALDIÇÃO LETAL: " + p.getNome() + " alcançou 100% de Maldição.");
 		}
 	}
 

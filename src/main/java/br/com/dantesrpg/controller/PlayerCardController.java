@@ -340,7 +340,9 @@ public class PlayerCardController {
 			}
 
 			hpBarPolygon.getStyleClass().clear();
-			hpBarPolygon.getStyleClass().add("hp-bar-fill");
+			hpBarPolygon.getStyleClass().add(personagem.getValorPropriedade("MALDITO") > 0
+					? "hp-bar-fill-cursed"
+					: "hp-bar-fill");
 		}
 	}
 

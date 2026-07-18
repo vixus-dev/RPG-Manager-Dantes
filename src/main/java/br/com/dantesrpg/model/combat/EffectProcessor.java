@@ -45,7 +45,8 @@ public class EffectProcessor {
 			return;
 
 		String nomeEf = efeito.getNome().toLowerCase();
-		if (alvo.getValorPropriedade("IMUNIDADE_DOT") > 0 && efeito.getTipo() == TipoEfeito.DOT) {
+		if ((alvo.getValorPropriedade("IMUNIDADE_DOT") > 0 || alvo.getValorPropriedade("MALDITO") > 0)
+				&& efeito.getTipo() == TipoEfeito.DOT) {
 			System.out.println(">>> IMUNE! " + alvo.getNome() + " é imune a DoT: " + efeito.getNome());
 			return;
 		}
@@ -215,9 +216,10 @@ public class EffectProcessor {
 		}
 
 		return switch (nomeArma) {
-		case "Sabre do Kraken" -> 0.075;
+		case "Sabre do Kraken", "SabreMaldito[inimigo]" -> 0.075;
 		case "Lâminas Gêmeas Maré Alta" -> 0.05;
 		case "Dreadnought" -> 0.10;
+		case "MandibulaCoralMaldita" -> 0.025;
 		default -> 0.20;
 		};
 	}

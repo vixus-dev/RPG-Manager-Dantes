@@ -1134,6 +1134,10 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 		return bestiarioSpawnService.getBestiarioDatabase();
 	}
 
+	public boolean aplicarVersaoMaldita(Personagem personagem) {
+		return bestiarioSpawnService.aplicarVersaoMaldita(personagem);
+	}
+
 	public void entrarModoSpawn(String idMonstro) {
 		bestiarioSpawnService.entrarModoSpawn(idMonstro);
 	}

@@ -1143,6 +1143,18 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		}
 	}
 
+	public void criarAreaDeFogoAmaldicoado(int centroX, int centroY, int raio, int duracaoTU, Personagem criador) {
+		System.out.println("MAPA: Criando fogo amaldiçoado centrado em (" + centroX + "," + centroY + ")");
+		for (int y = centroY - raio; y <= centroY + raio; y++) {
+			for (int x = centroX - raio; x <= centroX + raio; x++) {
+				if (dentroDoGrid(x, y) && !paredesGrid[x][y]) {
+					aplicarEfeitoNoSolo(x, y,
+							new EfeitoInstance(TipoEfeitoSolo.FOGO_AMALDICOADO, duracaoTU, 0, criador));
+				}
+			}
+		}
+	}
+
 	public void avancarTempoTerreno(int tempoDecorrido) {
 		boolean visualMudou = false;
 
@@ -1263,6 +1275,8 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 				// CASO 2: FOGO NORMAL (Overlay de chão)
 				imagemParaCarregar = "/effects/fire_ground_overlay.png";
 			}
+		} else if (efeito.getTipo() == TipoEfeitoSolo.FOGO_AMALDICOADO) {
+			imagemParaCarregar = "/effects/cusedFireOverlay.png";
 		} else if (efeito.getTipo() == TipoEfeitoSolo.ACIDO) {
 			imagemParaCarregar = "/effects/acid_pool.png";
 		} else if (efeito.getTipo() == TipoEfeitoSolo.GAS) {
