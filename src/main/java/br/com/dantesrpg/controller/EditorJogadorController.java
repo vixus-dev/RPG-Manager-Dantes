@@ -275,7 +275,7 @@ public class EditorJogadorController {
             );
             imgJogador.setFitWidth(42);
             imgJogador.setFitHeight(42);
-            imgJogador.setPreserveRatio(true);
+            imgJogador.setPreserveRatio(false);
             imgJogador.setSmooth(true);
 
             StackPane cardRetrato = new StackPane(imgJogador);
@@ -291,6 +291,7 @@ public class EditorJogadorController {
             btnJogador.setGraphic(btnContent);
             btnJogador.setMaxWidth(Double.MAX_VALUE);
             btnJogador.getStyleClass().add("player-select-button");
+            btnJogador.getStyleClass().add("editor-player-select-button");
             btnJogador.setOnAction(e -> {
                 selecionarJogador(p);
                 atualizarSelecaoBotao(btnJogador);

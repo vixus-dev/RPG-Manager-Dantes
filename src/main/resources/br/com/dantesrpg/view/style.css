@@ -787,9 +787,35 @@
     -fx-border-radius: 5;
     -fx-border-color: #333344;
     -fx-border-width: 1;
-    -fx-padding: 8 10;
+    -fx-padding: 7 8;
     -fx-cursor: hand;
     -fx-alignment: CENTER_LEFT;
+}
+
+.player-select-portrait {
+    -fx-min-width: 42;
+    -fx-min-height: 42;
+    -fx-pref-width: 42;
+    -fx-pref-height: 42;
+    -fx-max-width: 42;
+    -fx-max-height: 42;
+    -fx-background-color: #100f1d;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(233, 69, 96, 0.45);
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+
+.player-select-name {
+    -fx-text-fill: inherit;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.editor-player-select-button {
+    -fx-min-height: 58;
+    -fx-pref-height: 58;
+    -fx-max-height: 58;
 }
 
 .player-select-button:hover {
