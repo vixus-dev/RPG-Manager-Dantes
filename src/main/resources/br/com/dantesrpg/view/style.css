@@ -49,6 +49,7 @@
 .bar-text { -fx-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 0 0 0 5; -fx-effect: dropshadow(gaussian, black, 2, 0.8, 0, 0); }
 .bar-track { -fx-fill: black; -fx-stroke: transparent; }
 .hp-bar-fill { -fx-fill: linear-gradient(to right, #00FF00, #33AA33); -fx-stroke: transparent; }
+.hp-bar-fill-cursed { -fx-fill: linear-gradient(to right, #00ffff, #168fbd); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, #00ffff, 5, 0.35, 0, 0); }
 .mp-bar-fill { -fx-fill: linear-gradient(to right, #00FFFF, #0077FF); -fx-stroke: transparent; }
 .passive-bar-fill { -fx-fill: linear-gradient(to right, #FFFF00, #FFAA00); -fx-stroke: transparent; }
 .passive-bar-fill.race-elf { -fx-fill: linear-gradient(to right, #FFD700, #FFAA00); }

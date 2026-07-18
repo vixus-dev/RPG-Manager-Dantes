@@ -34,6 +34,11 @@ import java.util.Map;
 import java.util.Optional;
 
 public class CombatManager {
+	private static final String PROPRIEDADE_MALDICAO_AO_MORRER = "MALDICAO_AO_MORRER";
+	private static final String PROPRIEDADE_MALDITO = "MALDITO";
+	private static final int RAIO_ARISE = 1;
+	private static final int DURACAO_FOGO_AMALDICOADO_TU = 50;
+	private static final double PERCENTUAL_MALDICAO_FOGO_AMALDICOADO = 0.25;
 
 	// ========== CAMPOS ==========
 
@@ -139,6 +144,114 @@ public class CombatManager {
 
 	public void setPendingMunicaoConsumption(Runnable r) {
 		this.pendingMunicaoConsumption = r;
+	}
+
+	/**
+	 * Intercepta a morte dos inimigos marcados para retornarem pelo ARISE.
+	 */
+	public boolean colocarEmEsperaParaArise(Personagem alvo, EstadoCombate estado) {
+		if (alvo == null || estado == null || alvo.getValorPropriedade(PROPRIEDADE_MALDICAO_AO_MORRER) <= 0
+				|| alvo.getValorPropriedade(PROPRIEDADE_MALDITO) > 0) {
+			return false;
+		}
+
+		boolean aguardandoArise = estado.colocarEmEsperaParaArise(alvo);
+		if (aguardandoArise) {
+			System.out.println(">>> " + alvo.getNome() + " sucumbiu à maldição e aguarda o ARISE.");
+		}
+		return aguardandoArise;
+	}
+
+	/**
+	 * Restaura todos os inimigos aguardando ARISE como versões malditas e
+	 * desencadeia a explosão de maldição na área onde cada um caiu.
+	 */
+	public int ativarArise(EstadoCombate estado) {
+		if (estado == null || estado.getInimigosAguardandoArise().isEmpty()) {
+			return 0;
+		}
+
+		Map<Personagem, EstadoCombate.PosicaoMorteAmaldicoada> aguardando = estado.getInimigosAguardandoArise();
+		for (Map.Entry<Personagem, EstadoCombate.PosicaoMorteAmaldicoada> entrada : aguardando.entrySet()) {
+			Personagem inimigo = entrada.getKey();
+			EstadoCombate.PosicaoMorteAmaldicoada posicaoMorte = entrada.getValue();
+			if (inimigo == null) {
+				continue;
+			}
+
+			inimigo.setPosX(posicaoMorte.x());
+			inimigo.setPosY(posicaoMorte.y());
+			removerDotsAtivos(inimigo);
+			br.com.dantesrpg.model.util.MaldicaoUtils.purificarMaldicoes(inimigo);
+
+			boolean aplicouVersaoMaldita = mainController != null
+					&& mainController.aplicarVersaoMaldita(inimigo);
+			if (!aplicouVersaoMaldita) {
+				inimigo.getPropriedades().removeIf(prop -> prop.equals(PROPRIEDADE_MALDICAO_AO_MORRER));
+				inimigo.adicionarPropriedade(PROPRIEDADE_MALDITO);
+			}
+			if (!aplicouVersaoMaldita && !inimigo.getNome().endsWith(" Maldito")) {
+				inimigo.setNome(inimigo.getNome() + " Maldito");
+			}
+			inimigo.setVidaAtual(inimigo.getVidaMaxima(), estado, mainController);
+			inimigo.setContadorTU(obterTuDeRetorno(estado));
+
+			criarFogoAmaldicoado(posicaoMorte, inimigo);
+			aplicarExplosaoAmaldicoada(posicaoMorte, inimigo, estado);
+			estado.removerDaEsperaArise(inimigo);
+			System.out.println(">>> ARISE: " + inimigo.getNome() + " retornou como inimigo maldito.");
+		}
+
+		if (mainController != null) {
+			mainController.atualizarInterfaceTotal();
+		}
+		return aguardando.size();
+	}
+
+	private int obterTuDeRetorno(EstadoCombate estado) {
+		Personagem atorAtual = estado.getAtorAtual();
+		return (atorAtual != null ? atorAtual.getContadorTU() : estado.getTickCounter()) + 100;
+	}
+
+	private void criarFogoAmaldicoado(EstadoCombate.PosicaoMorteAmaldicoada posicao, Personagem criador) {
+		if (mainController != null && mainController.getMapController() != null) {
+			mainController.getMapController().criarAreaDeFogoAmaldicoado(posicao.x(), posicao.y(), RAIO_ARISE,
+					DURACAO_FOGO_AMALDICOADO_TU, criador);
+		}
+	}
+
+	private void aplicarExplosaoAmaldicoada(EstadoCombate.PosicaoMorteAmaldicoada posicao, Personagem origem,
+			EstadoCombate estado) {
+		for (Personagem personagem : estado.getCombatentes()) {
+			if (personagem == null || !"JOGADOR".equalsIgnoreCase(personagem.getFaccao())
+					|| !personagem.isAtivoNoCombate()) {
+				continue;
+			}
+			int distancia = Math.max(Math.abs(personagem.getPosX() - posicao.x()),
+					Math.abs(personagem.getPosY() - posicao.y()));
+			if (distancia <= RAIO_ARISE) {
+				aplicarMaldicaoDoFogoAmaldicoado(personagem, origem.getNome());
+			}
+		}
+	}
+
+	private void removerDotsAtivos(Personagem personagem) {
+		List<String> dots = personagem.getEfeitosAtivos().entrySet().stream()
+				.filter(entrada -> entrada.getValue() != null && entrada.getValue().getTipo() == TipoEfeito.DOT)
+				.map(Map.Entry::getKey)
+				.toList();
+		for (String nomeDot : dots) {
+			personagem.removerEfeito(nomeDot);
+		}
+	}
+
+	public void aplicarMaldicaoDoFogoAmaldicoado(Personagem alvo, String fonte) {
+		if (alvo == null || !"JOGADOR".equalsIgnoreCase(alvo.getFaccao())) {
+			return;
+		}
+		br.com.dantesrpg.model.util.MaldicaoUtils.adicionarMaldicao(alvo,
+				new br.com.dantesrpg.model.util.Maldicao("Fogo Amaldiçoado de " + fonte,
+						PERCENTUAL_MALDICAO_FOGO_AMALDICOADO, DURACAO_FOGO_AMALDICOADO_TU, false));
 	}
 
 	// ========== MUNIÇÃO PENDENTE ==========
@@ -553,6 +666,11 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 						System.out.println(">>> Gatilho: " + p.getNome() + " foi postergado em +100 TU.");
 						continue;
 					}
+					if (p.getValorPropriedade(PROPRIEDADE_MALDITO) > 0
+							&& efeitoObj.getTipo() == TipoEfeito.DOT) {
+						efeitosARemover.add(nomeEfeito);
+						continue;
+					}
 
 					efeitoObj.reduzirDuracao(1);
 
@@ -677,6 +795,12 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 
 						// Morte por DoT (Essência)
 						if (vidaAntes > 0 && !p.isAtivoNoCombate() && !p.isVivo()) {
+							if (colocarEmEsperaParaArise(p, estado)) {
+								if (mainController != null) {
+									mainController.atualizarInterfaceAposMorte();
+								}
+								continue;
+							}
 							String msgMorte = "💀 " + p.getNome() + " morreu por " + efeitoObj.getNome() + "!";
 							System.out.println(">>> " + p.getNome() + " morreu por DoT.");
 
@@ -1473,6 +1597,12 @@ for (Personagem p : jogadoresVivos) {
 				Efeito queimacao = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Queimação", 200, 10);
 				effectProcessor.aplicarEfeito(ator, queimacao);
 			}
+		}
+
+		if (efeitoSolo.getTipo() == TipoEfeitoSolo.FOGO_AMALDICOADO) {
+			aplicarMaldicaoDoFogoAmaldicoado(ator, efeitoSolo.getCriador() != null
+					? efeitoSolo.getCriador().getNome()
+					: "origem desconhecida");
 		}
 
 		// --- LÓGICA DO SANGUE ---

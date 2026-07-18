@@ -43,6 +43,7 @@
                <Label fx:id="lblContadorAndar" style="-fx-font-weight: bold; -fx-text-fill: #ff6b6b; -fx-font-size: 14px; -fx-padding: 4 12; -fx-background-color: rgba(255,50,50,0.15); -fx-background-radius: 5; -fx-border-color: #ff6b6b; -fx-border-radius: 5; -fx-border-width: 1;" text="" managed="false" visible="false"/>
                <Region HBox.hgrow="ALWAYS" />
                <Button onAction="#onRefreshClick" style="-fx-background-color: rgba(0, 240, 255, 0.1); -fx-text-fill: #00f0ff; -fx-font-size: 11px; -fx-background-radius: 5; -fx-border-color: rgba(0, 240, 255, 0.25); -fx-border-width: 1; -fx-cursor: hand;" text="Atualizar" />
+               <Button onAction="#onAriseClick" style="-fx-background-color: linear-gradient(to bottom, #34115c, #17072c); -fx-text-fill: #00ffff; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 5; -fx-border-color: #00d9ff; -fx-border-width: 1; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, #6f21d8, 6, 0.45, 0, 0);" text="ARISE" />
                <Button onAction="#onCurarTodosClick" style="-fx-background-color: rgba(0, 255, 136, 0.12); -fx-text-fill: #00ff88; -fx-font-weight: bold; -fx-background-radius: 5; -fx-border-color: rgba(0, 255, 136, 0.3); -fx-border-width: 1; -fx-cursor: hand;" text="Curar Todos" />
             </children>
          </HBox>

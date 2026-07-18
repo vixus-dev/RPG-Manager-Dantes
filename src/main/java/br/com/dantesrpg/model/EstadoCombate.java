@@ -12,6 +12,11 @@ public class EstadoCombate {
 	private int tickCounter; // Contador para gerenciar os ticks de DoT
 	private int xpAcumuladoPool = 0;
 	private CombatManager combatManager;
+	private final java.util.Map<Personagem, PosicaoMorteAmaldicoada> inimigosAguardandoArise = new java.util.LinkedHashMap<>();
+
+	/** Posição preservada para a ressurreição amaldiçoada. */
+	public record PosicaoMorteAmaldicoada(int x, int y) {
+	}
 
 	public EstadoCombate(List<Personagem> personagensIniciais) {
 		this.combatentes = new ArrayList<>(personagensIniciais);
@@ -93,6 +98,23 @@ public class EstadoCombate {
 
 	public void setCombatManager(CombatManager combatManager) {
 		this.combatManager = combatManager;
+	}
+
+	public boolean colocarEmEsperaParaArise(Personagem personagem) {
+		if (personagem == null || inimigosAguardandoArise.containsKey(personagem)) {
+			return false;
+		}
+		inimigosAguardandoArise.put(personagem,
+				new PosicaoMorteAmaldicoada(personagem.getPosX(), personagem.getPosY()));
+		return true;
+	}
+
+	public java.util.Map<Personagem, PosicaoMorteAmaldicoada> getInimigosAguardandoArise() {
+		return java.util.Map.copyOf(inimigosAguardandoArise);
+	}
+
+	public void removerDaEsperaArise(Personagem personagem) {
+		inimigosAguardandoArise.remove(personagem);
 	}
 
 	/**

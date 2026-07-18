@@ -347,6 +347,13 @@ public class DamageApplicator {
 
 			// MORTE
 			if (vidaPre > 0 && !alvo.isAtivoNoCombate() && !alvo.isVivo()) {
+				if (combatManager.colocarEmEsperaParaArise(alvo, estado)) {
+					if (getController() != null) {
+						getController().atualizarInterfaceAposMorte();
+					}
+					return;
+				}
+
 				// Vínculo de Cura na Morte
 				for (String prop : alvo.getPropriedades()) {
 					if (prop.startsWith("VINCULO_CURA_MORTE:")) {
