@@ -5,6 +5,7 @@ import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.Raridade;
 import br.com.dantesrpg.model.items.Consumivel;
 import br.com.dantesrpg.model.util.ImageCache;
+import br.com.dantesrpg.controller.hud.VidasPortraitRenderer;
 import br.com.dantesrpg.controller.util.ItemVisualUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -912,6 +913,10 @@ public class EditorJogadorController {
             ),
             "red"
         );
+        adicionarPecado(jogadorSelecionado.getPecado());
+        detailedAttributesPane.getChildren().add(
+            VidasPortraitRenderer.criar(jogadorSelecionado.getVidas())
+        );
     }
 
     private StackPane criarBarraStat(
@@ -979,6 +984,12 @@ public class EditorJogadorController {
 
         row.getChildren().addAll(lblNome, lblValor);
         detailedAttributesPane.getChildren().add(row);
+    }
+
+    private void adicionarPecado(int pecado) {
+        Label valor = new Label(String.valueOf(pecado));
+        valor.setStyle("-fx-text-fill: #b56cff; -fx-font-weight: bold;");
+        detailedAttributesPane.getChildren().add(valor);
     }
 
     // =============================================

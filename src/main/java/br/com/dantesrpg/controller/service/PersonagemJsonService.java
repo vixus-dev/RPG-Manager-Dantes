@@ -104,6 +104,8 @@ public class PersonagemJsonService {
 
 				int grau = data.containsKey("grau") ? ((Double) data.get("grau")).intValue() : 0;
 				int segmentos = data.containsKey("segmentos") ? ((Double) data.get("segmentos")).intValue() : 0;
+				int pecado = data.containsKey("pecado") ? ((Number) data.get("pecado")).intValue() : 0;
+				int vidas = data.containsKey("vidas") ? ((Number) data.get("vidas")).intValue() : 0;
 
 				Personagem personagem = new Personagem(nome, raca, classe, nivel, atributosBase, vidaMaximaBase,
 						iniciativaBase);
@@ -113,6 +115,8 @@ public class PersonagemJsonService {
 				personagem.setXpAtual(xpSalvo);
 				personagem.setGrau(grau);
 				personagem.setSegmentosVida(segmentos);
+				personagem.setPecado(pecado);
+				personagem.setVidas(vidas);
 				if (data.containsKey("wieldingMaximo")) {
 					personagem.setWieldingMaximo(((Number) data.get("wieldingMaximo")).intValue());
 				}
@@ -482,6 +486,8 @@ public class PersonagemJsonService {
 		data.put("vidaMaximaBase", personagem.getVidaMaximaBase());
 		data.put("grau", personagem.getGrau());
 		data.put("segmentos", personagem.getSegmentosVida());
+		data.put("pecado", personagem.getPecado());
+		data.put("vidas", personagem.getVidas());
 		if (personagem.getArmaduraNatural() > 0) {
 			data.put("armaduraNatural", personagem.getArmaduraNatural());
 		}

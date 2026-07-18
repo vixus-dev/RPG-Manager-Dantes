@@ -202,6 +202,8 @@ public class CharacterInfoRenderer {
 		addStatLabel("Taxa Crítica:", String.format("%.1f%%", ator.getTaxaCritica() * 100));
 		addStatLabel("Dano Crítico:", String.format("+%.1f%%", ator.getDanoCritico() * 100));
 		addStatLabel("Bônus Dano:",   String.format("+%.1f%%", ator.getBonusDanoPercentual() * 100));
+		adicionarPecado(ator.getPecado());
+		detailedPane.getChildren().add(VidasPortraitRenderer.criar(ator.getVidas()));
 
 		detailedPane.requestLayout();
 	}
@@ -231,6 +233,12 @@ public class CharacterInfoRenderer {
 		v.setStyle("-fx-text-fill: white;");
 		row.getChildren().addAll(t, v);
 		detailedPane.getChildren().add(row);
+	}
+
+	private void adicionarPecado(int pecado) {
+		Label valor = new Label(String.valueOf(pecado));
+		valor.setStyle("-fx-text-fill: #b56cff; -fx-font-weight: bold;");
+		detailedPane.getChildren().add(valor);
 	}
 
 	private String resolverEstiloEfeito(TipoEfeito tipo) {
