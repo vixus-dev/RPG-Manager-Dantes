@@ -16,6 +16,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
@@ -71,6 +72,7 @@ import br.com.dantesrpg.controller.service.BestiarioSpawnService;
 import br.com.dantesrpg.controller.service.CatalogoItensService;
 import br.com.dantesrpg.controller.service.CombatUiRefresher;
 import br.com.dantesrpg.controller.service.EstadoJogadoresService;
+import br.com.dantesrpg.controller.service.EstadoAndarService;
 import br.com.dantesrpg.controller.service.FantasmaNobreActionService;
 import br.com.dantesrpg.controller.service.JanelasCombateCoordinator;
 import br.com.dantesrpg.controller.service.MapaCombateCoordinator;
@@ -79,11 +81,17 @@ import br.com.dantesrpg.controller.service.PromptCombateService;
 import br.com.dantesrpg.controller.service.ReforcosDialogService;
 import br.com.dantesrpg.controller.service.SquadCombateCoordinator;
 import br.com.dantesrpg.controller.service.TurnoCombateCoordinator;
+import br.com.dantesrpg.controller.service.TemaAndarService;
+import br.com.dantesrpg.model.theme.ConfiguracaoAndar;
 
 public class CombatController {
 
 	@FXML
 	private BorderPane rootPane;
+	@FXML
+	private VBox leftNavBar;
+	@FXML
+	private HBox gmToolbar;
 	@FXML
 	private BorderPane contextPane;
 	@FXML
@@ -130,9 +138,9 @@ public class CombatController {
 	private EstadoCombate estadoCombate;
 
 	private Node combatViewCenterNode;
-	private BorderPane lojaViewNode;
+	private StackPane lojaViewNode;
 	private LojaController lojaController;
-	private BorderPane editorViewNode;
+	private StackPane editorViewNode;
 	private EditorJogadorController editorJogadorController;
 	private BorderPane criarViewNode;
 	private CriarController criarController;
@@ -141,6 +149,8 @@ public class CombatController {
 	private Map<String, Map<String, Object>> itempediaDatabase;
 	private Map<String, Map<String, Object>> bestiarioDatabase;
 	private final CatalogoItensService catalogoItensService = new CatalogoItensService();
+	private final EstadoAndarService estadoAndarService = new EstadoAndarService();
+	private TemaAndarService temaAndarService;
 	private final BestiarioSpawnService bestiarioSpawnService = new BestiarioSpawnService(this, catalogoItensService,
 			() -> estadoCombate);
 	private final CombatUiRefresher combatUiRefresher = new CombatUiRefresher(this, () -> estadoCombate,
@@ -197,6 +207,13 @@ public class CombatController {
 		// Fase LEVE: apenas bindings de UI, sem I/O nem carregamento de dados.
 		// O trabalho pesado é feito em inicializacaoTardia(), chamado pelo Main.
 		this.combatViewCenterNode = rootPane.getCenter();
+		this.temaAndarService = new TemaAndarService(rootPane, leftNavBar, gmToolbar);
+		estadoAndarService.configuracaoAtualProperty().addListener((obs, anterior, atual) -> {
+			if (atual != null) {
+				this.efeitoAndarAtual = atual.getOpcaoSeletor();
+			}
+			aplicarTemaAtual();
+		});
 		System.out.println("COMBATE: Interface pronta (aguardando inicialização tardia).");
 
 		// Clip mainCombatStack to prevent any child (like the map) from overflowing
@@ -231,6 +248,7 @@ public class CombatController {
 	 */
 	public void inicializacaoTardia() {
 		System.out.println("COMBATE: Iniciando carregamento de dados...");
+		carregarTemaDoPresetEquipado();
 
 		// --- Cria overlay de loading ---
 		StackPane overlayLoading = criarOverlayDeLoading();
@@ -702,6 +720,7 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				if (loader.getLocation() == null)
 					throw new IOException("DetailedTurnHUD.fxml não encontrado");
 				Parent detailedTurnHudRoot = loader.load();
+				aplicarTemaEmRaiz(detailedTurnHudRoot);
 				detailedTurnHudController = loader.getController();
 				detailedTurnHudStage = new Stage();
 				Window ownerWindow = rootPane.getScene() != null ? rootPane.getScene().getWindow() : null;
@@ -731,6 +750,7 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				lojaViewNode = loader.load();
 				lojaController = loader.getController();
 			}
+			aplicarTemaAtual();
 
 			// mudar baseando na loja uau
 			lojaController.inicializarLoja(this, this.estadoCombate, "LOJA_PRINCIPAL_TESTE");
@@ -763,6 +783,7 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				editorViewNode = loader.load(); // Carrega como BorderPane (ou o root que você usou)
 				editorJogadorController = loader.getController();
 			}
+			aplicarTemaAtual();
 
 			// Inicializa o editor com os dados de combate atuais
 			editorJogadorController.inicializar(this, this.estadoCombate);
@@ -1187,13 +1208,58 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 	}
 
 	public void setEfeitoAndar(String efeito, boolean ativo) {
-		if (efeito != null && efeito.equals(this.efeitoAndarAtual) && this.efeitoAndarAtivo == ativo) {
+		String efeitoNormalizado = efeito == null || efeito.isBlank() ? "Nenhum" : efeito;
+		boolean efeitoMudou = !efeitoNormalizado.equals(this.efeitoAndarAtual);
+		if (!efeitoMudou && this.efeitoAndarAtivo == ativo) {
 			return;
 		}
-		this.efeitoAndarAtual = efeito;
+		this.efeitoAndarAtual = efeitoNormalizado;
 		this.efeitoAndarAtivo = ativo;
-		System.out.println("GM: Efeito de Andar alterado para: " + efeito + " (Ativo: " + ativo + ")");
+		if (efeitoMudou) {
+			estadoAndarService.selecionarPorOpcao(efeitoNormalizado);
+		}
+		System.out.println("GM: Efeito de Andar alterado para: " + efeitoNormalizado + " (Ativo: " + ativo + ")");
 		notificarGerenciadorCombate();
+	}
+
+	public List<String> getOpcoesAndar() {
+		return estadoAndarService.getOpcoesSeletor();
+	}
+
+	public void carregarTemaDoPresetEquipado() {
+		estadoAndarService.carregarDoPresetEquipado();
+		ConfiguracaoAndar configuracao = estadoAndarService.getConfiguracaoAtual();
+		this.efeitoAndarAtual = configuracao != null ? configuracao.getOpcaoSeletor() : "Nenhum";
+		aplicarTemaAtual();
+		notificarGerenciadorCombate();
+	}
+
+	public void aplicarTemaEmRaiz(Parent raiz) {
+		if (temaAndarService == null || raiz == null) {
+			return;
+		}
+		temaAndarService.registrarRaiz(raiz);
+	}
+
+	private void aplicarTemaAtual() {
+		if (temaAndarService == null) {
+			return;
+		}
+		ConfiguracaoAndar configuracao = estadoAndarService.getConfiguracaoAtual();
+		temaAndarService.aplicarTema(configuracao);
+
+		if (lojaViewNode != null && lojaController != null) {
+			temaAndarService.registrarRaiz(lojaViewNode);
+			String caminho = configuracao != null && configuracao.getAssets() != null
+					? configuracao.getAssets().getFundoLoja() : null;
+			lojaController.setFundoTema(temaAndarService.carregarImagem(caminho));
+		}
+		if (editorViewNode != null && editorJogadorController != null) {
+			temaAndarService.registrarRaiz(editorViewNode);
+			String caminho = configuracao != null && configuracao.getAssets() != null
+					? configuracao.getAssets().getFundoEditor() : null;
+			editorJogadorController.setFundoTema(temaAndarService.carregarImagem(caminho));
+		}
 	}
 
 	public String getEfeitoAndarAtual() {

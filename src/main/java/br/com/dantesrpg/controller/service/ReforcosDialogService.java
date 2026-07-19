@@ -1156,6 +1156,7 @@ public class ReforcosDialogService {
 				}
 				preset.setName(newName);
 				PartyPresetsData.salvarPresets(data);
+				controller.carregarTemaDoPresetEquipado();
 
 				refreshPresetsList.run();
 				for (int i = 0; i < lvPresets.getItems().size(); i++) {
@@ -1258,8 +1259,16 @@ public class ReforcosDialogService {
 			}
 
 			PartyPresetsData data = PartyPresetsData.carregarPresets();
+			PartyPreset presetAnterior = data.getPresets().stream()
+					.filter(p -> p.getName().equalsIgnoreCase(name))
+					.findFirst().orElse(null);
+			PartyPreset novoPreset = new PartyPreset(name, activeCharNames);
+			if (presetAnterior != null) {
+				novoPreset.setAndarAtual(presetAnterior.getAndarAtual());
+				novoPreset.setEstadoVisualAndar(presetAnterior.getEstadoVisualAndar());
+			}
 			data.getPresets().removeIf(p -> p.getName().equalsIgnoreCase(name));
-			data.getPresets().add(new PartyPreset(name, activeCharNames));
+			data.getPresets().add(novoPreset);
 			if (data.getEquippedSlotName() == null || data.getEquippedSlotName().isEmpty()) {
 				data.setEquippedSlotName(name);
 			}
@@ -1309,6 +1318,7 @@ public class ReforcosDialogService {
 
 			data.setEquippedSlotName(preset.getName());
 			PartyPresetsData.salvarPresets(data);
+			controller.carregarTemaDoPresetEquipado();
 
 			refreshLists.run();
 			refreshPresetsList.run();
@@ -1338,6 +1348,7 @@ public class ReforcosDialogService {
 					data.setEquippedSlotName(null);
 				}
 				PartyPresetsData.salvarPresets(data);
+				controller.carregarTemaDoPresetEquipado();
 
 				refreshPresetsList.run();
 			}

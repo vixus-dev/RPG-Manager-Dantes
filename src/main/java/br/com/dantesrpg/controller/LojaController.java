@@ -37,6 +37,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -59,6 +61,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class LojaController {
+	@FXML private StackPane lojaThemeRoot;
+	@FXML private ImageView lojaThemeBackground;
 
 	@FXML private HBox lojaHeader;
 	@FXML private Label labelNomeLoja;
@@ -105,6 +109,9 @@ public class LojaController {
 
 	@FXML
 	public void initialize() {
+		lojaThemeBackground.fitWidthProperty().bind(lojaThemeRoot.widthProperty());
+		lojaThemeBackground.fitHeightProperty().bind(lojaThemeRoot.heightProperty());
+
 		comboSelecaoLoja.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal != null) {
 				carregarLoja(newVal);
@@ -130,6 +137,11 @@ public class LojaController {
 		comboFiltroTipoArma.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> atualizarUI());
 
 		txtBusca.textProperty().addListener((obs, oldVal, newVal) -> atualizarUI());
+	}
+
+	public void setFundoTema(Image imagem) {
+		lojaThemeBackground.setImage(imagem);
+		lojaThemeBackground.setVisible(imagem != null);
 	}
 
 	public void inicializarLoja(CombatController controller, EstadoCombate estado, String idLojaInicial) {

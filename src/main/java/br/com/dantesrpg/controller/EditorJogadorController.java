@@ -51,6 +51,12 @@ public class EditorJogadorController {
 
     private static final double TAMANHO_RETRATO_LISTA = 42;
 
+    @FXML
+    private StackPane editorThemeRoot;
+
+    @FXML
+    private ImageView editorThemeBackground;
+
     // --- Header ---
     @FXML
     private HBox characterHeader;
@@ -194,6 +200,9 @@ public class EditorJogadorController {
 
     @FXML
     public void initialize() {
+        editorThemeBackground.fitWidthProperty().bind(editorThemeRoot.widthProperty());
+        editorThemeBackground.fitHeightProperty().bind(editorThemeRoot.heightProperty());
+
         configurarPaineisDeOrigem();
 
         inventarioListView.setOnMouseClicked(event -> {
@@ -687,6 +696,11 @@ public class EditorJogadorController {
                 "Efeito ativo: " + efeito.getNome()
             );
         }
+    }
+
+    public void setFundoTema(javafx.scene.image.Image imagem) {
+        editorThemeBackground.setImage(imagem);
+        editorThemeBackground.setVisible(imagem != null);
     }
 
     private void adicionarModificadoresDeEquipamento(List<ModificadorAtributoExibicao> modificadores, Atributo atributo) {

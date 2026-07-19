@@ -223,6 +223,7 @@ public class GerenciadorCombateController {
 		if (mainController != null) {
 			isSyncing = true;
 			try {
+				comboEfeitoAndar.getItems().setAll(mainController.getOpcoesAndar());
 				String currentEfeito = mainController.getEfeitoAndarAtual();
 				if (currentEfeito != null) {
 					comboEfeitoAndar.setValue(currentEfeito);
@@ -231,6 +232,7 @@ public class GerenciadorCombateController {
 			} finally {
 				isSyncing = false;
 			}
+			atualizarContadorAndar();
 		}
 	}
 
@@ -406,7 +408,7 @@ public class GerenciadorCombateController {
 		if (efeito.startsWith("3º Andar")) return 300; // O Olho
 		if (efeito.contains("4º Andar - Dia")) return 100;
 		if (efeito.contains("4º Andar")) return 200;
-		if (efeito.startsWith("5º Andar")) return 100;
+		if ("5º Andar - Tempestade".equals(efeito)) return 100;
 		if (efeito.startsWith("7º Andar")) return 150;
 		if (efeito.startsWith("8.1º Andar")) return 200;
 		return 0;
@@ -417,7 +419,7 @@ public class GerenciadorCombateController {
 		if (efeito.startsWith("3º Andar")) return "O Olho";
 		if (efeito.contains("Dia")) return "Vento Escaldante";
 		if (efeito.contains("Noite")) return "Vento Congelante";
-		if (efeito.startsWith("5º Andar")) return "Tempestade";
+		if ("5º Andar - Tempestade".equals(efeito)) return "Tempestade";
 		if (efeito.startsWith("7º Andar")) return "Holofotes";
 		if (efeito.startsWith("8.1º Andar")) return "Cruzes";
 		return efeito;
@@ -1428,9 +1430,10 @@ public class GerenciadorCombateController {
 	}
 
 	private void configurarEfeitosAndar() {
-		comboEfeitoAndar.getItems().addAll("Nenhum", "2º Andar - Arremesso", "3º Andar - O Olho", "4º Andar - Dia",
-				"4º Andar - Noite", "4º andar - Eclipse", "5º Andar - Tempestade", "7º Andar - Holofotes",
-				"8.1º Andar - Cruzes", "9º Andar - A Sala dos Trovões");
+		comboEfeitoAndar.getItems().addAll("Nenhum", "1º Andar - Campos Helênicos", "2º Andar - Arremesso",
+				"3º Andar - O Olho", "4º Andar - Dia", "4º Andar - Noite", "4º Andar - Eclipse",
+				"5º Andar - Praia", "5º Andar - Tempestade", "6º Andar - Cidade de Sangue",
+				"7º Andar - Holofotes", "8.1º Andar - Cruzes", "9º Andar - A Sala dos Trovões");
 		comboEfeitoAndar.getSelectionModel().selectFirst();
 
 		comboEfeitoAndar.valueProperty().addListener((o, old, newVal) -> {

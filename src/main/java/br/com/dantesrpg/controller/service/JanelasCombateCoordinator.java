@@ -72,6 +72,7 @@ public class JanelasCombateCoordinator {
 				FXMLLoader loader = new FXMLLoader(
 						controller.getClass().getResource("/br/com/dantesrpg/view/MapView.fxml"));
 				Parent mapRoot = loader.load();
+				controller.aplicarTemaEmRaiz(mapRoot);
 
 				mapController = loader.getController();
 				mapController.setMainController(controller);
@@ -112,6 +113,7 @@ public class JanelasCombateCoordinator {
 			FXMLLoader loader = new FXMLLoader(
 					controller.getClass().getResource("/br/com/dantesrpg/view/DamageResolutionView.fxml"));
 			Parent root = loader.load();
+			controller.aplicarTemaEmRaiz(root);
 
 			DamageResolutionController resolutionController = loader.getController();
 			resolutionController.setMainController(controller);
@@ -140,6 +142,7 @@ public class JanelasCombateCoordinator {
 				FXMLLoader loader = new FXMLLoader(
 						controller.getClass().getResource("/br/com/dantesrpg/view/DiceRollPrompt.fxml"));
 				Parent root = loader.load();
+				controller.aplicarTemaEmRaiz(root);
 				diceRollController = loader.getController();
 				diceRollController.setMainController(controller);
 
@@ -179,6 +182,7 @@ public class JanelasCombateCoordinator {
 			FXMLLoader loader = new FXMLLoader(
 					controller.getClass().getResource("/br/com/dantesrpg/view/GerenciadorCombateView.fxml"));
 			Parent root = loader.load();
+			controller.aplicarTemaEmRaiz(root);
 
 			GerenciadorCombateController painelController = loader.getController();
 			painelController.setMainController(controller, estadoSupplier.get());
@@ -222,6 +226,7 @@ public class JanelasCombateCoordinator {
 				FXMLLoader loader = new FXMLLoader(
 						controller.getClass().getResource("/br/com/dantesrpg/view/BestiarioView.fxml"));
 				Parent root = loader.load();
+				controller.aplicarTemaEmRaiz(root);
 				bestiarioController = loader.getController();
 
 				bestiarioStage = new Stage();
