@@ -24,7 +24,7 @@
             <Label text="Criação" styleClass="header-label" maxWidth="Infinity"/>
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                 <VBox spacing="6.0">
-                    <Button text="Criar Item 📦" fx:id="btnAbaCriarItem" maxWidth="Infinity" styleClass="player-select-button, player-select-button-selected"/>
+                    <Button text="Criar Item" fx:id="btnAbaCriarItem" maxWidth="Infinity" styleClass="player-select-button, player-select-button-selected"/>
                 </VBox>
             </ScrollPane>
         </VBox>
@@ -95,7 +95,7 @@
                 
                 <!-- Bento Card 2: Armas (Especificidades) -->
                 <VBox fx:id="paneArma" styleClass="bento-card" spacing="12.0" visible="false" managed="false">
-                    <Label text="Propriedades de Arma ⚔️" styleClass="header-label"/>
+                    <Label text="Propriedades de Arma" styleClass="header-label"/>
                     
                     <GridPane vgap="10.0" hgap="15.0">
                         <columnConstraints>

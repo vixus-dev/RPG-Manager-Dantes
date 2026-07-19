@@ -663,12 +663,17 @@
 
 /* Moldura do Retrato */
 .portrait-container {
+    -fx-background-radius: 8;
+    -fx-background-color: #0d0c15;
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.35), 8, 0.5, 0, 0);
+}
+
+.portrait-container-border {
+    -fx-background-color: transparent;
     -fx-border-color: linear-gradient(to bottom, #e94560, #00f0ff);
     -fx-border-width: 2;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
-    -fx-background-color: #0d0c15;
-    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.35), 8, 0.5, 0, 0);
 }
 
 /* --- HEADER DO PERSONAGEM (GLASS GRADIENT) --- */
@@ -704,6 +709,45 @@
     -fx-font-size: 14px;
     -fx-text-fill: #ffd700;
     -fx-font-weight: bold;
+}
+
+.xp-progress-container {
+    -fx-min-width: 220;
+    -fx-pref-width: 220;
+    -fx-background-color: #090a11;
+    -fx-background-radius: 11;
+    -fx-border-color: rgba(255, 215, 0, 0.45);
+    -fx-border-width: 1;
+    -fx-border-radius: 11;
+}
+
+.xp-progress-bar {
+    -fx-pref-width: 220;
+    -fx-min-width: 220;
+    -fx-pref-height: 20;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.xp-progress-bar > .track {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10;
+}
+
+.xp-progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #c99218, #ffe17a);
+    -fx-background-insets: 0;
+    -fx-background-radius: 10;
+    -fx-padding: 0;
+}
+
+.xp-progress-text {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.95), 2, 0.6, 0, 1);
 }
 
 /* --- ESTILIZAÇÃO DO TABPANE MODERNIZADO --- */
@@ -1598,6 +1642,66 @@
     -fx-background-color: rgba(0, 240, 255, 0.18);
     -fx-border-color: #00f0ff;
     -fx-effect: dropshadow(gaussian, rgba(0, 240, 255, 0.45), 8, 0, 0, 0);
+}
+
+/* Painéis retráteis dos dossiês de classe e raça. */
+.editor-content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.editor-content-scroll > .viewport,
+.origin-info-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.origin-info-panel {
+    -fx-background-color: #111523;
+    -fx-border-color: rgba(0, 240, 255, 0.32);
+    -fx-border-width: 1;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+}
+
+.origin-info-panel > .title {
+    -fx-background-color: linear-gradient(to right, #152239, #111523);
+    -fx-background-radius: 6 6 0 0;
+    -fx-padding: 9 12;
+    -fx-cursor: hand;
+}
+
+.origin-info-panel > .title:hover {
+    -fx-background-color: linear-gradient(to right, #193653, #111523);
+}
+
+.origin-info-panel > .title > .text {
+    -fx-fill: #00f0ff;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.origin-info-panel > .title > .arrow-button .arrow {
+    -fx-background-color: #00f0ff;
+}
+
+.origin-info-panel > .content {
+    -fx-background-color: #0d101b;
+    -fx-border-color: rgba(0, 240, 255, 0.18) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 0;
+}
+
+.origin-info-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.origin-info-content {
+    -fx-text-fill: #e4e8f2;
+    -fx-font-size: 12px;
+    -fx-line-spacing: 3px;
+    -fx-padding: 12;
 }
 
 .popup-dialog {

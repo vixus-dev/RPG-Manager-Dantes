@@ -6,6 +6,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ProgressBar?>
 <?import java.net.URL?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -18,6 +20,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.shape.Rectangle?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.EditorJogadorController"
             prefHeight="700.0" prefWidth="1100.0" styleClass="editor-background">
@@ -40,7 +43,13 @@
             <!-- HEADER DO PERSONAGEM (GLASS GRADIENT) -->
             <HBox fx:id="characterHeader" styleClass="character-header" spacing="15.0" alignment="CENTER_LEFT">
                 <StackPane prefWidth="68" prefHeight="68" styleClass="portrait-container">
-                    <ImageView fx:id="imgPortrait" fitWidth="64" fitHeight="64" preserveRatio="true" />
+                    <StackPane minWidth="64.0" minHeight="64.0" prefWidth="64.0" prefHeight="64.0" maxWidth="64.0" maxHeight="64.0">
+                        <ImageView fx:id="imgPortrait" fitWidth="64" fitHeight="64" preserveRatio="true" />
+                        <clip>
+                            <Rectangle width="64" height="64" arcWidth="10" arcHeight="10" />
+                        </clip>
+                    </StackPane>
+                    <Region mouseTransparent="true" maxWidth="Infinity" maxHeight="Infinity" styleClass="portrait-container-border" />
                 </StackPane>
                 <VBox spacing="4" alignment="CENTER_LEFT">
                     <Label fx:id="labelNomePersonagem" text="Selecione um jogador" styleClass="label-name"/>
@@ -51,60 +60,81 @@
                     </HBox>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <VBox spacing="4" alignment="CENTER_RIGHT">
+                <VBox minWidth="220.0" prefWidth="220.0" spacing="4" alignment="CENTER">
                     <Label fx:id="labelNivelXP" text="" styleClass="label-level"/>
-                    <Label fx:id="labelPontosParaDistribuir" text="" styleClass="points-none"/>
+                    <StackPane minHeight="22.0" prefHeight="22.0" maxHeight="22.0" styleClass="xp-progress-container">
+                        <ProgressBar fx:id="progressXp" progress="0.0" maxWidth="Infinity" styleClass="xp-progress-bar" />
+                        <Label fx:id="labelXp" text="XP 0/0" mouseTransparent="true" styleClass="xp-progress-text" />
+                    </StackPane>
                 </VBox>
             </HBox>
 
             <!-- CONTEÚDO PRINCIPAL: TAB PANELS ESTILIZADOS -->
             <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" styleClass="editor-tab-pane">
                 <tabs>
-                    <!-- TAB 1: ALMA & COMBATE -->
+                    <!-- TAB 1: Atributos & COMBATE -->
                     <Tab text="Atributos &amp; Combate" styleClass="editor-tab">
                         <content>
-                            <HBox spacing="15.0" style="-fx-padding: 15;">
+                            <ScrollPane fitToWidth="true" styleClass="editor-content-scroll">
+                                <content>
+                                    <HBox spacing="15.0" style="-fx-padding: 15;">
                                 <!-- Atributos Base -->
                                 <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="350.0" spacing="12.0">
-                                    <Label text="Atributos de Alma" styleClass="header-label"/>
-                                    <GridPane fx:id="attributesGrid" vgap="6.0" hgap="10.0" VBox.vgrow="ALWAYS" />
-                                    
-                                    <Region styleClass="editor-separator" />
-                                    
+                                    <Label text="Atributos do personagem" styleClass="header-label"/>
+                                    <Label fx:id="labelPontosParaDistribuir" text="" visible="false" managed="false" styleClass="points-available"/>
+                                    <!-- Os 8px de padding, somados aos 12px do VBox, formam a margem de 20px. -->
+                                    <GridPane fx:id="attributesGrid" vgap="6.0" hgap="10.0" style="-fx-padding: 0 0 8 0;" />
+
                                     <Label text="Informações de Origem" styleClass="header-label" />
-                                    <HBox spacing="8.0">
-                                        <Button fx:id="btnInfoClasse" text="Classe" onAction="#onInfoClasseClick" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="editor-btn-info"/>
-                                        <Button fx:id="btnInfoRaca" text="Raça" onAction="#onInfoRacaClick" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="editor-btn-info"/>
-                                    </HBox>
+                                    <TitledPane fx:id="painelInfoClasse" text="Classe" animated="true" expanded="false" styleClass="origin-info-panel">
+                                        <content>
+                                            <ScrollPane fitToWidth="true" prefViewportHeight="220.0" maxHeight="260.0" styleClass="origin-info-scroll">
+                                                <content>
+                                                    <Label fx:id="labelInfoClasse" wrapText="true" maxWidth="Infinity" styleClass="origin-info-content" />
+                                                </content>
+                                            </ScrollPane>
+                                        </content>
+                                    </TitledPane>
+                                    <TitledPane fx:id="painelInfoRaca" text="Raça" animated="true" expanded="false" styleClass="origin-info-panel">
+                                        <content>
+                                            <ScrollPane fitToWidth="true" prefViewportHeight="220.0" maxHeight="260.0" styleClass="origin-info-scroll">
+                                                <content>
+                                                    <Label fx:id="labelInfoRaca" wrapText="true" maxWidth="Infinity" styleClass="origin-info-content" />
+                                                </content>
+                                            </ScrollPane>
+                                        </content>
+                                    </TitledPane>
                                 </VBox>
                                 
                                 <!-- Radar Chart -->
                                 <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="380.0" spacing="12.0" alignment="CENTER">
-                                    <Label text="Projeção Espiritual" styleClass="header-label" maxWidth="Infinity"/>
+                                    <Label text="Gráfico de Atributos" styleClass="header-label" maxWidth="Infinity"/>
                                     <Pane fx:id="radarChartPlaceholder" VBox.vgrow="ALWAYS" styleClass="radar-chart-pane" />
                                 </VBox>
                                 
                                 <!-- Atributos de Combate e retrato de vidas -->
-                                <VBox HBox.hgrow="ALWAYS" prefWidth="350.0" spacing="12.0">
+                                <VBox HBox.hgrow="ALWAYS" prefWidth="350.0" spacing="12.0" alignment="TOP_CENTER">
                                     <VBox styleClass="editor-column, bento-card" spacing="12.0">
-                                        <Label text="Atributos de Combate" styleClass="header-label"/>
+                                        <Label text="Estátisticas de Combate" styleClass="header-label"/>
                                         <ScrollPane fx:id="detailedAttributesScrollPane" prefHeight="300.0" maxHeight="300.0" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
                                             <VBox fx:id="detailedAttributesPane" spacing="6.0" />
                                         </ScrollPane>
                                     </VBox>
-                                    <StackPane fx:id="vidasContainer" minWidth="120.0" minHeight="120.0" prefWidth="180.0" prefHeight="265.0" maxWidth="350.0" maxHeight="350.0" styleClass="bento-card" style="-fx-padding: 0;" />
+                                    <StackPane fx:id="vidasContainer" minWidth="120.0" minHeight="120.0" prefWidth="265.0" prefHeight="265.0" maxWidth="265.0" maxHeight="265.0" styleClass="bento-card" style="-fx-padding: 0;" />
                                 </VBox>
-                            </HBox>
+                                    </HBox>
+                                </content>
+                            </ScrollPane>
                         </content>
                     </Tab>
                     
                     <!-- TAB 2: ARSENAL & MOCHILA -->
-                    <Tab text="Arsenal &amp; Inventário" styleClass="editor-tab">
+                    <Tab text="Inventário" styleClass="editor-tab">
                         <content>
                             <HBox spacing="15.0" style="-fx-padding: 15;">
                                 <!-- Arsenal (Equipados) -->
                                 <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="480.0" spacing="12.0">
-                                    <Label text="Arsenal Ativo" styleClass="header-label"/>
+                                    <Label text="Arsenal Equipado" styleClass="header-label"/>
                                     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                                         <VBox fx:id="equipmentContainer" spacing="10.0" />
                                     </ScrollPane>
@@ -130,7 +160,7 @@
                     </Tab>
                     
                     <!-- TAB 3: HABILIDADES & GRIMÓRIO -->
-                    <Tab text="Habilidades &amp; Selos" styleClass="editor-tab">
+                    <Tab text="Habilidades" styleClass="editor-tab">
                         <content>
                             <HBox spacing="15.0" style="-fx-padding: 15;">
                                 <!-- Habilidades -->
@@ -143,11 +173,10 @@
                                 <StackPane HBox.hgrow="ALWAYS" prefWidth="500.0">
                                     <!-- 1. Boas-vindas (Grimório) -->
                                     <VBox fx:id="skillWelcomePane" styleClass="editor-column, bento-card" spacing="15.0" alignment="CENTER">
-                                        <Label text="Grimório &amp; Selos de Magia" styleClass="header-label" maxWidth="Infinity"/>
+                                        <Label text="Descrição" styleClass="header-label" maxWidth="Infinity"/>
                                         <Region VBox.vgrow="ALWAYS" />
-                                        <Label text=":::" style="-fx-font-size: 28px; -fx-text-fill: #e94560;" />
-                                        <Label text="Biblioteca de Magias" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e94560;" />
-                                        <Label text="Selecione uma habilidade ao lado para ver seus detalhes táticos. Magias de Grimório podem ser escritas na aba de Arsenal." 
+                                        <Label text="Descrição de Habilidades" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e94560;" />
+                                        <Label text="Selecione uma habilidade ao lado para ver seus detalhes táticos." 
                                                wrapText="true" alignment="CENTER" textAlignment="CENTER" style="-fx-text-fill: #808090; -fx-font-size: 13px;" maxWidth="320" />
                                         <Region VBox.vgrow="ALWAYS" />
                                     </VBox>

@@ -39,7 +39,7 @@ public final class VidasPortraitRenderer {
 			ImageView imageView = new ImageView(imagem);
 			imageView.fitWidthProperty().bind(retrato.widthProperty());
 			imageView.fitHeightProperty().bind(retrato.heightProperty());
-			imageView.setPreserveRatio(false);
+			imageView.setPreserveRatio(true);
 			retrato.getChildren().add(imageView);
 		}
 	}

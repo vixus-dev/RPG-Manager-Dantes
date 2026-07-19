@@ -24,9 +24,11 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -67,6 +69,12 @@ public class EditorJogadorController {
 
     @FXML
     private Label labelNivelXP;
+
+    @FXML
+    private ProgressBar progressXp;
+
+    @FXML
+    private Label labelXp;
 
     @FXML
     private Label labelPontosParaDistribuir;
@@ -131,12 +139,18 @@ public class EditorJogadorController {
 
     private String categoriaSelecionada = "Tudo";
 
-    // --- Botões do Dossiê ---
+    // --- Painéis do Dossiê ---
     @FXML
-    private Button btnInfoClasse;
+    private TitledPane painelInfoClasse;
 
     @FXML
-    private Button btnInfoRaca;
+    private TitledPane painelInfoRaca;
+
+    @FXML
+    private Label labelInfoClasse;
+
+    @FXML
+    private Label labelInfoRaca;
 
     // --- Inspetor de Habilidades ---
     @FXML
@@ -174,6 +188,8 @@ public class EditorJogadorController {
 
     @FXML
     public void initialize() {
+        configurarPaineisDeOrigem();
+
         inventarioListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 Item itemSelecionado = inventarioListView
@@ -361,6 +377,32 @@ public class EditorJogadorController {
         atualizarAtributosDetalhados();
         atualizarInventario();
         atualizarHabilidades();
+        atualizarInformacoesDeOrigem();
+    }
+
+    private void configurarPaineisDeOrigem() {
+        painelInfoClasse.expandedProperty().addListener((obs, estavaExpandido, expandido) -> {
+            if (expandido) {
+                painelInfoRaca.setExpanded(false);
+            }
+        });
+        painelInfoRaca.expandedProperty().addListener((obs, estavaExpandido, expandido) -> {
+            if (expandido) {
+                painelInfoClasse.setExpanded(false);
+            }
+        });
+    }
+
+    private void atualizarInformacoesDeOrigem() {
+        Classe classe = jogadorSelecionado.getClasse();
+        Raça raca = jogadorSelecionado.getRaca();
+
+        painelInfoClasse.setDisable(classe == null);
+        painelInfoRaca.setDisable(raca == null);
+        painelInfoClasse.setText(classe == null ? "Classe indisponível" : "Classe — " + classe.getNome());
+        painelInfoRaca.setText(raca == null ? "Raça indisponível" : "Raça — " + raca.getNome());
+        labelInfoClasse.setText(classe == null ? "Este personagem não possui uma classe definida." : criarDossieClasse());
+        labelInfoRaca.setText(raca == null ? "Este personagem não possui uma raça definida." : criarDossieRaca());
     }
 
     // =============================================
@@ -384,33 +426,31 @@ public class EditorJogadorController {
 
         int xpAtual = jogadorSelecionado.getXpAtual();
         int xpProx = jogadorSelecionado.getXpParaProximoNivel();
-        labelNivelXP.setText(
-            "Nv. " +
-                jogadorSelecionado.getNivel() +
-                "  (" +
-                xpAtual +
-                "/" +
-                xpProx +
-                " XP)"
-        );
+        double progressoXp = xpProx > 0
+            ? Math.min(Math.max((double) xpAtual / xpProx, 0), 1)
+            : 0;
+        labelNivelXP.setText("Nível " + jogadorSelecionado.getNivel());
+        progressXp.setProgress(progressoXp);
+        labelXp.setText("XP " + xpAtual + "/" + xpProx);
 
         // Portrait
         carregarPortrait();
 
         // Pontos para distribuir
         int pontos = jogadorSelecionado.getPontosParaDistribuir();
+        boolean possuiPontosParaDistribuir = pontos > 0;
+        labelPontosParaDistribuir.setVisible(possuiPontosParaDistribuir);
+        labelPontosParaDistribuir.setManaged(possuiPontosParaDistribuir);
+        labelPontosParaDistribuir
+            .getStyleClass()
+            .removeAll("points-none", "points-available");
         if (pontos > 0) {
             labelPontosParaDistribuir.setText(
                 "+" + pontos + " pontos para distribuir!"
             );
-            labelPontosParaDistribuir.getStyleClass().removeAll("points-none");
             labelPontosParaDistribuir.getStyleClass().add("points-available");
         } else {
-            labelPontosParaDistribuir.setText("Nenhum ponto disponível");
-            labelPontosParaDistribuir
-                .getStyleClass()
-                .removeAll("points-available");
-            labelPontosParaDistribuir.getStyleClass().add("points-none");
+            labelPontosParaDistribuir.setText("");
         }
     }
 
@@ -2044,14 +2084,13 @@ public class EditorJogadorController {
     }
 
     // =============================================
-    // === POPUPS DOSSIES DE ORIGEM
+    // === DOSSIES DE ORIGEM
     // =============================================
 
-    @FXML
-    private void onInfoClasseClick() {
-        if (jogadorSelecionado == null) return;
+    private String criarDossieClasse() {
+        if (jogadorSelecionado == null) return "";
         Classe classe = jogadorSelecionado.getClasse();
-        if (classe == null) return;
+        if (classe == null) return "";
 
         StringBuilder sb = new StringBuilder();
         sb.append("CLASSE: ")
@@ -2104,7 +2143,7 @@ public class EditorJogadorController {
                         .append(hab.getNivelNecessario())
                         .append(")");
                 }
-                sb.append("\n    L_ ")
+                sb.append("\n    L> ")
                     .append(hab.getDescricao())
                     .append("\n\n");
             }
@@ -2112,24 +2151,19 @@ public class EditorJogadorController {
             sb.append("  * Nenhuma habilidade listada.\n");
         }
 
-        mostrarPopupInfo(
-            "Dossie de Classe: " + classe.getNome(),
-            "Dossie de Classe: " + classe.getNome(),
-            sb.toString()
-        );
+        return sb.toString();
     }
 
-    @FXML
-    private void onInfoRacaClick() {
-        if (jogadorSelecionado == null) return;
+    private String criarDossieRaca() {
+        if (jogadorSelecionado == null) return "";
         Raça raca = jogadorSelecionado.getRaca();
-        if (raca == null) return;
+        if (raca == null) return "";
 
         StringBuilder sb = new StringBuilder();
         sb.append("RACA: ").append(raca.getNome().toUpperCase()).append("\n");
-        sb.append("=========================================\n\n");
-        sb.append("EFEITO PASSIVO:\n");
-        sb.append("  L_ ").append(raca.getDescricaoPassiva()).append("\n\n");
+        sb.append("----------------------------------\n\n");
+        sb.append("EFEITO:\n");
+        sb.append("  L> ").append(raca.getDescricaoPassiva()).append("\n\n");
 
         // Verificar transformação V2
         String nomeV2 = raca.getNomeV2();
@@ -2138,62 +2172,30 @@ public class EditorJogadorController {
             boolean desbloqueada = raca.isV2();
             if (desbloqueada) {
                 sb.append("  [x] ").append(nomeV2).append(" (Desbloqueado)\n");
-                sb.append("    L_ ")
+                sb.append("    L> ")
                     .append(raca.getDescricaoPassiva())
                     .append("\n\n");
             } else {
                 sb.append("  [ ] ").append(nomeV2).append(" (Bloqueado)\n");
                 sb.append(
-                    "    L_ [Descricao oculta pelo selo do Inferno. Requer Despertar Espiritual.]\n\n"
+                    "    L> [Descricao oculta. Requer Desbloqueio da raça V2.]\n\n"
                 );
             }
         }
 
-        sb.append("TECNICAS RACIAIS:\n");
+        sb.append("HABILIDADES RACIAIS:\n");
         List<Habilidade> habilidadesRaciais = raca.getRacialAbilities(
             jogadorSelecionado
         );
         if (habilidadesRaciais != null && !habilidadesRaciais.isEmpty()) {
             for (Habilidade hab : habilidadesRaciais) {
                 sb.append("  * ").append(hab.getNome()).append("\n");
-                sb.append("    L_ ").append(hab.getDescricao()).append("\n\n");
+                sb.append("    L> ").append(hab.getDescricao()).append("\n\n");
             }
         } else {
             sb.append("  * Nenhuma tecnica racial ativa.\n");
         }
 
-        mostrarPopupInfo(
-            "Dossie de Raca: " + raca.getNome(),
-            "Dossie de Raca: " + raca.getNome(),
-            sb.toString()
-        );
-    }
-
-    private void mostrarPopupInfo(
-        String titulo,
-        String cabecalho,
-        String conteudo
-    ) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(cabecalho);
-        alert.setContentText(conteudo);
-
-        // Customizar folha de estilo para caixa modal estilo RPG escuro
-        if (alert.getDialogPane() != null) {
-            alert
-                .getDialogPane()
-                .getStylesheets()
-                .add(
-                    getClass()
-                        .getResource("/br/com/dantesrpg/view/style.css")
-                        .toExternalForm()
-                );
-            alert.getDialogPane().getStyleClass().add("popup-dialog");
-            // Forçar largura razoável para ler bem as árvores de skills
-            alert.getDialogPane().setPrefWidth(480);
-        }
-
-        alert.showAndWait();
+        return sb.toString();
     }
 }
