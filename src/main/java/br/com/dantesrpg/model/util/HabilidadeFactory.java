@@ -100,6 +100,7 @@ public class HabilidadeFactory {
 		registro.put("Holy Spirit", HolySpirit::new);
 		registro.put("Postura de Bloqueio", PosturaDeBloqueio::new);
 		registro.put("Arremesso de Escudo", ArremessoDeEscudo::new);
+		registro.put("Arremesso de Tridente", ArremessoDeTridente::new);
 
 		// Lua Profana
 		registro.put("sweet dreams", SweetDreams::new);
