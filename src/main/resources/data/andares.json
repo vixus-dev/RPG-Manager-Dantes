@@ -1,0 +1,275 @@
+[
+  {
+    "id": "NULO",
+    "andarId": "NULO",
+    "estadoVisual": 0,
+    "nome": "Tema atual",
+    "opcaoSeletor": "Nenhum",
+    "classeCss": "",
+    "temaClaro": false
+  },
+  {
+    "id": "01-1",
+    "andarId": "ANDAR_1",
+    "estadoVisual": 1,
+    "nome": "1º Andar — Campos Helênicos",
+    "opcaoSeletor": "1º Andar - Campos Helênicos",
+    "classeCss": "tema-andar-01-1",
+    "temaClaro": true,
+    "paleta": {
+      "canvas": "#F2F5ED", "superficie": "#FFFFFF", "superficieElevada": "#F7FAF4",
+      "primaria": "#91C7A3", "secundaria": "#CDE8D2", "acento": "#B08D57",
+      "texto": "#1D2A22", "textoSuave": "#5B6D62", "textoSobrePrimaria": "#10231A",
+      "borda": "#B8D5C0", "painel": "rgba(255,255,255,0.82)", "card": "rgba(255,255,255,0.88)",
+      "campo": "rgba(247,250,244,0.94)", "hover": "#DDEEE1", "pressionado": "#C3DFC9"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_01-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_01-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_01-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_01-1/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "02-1",
+    "andarId": "ANDAR_2",
+    "estadoVisual": 1,
+    "nome": "2º Andar — Neon Abissal",
+    "opcaoSeletor": "2º Andar - Arremesso",
+    "classeCss": "tema-andar-02-1",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#05030A", "superficie": "#130A1F", "superficieElevada": "#211032",
+      "primaria": "#B026FF", "secundaria": "#5B2A86", "acento": "#00F0FF",
+      "texto": "#F6EEFF", "textoSuave": "#B9A7C9", "textoSobrePrimaria": "#09020E",
+      "borda": "#6B2A91", "painel": "rgba(19,10,31,0.82)", "card": "rgba(28,13,43,0.88)",
+      "campo": "rgba(10,5,16,0.94)", "hover": "#35134D", "pressionado": "#4A176B"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_02-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_02-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_02-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_02-1/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "03-1",
+    "andarId": "ANDAR_3",
+    "estadoVisual": 1,
+    "nome": "3º Andar — Vísceras",
+    "opcaoSeletor": "3º Andar - O Olho",
+    "classeCss": "tema-andar-03-1",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#100307", "superficie": "#2A0812", "superficieElevada": "#3A0D19",
+      "primaria": "#A80F2E", "secundaria": "#5E0B22", "acento": "#E14B58",
+      "texto": "#FFE9E5", "textoSuave": "#C99BA2", "textoSobrePrimaria": "#FFF4F2",
+      "borda": "#72152A", "painel": "rgba(42,8,18,0.82)", "card": "rgba(55,10,23,0.88)",
+      "campo": "rgba(25,4,10,0.94)", "hover": "#551022", "pressionado": "#73132B"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_03-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_03-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_03-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_03-1/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "04-1",
+    "andarId": "ANDAR_4",
+    "estadoVisual": 1,
+    "nome": "4º Andar — Dia",
+    "opcaoSeletor": "4º Andar - Dia",
+    "classeCss": "tema-andar-04-1",
+    "temaClaro": true,
+    "paleta": {
+      "canvas": "#D7B46A", "superficie": "#E9D39A", "superficieElevada": "#F3E2B5",
+      "primaria": "#E38B29", "secundaria": "#9B5D24", "acento": "#FFE08A",
+      "texto": "#2F2114", "textoSuave": "#6E5436", "textoSobrePrimaria": "#2A1605",
+      "borda": "#B97A33", "painel": "rgba(243,226,181,0.82)", "card": "rgba(250,235,196,0.88)",
+      "campo": "rgba(255,244,215,0.94)", "hover": "#F0C66F", "pressionado": "#E4AC4A"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_04-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_04-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_04-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_04-1/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "04-2",
+    "andarId": "ANDAR_4",
+    "estadoVisual": 2,
+    "nome": "4º Andar — Noite",
+    "opcaoSeletor": "4º Andar - Noite",
+    "classeCss": "tema-andar-04-2",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#0C1420", "superficie": "#1E2A36", "superficieElevada": "#2A3947",
+      "primaria": "#C9B27C", "secundaria": "#52677C", "acento": "#9AD1D4",
+      "texto": "#F4EAD2", "textoSuave": "#B8AD94", "textoSobrePrimaria": "#1A1710",
+      "borda": "#66798A", "painel": "rgba(30,42,54,0.82)", "card": "rgba(38,52,65,0.88)",
+      "campo": "rgba(15,24,34,0.94)", "hover": "#35495B", "pressionado": "#465E73"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_04-2/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_04-2/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_04-2/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_04-2/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "04-3",
+    "andarId": "ANDAR_4",
+    "estadoVisual": 3,
+    "nome": "4º Andar — Eclipse",
+    "opcaoSeletor": "4º Andar - Eclipse",
+    "classeCss": "tema-andar-04-3",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#170D0A", "superficie": "#352017", "superficieElevada": "#4A2B1D",
+      "primaria": "#C96E22", "secundaria": "#6D2230", "acento": "#F2C14E",
+      "texto": "#FFF0D6", "textoSuave": "#C6A98B", "textoSobrePrimaria": "#241104",
+      "borda": "#804126", "painel": "rgba(53,32,23,0.82)", "card": "rgba(66,37,25,0.88)",
+      "campo": "rgba(29,15,11,0.94)", "hover": "#5B321F", "pressionado": "#784325"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_04-3/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_04-3/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_04-3/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_04-3/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "05-1",
+    "andarId": "ANDAR_5",
+    "estadoVisual": 1,
+    "nome": "5º Andar — Praia",
+    "opcaoSeletor": "5º Andar - Praia",
+    "classeCss": "tema-andar-05-1",
+    "temaClaro": true,
+    "paleta": {
+      "canvas": "#EAD7A1", "superficie": "#FFF2C7", "superficieElevada": "#FFF8DF",
+      "primaria": "#159FB3", "secundaria": "#0B4F6C", "acento": "#F6C453",
+      "texto": "#102D3A", "textoSuave": "#47656E", "textoSobrePrimaria": "#F4FEFF",
+      "borda": "#5CAAB2", "painel": "rgba(255,242,199,0.82)", "card": "rgba(255,248,223,0.88)",
+      "campo": "rgba(255,252,236,0.94)", "hover": "#BFE8E4", "pressionado": "#8FD5D4"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_05-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_05-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_05-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_05-1/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "05-2",
+    "andarId": "ANDAR_5",
+    "estadoVisual": 2,
+    "nome": "5º Andar — Tempestade",
+    "opcaoSeletor": "5º Andar - Tempestade",
+    "classeCss": "tema-andar-05-2",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#061923", "superficie": "#0D3342", "superficieElevada": "#15485A",
+      "primaria": "#2CC9DD", "secundaria": "#123C69", "acento": "#D9F8FF",
+      "texto": "#F2FBFF", "textoSuave": "#A1C8D2", "textoSobrePrimaria": "#042027",
+      "borda": "#247B8F", "painel": "rgba(13,51,66,0.82)", "card": "rgba(16,61,77,0.88)",
+      "campo": "rgba(5,28,39,0.94)", "hover": "#1B5D70", "pressionado": "#24798E"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_05-2/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_05-2/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_05-2/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_05-2/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "06-1",
+    "andarId": "ANDAR_6",
+    "estadoVisual": 1,
+    "nome": "6º Andar — Cidade de Sangue",
+    "opcaoSeletor": "6º Andar - Cidade de Sangue",
+    "classeCss": "tema-andar-06-1",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#080305", "superficie": "#21070D", "superficieElevada": "#330B14",
+      "primaria": "#74152B", "secundaria": "#3A0913", "acento": "#B73A4D",
+      "texto": "#FBE9E9", "textoSuave": "#C69A9F", "textoSobrePrimaria": "#FFF1F2",
+      "borda": "#591020", "painel": "rgba(33,7,13,0.82)", "card": "rgba(45,9,17,0.88)",
+      "campo": "rgba(14,3,6,0.94)", "hover": "#45101C", "pressionado": "#601327"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_06-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_06-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_06-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_06-1/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "07-1",
+    "andarId": "ANDAR_7",
+    "estadoVisual": 1,
+    "nome": "7º Andar — Guerra em Cena",
+    "opcaoSeletor": "7º Andar - Holofotes",
+    "classeCss": "tema-andar-07-1",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#070707", "superficie": "#181818", "superficieElevada": "#242424",
+      "primaria": "#E8E8E8", "secundaria": "#666666", "acento": "#C9A86A",
+      "texto": "#F7F7F7", "textoSuave": "#B5B5B5", "textoSobrePrimaria": "#080808",
+      "borda": "#555555", "painel": "rgba(24,24,24,0.82)", "card": "rgba(31,31,31,0.88)",
+      "campo": "rgba(10,10,10,0.94)", "hover": "#343434", "pressionado": "#494949"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_07-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_07-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_07-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_07-1/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "08-1",
+    "andarId": "ANDAR_8",
+    "estadoVisual": 1,
+    "nome": "8º Andar — Espectro Total",
+    "opcaoSeletor": "8.1º Andar - Cruzes",
+    "classeCss": "tema-andar-08-1",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#101014", "superficie": "#1C1C24", "superficieElevada": "#282832",
+      "primaria": "#FF4FD8", "secundaria": "#43E8FF", "acento": "#FFD84D",
+      "texto": "#FFFFFF", "textoSuave": "#C9C9D6", "textoSobrePrimaria": "#160612",
+      "borda": "#726B8E", "painel": "rgba(28,28,36,0.82)", "card": "rgba(36,36,46,0.88)",
+      "campo": "rgba(15,15,20,0.94)", "hover": "#393244", "pressionado": "#4C3E5B"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_08-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_08-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_08-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_08-1/fundo_editor.jpg"
+    }
+  },
+  {
+    "id": "09-1",
+    "andarId": "ANDAR_9",
+    "estadoVisual": 1,
+    "nome": "9º Andar — Gelo Profundo",
+    "opcaoSeletor": "9º Andar - A Sala dos Trovões",
+    "classeCss": "tema-andar-09-1",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#07131E", "superficie": "#10283A", "superficieElevada": "#193A50",
+      "primaria": "#A9E7FF", "secundaria": "#36CFE6", "acento": "#F4FDFF",
+      "texto": "#F7FBFF", "textoSuave": "#B9D4E3", "textoSobrePrimaria": "#071720",
+      "borda": "#5A9DB5", "painel": "rgba(16,40,58,0.82)", "card": "rgba(20,49,69,0.88)",
+      "campo": "rgba(7,25,37,0.94)", "hover": "#24516A", "pressionado": "#326A86"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_09-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_09-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_09-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_09-1/fundo_editor.jpg"
+    }
+  }
+]
