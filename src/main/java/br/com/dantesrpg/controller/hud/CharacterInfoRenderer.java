@@ -13,6 +13,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Renderiza o painel de informações do personagem no HUD de turno detalhado.
@@ -30,6 +35,17 @@ public class CharacterInfoRenderer {
 	private final ScrollPane detailedScrollPane;
 	private final VBox detailedPane;
 	private GridPane attributesGrid;
+	private final Map<String, BadgeEfeito> badgesPorEfeito = new HashMap<>();
+
+	private static final class BadgeEfeito {
+		private final Label label;
+		private final Tooltip tooltip;
+
+		private BadgeEfeito(Label label, Tooltip tooltip) {
+			this.label = label;
+			this.tooltip = tooltip;
+		}
+	}
 
 	public CharacterInfoRenderer(Label labelNome, Label labelClasseRaca,
 			Label labelHP, Label labelMP, Label labelTU,
@@ -114,38 +130,68 @@ public class CharacterInfoRenderer {
 	/** Atualiza apenas os badges de efeitos ativos. */
 	public void renderEffects(Personagem ator) {
 		if (effectsContainer == null) return;
-		effectsContainer.getChildren().clear();
-		if (ator.getEfeitosAtivos() == null) return;
-
-		for (Efeito efeito : new ArrayList<>(ator.getEfeitosAtivos().values())) {
-			String texto = efeito.getNome();
-			if (efeito.getStacks() > 0) texto += " (" + efeito.getStacks() + ")";
-
-			Label lbl = new Label(texto + " [" + efeito.getDuracaoTURestante() + "]");
-			lbl.setMaxWidth(Double.MAX_VALUE);
-			lbl.setStyle(resolverEstiloEfeito(efeito.getTipo()));
-
-			// Resolução e injeção do ícone
-			String path = EffectIconResolver.getIconPath(efeito.getNome(), efeito.getTipo());
-			Image img = ImageCache.get(path, 14, 14);
-			if (img != null && !img.isError()) {
-				ImageView view = new ImageView(img);
-				view.setFitWidth(14);
-				view.setFitHeight(14);
-				view.setPreserveRatio(true);
-				lbl.setGraphic(view);
-				lbl.setGraphicTextGap(5);
+		List<BadgeEfeito> badgesOrdenados = new ArrayList<>();
+		Set<String> nomesAtuais = new HashSet<>();
+		if (ator.getEfeitosAtivos() != null) {
+			for (Efeito efeito : ator.getEfeitosAtivos().values()) {
+				if (efeito == null) continue;
+				nomesAtuais.add(efeito.getNome());
+				BadgeEfeito badge = badgesPorEfeito.computeIfAbsent(efeito.getNome(), chave -> criarBadgeEfeito());
+				atualizarBadgeEfeito(badge, efeito);
+				badgesOrdenados.add(badge);
 			}
+		}
 
-			Tooltip tip = new Tooltip(EffectTooltipBuilder.buildTooltip(efeito));
-			tip.setStyle("-fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; "
-					+ "-fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 8;");
-			tip.setShowDelay(javafx.util.Duration.millis(200));
-			tip.setMaxWidth(350);
-			tip.setWrapText(true);
-			Tooltip.install(lbl, tip);
+		badgesPorEfeito.entrySet().removeIf(entry -> {
+			if (nomesAtuais.contains(entry.getKey())) return false;
+			Tooltip.uninstall(entry.getValue().label, entry.getValue().tooltip);
+			effectsContainer.getChildren().remove(entry.getValue().label);
+			return true;
+		});
+		sincronizarOrdemDosBadges(badgesOrdenados);
+	}
 
-			effectsContainer.getChildren().add(lbl);
+	private BadgeEfeito criarBadgeEfeito() {
+		Label label = new Label();
+		label.setMaxWidth(Double.MAX_VALUE);
+		Tooltip tooltip = new Tooltip();
+		tooltip.setStyle("-fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; "
+				+ "-fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 8;");
+		tooltip.setShowDelay(javafx.util.Duration.millis(200));
+		tooltip.setMaxWidth(350);
+		tooltip.setWrapText(true);
+		Tooltip.install(label, tooltip);
+		return new BadgeEfeito(label, tooltip);
+	}
+
+	private void atualizarBadgeEfeito(BadgeEfeito badge, Efeito efeito) {
+		String texto = efeito.getNome();
+		if (efeito.getStacks() > 0) texto += " (" + efeito.getStacks() + ")";
+		badge.label.setText(texto + " [" + efeito.getDuracaoTURestante() + "]");
+		badge.label.setStyle(resolverEstiloEfeito(efeito.getTipo()));
+		badge.tooltip.setText(EffectTooltipBuilder.buildTooltip(efeito));
+
+		String path = EffectIconResolver.getIconPath(efeito.getNome(), efeito.getTipo());
+		Image image = ImageCache.get(path, 14, 14);
+		if (image == null || image.isError()) {
+			badge.label.setGraphic(null);
+			return;
+		}
+		ImageView view = new ImageView(image);
+		view.setFitWidth(14);
+		view.setFitHeight(14);
+		view.setPreserveRatio(true);
+		badge.label.setGraphic(view);
+		badge.label.setGraphicTextGap(5);
+	}
+
+	private void sincronizarOrdemDosBadges(List<BadgeEfeito> badgesOrdenados) {
+		for (int indice = 0; indice < badgesOrdenados.size(); indice++) {
+			Label label = badgesOrdenados.get(indice).label;
+			int indiceAtual = effectsContainer.getChildren().indexOf(label);
+			if (indiceAtual == indice) continue;
+			if (indiceAtual >= 0) effectsContainer.getChildren().remove(indiceAtual);
+			effectsContainer.getChildren().add(indice, label);
 		}
 	}
 

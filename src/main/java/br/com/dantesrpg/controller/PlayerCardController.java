@@ -69,6 +69,7 @@ public class PlayerCardController {
 	private Pane hpBarContainer;
 
 	private Personagem personagem;
+	private String assinaturaEfeitosExibidos;
 
 	/**
 	 * Libera recursos visuais que continuam registrados no motor de animação do JavaFX.
@@ -561,6 +562,11 @@ public class PlayerCardController {
 	private void updateEffects() {
 		if (cardEffectsContainer == null)
 			return;
+		String novaAssinatura = criarAssinaturaEfeitos();
+		if (novaAssinatura.equals(assinaturaEfeitosExibidos)) {
+			return;
+		}
+		assinaturaEfeitosExibidos = novaAssinatura;
 
 		cardEffectsContainer.getChildren().clear();
 		if (expandedEffectsContainer != null) {
@@ -631,6 +637,21 @@ public class PlayerCardController {
 		if (expandedEffectsContainer != null) {
 			expandedEffectsContainer.toFront();
 		}
+	}
+
+	private String criarAssinaturaEfeitos() {
+		if (personagem == null || personagem.getEfeitosAtivos() == null
+				|| personagem.getEfeitosAtivos().isEmpty()) {
+			return "";
+		}
+
+		StringBuilder assinatura = new StringBuilder();
+		for (Efeito efeito : personagem.getEfeitosAtivos().values()) {
+			if (efeito != null) {
+				assinatura.append(EffectTooltipBuilder.buildTooltip(efeito)).append('\u0000');
+			}
+		}
+		return assinatura.toString();
 	}
 
 	private Node criarIconeEfeitoComStacks(Efeito efeito, double size) {

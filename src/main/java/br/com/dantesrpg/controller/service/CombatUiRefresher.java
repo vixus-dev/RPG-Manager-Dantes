@@ -2,8 +2,10 @@ package br.com.dantesrpg.controller.service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -55,6 +57,7 @@ public class CombatUiRefresher {
 	private javafx.animation.Transition activeCountdownTransition;
 	private int lastTickCounter = -1;
 	private double originalTimelineWidth = -1.0;
+	private final Map<Personagem, AnchorPane> cardsPorCombatente = new IdentityHashMap<>();
 
 	public CombatUiRefresher(CombatController controller, Supplier<EstadoCombate> estadoSupplier,
 			Supplier<VBox> playerListSupplier, Supplier<VBox> enemyListSupplier, Supplier<Pane> timelineSupplier) {
@@ -74,12 +77,10 @@ public class CombatUiRefresher {
 			return;
 		}
 
-		descartarCards(playerListContainer);
-		descartarCards(enemyListContainer);
 		controller.forEachMap(m -> m.desenharPeoes(new ArrayList<>()));
 
-		int playerIndex = 0;
-		int enemyIndex = 0;
+		List<Personagem> jogadoresAtivos = new ArrayList<>();
+		List<Personagem> inimigosAtivos = new ArrayList<>();
 		for (Personagem personagem : estado.getCombatentes()) {
 			if (personagem == null || personagem.isAusente()) {
 				continue;
@@ -88,40 +89,68 @@ public class CombatUiRefresher {
 				continue;
 			}
 
-			try {
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/com/dantesrpg/view/PlayerCard.fxml"));
-				AnchorPane cardNode = loader.load();
-				PlayerCardController cardController = loader.getController();
-				cardNode.setUserData(cardController);
-				cardController.setPersonagem(personagem, controller.isPlayer(personagem) ? "player" : "enemy");
-
-				VBox.setMargin(cardNode, new javafx.geometry.Insets(0, 0, 0, 0));
-
-				if (controller.isPlayer(personagem)) {
-					playerListContainer.getChildren().add(cardNode);
-					cardNode.setTranslateX(playerIndex % 2 != 0 ? 70 : 10);
-					playerIndex++;
-				} else {
-					enemyListContainer.getChildren().add(cardNode);
-					cardNode.setTranslateX(enemyIndex % 2 != 0 ? 60 : 0);
-					enemyIndex++;
-				}
-			} catch (Exception e) {
-				System.err.println("Erro ao carregar PlayerCard.fxml para: " + personagem.getNome());
-				e.printStackTrace();
+			if (controller.isPlayer(personagem)) {
+				jogadoresAtivos.add(personagem);
+			} else {
+				inimigosAtivos.add(personagem);
 			}
 		}
+
+		removerCardsInativos(jogadoresAtivos, inimigosAtivos);
+		sincronizarCards(playerListContainer, jogadoresAtivos, "player", 10, 70);
+		sincronizarCards(enemyListContainer, inimigosAtivos, "enemy", 0, 60);
 
 		controller.forEachMap(m -> m.desenharPeoes(estado.getCombatentes()));
 	}
 
-	private void descartarCards(VBox listaDeCards) {
-		for (Node node : listaDeCards.getChildren()) {
-			if (node.getUserData() instanceof PlayerCardController) {
-				((PlayerCardController) node.getUserData()).descartar();
+	private void removerCardsInativos(List<Personagem> jogadoresAtivos, List<Personagem> inimigosAtivos) {
+		Set<Personagem> combatentesAtivos = java.util.Collections.newSetFromMap(new IdentityHashMap<>());
+		combatentesAtivos.addAll(jogadoresAtivos);
+		combatentesAtivos.addAll(inimigosAtivos);
+
+		cardsPorCombatente.entrySet().removeIf(entry -> {
+			if (combatentesAtivos.contains(entry.getKey())) return false;
+			AnchorPane card = entry.getValue();
+			if (card.getParent() instanceof Pane parent) parent.getChildren().remove(card);
+			if (card.getUserData() instanceof PlayerCardController cardController) cardController.descartar();
+			return true;
+		});
+	}
+
+	private void sincronizarCards(VBox container, List<Personagem> combatentes, String tipoCard,
+			int deslocamentoPar, int deslocamentoImpar) {
+		for (int indice = 0; indice < combatentes.size(); indice++) {
+			Personagem personagem = combatentes.get(indice);
+			AnchorPane card = obterOuCriarCard(personagem, tipoCard);
+			if (card == null) continue;
+
+			if (card.getParent() instanceof Pane parent && parent != container) parent.getChildren().remove(card);
+			int indiceAtual = container.getChildren().indexOf(card);
+			if (indiceAtual != indice) {
+				if (indiceAtual >= 0) container.getChildren().remove(indiceAtual);
+				container.getChildren().add(indice, card);
 			}
+			card.setTranslateX(indice % 2 == 0 ? deslocamentoPar : deslocamentoImpar);
 		}
-		listaDeCards.getChildren().clear();
+	}
+
+	private AnchorPane obterOuCriarCard(Personagem personagem, String tipoCard) {
+		AnchorPane card = cardsPorCombatente.get(personagem);
+		try {
+			if (card == null) {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/com/dantesrpg/view/PlayerCard.fxml"));
+				card = loader.load();
+				card.setUserData(loader.getController());
+				VBox.setMargin(card, new javafx.geometry.Insets(0, 0, 0, 0));
+				cardsPorCombatente.put(personagem, card);
+			}
+			((PlayerCardController) card.getUserData()).setPersonagem(personagem, tipoCard);
+			return card;
+		} catch (Exception e) {
+			System.err.println("Erro ao carregar PlayerCard.fxml para: " + personagem.getNome());
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private VBox criarTokenVisivel(Personagem personagem, int tuExibido, boolean isPreview) {
