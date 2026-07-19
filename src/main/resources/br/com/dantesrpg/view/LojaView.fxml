@@ -9,9 +9,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
 
-<BorderPane styleClass="loja-background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.LojaController"
-            prefWidth="1100.0" prefHeight="700.0">
+<StackPane fx:id="lojaThemeRoot" styleClass="loja-background" stylesheets="@style.css"
+           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="br.com.dantesrpg.controller.LojaController" prefWidth="1100.0" prefHeight="700.0">
+   <children>
+      <ImageView fx:id="lojaThemeBackground" mouseTransparent="true" preserveRatio="false" smooth="true" />
+      <BorderPane styleClass="loja-content" prefWidth="1100.0" prefHeight="700.0">
 
    <!-- HEADER DA LOJA -->
    <top>
@@ -83,4 +89,6 @@
 
       </HBox>
    </center>
-</BorderPane>
+      </BorderPane>
+   </children>
+</StackPane>

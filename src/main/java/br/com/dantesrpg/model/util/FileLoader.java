@@ -17,6 +17,21 @@ public class FileLoader {
 	private static List<String> diretoriosDevValidos = null;
 
 	public static InputStream carregarArquivo(String caminhoRelativo) {
+		return carregarArquivo(caminhoRelativo, true);
+	}
+
+	/**
+	 * Carrega um recurso opcional sem registrar sua ausência como erro crítico.
+	 * Útil para assets visuais que possuem fallback por CSS.
+	 */
+	public static InputStream carregarArquivoOpcional(String caminhoRelativo) {
+		return carregarArquivo(caminhoRelativo, false);
+	}
+
+	private static InputStream carregarArquivo(String caminhoRelativo, boolean registrarAusencia) {
+		if (caminhoRelativo == null || caminhoRelativo.isBlank()) {
+			return null;
+		}
 		try {
 			String caminhoLimpo = caminhoRelativo.startsWith("/") ? caminhoRelativo.substring(1) : caminhoRelativo;
 
@@ -73,7 +88,7 @@ public class FileLoader {
 			}
 		}
 
-		if (is == null) {
+		if (is == null && registrarAusencia) {
 			System.err.println("[FileLoader] ERRO CRÍTICO: Arquivo não encontrado em lugar nenhum: " + caminhoRelativo);
 		}
 

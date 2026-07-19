@@ -5,6 +5,8 @@ import java.util.List;
 public class PartyPreset {
 	private String name;
 	private List<String> characterNames;
+	private String andarAtual = "NULO";
+	private int estadoVisualAndar = 0;
 
 	public PartyPreset() {
 	}
@@ -28,5 +30,21 @@ public class PartyPreset {
 
 	public void setCharacterNames(List<String> characterNames) {
 		this.characterNames = characterNames;
+	}
+
+	public String getAndarAtual() {
+		return andarAtual == null || andarAtual.isBlank() ? "NULO" : andarAtual;
+	}
+
+	public void setAndarAtual(String andarAtual) {
+		this.andarAtual = andarAtual == null || andarAtual.isBlank() ? "NULO" : andarAtual;
+	}
+
+	public int getEstadoVisualAndar() {
+		return estadoVisualAndar;
+	}
+
+	public void setEstadoVisualAndar(int estadoVisualAndar) {
+		this.estadoVisualAndar = Math.max(0, estadoVisualAndar);
 	}
 }
