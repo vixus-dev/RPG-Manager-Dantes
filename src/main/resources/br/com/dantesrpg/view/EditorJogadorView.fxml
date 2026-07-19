@@ -90,7 +90,7 @@
                                         <content>
                                             <ScrollPane fitToWidth="true" prefViewportHeight="220.0" maxHeight="260.0" styleClass="origin-info-scroll">
                                                 <content>
-                                                    <Label fx:id="labelInfoClasse" wrapText="true" maxWidth="Infinity" styleClass="origin-info-content" />
+                                                    <Label fx:id="labelInfoClasse" wrapText="true" maxWidth="Infinity" minHeight="-Infinity" styleClass="origin-info-content" />
                                                 </content>
                                             </ScrollPane>
                                         </content>
@@ -99,7 +99,7 @@
                                         <content>
                                             <ScrollPane fitToWidth="true" prefViewportHeight="220.0" maxHeight="260.0" styleClass="origin-info-scroll">
                                                 <content>
-                                                    <Label fx:id="labelInfoRaca" wrapText="true" maxWidth="Infinity" styleClass="origin-info-content" />
+                                                    <Label fx:id="labelInfoRaca" wrapText="true" maxWidth="Infinity" minHeight="-Infinity" styleClass="origin-info-content" />
                                                 </content>
                                             </ScrollPane>
                                         </content>

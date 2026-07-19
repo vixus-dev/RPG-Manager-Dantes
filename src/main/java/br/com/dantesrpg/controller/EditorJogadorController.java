@@ -186,6 +186,12 @@ public class EditorJogadorController {
     private CombatController mainController;
     private Button botaoSelecionadoAtual;
 
+    private record ModificadorAtributoExibicao(
+        int valor,
+        String classeVisual,
+        String origem
+    ) {}
+
     @FXML
     public void initialize() {
         configurarPaineisDeOrigem();
@@ -474,8 +480,9 @@ public class EditorJogadorController {
             new javafx.scene.layout.ColumnConstraints(45);
         javafx.scene.layout.ColumnConstraints colValor =
             new javafx.scene.layout.ColumnConstraints(30);
-        javafx.scene.layout.ColumnConstraints colDiff =
-            new javafx.scene.layout.ColumnConstraints(35);
+        javafx.scene.layout.ColumnConstraints colFontes =
+            new javafx.scene.layout.ColumnConstraints(54, 76, Double.MAX_VALUE);
+        colFontes.setHgrow(Priority.ALWAYS);
         javafx.scene.layout.ColumnConstraints colBtn =
             new javafx.scene.layout.ColumnConstraints(30);
         javafx.scene.layout.ColumnConstraints colRank =
@@ -484,7 +491,7 @@ public class EditorJogadorController {
             new javafx.scene.layout.ColumnConstraints(40);
         attributesGrid
             .getColumnConstraints()
-            .addAll(colNome, colValor, colDiff, colBtn, colRank, colDado);
+            .addAll(colNome, colValor, colFontes, colBtn, colRank, colDado);
 
         int i = 0;
         for (Atributo atr : Atributo.values()) {
@@ -495,7 +502,6 @@ public class EditorJogadorController {
                 .getAtributosBase()
                 .getOrDefault(atr, 1);
             String rank = getRank(valorFinal);
-            int diferenca = valorFinal - valorBase;
 
             // Col 0: Nome do atributo
             Label lblNome = new Label(atr.name().substring(0, 3));
@@ -514,16 +520,10 @@ public class EditorJogadorController {
             }
             attributesGrid.add(lblValor, 1, i);
 
-            // Col 2: Diferença (buff/debuff)
-            Label lblDiff = new Label("");
-            if (diferenca != 0) {
-                String sinal = diferenca > 0 ? "+" : "";
-                lblDiff.setText(sinal + diferenca);
-                lblDiff
-                    .getStyleClass()
-                    .add(diferenca > 0 ? "attr-diff-buff" : "attr-diff-debuff");
-            }
-            attributesGrid.add(lblDiff, 2, i);
+            // Col 2: Fontes de modificadores, reveladas somente no hover.
+            HBox caixaModificadores = criarCaixaModificadores(atr);
+            GridPane.setHgrow(caixaModificadores, Priority.ALWAYS);
+            attributesGrid.add(caixaModificadores, 2, i);
 
             // Col 3: Botão +
             Button btnMais = new Button("+");
@@ -556,6 +556,191 @@ public class EditorJogadorController {
         }
 
         desenharGraficoRadar();
+    }
+
+    private HBox criarCaixaModificadores(Atributo atributo) {
+        HBox caixa = new HBox(4);
+        caixa.setAlignment(Pos.CENTER_LEFT);
+        caixa.setMaxWidth(Double.MAX_VALUE);
+        caixa.getStyleClass().add("attribute-modifier-box");
+
+        List<ModificadorAtributoExibicao> modificadores = listarModificadoresDoAtributo(atributo);
+        Label total = criarLabelTotalModificadores(modificadores);
+        caixa.getChildren().add(total);
+
+        caixa.setOnMouseEntered(event -> caixa.getChildren().setAll(criarLabelsPorCategoria(modificadores)));
+        caixa.setOnMouseExited(event -> caixa.getChildren().setAll(total));
+        return caixa;
+    }
+
+    private Label criarLabelTotalModificadores(List<ModificadorAtributoExibicao> modificadores) {
+        int total = modificadores.stream().mapToInt(ModificadorAtributoExibicao::valor).sum();
+        Label label = new Label(formatarModificador(total));
+        label.getStyleClass().add(
+            total > 0
+                ? "attribute-modifier-total-positive"
+                : total < 0 ? "attribute-modifier-total-negative" : "attribute-modifier-total-neutral"
+        );
+        return label;
+    }
+
+    private List<Label> criarLabelsPorCategoria(List<ModificadorAtributoExibicao> modificadores) {
+        List<Label> labels = List.of(
+            criarLabelCategoria(modificadores, "attribute-modifier-class", "Classe"),
+            criarLabelCategoria(modificadores, "attribute-modifier-equipment", "Equipamentos"),
+            criarLabelCategoria(modificadores, "attribute-modifier-racial", "Raça e efeitos")
+        );
+        for (Label label : labels) {
+            label.setAlignment(Pos.CENTER);
+            label.setPrefWidth(0);
+            label.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(label, Priority.ALWAYS);
+        }
+        return labels;
+    }
+
+    private Label criarLabelCategoria(
+        List<ModificadorAtributoExibicao> modificadores,
+        String classeVisual,
+        String categoria
+    ) {
+        List<ModificadorAtributoExibicao> fontes = modificadores
+            .stream()
+            .filter(modificador -> modificador.classeVisual().equals(classeVisual))
+            .toList();
+        int total = fontes.stream().mapToInt(ModificadorAtributoExibicao::valor).sum();
+
+        Label label = new Label(formatarModificador(total));
+        label.getStyleClass().add(classeVisual);
+        Tooltip tooltip = new Tooltip(montarTooltipCategoria(categoria, fontes));
+        tooltip.setShowDelay(javafx.util.Duration.millis(200));
+        Tooltip.install(label, tooltip);
+        return label;
+    }
+
+    private String montarTooltipCategoria(
+        String categoria,
+        List<ModificadorAtributoExibicao> fontes
+    ) {
+        if (fontes.isEmpty()) {
+            return categoria + ": nenhum modificador";
+        }
+
+        StringBuilder tooltip = new StringBuilder(categoria).append(":");
+        for (ModificadorAtributoExibicao fonte : fontes) {
+            tooltip
+                .append("\n")
+                .append(fonte.origem())
+                .append(" ")
+                .append(formatarModificador(fonte.valor()));
+        }
+        return tooltip.toString();
+    }
+
+    private List<ModificadorAtributoExibicao> listarModificadoresDoAtributo(Atributo atributo) {
+        List<ModificadorAtributoExibicao> modificadores = new ArrayList<>();
+        Classe classe = jogadorSelecionado.getClasse();
+        adicionarModificador(
+            modificadores,
+            obterModificador(classe == null ? null : classe.getModificadoresDeAtributo(), atributo),
+            "attribute-modifier-class",
+            "Classe: " + (classe == null ? "Sem classe" : classe.getNome())
+        );
+
+        adicionarModificadoresRaciais(modificadores, atributo);
+        adicionarModificadoresDeEfeitos(modificadores, atributo);
+        adicionarModificadoresDeEquipamento(modificadores, atributo);
+        return modificadores;
+    }
+
+    private void adicionarModificadoresRaciais(List<ModificadorAtributoExibicao> modificadores, Atributo atributo) {
+        Raça raca = jogadorSelecionado.getRaca();
+        if (raca == null) return;
+
+        adicionarModificador(
+            modificadores,
+            obterModificador(raca.getAttributeModifiers(jogadorSelecionado), atributo),
+            "attribute-modifier-racial",
+            "Raça: " + raca.getNome()
+        );
+        adicionarModificador(
+            modificadores,
+            obterModificador(raca.getTemporaryAttributeModifiers(jogadorSelecionado), atributo),
+            "attribute-modifier-racial",
+            "Raça: " + raca.getNome() + " (bônus temporário)"
+        );
+    }
+
+    private void adicionarModificadoresDeEfeitos(List<ModificadorAtributoExibicao> modificadores, Atributo atributo) {
+        for (Efeito efeito : jogadorSelecionado.getEfeitosAtivos().values()) {
+            if (efeito == null || efeito.getModificadores() == null) continue;
+
+            adicionarModificador(
+                modificadores,
+                obterModificadorDeEfeito(efeito, atributo),
+                "attribute-modifier-racial",
+                "Efeito ativo: " + efeito.getNome()
+            );
+        }
+    }
+
+    private void adicionarModificadoresDeEquipamento(List<ModificadorAtributoExibicao> modificadores, Atributo atributo) {
+        for (Arma arma : jogadorSelecionado.getArmasEquipadas()) {
+            adicionarModificador(
+                modificadores,
+                obterModificador(arma.getModificadoresDeAtributo(), atributo),
+                "attribute-modifier-equipment",
+                "Arma: " + arma.getNome()
+            );
+        }
+
+        Armadura armadura = jogadorSelecionado.getArmaduraEquipada();
+        adicionarModificador(
+            modificadores,
+            obterModificador(armadura == null ? null : armadura.getModificadoresDeAtributo(), atributo),
+            "attribute-modifier-equipment",
+            "Armadura: " + (armadura == null ? "" : armadura.getNome())
+        );
+
+        adicionarModificadorDeAmuleto(modificadores, jogadorSelecionado.getAmuleto1(), atributo);
+        adicionarModificadorDeAmuleto(modificadores, jogadorSelecionado.getAmuleto2(), atributo);
+    }
+
+    private void adicionarModificadorDeAmuleto(
+        List<ModificadorAtributoExibicao> modificadores,
+        Amuleto amuleto,
+        Atributo atributo
+    ) {
+        adicionarModificador(
+            modificadores,
+            obterModificador(amuleto == null ? null : amuleto.getModificadoresDeAtributo(), atributo),
+            "attribute-modifier-equipment",
+            "Amuleto: " + (amuleto == null ? "" : amuleto.getNome())
+        );
+    }
+
+    private void adicionarModificador(
+        List<ModificadorAtributoExibicao> modificadores,
+        int valor,
+        String classeVisual,
+        String origem
+    ) {
+        if (valor != 0) {
+            modificadores.add(new ModificadorAtributoExibicao(valor, classeVisual, origem));
+        }
+    }
+
+    private int obterModificador(Map<Atributo, Integer> modificadores, Atributo atributo) {
+        return modificadores == null ? 0 : modificadores.getOrDefault(atributo, 0);
+    }
+
+    private int obterModificadorDeEfeito(Efeito efeito, Atributo atributo) {
+        Double valor = efeito.getModificadores().get(atributo.name());
+        return valor == null ? 0 : valor.intValue();
+    }
+
+    private String formatarModificador(int valor) {
+        return valor > 0 ? "+" + valor : String.valueOf(valor);
     }
 
     private String getRankStyleClass(int valor) {

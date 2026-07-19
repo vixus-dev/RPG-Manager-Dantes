@@ -1190,6 +1190,62 @@
 .attr-diff-buff { -fx-text-fill: #2ecc71; -fx-font-size: 11px; }
 .attr-diff-debuff { -fx-text-fill: #e74c3c; -fx-font-size: 11px; }
 
+/* --- FONTES DOS MODIFICADORES DE ATRIBUTO --- */
+.attribute-modifier-box {
+    -fx-min-height: 23;
+    -fx-pref-height: 23;
+    -fx-padding: 2 0;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: help;
+}
+
+.attribute-modifier-box:hover {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.attribute-modifier-class,
+.attribute-modifier-equipment,
+.attribute-modifier-racial {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 2;
+    -fx-alignment: center;
+}
+
+.attribute-modifier-total-positive,
+.attribute-modifier-total-negative,
+.attribute-modifier-total-neutral {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 2;
+}
+
+.attribute-modifier-class {
+    -fx-text-fill: #ffd54a;
+}
+
+.attribute-modifier-equipment {
+    -fx-text-fill: #00e5ff;
+}
+
+.attribute-modifier-racial {
+    -fx-text-fill: #c77dff;
+}
+
+.attribute-modifier-total-positive {
+    -fx-text-fill: #2ecc71;
+}
+
+.attribute-modifier-total-negative {
+    -fx-text-fill: #e74c3c;
+}
+
+.attribute-modifier-total-neutral {
+    -fx-text-fill: #646477;
+}
+
 /* --- PROGRESS BAR DE RANK --- */
 .rank-progress-track {
     -fx-background-color: #0a0a12;
