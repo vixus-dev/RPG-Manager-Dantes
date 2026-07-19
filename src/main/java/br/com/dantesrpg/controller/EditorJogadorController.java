@@ -568,7 +568,7 @@ public class EditorJogadorController {
         Label total = criarLabelTotalModificadores(modificadores);
         caixa.getChildren().add(total);
 
-        caixa.setOnMouseEntered(event -> caixa.getChildren().setAll(criarLabelsPorCategoria(modificadores)));
+        caixa.setOnMouseEntered(event -> caixa.getChildren().setAll(criarCaixasPorCategoria(modificadores)));
         caixa.setOnMouseExited(event -> caixa.getChildren().setAll(total));
         return caixa;
     }
@@ -584,22 +584,21 @@ public class EditorJogadorController {
         return label;
     }
 
-    private List<Label> criarLabelsPorCategoria(List<ModificadorAtributoExibicao> modificadores) {
-        List<Label> labels = List.of(
-            criarLabelCategoria(modificadores, "attribute-modifier-class", "Classe"),
-            criarLabelCategoria(modificadores, "attribute-modifier-equipment", "Equipamentos"),
-            criarLabelCategoria(modificadores, "attribute-modifier-racial", "Raça e efeitos")
+    private List<StackPane> criarCaixasPorCategoria(List<ModificadorAtributoExibicao> modificadores) {
+        List<StackPane> caixas = List.of(
+            criarCaixaCategoria(modificadores, "attribute-modifier-class", "Classe"),
+            criarCaixaCategoria(modificadores, "attribute-modifier-equipment", "Equipamentos"),
+            criarCaixaCategoria(modificadores, "attribute-modifier-racial", "Raça e efeitos")
         );
-        for (Label label : labels) {
-            label.setAlignment(Pos.CENTER);
-            label.setPrefWidth(0);
-            label.setMaxWidth(Double.MAX_VALUE);
-            HBox.setHgrow(label, Priority.ALWAYS);
+        for (StackPane caixa : caixas) {
+            caixa.setPrefWidth(0);
+            caixa.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(caixa, Priority.ALWAYS);
         }
-        return labels;
+        return caixas;
     }
 
-    private Label criarLabelCategoria(
+    private StackPane criarCaixaCategoria(
         List<ModificadorAtributoExibicao> modificadores,
         String classeVisual,
         String categoria
@@ -611,11 +610,15 @@ public class EditorJogadorController {
         int total = fontes.stream().mapToInt(ModificadorAtributoExibicao::valor).sum();
 
         Label label = new Label(formatarModificador(total));
+        label.setAlignment(Pos.CENTER);
         label.getStyleClass().add(classeVisual);
+
+        StackPane caixa = new StackPane(label);
+        caixa.getStyleClass().addAll("attribute-modifier-category-box", classeVisual + "-box");
         Tooltip tooltip = new Tooltip(montarTooltipCategoria(categoria, fontes));
         tooltip.setShowDelay(javafx.util.Duration.millis(200));
-        Tooltip.install(label, tooltip);
-        return label;
+        Tooltip.install(caixa, tooltip);
+        return caixa;
     }
 
     private String montarTooltipCategoria(
