@@ -938,6 +938,23 @@
     -fx-font-style: italic;
 }
 
+/* Item da lista de inventário: a animação de Shiny/Overclock é desenhada sobre este card. */
+.editor-inventory-item-card {
+    -fx-background-color: #171722;
+    -fx-background-radius: 5;
+    -fx-padding: 4 6;
+}
+
+/* Mantém a raridade na borda, mas dá presença visual aos itens Shiny. */
+.item-shiny-card {
+    -fx-background-color: linear-gradient(to bottom right, #312917 0%, #242116 42%, #1e1e2e 100%);
+}
+
+/* Atmosfera fixa de Overclock; somente as fagulhas no Canvas recebem animação. */
+.item-overclock-card {
+    -fx-background-color: linear-gradient(to top, #0b405e 0%, #092b43 35%, #111827 100%);
+}
+
 .equipment-stat {
     -fx-text-fill: #c9cad8;
     -fx-font-size: 11px;

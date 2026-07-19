@@ -213,10 +213,12 @@ public class EditorJogadorController {
                 protected void updateItem(Item item, boolean empty) {
                     super.updateItem(item, empty);
                     if (empty || item == null) {
+						ItemVisualUtils.pararAnimacao(getGraphic());
                         setText(null);
                         setGraphic(null);
                         setTooltip(null);
                     } else {
+						ItemVisualUtils.pararAnimacao(getGraphic());
                         setGraphic(criarCelulaInventario(item));
                         setText(null);
 
@@ -883,7 +885,6 @@ public class EditorJogadorController {
 
         card.getChildren().addAll(lblSlot, headerRow);
 		adicionarDescricaoItem(card, item);
-		ItemVisualUtils.aplicarBordaShinyPulsante(card, item);
 
         // Stats do item
         String detalhes = gerarTextoDetalhesItemCompacto(item);
@@ -904,6 +905,7 @@ public class EditorJogadorController {
             }
         }
 
+        ItemVisualUtils.aplicarEfeitosNoCard(card, item);
         return card;
     }
 
@@ -1248,9 +1250,10 @@ public class EditorJogadorController {
     // === COLUNA 3: Inventário + Habilidades
     // =============================================
 
-    private HBox criarCelulaInventario(Item item) {
+    private StackPane criarCelulaInventario(Item item) {
         HBox row = new HBox(8);
         row.setAlignment(Pos.CENTER_LEFT);
+		row.setMaxWidth(Double.MAX_VALUE);
 
         // Ícone de tipo
         String icone;
@@ -1276,14 +1279,18 @@ public class EditorJogadorController {
         lblNome.setStyle(
             "-fx-text-fill: " + corRaridade + "; -fx-font-size: 12px;"
         );
-		ItemVisualUtils.aplicarBrilhoNoInventario(lblNome, item);
         HBox.setHgrow(lblNome, Priority.ALWAYS);
 
         Label lblQtd = new Label("x" + quantidade);
         lblQtd.setStyle("-fx-text-fill: #808090; -fx-font-size: 11px;");
 
         row.getChildren().addAll(lblIcone, lblNome, lblQtd);
-        return row;
+
+		StackPane card = new StackPane(row);
+		card.getStyleClass().add("editor-inventory-item-card");
+		card.setMaxWidth(Double.MAX_VALUE);
+		ItemVisualUtils.aplicarEfeitosNoCard(card, item);
+		return card;
     }
 
     private String getCorRaridadeItem(Item item) {
