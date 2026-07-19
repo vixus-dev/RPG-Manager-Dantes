@@ -1,5 +1,6 @@
 {
   "iniciativaBase": 43,
+  "pecado": 7,
   "atributosBase": {
     "FORCA": 13,
     "PERCEPCAO": 8,
@@ -21,8 +22,8 @@
     "bronze": 35935
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 231.0,
-  "contadorTU": 0,
+  "vidaAtual": 206.0,
+  "contadorTU": 1,
   "fantasmaNobre": "VigiliaEterna",
   "armaduraEquipada": "Armadura do Mestre",
   "armaEquipada": "Pálida Vigília",
@@ -42,11 +43,10 @@
   ],
   "nome": "Eidan",
   "segmentos": 0,
-  "pecado": 7,
-  "vidas": 2,
   "grau": 2,
-  "posX": 7,
+  "posX": 5,
   "posY": 5,
+  "vidas": 2,
   "amuleto2": "Colar da Baleia Azul",
   "amuleto1": "Cranio de esqueleto shiny",
   "manaAtual": 12.5,

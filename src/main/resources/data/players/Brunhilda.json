@@ -1,5 +1,6 @@
 {
   "iniciativaBase": 22,
+  "pecado": 1,
   "atributosBase": {
     "FORCA": 13,
     "PERCEPCAO": 2,
@@ -21,8 +22,8 @@
     "bronze": 0
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 26.33488828502415,
-  "contadorTU": 0,
+  "vidaAtual": 32.0,
+  "contadorTU": 4,
   "fantasmaNobre": "Fimbulwinter",
   "armaduraEquipada": "Peitoral da Guarda de Marfim",
   "armaEquipada": "Tridente",
@@ -39,11 +40,10 @@
   ],
   "nome": "Brunhilda",
   "segmentos": 0,
-  "pecado": 1,
-  "vidas": 0,
   "grau": 0,
-  "posX": 8,
-  "posY": 6,
+  "posX": 5,
+  "posY": 5,
+  "vidas": 0,
   "amuleto2": "Colar de Tinta Seca",
   "amuleto1": "Medalhão da Promessa",
   "manaAtual": 5.5,

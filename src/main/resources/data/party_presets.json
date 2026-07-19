@@ -9,7 +9,9 @@
         "KuangLi",
         "darrell",
         "Brunhilda"
-      ]
+      ],
+      "andarAtual": "ANDAR_5",
+      "estadoVisualAndar": 1
     },
     {
       "name": "Equipe 2",
@@ -17,7 +19,9 @@
         "Sarvant",
         "etham",
         "zakaris"
-      ]
+      ],
+      "andarAtual": "NULO",
+      "estadoVisualAndar": 0
     },
     {
       "name": "Equipe Primaria",
@@ -28,7 +32,9 @@
         "eidan",
         "lyria",
         "trakin"
-      ]
+      ],
+      "andarAtual": "NULO",
+      "estadoVisualAndar": 0
     },
     {
       "name": "Equipe Filosofos",
@@ -37,13 +43,17 @@
         "Atlas",
         "Julius",
         "Platão"
-      ]
+      ],
+      "andarAtual": "ANDAR_1",
+      "estadoVisualAndar": 1
     },
     {
       "name": "Beta",
       "characterNames": [
         "Virgilio"
-      ]
+      ],
+      "andarAtual": "ANDAR_9",
+      "estadoVisualAndar": 1
     }
   ]
 }
