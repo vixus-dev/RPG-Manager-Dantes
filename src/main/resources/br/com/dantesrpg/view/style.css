@@ -2317,6 +2317,256 @@
     -fx-background-color: #2c8752;
 }
 
+/* =========================================================
+   TEMAS REATIVOS POR ANDAR
+   Os tokens são injetados pelo TemaAndarService somente quando
+   o estado visual é diferente de NULO.
+   ========================================================= */
+
+.tema-andar-ativo {
+    -fx-background-color: -andar-canvas;
+    -fx-text-fill: -andar-texto;
+}
+
+.tema-andar-ativo .navigation-bar,
+.tema-andar-ativo .gm-toolbar {
+    -fx-background-color: -andar-superficie;
+    -fx-border-color: -andar-borda;
+}
+
+.tema-andar-ativo .navigation-bar .button,
+.tema-andar-ativo .gm-toolbar .button {
+    -fx-background-color: -andar-superficie-elevada;
+    -fx-text-fill: -andar-texto;
+    -fx-border-color: -andar-borda;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.tema-andar-ativo .navigation-bar .button:hover,
+.tema-andar-ativo .gm-toolbar .button:hover {
+    -fx-background-color: -andar-hover;
+    -fx-text-fill: -andar-texto;
+    -fx-border-color: -andar-primaria;
+}
+
+.tema-andar-ativo .navigation-bar .button:pressed,
+.tema-andar-ativo .navigation-bar .button:focused,
+.tema-andar-ativo .gm-toolbar .button:pressed,
+.tema-andar-ativo .gm-toolbar .button:focused {
+    -fx-background-color: -andar-primaria;
+    -fx-text-fill: -andar-texto-sobre-primaria;
+    -fx-border-color: -andar-acento;
+}
+
+.tema-andar-ativo .navigation-bar .button:disabled,
+.tema-andar-ativo .gm-toolbar .button:disabled {
+    -fx-background-color: -andar-campo;
+    -fx-text-fill: -andar-texto-suave;
+    -fx-opacity: 0.62;
+}
+
+.tema-andar-ativo #btnIniciarTurno {
+    -fx-background-color: -andar-superficie-elevada;
+    -fx-text-fill: -andar-texto;
+    -fx-border-color: -andar-acento;
+}
+
+.tema-andar-ativo #btnIniciarTurno:hover {
+    -fx-background-color: -andar-hover;
+    -fx-border-color: -andar-primaria;
+}
+
+.tema-andar-ativo .timeline-bar {
+    -fx-background-color: -andar-painel;
+    -fx-border-color: transparent transparent -andar-borda transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Loja: a imagem fica em um ImageView atrás deste conteúdo. */
+.tema-andar-ativo.loja-background {
+    -fx-background-color: -andar-canvas;
+}
+
+.tema-andar-ativo .loja-content {
+    -fx-background-color: transparent;
+}
+
+.tema-andar-ativo .loja-header,
+.tema-andar-ativo .loja-section,
+.tema-andar-ativo .loja-preview-panel,
+.tema-andar-ativo .moeda-container {
+    -fx-background-color: -andar-painel;
+    -fx-border-color: -andar-borda;
+}
+
+.tema-andar-ativo .loja-header .loja-titulo {
+    -fx-text-fill: -andar-primaria;
+    -fx-effect: dropshadow(gaussian, -andar-primaria, 7, 0.25, 0, 0);
+}
+
+.tema-andar-ativo .loja-header .loja-nome-loja,
+.tema-andar-ativo .loja-section-title,
+.tema-andar-ativo .loja-preview-descricao,
+.tema-andar-ativo .loja-categoria-header {
+    -fx-text-fill: -andar-texto;
+    -fx-border-color: transparent transparent -andar-borda transparent;
+}
+
+.tema-andar-ativo .loja-combo,
+.tema-andar-ativo .loja-combo .list-cell,
+.tema-andar-ativo .loja-background .text-field {
+    -fx-background-color: -andar-campo;
+    -fx-text-fill: -andar-texto;
+    -fx-border-color: -andar-borda;
+}
+
+.tema-andar-ativo .loja-combo:hover,
+.tema-andar-ativo .loja-background .text-field:focused {
+    -fx-border-color: -andar-primaria;
+}
+
+.tema-andar-ativo .loja-card-oferta,
+.tema-andar-ativo .loja-card-inventario,
+.tema-andar-ativo .loja-card-overclock {
+    -fx-background-color: -andar-card;
+    -fx-border-color: -andar-borda;
+}
+
+.tema-andar-ativo .loja-card-oferta:hover,
+.tema-andar-ativo .loja-card-inventario:hover,
+.tema-andar-ativo .loja-card-overclock:hover {
+    -fx-background-color: -andar-hover;
+    -fx-border-color: -andar-primaria;
+}
+
+.tema-andar-ativo .loja-card-oferta-selected {
+    -fx-background-color: -andar-pressionado;
+    -fx-border-color: -andar-acento;
+}
+
+/* Editor: superfícies translúcidas preservam o fundo sem apagar conteúdo. */
+.tema-andar-ativo.editor-background {
+    -fx-background-color: -andar-canvas;
+}
+
+.tema-andar-ativo .editor-content,
+.tema-andar-ativo .editor-content-scroll,
+.tema-andar-ativo .editor-content-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.tema-andar-ativo .editor-sidebar,
+.tema-andar-ativo .character-header,
+.tema-andar-ativo .editor-column,
+.tema-andar-ativo .bento-card,
+.tema-andar-ativo .origin-info-panel,
+.tema-andar-ativo .editor-stat-row,
+.tema-andar-ativo .equipment-card,
+.tema-andar-ativo .equipment-card-empty {
+    -fx-background-color: -andar-painel;
+    -fx-border-color: -andar-borda;
+}
+
+.tema-andar-ativo .editor-column,
+.tema-andar-ativo .bento-card,
+.tema-andar-ativo .equipment-card,
+.tema-andar-ativo .equipment-card-empty {
+    -fx-background-color: -andar-card;
+}
+
+.tema-andar-ativo .bento-card:hover,
+.tema-andar-ativo .editor-column:hover,
+.tema-andar-ativo .editor-stat-row:hover {
+    -fx-background-color: -andar-hover;
+    -fx-border-color: -andar-primaria;
+}
+
+.tema-andar-ativo .header-label,
+.tema-andar-ativo .character-header .label-name,
+.tema-andar-ativo .editor-stat-label,
+.tema-andar-ativo .editor-stat-value,
+.tema-andar-ativo .equipment-slot-label,
+.tema-andar-ativo .equipment-item-description,
+.tema-andar-ativo .attr-name-label,
+.tema-andar-ativo .editor-ranks-label,
+.tema-andar-ativo .origin-info-content {
+    -fx-text-fill: -andar-texto;
+}
+
+.tema-andar-ativo .character-header .label-class {
+    -fx-text-fill: -andar-primaria;
+}
+
+.tema-andar-ativo .character-header .label-race {
+    -fx-text-fill: -andar-secundaria;
+}
+
+.tema-andar-ativo .character-header .label-level {
+    -fx-text-fill: -andar-acento;
+}
+
+.tema-andar-ativo .editor-tab-pane .tab-header-area,
+.tema-andar-ativo .editor-tab-pane .tab-header-background,
+.tema-andar-ativo .editor-tab-pane .tab,
+.tema-andar-ativo .editor-list-view,
+.tema-andar-ativo .editor-list-view .list-cell,
+.tema-andar-ativo .editor-search-field {
+    -fx-background-color: -andar-campo;
+    -fx-text-fill: -andar-texto;
+    -fx-border-color: -andar-borda;
+}
+
+.tema-andar-ativo .editor-tab-pane .tab:hover,
+.tema-andar-ativo .editor-list-view .list-cell:filled:hover,
+.tema-andar-ativo .player-select-button:hover,
+.tema-andar-ativo .editor-btn-filter:hover {
+    -fx-background-color: -andar-hover;
+    -fx-text-fill: -andar-texto;
+}
+
+.tema-andar-ativo .editor-tab-pane .tab:selected,
+.tema-andar-ativo .player-select-button-selected,
+.tema-andar-ativo .editor-btn-filter-active {
+    -fx-background-color: -andar-primaria;
+    -fx-text-fill: -andar-texto-sobre-primaria;
+    -fx-border-color: -andar-acento;
+}
+
+.tema-andar-ativo .editor-tab-pane .tab .tab-label {
+    -fx-text-fill: -andar-texto-suave;
+}
+
+.tema-andar-ativo .editor-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: -andar-texto-sobre-primaria;
+}
+
+.tema-andar-ativo .player-select-button,
+.tema-andar-ativo .editor-btn-filter,
+.tema-andar-ativo .editor-btn-plus,
+.tema-andar-ativo .editor-btn-info {
+    -fx-background-color: -andar-superficie-elevada;
+    -fx-text-fill: -andar-texto;
+    -fx-border-color: -andar-borda;
+}
+
+/* O 8º usa o espectro completo só em pontos de ênfase. */
+.tema-andar-08-1 .navigation-bar .button:focused,
+.tema-andar-08-1 .gm-toolbar .button:focused,
+.tema-andar-08-1 .editor-tab-pane .tab:selected,
+.tema-andar-08-1 .player-select-button-selected,
+.tema-andar-08-1 .editor-btn-filter-active {
+    -fx-background-color: linear-gradient(to right, #FF4FD8, #9C6BFF, #43E8FF, #73FF8C, #FFD84D);
+    -fx-text-fill: #101014;
+    -fx-border-color: #FFFFFF;
+}
+
+.tema-andar-08-1 .loja-header,
+.tema-andar-08-1 .character-header,
+.tema-andar-08-1 .bento-card:hover {
+    -fx-border-color: linear-gradient(to right, #FF4FD8, #43E8FF, #73FF8C, #FFD84D, #9C6BFF);
+}
+
 .bestiary-field-error {
     -fx-border-color: #ff4b4b;
     -fx-border-width: 1.5;

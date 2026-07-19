@@ -22,8 +22,12 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.EditorJogadorController"
-            prefHeight="700.0" prefWidth="1100.0" styleClass="editor-background">
+<StackPane fx:id="editorThemeRoot" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="br.com.dantesrpg.controller.EditorJogadorController" prefHeight="700.0" prefWidth="1100.0"
+           styleClass="editor-background" stylesheets="@style.css">
+    <children>
+        <ImageView fx:id="editorThemeBackground" mouseTransparent="true" preserveRatio="false" smooth="true" />
+        <BorderPane styleClass="editor-content" prefHeight="700.0" prefWidth="1100.0">
 
     <!-- SIDEBAR ESQUERDA: Lista de Jogadores -->
     <left>
@@ -223,7 +227,6 @@
             </TabPane>
         </VBox>
     </center>
-    <stylesheets>
-        <URL value="@style.css" />
-    </stylesheets>
-</BorderPane>
+        </BorderPane>
+    </children>
+</StackPane>
