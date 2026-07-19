@@ -545,7 +545,7 @@ Efeito congelante = new Efeito("Vento Congelante", TipoEfeito.DEBUFF, 100, null,
 				}
 
 				// 5º ANDAR: Tempestade (Chuva + Raios)
-				else if (efeito.startsWith("5º Andar")) {
+				else if ("5º Andar - Tempestade".equals(efeito)) {
 					if (tempoGlobalAtual % 100 == 0 && duracaoChuvaRestante <= 0) {
 						if (Math.random() < 0.20) {
 							duracaoChuvaRestante = 300;

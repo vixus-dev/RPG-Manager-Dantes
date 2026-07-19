@@ -63,9 +63,10 @@
     </plugins>
   </build>
   <properties>
+    <maven.compiler.source>21</maven.compiler.source>
+    <atlantafx.version>2.1.0</atlantafx.version>
     <maven.compiler.target>21</maven.compiler.target>
     <gson.version>2.11.0</gson.version>
-    <maven.compiler.source>21</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javafx.version>21.0.5</javafx.version>
   </properties>
