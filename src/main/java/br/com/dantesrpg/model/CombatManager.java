@@ -477,6 +477,9 @@ public class CombatManager {
 				// Efeitos de Terreno Constantes (como Areia e Água)
 				if (mainController != null && mainController.getMapController() != null) {
 					br.com.dantesrpg.controller.MapController map = mainController.getMapController();
+					if (mainController.isPlayer(p)) {
+						br.com.dantesrpg.model.combat.SubmersaoProcessor.processarTick(p, map, tempoGlobalAtual);
+					}
 					br.com.dantesrpg.model.map.TerrainData.EfeitoInstance efeitoChao = map.getEfeitoNoSolo(p.getPosX(), p.getPosY());
 					if (efeitoChao != null && efeitoChao.getTipo() == TipoEfeitoSolo.AREIA && (tempoGlobalAtual % 30 == 0)) {
 						System.out.println(">>> " + p.getNome() + " sofreu 2 de dano por estar na Areia.");
@@ -484,8 +487,15 @@ public class CombatManager {
 						p.setVidaAtual(vidaAntes - 2, estado, mainController);
 						p.registrarDanoSofrido(2, tempoGlobalAtual);
 						if (p.getVidaAtual() <= 0 && !p.isVivo()) {
-
-					if (mainController != null) mainController.atualizarInterfaceAposMorte();
+							if (colocarEmEsperaParaArise(p, estado)) {
+								if (mainController != null) {
+									mainController.atualizarInterfaceAposMorte();
+								}
+								continue;
+							}
+							if (mainController != null) {
+								mainController.atualizarInterfaceAposMorte();
+							}
 						}
 					}
 
@@ -580,6 +590,13 @@ public class CombatManager {
 						p.setVidaAtual(vidaAntes - dano, estado, mainController);
 						System.out.println(">>> Jihō Gekkyūden: " + p.getNome() + " sofre "
 								+ String.format("%.0f", dano) + " de dano (Maldição do Gekkyūden).");
+						if (vidaAntes > 0 && !p.isAtivoNoCombate() && !p.isVivo()
+								&& colocarEmEsperaParaArise(p, estado)) {
+							if (mainController != null) {
+								mainController.atualizarInterfaceAposMorte();
+							}
+							break;
+						}
 					}
 
 					// Maldição de Fimbulwinter: inimigo dentro do domínio de Brunhilda ganha 1 stack de Congelamento a cada 100 TU
@@ -647,6 +664,10 @@ public class CombatManager {
 							efeitoObj.getModificadores().put("BONUS_ARMADURA_PERCENTUAL", armaduraRed - 0.20);
 							efeitoObj.getModificadores().put("REDUCAO_CURA", curaRed + 0.50);
 							p.recalcularAtributosEstatisticas();
+						}
+						if (efeitoObj.getNome().equals(br.com.dantesrpg.model.combat.SubmersaoProcessor.EFEITO_ASFIXIA)) {
+							br.com.dantesrpg.model.util.MaldicaoUtils.adicionarMaldicao(p,
+									new br.com.dantesrpg.model.util.Maldicao("Asfixia", 0.025, 1000, false));
 						}
 						if (danoFinalDoT > 0) {
 							// Dormindo: acorda após 2 ticks de dano
@@ -776,6 +797,9 @@ public class CombatManager {
 							if (nomeEfeito.equals("Despertar Divino")) {
 								br.com.dantesrpg.model.fantasmasnobres.RevelacaoDeYaweh
 										.reverterDespertarDivino(p);
+							}
+							if (nomeEfeito.equals("ALL OUT PIRATE")) {
+								br.com.dantesrpg.model.habilidades.boss.AllOutPirate.reverter(p);
 							}
 						}
 					}
@@ -1041,6 +1065,11 @@ public class CombatManager {
 				custoTUBase = (int) (custoTUBase * multTU);
 				System.out.println(">>> Modo " + ator.getArmaEquipada().getNomeAtaqueAlternativoBasico() + ": TU ajustado para " + custoTUBase);
 			}
+		}
+
+		if (habilidade != null && ator.getEfeitosAtivos().containsKey("ALL OUT PIRATE")) {
+			custoTUBase = (int) Math.ceil(custoTUBase * 0.70);
+			System.out.println(">>> ALL OUT PIRATE: custo da habilidade reduzido para " + custoTUBase + " TU.");
 		}
 
 		// Custo de Rajada (Ranged): +10% TU por tiro EXTRA

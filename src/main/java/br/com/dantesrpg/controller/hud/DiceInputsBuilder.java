@@ -190,7 +190,9 @@ public class DiceInputsBuilder {
 
 		boolean precisa = hab.getMultiplicadorDeDano() > 0;
 		String nome = hab.getNome();
-		if (nome.equals("Distorted Solo") || nome.equals("Wha-Wha Solo") || nome.equals("Plain Solo")) {
+		if (hab instanceof br.com.dantesrpg.model.habilidades.classe.DistortedSolo
+				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.WhaWhaSolo
+				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.PlainSolo) {
 			precisa = true;
 		}
 		if (nome.equals("Aprimorar Poção") || nome.equals("Mestre Filosofal")) {
@@ -278,6 +280,26 @@ public class DiceInputsBuilder {
 
 	private void adicionarInputsEspecificosHabilidade(String nome, Personagem ator,
 			Map<String, TextField> inputsExtras) {
+		if (nome.equals("Dissident Aggressor")) {
+			adicionarInputExtra(br.com.dantesrpg.model.habilidades.classe.AngryAgain.INPUT_DADO_INSPIRACAO,
+					"Dado de Inspira\u00e7\u00e3o:", inputsExtras);
+			return;
+		}
+		if (nome.equals("Black Magic")) {
+			adicionarInputExtra(br.com.dantesrpg.model.habilidades.classe.PoisonWasTheCure.INPUT_DADO_CURA,
+					"Resultado do dado de cura:", inputsExtras);
+			return;
+		}
+		if (nome.equals("Fight Till Death")) {
+			adicionarInputExtra(br.com.dantesrpg.model.habilidades.classe.SeekAndDestroy.INPUT_TESTE_BUFF,
+					"Teste de buff dos aliados:", inputsExtras);
+			return;
+		}
+		if (nome.equals("Hell Awaits")) {
+			adicionarInputExtra(br.com.dantesrpg.model.habilidades.classe.KickTheChair.INPUT_TESTE_EXPLOSAO,
+					"Teste de dano da explos\u00e3o:", inputsExtras);
+			return;
+		}
 		if (nome.equals("Fulgor Negro") && !ator.getEfeitosAtivos().containsKey("Restrição Celestial")) {
 			adicionarInputExtra("DADO_CHANCE_FULGOR", "Chance Acerto (1d4):", inputsExtras);
 		} else if (nome.equals("Fulgor Negro") && ator.getEfeitosAtivos().containsKey("Restrição Celestial")) {

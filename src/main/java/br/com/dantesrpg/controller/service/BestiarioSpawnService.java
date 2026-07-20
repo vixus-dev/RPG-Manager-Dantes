@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,10 +101,16 @@ public class BestiarioSpawnService {
 		monstro.setXpReward(((Number) dadosMalditos.getOrDefault("xpReward", monstro.getXpReward())).intValue());
 		monstro.setGrau(((Number) dadosMalditos.getOrDefault("grau", 0.0)).intValue());
 		monstro.setSegmentosVida(((Number) dadosMalditos.getOrDefault("segmentos", 0.0)).intValue());
+		monstro.setAndar((String) dadosMalditos.getOrDefault("andar", "Não informado"));
 		monstro.setPesoEntidade(PesoEntidade.fromJsonId((String) dadosMalditos.getOrDefault("peso", "medio_padrao")));
 		monstro.setTamanhoX(((Number) dadosMalditos.getOrDefault("tamanhoX", 1.0)).intValue());
 		monstro.setTamanhoY(((Number) dadosMalditos.getOrDefault("tamanhoY", 1.0)).intValue());
-		monstro.setPropriedades(lerPropriedades(dadosMalditos));
+		List<String> propriedadesMalditas = lerPropriedades(dadosMalditos);
+		propriedadesMalditas.removeIf(prop -> "MALDICAO_AO_MORRER".equalsIgnoreCase(prop));
+		if (propriedadesMalditas.stream().noneMatch(prop -> "MALDITO".equalsIgnoreCase(prop))) {
+			propriedadesMalditas.add("MALDITO");
+		}
+		monstro.setPropriedades(propriedadesMalditas);
 		monstro.setPoderoso(Boolean.TRUE.equals(dadosMalditos.get("poderoso")));
 
 		equiparArma(monstro, (String) dadosMalditos.getOrDefault("arma", null));
@@ -116,20 +123,72 @@ public class BestiarioSpawnService {
 	}
 
 	private Map<String, Object> localizarVersaoMaldita(Personagem monstro) {
-		String nomeBase = monstro.getNomeBaseImagem();
-		if (nomeBase == null || nomeBase.isBlank()) {
-			nomeBase = monstro.getNome().replaceFirst("\\s+\\d+$", "");
+		if (bestiarioDatabase == null || bestiarioDatabase.isEmpty()) {
+			return null;
 		}
 
-		String nomeEsperado = nomeBase.trim() + " maldito";
+		// O nome exibido pode receber um sufixo de instância (" 1", " 2") e
+		// alguns registros usam uma chave técnica diferente do campo "nome".
+		// Compare também a forma normalizada para não perder variantes por
+		// diferenças de acentuação, caixa ou espaços.
+		List<String> nomesBase = new ArrayList<>();
+		adicionarNomeBase(nomesBase, monstro.getNomeBaseImagem());
+		adicionarNomeBase(nomesBase, monstro.getNome());
+
 		for (Map.Entry<String, Map<String, Object>> entrada : bestiarioDatabase.entrySet()) {
 			Map<String, Object> dados = entrada.getValue();
-			String nome = (String) dados.getOrDefault("nome", entrada.getKey());
-			if (nomeEsperado.equalsIgnoreCase(nome) || nomeEsperado.equalsIgnoreCase(entrada.getKey())) {
-				return dados;
+			if (dados == null) {
+				continue;
+			}
+
+			String nomeVariante = String.valueOf(dados.getOrDefault("nome", entrada.getKey()));
+			String chaveVariante = entrada.getKey();
+			boolean varianteMarcada = contemPropriedade(dados, "MALDITO")
+					|| normalizarNome(nomeVariante).endsWith(" maldito")
+					|| normalizarNome(chaveVariante).endsWith(" maldito");
+			if (!varianteMarcada) {
+				continue;
+			}
+			String baseDaVariante = removerSufixoMaldito(nomeVariante);
+			String baseDaChave = removerSufixoMaldito(chaveVariante);
+			for (String nomeBase : nomesBase) {
+				String normalizado = normalizarNome(nomeBase);
+				if (normalizado.equals(normalizarNome(baseDaVariante))
+						|| normalizado.equals(normalizarNome(baseDaChave))) {
+					return dados;
+				}
 			}
 		}
 		return null;
+	}
+
+	private void adicionarNomeBase(List<String> nomesBase, String nome) {
+		if (nome == null || nome.isBlank()) {
+			return;
+		}
+		String semInstancia = nome.trim().replaceFirst("\\s+\\d+$", "");
+		if (!semInstancia.isBlank() && !nomesBase.contains(semInstancia)) {
+			nomesBase.add(semInstancia);
+		}
+	}
+
+	private String removerSufixoMaldito(String nome) {
+		if (nome == null) {
+			return "";
+		}
+		return nome.trim().replaceFirst("(?i)\\s+maldito$", "").trim();
+	}
+
+	private String normalizarNome(String nome) {
+		String semAcentos = Normalizer.normalize(nome == null ? "" : nome, Normalizer.Form.NFD)
+				.replaceAll("\\p{M}", "");
+		return semAcentos.replaceAll("\\s+", " ").trim().toLowerCase(java.util.Locale.ROOT);
+	}
+
+	private boolean contemPropriedade(Map<String, Object> dados, String propriedade) {
+		Object valor = dados.get("propriedades");
+		return valor instanceof List<?> lista
+				&& lista.stream().anyMatch(item -> propriedade.equalsIgnoreCase(String.valueOf(item).trim()));
 	}
 
 	private String aplicarSufixoDeInstancia(String nomeAtual, String nomeBaseMaldito) {
@@ -192,6 +251,7 @@ public class BestiarioSpawnService {
 		int segmentos = ((Number) data.getOrDefault("segmentos", 0.0)).intValue();
 		int grau = ((Number) data.getOrDefault("grau", 0.0)).intValue();
 		String pesoStr = (String) data.getOrDefault("peso", "medio_padrao");
+		String andar = (String) data.getOrDefault("andar", "Não informado");
 
 		Map<Atributo, Integer> atributos = atributosBase(agilidade);
 		long qtdExistente = estado.getCombatentes().stream().filter(p -> p.getNome().startsWith(nomeBase)).count();
@@ -202,6 +262,7 @@ public class BestiarioSpawnService {
 				vidaMax, 0);
 		monstro.setArmaduraNatural(ArmaduraUtils.calcularPontosParaReducaoPercentual(defesa));
 		monstro.setFaccao("INIMIGO");
+		monstro.setAndar(andar);
 		monstro.setNomeBaseImagem(nomeBaseImagem);
 		monstro.setXpReward(xpReward);
 		monstro.setPosX(x);
@@ -263,6 +324,7 @@ public class BestiarioSpawnService {
 		int grau = ((Number) dadosMonstro.getOrDefault("grau", 0.0)).intValue();
 		int segmentos = ((Number) dadosMonstro.getOrDefault("segmentos", 0.0)).intValue();
 		String nomeArma = (String) dadosMonstro.getOrDefault("arma", null);
+		String andar = (String) dadosMonstro.getOrDefault("andar", "Não informado");
 
 		if (idMonstro.equalsIgnoreCase("Nebrion")) {
 			tamanhoX = 7;
@@ -297,6 +359,7 @@ public class BestiarioSpawnService {
 		monstro.setPosX(x);
 		monstro.setPosY(y);
 		monstro.setFaccao("INIMIGO");
+		monstro.setAndar(andar);
 		monstro.setNomeBaseImagem(nomeBaseImagem);
 		monstro.setPropriedades(props);
 		
