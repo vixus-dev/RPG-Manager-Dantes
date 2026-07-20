@@ -2,6 +2,7 @@
   "Diabrete": {
     "nome": "Diabrete",
     "raca": "Demônio-Menor",
+    "andar": "0",
     "grau": 0.0,
     "vida": 25.0,
     "mana": 1.0,
@@ -16,6 +17,7 @@
   "grupo de diabretes": {
     "nome": "grupo de diabretes",
     "raca": "Demônio-Menor",
+    "andar": "0",
     "grau": 1.0,
     "vida": 60.0,
     "mana": 1.0,
@@ -30,6 +32,7 @@
   "Nupperibo": {
     "nome": "Nupperibo",
     "raca": "Demônio-Menor",
+    "andar": "Não 0",
     "grau": 1.0,
     "vida": 150.0,
     "mana": 1.0,
@@ -44,6 +47,7 @@
   "nupperiboAlpha": {
     "nome": "Nupperibo Alfa",
     "raca": "Demônio-Menor",
+    "andar": "3",
     "grau": 1.0,
     "vida": 4500.0,
     "mana": 5.0,
@@ -58,6 +62,7 @@
   "Larvas Infernais": {
     "nome": "Larvas Infernais",
     "raca": "Demônio-Menor",
+    "andar": "1",
     "grau": 0.0,
     "vida": 30.0,
     "mana": 2.0,
@@ -74,6 +79,7 @@
   "Fendspawn": {
     "nome": "Fendspawn",
     "raca": "Demônio",
+    "andar": "1",
     "grau": 2.0,
     "vida": 115.0,
     "mana": 1.0,
@@ -88,6 +94,7 @@
   "Painfiends": {
     "nome": "Painfiends",
     "raca": "Demônio",
+    "andar": "1",
     "grau": 2.0,
     "vida": 135.0,
     "mana": 1.0,
@@ -102,6 +109,7 @@
   "Massa Hedionda": {
     "nome": "Massa Hedionda",
     "raca": "Demônio-Maior",
+    "andar": "1",
     "grau": 2.0,
     "vida": 400.0,
     "mana": 10.0,
@@ -120,6 +128,7 @@
   "Verme_de_carne": {
     "nome": "Verme de Carne",
     "raca": "Demônio",
+    "andar": "3",
     "grau": 0.0,
     "vida": 15.0,
     "mana": 2.0,
@@ -133,6 +142,7 @@
   "Massa Hedionda Maior": {
     "nome": "Massa Hedionda Maior",
     "raca": "Demônio-Maior",
+    "andar": "1",
     "grau": 2.0,
     "vida": 500.0,
     "mana": 10.0,
@@ -151,6 +161,7 @@
   "DeathCatcher": {
     "nome": "DeathCatcher",
     "raca": "Demônio",
+    "andar": "3",
     "grau": 1.0,
     "vida": 200.0,
     "mana": 10.0,
@@ -169,6 +180,7 @@
   "Mysterious Druid Knight": {
     "nome": "Mysterious Druid Knight",
     "raca": "Casca-Maior",
+    "andar": "1,5",
     "grau": 2.0,
     "vida": 1000.0,
     "mana": 10.0,
@@ -186,6 +198,7 @@
   "Zeraphon - O Zero": {
     "nome": "Zeraphon - O Zero",
     "raca": "Corte Infernal",
+    "andar": "9",
     "grau": 4.0,
     "vida": 2500.0,
     "mana": 10.0,
@@ -204,6 +217,7 @@
   "BonecoTeste": {
     "nome": "bonecoTeste",
     "raca": "Demônio",
+    "andar": "Não informado",
     "grau": 2.0,
     "vida": 135.0,
     "mana": 1.0,
@@ -223,6 +237,7 @@
   "Filth": {
     "nome": "Humano Transfigurado",
     "raca": "Casca-Menor",
+    "andar": "0",
     "grau": 1.0,
     "vida": 60.0,
     "mana": 1.0,
@@ -236,6 +251,7 @@
   "FilthDeSangue": {
     "nome": "Filth De Sangue",
     "raca": "Casca-Menor",
+    "andar": "3",
     "grau": 1.0,
     "vida": 80.0,
     "mana": 3.0,
@@ -249,6 +265,7 @@
   "FilthDeAreia": {
     "nome": "Filth De Areia",
     "raca": "Casca-Menor",
+    "andar": "4",
     "grau": 1.0,
     "vida": 125.0,
     "mana": 5.0,
@@ -262,6 +279,7 @@
   "ocultista de carne": {
     "nome": "ocultista de carne",
     "raca": "Casca",
+    "andar": "3",
     "grau": 1.0,
     "vida": 1000.0,
     "mana": 3.0,
@@ -275,6 +293,7 @@
   "Aranha": {
     "nome": "Aranha",
     "raca": "Casca-Menor",
+    "andar": "1",
     "grau": 0.0,
     "vida": 25.0,
     "mana": 2.0,
@@ -288,6 +307,7 @@
   "Aranha Gigante": {
     "nome": "Aranha Gigante",
     "raca": "Casca-Menor",
+    "andar": "1",
     "grau": 1.0,
     "vida": 65.0,
     "mana": 4.0,
@@ -301,6 +321,7 @@
   "Drone": {
     "nome": "Drone",
     "raca": "Maquina-Menor",
+    "andar": "0.5",
     "grau": 0.0,
     "vida": 40.0,
     "mana": 6.0,
@@ -314,6 +335,7 @@
   "StreetCleaner": {
     "nome": "StreetCleaner",
     "raca": "Maquina-Menor",
+    "andar": "0.5",
     "grau": 0.0,
     "vida": 125.0,
     "mana": 6.0,
@@ -327,6 +349,7 @@
   "Digger": {
     "nome": "Digger",
     "raca": "Maquina-Menor",
+    "andar": "0.5",
     "grau": 1.0,
     "vida": 120.0,
     "mana": 4.0,
@@ -340,6 +363,7 @@
   "FRGEL": {
     "nome": "FRGEL",
     "raca": "Maquina",
+    "andar": "0.5",
     "grau": 1.0,
     "vida": 200.0,
     "mana": 5.0,
@@ -353,6 +377,7 @@
   "Swordsmachine": {
     "nome": "Swordsmachine",
     "raca": "Maquina",
+    "andar": "0.5",
     "grau": 2.0,
     "vida": 200.0,
     "mana": 10.0,
@@ -367,6 +392,7 @@
   "FRSL": {
     "nome": "FRSL",
     "raca": "Maquina-Maior",
+    "andar": "0.5",
     "grau": 2.0,
     "vida": 300.0,
     "mana": 10.0,
@@ -381,6 +407,7 @@
   "Cerberus": {
     "nome": "Cerberus",
     "raca": "Demônio-Maior",
+    "andar": "0.5",
     "grau": 1.0,
     "vida": 150.0,
     "mana": 10.0,
@@ -398,6 +425,7 @@
   "Cerberus_Sangrento": {
     "nome": "Cerberus Sangrento",
     "raca": "Demônio-Maior",
+    "andar": "3",
     "grau": 2.0,
     "vida": 300.0,
     "mana": 5.0,
@@ -415,6 +443,7 @@
   "Succubus": {
     "nome": "Succubus",
     "raca": "Demônio",
+    "andar": "2",
     "grau": 1.0,
     "vida": 200.0,
     "mana": 5.0,
@@ -430,6 +459,7 @@
   "Incubus": {
     "nome": "Incubus",
     "raca": "Demônio",
+    "andar": "2",
     "grau": 1.0,
     "vida": 250.0,
     "mana": 5.0,
@@ -445,6 +475,7 @@
   "Véntrex": {
     "nome": "Véntrex",
     "raca": "Demônio-Menor",
+    "andar": "2",
     "grau": 1.0,
     "vida": 125.0,
     "mana": 4.0,
@@ -462,6 +493,7 @@
   "Corticeiro da Carne": {
     "nome": "Corticeiro da Carne",
     "raca": "Demônio",
+    "andar": "2",
     "grau": 1.0,
     "vida": 400.0,
     "mana": 4.0,
@@ -477,6 +509,7 @@
   "Madames do Abismo": {
     "nome": "Madames do Abismo",
     "raca": "Demônio",
+    "andar": "2",
     "grau": 1.0,
     "vida": 150.0,
     "mana": 4.0,
@@ -492,6 +525,7 @@
   "Autômatos Sensoriais": {
     "nome": "Autômatos Sensoriais",
     "raca": "Maquina",
+    "andar": "2",
     "grau": 1.0,
     "vida": 300.0,
     "mana": 4.0,
@@ -510,6 +544,7 @@
   "Parasitas do Êxtase": {
     "nome": "Parasitas do Êxtase",
     "raca": "Demônio-Menor",
+    "andar": "2",
     "grau": 1.0,
     "vida": 30.0,
     "mana": 10.0,
@@ -525,6 +560,7 @@
   "Condutores Infernais": {
     "nome": "Condutores Infernais",
     "raca": "Demônio",
+    "andar": "2",
     "grau": 1.0,
     "vida": 225.0,
     "mana": 6.0,
@@ -540,6 +576,7 @@
   "MindFlayers": {
     "nome": "MindFlayer",
     "raca": "Maquina-Maior",
+    "andar": "2",
     "grau": 1.0,
     "vida": 500.0,
     "mana": 10.0,
@@ -555,6 +592,7 @@
   "Globulo Branco": {
     "nome": "Globulo Branco",
     "raca": "Demônio-Maior",
+    "andar": "3",
     "grau": 1.0,
     "vida": 2000.0,
     "mana": 10.0,
@@ -570,6 +608,7 @@
   "Shael": {
     "nome": "Shael",
     "raca": "Corte Infernal",
+    "andar": "2",
     "grau": 2.0,
     "vida": 5250.0,
     "mana": 6.0,
@@ -585,6 +624,7 @@
   "Aedolor": {
     "nome": "Aedolor",
     "raca": "Corte Infernal",
+    "andar": "2",
     "grau": 2.0,
     "vida": 2750.0,
     "mana": 14.0,
@@ -600,6 +640,7 @@
   "Nebrion": {
     "nome": "Nebrion",
     "raca": "Corte Infernal",
+    "andar": "2",
     "grau": 2.0,
     "vida": 6250.0,
     "mana": 14.0,
@@ -617,6 +658,7 @@
   "MinosFase1": {
     "nome": "Minos",
     "raca": "O Colosso",
+    "andar": "2",
     "grau": 2.0,
     "vida": 4000.0,
     "mana": 10.0,
@@ -634,6 +676,7 @@
   "MinosFase2": {
     "nome": "Minos",
     "raca": "O Colosso",
+    "andar": "2",
     "grau": 2.0,
     "vida": 6000.0,
     "mana": 10.0,
@@ -651,6 +694,7 @@
   "MinosFase3": {
     "nome": "Minos",
     "raca": "O Colosso",
+    "andar": "2",
     "grau": 2.0,
     "vida": 10000.0,
     "mana": 10.0,
@@ -668,6 +712,7 @@
   "morghul": {
     "nome": "morghul - O quinto",
     "raca": "Corte Infernal",
+    "andar": "3",
     "grau": 3.0,
     "vida": 1750.0,
     "mana": 10.0,
@@ -685,6 +730,7 @@
   "lillith": {
     "nome": "Lillith - A Terceira",
     "raca": "Corte Infernal",
+    "andar": "3",
     "grau": 2.0,
     "vida": 2000.0,
     "mana": 10.0,
@@ -700,6 +746,7 @@
   "tentaculoDeSangue": {
     "nome": "Tentáculo de Sangue",
     "raca": "Corte Infernal",
+    "andar": "3",
     "grau": 1.0,
     "vida": 100.0,
     "mana": 4.0,
@@ -717,6 +764,7 @@
   "JusticeiroCego": {
     "nome": "O Justiceiro Cego - O Décimo Primeiro",
     "raca": "Corte Infernal",
+    "andar": "3",
     "grau": 2.0,
     "vida": 5000.0,
     "mana": 12.0,
@@ -734,6 +782,7 @@
   "SentinelaFalso": {
     "nome": "Sentinela Falso",
     "raca": "Demônio",
+    "andar": "3",
     "grau": 0.0,
     "vida": 250.0,
     "mana": 0.0,
@@ -749,6 +798,7 @@
   "ArcanjoExecutor": {
     "nome": "Arcanjo - o Executor",
     "raca": "Arcanjo",
+    "andar": "Céu 4",
     "grau": 5.0,
     "vida": 10000.0,
     "mana": 20.0,
@@ -764,6 +814,7 @@
   "Pistoleiro do Deserto": {
     "nome": "Pistoleiro do Deserto",
     "raca": "Humano",
+    "andar": "4",
     "grau": 1.0,
     "vida": 150.0,
     "mana": 6.0,
@@ -778,6 +829,7 @@
   "Guardião Dessecado": {
     "nome": "Guardião Dessecado",
     "raca": "Casca",
+    "andar": "4",
     "grau": 2.0,
     "vida": 500.0,
     "mana": 8.0,
@@ -792,6 +844,7 @@
   "Batedor de Areia": {
     "nome": "Batedor de Areia",
     "raca": "Humano",
+    "andar": "4",
     "grau": 1.0,
     "vida": 250.0,
     "mana": 5.0,
@@ -806,6 +859,7 @@
   "Virtude": {
     "nome": "Virtude",
     "raca": "Anjo-menor",
+    "andar": "Céu 1",
     "grau": 4.0,
     "vida": 1250.0,
     "mana": 8.0,
@@ -823,6 +877,7 @@
   "Prisão de Carne": {
     "nome": "Prisão de Carne",
     "raca": "O Colosso",
+    "andar": "P1",
     "grau": 0.0,
     "vida": 10000.0,
     "mana": 100.0,
@@ -842,6 +897,7 @@
   "minos prime": {
     "nome": "minos prime",
     "raca": "prime",
+    "andar": "P1",
     "grau": 5.0,
     "vida": 20000.0,
     "mana": 10.0,
@@ -857,6 +913,7 @@
   "Lua Profana": {
     "nome": "Lua Profana",
     "raca": "Corte Infernal",
+    "andar": "4",
     "grau": 3.0,
     "vida": 20000.0,
     "mana": 10.0,
@@ -873,6 +930,7 @@
   "Elion": {
     "nome": "Elion",
     "raca": "falso-deus",
+    "andar": "4",
     "grau": 2.0,
     "vida": 10000.0,
     "mana": 12.0,
@@ -887,6 +945,7 @@
   "SoulCatcher": {
     "nome": "SoulCatcher",
     "raca": "Demônio",
+    "andar": "4",
     "grau": 3.0,
     "vida": 1000.0,
     "mana": 12.0,
@@ -901,6 +960,7 @@
   "Eremita": {
     "nome": "RockFeller \u0027A Nona\u0027",
     "raca": "Corte Infernal",
+    "andar": "4",
     "grau": 2.0,
     "vida": 2500.0,
     "mana": 8.0,
@@ -914,6 +974,7 @@
   "Ayame (Alter)": {
     "nome": "Ayame (Alter)",
     "raca": "Servo Corrompido",
+    "andar": "4",
     "grau": 2.0,
     "vida": 375.0,
     "mana": 11.0,
@@ -927,6 +988,7 @@
   "Escanor": {
     "nome": "Escanor - O Sol Cruel",
     "raca": "Corte Infernal",
+    "andar": "4",
     "grau": 2.0,
     "vida": 35000.0,
     "mana": 11.0,
@@ -942,6 +1004,7 @@
   "O mais forte": {
     "nome": "O mais forte",
     "raca": "Arcanjo",
+    "andar": "Céu 4",
     "grau": 5.0,
     "vida": 5.0E9,
     "mana": 10.0,
@@ -960,6 +1023,7 @@
   "Marinheiro": {
     "nome": "Marinheiro",
     "raca": "Casca",
+    "andar": "5",
     "grau": 2.0,
     "vida": 550,
     "mana": 4.0,
@@ -978,8 +1042,9 @@
   "Marinheiro maldito": {
     "nome": "Marinheiro maldito",
     "raca": "Casca",
+    "andar": "5",
     "grau": 3.0,
-    "vida": 550,
+    "vida": 275,
     "mana": 4.0,
     "agilidade": 6.0,
     "defesa": 15.0,
@@ -996,6 +1061,7 @@
   "Bucaneiro": {
     "nome": "Bucaneiro",
     "raca": "Casca",
+    "andar": "5",
     "grau": 2.0,
     "vida": 450,
     "mana": 4.0,
@@ -1014,8 +1080,9 @@
   "Bucaneiro maldito": {
     "nome": "Bucaneiro maldito",
     "raca": "Casca",
+    "andar": "5",
     "grau": 3.0,
-    "vida": 450,
+    "vida": 225,
     "mana": 4.0,
     "agilidade": 6.0,
     "defesa": 15.0,
@@ -1032,6 +1099,7 @@
   "filth de coral": {
     "nome": "filth de coral",
     "raca": "Casca",
+    "andar": "5",
     "grau": 2.0,
     "vida": 200,
     "mana": 4.0,
@@ -1050,6 +1118,7 @@
   "filth de coral maldito": {
     "nome": "filth de coral maldito",
     "raca": "Casca",
+    "andar": "5",
     "grau": 3.0,
     "vida": 200,
     "mana": 4.0,
@@ -1068,6 +1137,7 @@
   "BrutamontesPirata": {
     "nome": "Brutamontes",
     "raca": "Casca",
+    "andar": "5",
     "grau": 2.0,
     "vida": 750,
     "mana": 4.0,
@@ -1086,8 +1156,9 @@
   "BrutamontesPirata maldito": {
     "nome": "Brutamontes maldito",
     "raca": "Casca",
+    "andar": "5",
     "grau": 3.0,
-    "vida": 750,
+    "vida": 375,
     "mana": 4.0,
     "agilidade": 6.0,
     "defesa": 15.0,
@@ -1100,5 +1171,120 @@
     "segmentos": 0.0,
     "id": "brutamontesMaldito",
     "propriedades": ["MALDITO"]
+  },
+  "CapitaoPirata": {
+    "nome": "Capitao",
+    "raca": "Casca",
+    "andar": "5",
+    "grau": 2.0,
+    "vida": 950,
+    "mana": 4.0,
+    "agilidade": 6.0,
+    "defesa": 10.0,
+    "arma": "EspadaCapitao[inimigo]",
+    "xpReward": 150.0,
+    "peso": "medio_padrao",
+    "poderoso": false,
+    "tamanhoY": 1.0,
+    "tamanhoX": 1.0,
+    "segmentos": 0.0,
+    "id": "CapitaoPirata",
+    "propriedades": ["MALDICAO_AO_MORRER"]
+  },
+  "CapitaoPirata maldito": {
+    "nome": "Capitao maldito",
+    "raca": "Casca",
+    "andar": "5",
+    "grau": 3.0,
+    "vida": 475,
+    "mana": 4.0,
+    "agilidade": 6.0,
+    "defesa": 15.0,
+    "arma": "EspadaCapitaomaldito[inimigo]",
+    "xpReward": 100.0,
+    "peso": "medio_padrao",
+    "poderoso": false,
+    "tamanhoY": 1.0,
+    "tamanhoX": 1.0,
+    "segmentos": 0.0,
+    "id": "CapitaoMaldito",
+    "propriedades": ["MALDITO"]
+  },
+  "xebros": {
+    "nome": "xebros - A Temperança",
+    "raca": "Corte Infernal",
+    "andar": "5",
+    "grau": 5.0,
+    "vida": 25000.0,
+    "mana": 10.0,
+    "agilidade": 10.0,
+    "defesa": 25.0,
+    "segmentos": 5.0,
+    "arma": "Temperança",
+    "xpReward": 500.0,
+    "peso": "pesado",
+    "tamanhoY": 1.0,
+    "tamanhoX": 1.0,
+    "propriedades": [],
+    "poderoso": false
+  },
+  "Cerberus De Coral": {
+    "nome": "Cerberus De Coral",
+    "raca": "Demônio-Maior",
+    "andar": "5",
+    "grau": 4.0,
+    "vida": 3200.0,
+    "mana": 10.0,
+    "agilidade": 5.0,
+    "defesa": 25.0,
+    "segmentos": 2.0,
+    "arma": "CoralCerberus[inimigo]",
+    "xpReward": 150.0,
+    "peso": "pesado",
+    "propriedades": [
+    ],
+    "id": "CerberusCoral",
+    "tamanhoY": 2.0,
+    "tamanhoX": 2.0,
+    "poderoso": false
+  },
+  "Guardião do Recife": {
+    "nome": "Guardião do Recife",
+    "raca": "Demônio",
+    "andar": "5",
+    "grau": 4.0,
+    "vida": 2500.0,
+    "mana": 10.0,
+    "agilidade": 5.0,
+    "defesa": 22.5,
+    "segmentos": 2.0,
+    "arma": "GuardiaoRecife[inimigo]",
+    "xpReward": 80.0,
+    "peso": "pesado",
+    "tamanhoY": 2.0,
+    "tamanhoX": 2.0,
+    "propriedades": [
+    ],
+    "id": "GuardiaoRecife",
+    "poderoso": false
+  },
+  "Enguia rochosa": {
+    "nome": "Enguia rochosa",
+    "raca": "Demônio",
+    "andar": "5",
+    "grau": 3.0,
+    "vida": 1200.0,
+    "mana": 10.0,
+    "agilidade": 5.0,
+    "defesa": 22.5,
+    "segmentos": 2.0,
+    "arma": "EnguiaRochosa[inimigo]",
+    "xpReward": 55.0,
+    "peso": "pesado",
+    "id": "EnguiaRochosa",
+    "tamanhoY": 2.0,
+    "tamanhoX": 2.0,
+    "propriedades": ["CHOQUE_REATIVO:50"],
+    "poderoso": false
   }
 }

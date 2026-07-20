@@ -149,6 +149,22 @@ public class HabilidadeFactory {
 		registro.put("Paredão de Pedra", ParedaoDePedra::new);
 		registro.put("Meteoro", Meteoro::new);
 		registro.put("Terremoto", Terremoto::new);
+
+		// Inimigos do Recife
+		registro.put("Carapaça de Pedra", CarapacaDePedra::new);
+		registro.put("Auto-Guarda II", AutoGuarda2::new);
+		registro.put("Orbe Coral", OrbeCoral::new);
+		registro.put("Enraizar Coral", EnraizarCoral::new);
+		registro.put("Dash Cerberus", DashCerberus::new);
+
+		// Xebros - A Temperança
+		registro.put("Hood rook", HoodRook::new);
+		registro.put("Right HIT", RightHit::new);
+		registro.put("Maniac STEAM", ManiacSteam::new);
+		registro.put("im... the bone of my sword...", AllOutPirate::new);
+		registro.put("IS THAT ALL YOU GOT?", IsThatAllYouGot::new);
+		registro.put("WHERE IS YOUR DREAM?", WhereIsYourDream::new);
+		registro.put("THIS IS MY SEA.", ThisIsMySea::new);
 	}
 
 	public static Habilidade criarHabilidadePorNome(String nome) {
