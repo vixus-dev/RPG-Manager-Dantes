@@ -341,7 +341,7 @@
     "andar": "5",
     "valorMoedas": 120.0,
     "tipoMoeda": "BRONZE",
-    "danoBase": 23.0,
+    "danoBase": 30.0,
     "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
     "custoTU": 130.0,
@@ -760,7 +760,7 @@
     "andar": "0",
     "valorMoedas": 10.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 2,
+    "danoBase": 2.0,
     "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
     "custoTU": 1.0,
@@ -4331,8 +4331,7 @@
     "danoBase": 30.0,
     "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "modificadoresDeAtributo": {
-    },
+    "modificadoresDeAtributo": {},
     "custoTU": 90.0,
     "tipo": "Melee",
     "alcance": 3.0,
@@ -4362,15 +4361,13 @@
     "danoBase": 17.0,
     "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "modificadoresDeAtributo": {
-    },
+    "modificadoresDeAtributo": {},
     "custoTU": 90.0,
     "tipo": "Melee",
     "alcance": 2.0,
     "tipoAlvo": "CONE",
     "tamanhoArea": 135.0,
-    "modificadoresStatus": {
-    },
+    "modificadoresStatus": {},
     "habilidadesConcedidas": [
       "Arremesso de Machado"
     ],
@@ -4439,15 +4436,15 @@
     "raridade": "LENDARIO",
     "shiny": false,
     "andar": "4",
-    "valorMoedas": 50,
+    "valorMoedas": 50.0,
     "tipoMoeda": "PRATA",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 100,
+    "custoTU": 100.0,
     "tipo": "Melee",
-    "alcance": 2,
-    "wielding": 2,
+    "alcance": 2.0,
+    "wielding": 2.0,
     "efeitoAoAcertar": "Ruptura",
     "chanceEfeito": 0.25
   },
@@ -4458,44 +4455,128 @@
     "raridade": "LENDARIO",
     "shiny": false,
     "andar": "9",
-    "valorMoedas": 50,
+    "valorMoedas": 50.0,
     "tipoMoeda": "OURO",
-    "danoBase": 10,
-    "ticksDeDano": 1,
+    "danoBase": 10.0,
+    "ticksDeDano": 1.0,
     "atributoMultiplicador": "FORCA",
-    "custoTU": 80,
+    "custoTU": 80.0,
     "tipo": "Melee",
-    "alcance": 2,
-    "wielding": 1,
+    "alcance": 2.0,
+    "wielding": 1.0,
     "efeitosAoAcertar": [
-      { "efeito": "Toxina", "chance": 1.00 },
-      { "efeito": "Sangramento", "chance": 1.00 },
-      { "efeito": "Veneno", "chance": 1.00 },
-      { "efeito": "Queimação", "chance": 1.00 },
-      { "efeito": "Chama Divina", "chance": 1.00 },
-      { "efeito": "Hemorragia", "chance": 1.00 },
-      { "efeito": "Maldição Umbraum", "chance": 1.00 },
-      { "efeito": "Choque", "chance": 1.00 },
-      { "efeito": "Armadura Quebrada", "chance": 1.00 },
-      { "efeito": "Charm", "chance": 1.00 },
-      { "efeito": "Congelado", "chance": 1.00 },
-      { "efeito": "Congelamento", "chance": 1.00 },
-      { "efeito": "Controle Mental", "chance": 1.00 },
-      { "efeito": "Corta Cura", "chance": 1.00 },
-      { "efeito": "Dilaceramento", "chance": 1.00 },
-      { "efeito": "Dormindo", "chance": 1.00 },
-      { "efeito": "Enraizado", "chance": 1.00 },
-      { "efeito": "Falsa Justiça", "chance": 1.00 },
-      { "efeito": "HellFire", "chance": 1.00 },
-      { "efeito": "Lento", "chance": 1.00 },
-      { "efeito": "Maldição", "chance": 1.00 },
-      { "efeito": "Névoa Opressiva", "chance": 1.00 },
-      { "efeito": "Ouvidos Sangrando", "chance": 1.00 },
-      { "efeito": "Pesadelo", "chance": 1.00 },
-      { "efeito": "Ruptura", "chance": 1.00 },
-      { "efeito": "Sono", "chance": 1.00 },
-      { "efeito": "STUN", "chance": 1.00 },
-      { "efeito": "Vento Congelante", "chance": 1.00 }
+      {
+        "efeito": "Toxina",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Sangramento",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Veneno",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Queimação",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Chama Divina",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Hemorragia",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Maldição Umbraum",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Choque",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Armadura Quebrada",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Charm",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Congelado",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Congelamento",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Controle Mental",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Corta Cura",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Dilaceramento",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Dormindo",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Enraizado",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Falsa Justiça",
+        "chance": 1.0
+      },
+      {
+        "efeito": "HellFire",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Lento",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Maldição",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Névoa Opressiva",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Ouvidos Sangrando",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Pesadelo",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Ruptura",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Sono",
+        "chance": 1.0
+      },
+      {
+        "efeito": "STUN",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Vento Congelante",
+        "chance": 1.0
+      }
     ]
   },
   "Sabre": {
@@ -4820,7 +4901,7 @@
     "tipoAlvo": "AREA",
     "tamanhoArea": 1.0,
     "efeitoAoAcertar": "STUN",
-    "chanceEfeito": 0.50,
+    "chanceEfeito": 0.5,
     "wielding": 2.0
   },
   "Besta Naval": {
@@ -4864,7 +4945,7 @@
     "tipoAlvo": "AREA_QUADRADA",
     "tamanhoArea": 3.0,
     "efeitoAoAcertar": "Queimação",
-    "chanceEfeito": 0.30,
+    "chanceEfeito": 0.3,
     "wielding": 2.0
   },
   "Machado Hidráulico": {
@@ -4907,7 +4988,7 @@
     "tipoAlvo": "LINHA",
     "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Sangramento",
-    "chanceEfeito": 0.30,
+    "chanceEfeito": 0.3,
     "wielding": 2.0
   },
   "Trabuco": {
@@ -4928,7 +5009,7 @@
     "municaoMaxima": 4.0,
     "tipoAlvo": "INDIVIDUAL",
     "efeitoAoAcertar": "Sangramento",
-    "chanceEfeito": 0.30,
+    "chanceEfeito": 0.3,
     "wielding": 1.0
   },
   "Trabuco Poderoso": {
@@ -4949,7 +5030,7 @@
     "municaoMaxima": 2.0,
     "tipoAlvo": "INDIVIDUAL",
     "efeitoAoAcertar": "Ruptura",
-    "chanceEfeito": 0.30,
+    "chanceEfeito": 0.3,
     "wielding": 1.0
   },
   "Espingarda Salina": {
@@ -4971,7 +5052,7 @@
     "tipoAlvo": "CONE",
     "tamanhoArea": 60.0,
     "modificadoresStatus": {
-      "DANO_CRITICO": 0.20
+      "DANO_CRITICO": 0.2
     },
     "wielding": 2.0
   },
@@ -4992,7 +5073,7 @@
     "alcance": 2.0,
     "tipoAlvo": "INDIVIDUAL",
     "efeitoAoAcertar": "Choque",
-    "chanceEfeito": 0.50,
+    "chanceEfeito": 0.5,
     "wielding": 1.0
   },
   "Rifle Submersível XM-12": {
@@ -5035,7 +5116,7 @@
     "tipoAlvo": "AREA_QUADRADA",
     "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Armadura Quebrada",
-    "chanceEfeito": 0.30,
+    "chanceEfeito": 0.3,
     "wielding": 2.0
   },
   "Canhão de Bolhas": {
@@ -5081,8 +5162,14 @@
     "tipoAlvo": "MULTIPLOS",
     "tamanhoArea": 2.0,
     "efeitosAoAcertar": [
-      { "efeito": "Lento", "chance": 0.40 },
-      { "efeito": "Maldição", "chance": 0.20 }
+      {
+        "efeito": "Lento",
+        "chance": 0.4
+      },
+      {
+        "efeito": "Maldição",
+        "chance": 0.2
+      }
     ],
     "wielding": 2.0
   },
@@ -5104,7 +5191,10 @@
     "tipoAlvo": "INDIVIDUAL",
     "wielding": 1.0,
     "efeitosAoAcertar": [
-      { "efeito": "Maldição", "chance": 0.25 }
+      {
+        "efeito": "Maldição",
+        "chance": 0.25
+      }
     ]
   },
   "trabucoMaldito[inimigo]": {
@@ -5125,7 +5215,10 @@
     "tipoAlvo": "INDIVIDUAL",
     "wielding": 1.0,
     "efeitosAoAcertar": [
-      { "efeito": "Maldição", "chance": 0.25 }
+      {
+        "efeito": "Maldição",
+        "chance": 0.25
+      }
     ]
   },
   "MachadoBrutamontesmaldito[inimigo]": {
@@ -5144,10 +5237,13 @@
     "tipo": "Melee",
     "alcance": 2.0,
     "tipoAlvo": "CONE",
-    "tamanhoArea": 90.0,
+    "tamanhoArea": 60.0,
     "wielding": 2.0,
     "efeitosAoAcertar": [
-      { "efeito": "Maldição", "chance": 0.25 }
+      {
+        "efeito": "Maldicao",
+        "chance": 0.4
+      }
     ]
   },
   "MandibulaCoral": {
@@ -5167,7 +5263,7 @@
     "alcance": 2.0,
     "habilidadeConcedida": "Mordida",
     "efeitoAoAcertar": "Ruptura",
-    "chanceEfeito": 0.30,
+    "chanceEfeito": 0.3,
     "wielding": 1.0
   },
   "MandibulaCoralMaldita": {
@@ -5188,8 +5284,14 @@
     "habilidadeConcedida": "Mordida",
     "wielding": 1.0,
     "efeitosAoAcertar": [
-      { "efeito": "Maldição", "chance": 1.00 },
-      { "efeito": "Ruptura", "chance": 0.25 }
+      {
+        "efeito": "Maldição",
+        "chance": 1.0
+      },
+      {
+        "efeito": "Ruptura",
+        "chance": 0.25
+      }
     ]
   },
   "Espada de Pressão": {
@@ -5271,8 +5373,14 @@
     "alcance": 2.0,
     "tipoAlvo": "INDIVIDUAL",
     "efeitosAoAcertar": [
-      { "efeito": "Maldição", "chance": 0.30 },
-      { "efeito": "Armadura Quebrada", "chance": 0.12 }
+      {
+        "efeito": "Maldição",
+        "chance": 0.3
+      },
+      {
+        "efeito": "Armadura Quebrada",
+        "chance": 0.12
+      }
     ],
     "modificadoresDeAtributo": {
       "FORCA": 1.0
@@ -5297,7 +5405,7 @@
     "municaoMaxima": 10.0,
     "tipoAlvo": "INDIVIDUAL",
     "modificadoresStatus": {
-      "DANO_CRITICO": 0.30
+      "DANO_CRITICO": 0.3
     },
     "habilidadesConcedidas": [
       "Recarga atlante"
@@ -5345,7 +5453,7 @@
     "alcance": 2.0,
     "tipoAlvo": "INDIVIDUAL",
     "efeitoAoAcertar": "Sangramento",
-    "chanceEfeito": 0.30,
+    "chanceEfeito": 0.3,
     "modificadoresStatus": {
       "DANO_CRITICO": 0.15,
       "TAXA_CRITICA": 0.075,
@@ -5372,15 +5480,15 @@
     "efeitoAoAcertar": "Sangramento",
     "chanceEfeito": 0.35,
     "modificadoresStatus": {
-      "DANO_CRITICO": 0.20,
-      "TAXA_CRITICA": 0.10,
+      "DANO_CRITICO": 0.2,
+      "TAXA_CRITICA": 0.1,
       "HP_MAXIMO": -10.0,
       "ARMADURA_TOTAL": -30.0
     },
     "HasSpecialAttack": true,
     "SpecialAttackName": "corte 100x",
     "SpecialAttackDMG": 1.35,
-    "SpecialAttackCD": 0.90,
+    "SpecialAttackCD": 0.9,
     "SpecialAttackType": "CONE",
     "SpecialAttackSize": 135.0,
     "wielding": 1.0
@@ -5403,7 +5511,7 @@
     "tipoAlvo": "CONE",
     "tamanhoArea": 100.0,
     "efeitoAoAcertar": "Armadura Quebrada",
-    "chanceEfeito": 0.30,
+    "chanceEfeito": 0.3,
     "wielding": 2.0
   },
   "Núcleo Abissal": {
@@ -5424,15 +5532,15 @@
     "tipoAlvo": "AREA_QUADRADA",
     "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Queimação",
-    "chanceEfeito": 0.40,
+    "chanceEfeito": 0.4,
     "modificadoresDeAtributo": {
       "INSPIRACAO": 2.0,
       "INTELIGENCIA": 2.0
     },
     "HasSpecialAttack": true,
     "SpecialAttackName": "BOOM!",
-    "SpecialAttackDMG": 1.50,
-    "SpecialAttackCD": 1.50,
+    "SpecialAttackDMG": 1.5,
+    "SpecialAttackCD": 1.5,
     "SpecialAttackType": "AREA_QUADRADA",
     "SpecialAttackSize": 5.0,
     "wielding": 2.0
@@ -5456,7 +5564,7 @@
     "tipoAlvo": "AREA_QUADRADA",
     "tamanhoArea": 1.0,
     "efeitoAoAcertar": "Maldição",
-    "chanceEfeito": 0.20,
+    "chanceEfeito": 0.2,
     "habilidadesConcedidas": [
       "stepSite"
     ],
@@ -5518,6 +5626,203 @@
       "Ira de Poseidon",
       "Tsunami"
     ],
+    "wielding": 2.0
+  },
+  "Martelo de vidro": {
+    "nome": "Martelo de vidro",
+    "categoria": "Custom",
+    "descricao": "Martelo de vidro, quebra em um golpe, mas tem 100% de chance critica",
+    "raridade": "RARO",
+    "andar": "5",
+    "valorMoedas": 12500,
+    "tipoMoeda": "BRONZE",
+    "shiny": false,
+    "danoBase": 25,
+    "ticksDeDano": 1,
+    "atributoMultiplicador": "SORTE",
+    "custoTU": 120,
+    "tipo": "Melee",
+    "alcance": 3,
+    "wielding": 2,
+    "tipoAlvo": "AREA_QUADRADA",
+    "tamanhoArea": 2,
+    "modificadoresStatus": {
+      "TAXA_CRITICA": 1.00,
+      "DANO_CRITICO": 0.50
+    },
+    "efeitoAoAcertar": "Armadura Quebrada",
+    "chanceEfeito": 0.3
+  },
+  "EspadaCapitao[inimigo]": {
+    "nome": "EspadaCapitao[inimigo]",
+    "categoria": "Espada Longa",
+    "descricao": "Uma espada com uma arma.",
+    "raridade": "EPICO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 25000.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 105.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "modificadoresStatus": {
+      "DANO_CRITICO": 0.4,
+      "TAXA_CRITICA": 0.2
+    },
+    "modificadoresDeAtributo": {
+      "FORCA": 14.0
+    },
+    "HasSpecialAttack": true,
+    "SpecialAttackName": "Buckshot",
+    "SpecialAttackDMG": 1.15,
+    "SpecialAttackCD": 0.8,
+    "SpecialAttackType": "CONE",
+    "SpecialAttackSize": 135.0,
+    "wielding": 2.0
+  },
+  "EspadaCapitaomaldito[inimigo]": {
+    "nome": "EspadaCapitaomaldito[inimigo]",
+    "categoria": "Espada Longa",
+    "descricao": "Uma espada com uma arma importante realçar que é maldita",
+    "raridade": "EPICO",
+    "shiny": true,
+    "andar": "5",
+    "valorMoedas": 25000.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 105.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "modificadoresStatus": {
+      "DANO_CRITICO": 0.4,
+      "TAXA_CRITICA": 0.2
+    },
+    "modificadoresDeAtributo": {
+      "FORCA": 16.0
+    },
+    "HasSpecialAttack": true,
+    "SpecialAttackName": "Buckshot",
+    "SpecialAttackDMG": 1.15,
+    "SpecialAttackCD": 0.8,
+    "SpecialAttackType": "CONE",
+    "SpecialAttackSize": 135.0,
+    "wielding": 2.0,
+    "efeitosAoAcertar": [
+      {
+        "efeito": "Maldicao",
+        "chance": 0.4
+      }
+    ]
+  },
+  "EnguiaRochosa[inimigo]": {
+    "nome": "EnguiaRochosa[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Presas eletrificadas de uma enguia revestida de pedra.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 0.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 30.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 100.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "habilidadesConcedidas": ["Carapaça de Pedra"],
+    "efeitosAoAcertar": [
+      { "efeito": "STUN", "chance": 0.2 }
+    ],
+    "wielding": 2.0
+  },
+  "GuardiaoRecife[inimigo]": {
+    "nome": "GuardiaoRecife[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Arma de coral do guardiao, feita para controlar o campo de batalha.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 0.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 35.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 110.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "habilidadesConcedidas": ["Auto-Guarda II"],
+    "HasSpecialAttack": true,
+    "SpecialAttackName": "Impacto do Recife",
+    "SpecialAttackDMG": 1.0,
+    "SpecialAttackCD": 1.0,
+    "SpecialAttackType": "AREA_CIRCULAR",
+    "SpecialAttackSize": 3.0,
+    "SpecialAttackRange": 6.0,
+    "SpecialAttackEffect": "Choque",
+    "SpecialAttackEffectChance": 1.0,
+    "wielding": 2.0
+  },
+  "Temperança": {
+    "nome": "Temperança",
+    "categoria": "NPC",
+    "descricao": "A arma de Xebros, A Temperança.",
+    "raridade": "LENDARIO",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 0.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 45.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "SAGACIDADE",
+    "custoTU": 104.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "modificadoresDeAtributo": {
+      "SAGACIDADE": 15.0
+    },
+    "modificadoresStatus": {},
+    "habilidadesConcedidas": [
+      "Hood rook",
+      "Right HIT",
+      "Maniac STEAM",
+      "im... the bone of my sword..."
+    ],
+    "HasSpecialAttack": true,
+    "SpecialAttackName": "multibullets",
+    "SpecialAttackDMG": 0.75,
+    "SpecialAttackCD": 1.2,
+    "SpecialAttackType": "MULTIPLOS",
+    "SpecialAttackSize": 4.0,
+    "SpecialAttackRange": 7.0,
+    "wielding": 1.0
+  },
+  "CoralCerberus[inimigo]": {
+    "nome": "CoralCerberus[inimigo]",
+    "categoria": "NPC",
+    "descricao": "Mandibulas de coral que concedem os ataques do Cerberus de Coral.",
+    "raridade": "COMUM",
+    "shiny": false,
+    "andar": "5",
+    "valorMoedas": 0.0,
+    "tipoMoeda": "BRONZE",
+    "danoBase": 35.0,
+    "ticksDeDano": 1.0,
+    "atributoMultiplicador": "FORCA",
+    "custoTU": 100.0,
+    "tipo": "Melee",
+    "alcance": 2.0,
+    "tipoAlvo": "INDIVIDUAL",
+    "habilidadesConcedidas": ["Orbe Coral", "Enraizar Coral", "Dash Cerberus"],
     "wielding": 2.0
   }
 }
