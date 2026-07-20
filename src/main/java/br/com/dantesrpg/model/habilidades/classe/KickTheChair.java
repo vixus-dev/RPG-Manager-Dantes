@@ -6,6 +6,13 @@ import br.com.dantesrpg.model.fantasmasnobres.ModoPolaris;
 import java.util.*;
 
 public class KickTheChair extends Habilidade {
+	public static final String INPUT_TESTE_EXPLOSAO = "DADO_HELL_AWAITS";
+
+	@Override
+	public String getDescricao() {
+		return "Explode clones. O dano \u00e9 a base da explos\u00e3o + (resultado do teste x3). Cura aliados e Darrell por clone.";
+	}
+
 	public KickTheChair() {
 		super("Hell Awaits",
 				"Explode clones. Causa dano 3x3 e cura aliados. Cura Darrell por clone (Overheal vira Escudo x2).",
@@ -24,8 +31,8 @@ public class KickTheChair extends Habilidade {
 		System.out.println(">>> KICK THE CHAIR: Explodindo " + clones.size() + " clones!");
 
 		int danoBaseExplosao = 10;
-		int inspiracao = conjurador.getAtributosFinais().getOrDefault(Atributo.INSPIRACAO, 0);
-		double danoFinal = danoBaseExplosao + (inspiracao * 2);
+		int resultadoTeste = obterResultadoDado(manager, INPUT_TESTE_EXPLOSAO);
+		double danoFinal = danoBaseExplosao + (resultadoTeste * 3);
 
 		for (Personagem clone : clones) {
 			if (!clone.isAtivoNoCombate())
@@ -88,5 +95,12 @@ public class KickTheChair extends Habilidade {
 
 		conjurador.recalcularAtributosEstatisticas();
 		ModoPolaris.reverterParaPolaris(conjurador);
+	}
+
+	private int obterResultadoDado(CombatManager manager, String chaveDado) {
+		if (manager == null || manager.getLastInput() == null) {
+			return 0;
+		}
+		return Math.max(0, manager.getLastInput().getResultadoDado(chaveDado));
 	}
 }

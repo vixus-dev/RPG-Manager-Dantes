@@ -5,6 +5,13 @@ import br.com.dantesrpg.model.enums.*;
 import java.util.*;
 
 public class AngryAgain extends Habilidade {
+	public static final String INPUT_DADO_INSPIRACAO = "DADO_DISSIDENT_AGGRESSOR_INSPIRACAO";
+
+	@Override
+	public String getDescricao() {
+		return "Aumenta o dano do pr\u00f3ximo ataque de um aliado em 5% por resultado do dado de Inspira\u00e7\u00e3o.";
+	}
+
 	public AngryAgain() {
 		super("Dissident Aggressor", "Aumenta o dano do próximo ataque de um aliado (5% por ponto de IS).",
 				TipoHabilidade.ATIVA, 3, 100, 1, TipoAlvo.INDIVIDUAL, 0, 0, Collections.emptyList());
@@ -17,11 +24,14 @@ public class AngryAgain extends Habilidade {
 
 	@Override
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
+		if (alvos == null || alvos.isEmpty()) {
+			return;
+		}
 		Personagem alvo = alvos.get(0);
 
 		// Cálculo do Bônus: 7% (0.07) * Inspiração
-		int inspiracao = conjurador.getAtributosFinais().getOrDefault(Atributo.INSPIRACAO, 0);
-		double bonusPercentual = inspiracao * 0.07;
+		int resultadoDado = obterResultadoDado(manager, INPUT_DADO_INSPIRACAO);
+		double bonusPercentual = resultadoDado * 0.05;
 
 		Map<String, Double> mods = new HashMap<>();
 		mods.put("DANO_BONUS_PERCENTUAL", bonusPercentual);
@@ -34,5 +44,12 @@ public class AngryAgain extends Habilidade {
 
 		System.out.println(
 				">>> Angry Again: " + alvo.getNome() + " ganhou +" + (int) (bonusPercentual * 100) + "% de dano!");
+	}
+
+	private int obterResultadoDado(CombatManager manager, String chaveDado) {
+		if (manager == null || manager.getLastInput() == null) {
+			return 0;
+		}
+		return Math.max(0, manager.getLastInput().getResultadoDado(chaveDado));
 	}
 }

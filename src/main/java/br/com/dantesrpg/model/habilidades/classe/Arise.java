@@ -24,18 +24,18 @@ public class Arise extends Habilidade {
 
 		// Buff nos Clones (+Vida, +50% Dano)
 		Map<String, Double> modsClone = new HashMap<>();
+		modsClone.put("HP_MAXIMO", (double) bonusVidaClone);
 		modsClone.put("DANO_BONUS_PERCENTUAL", 0.50);
 
 		for (Personagem clone : clones) {
 			if (clone.isAtivoNoCombate()) {
 				// Aumenta a vida máxima e cura
-				clone.setVidaMaxima(clone.getVidaMaxima() + bonusVidaClone);
-				clone.setVidaAtual(clone.getVidaAtual() + bonusVidaClone, estado, manager.getController());
+				double vidaAntesDoBuff = clone.getVidaAtual();
 
 				// Aplica buff de dano
 				Efeito buffSombra = new Efeito("Poder das Sombras", TipoEfeito.BUFF, 300, modsClone, 0, 0);
 				clone.adicionarEfeito(buffSombra);
-				clone.recalcularAtributosEstatisticas();
+				clone.setVidaAtual(vidaAntesDoBuff + bonusVidaClone, estado, manager.getController());
 				System.out.println(">>> Sombra fortalecida (+" + bonusVidaClone + " HP, +50% Dano).");
 			}
 		}
