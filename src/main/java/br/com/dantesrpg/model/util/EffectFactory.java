@@ -25,6 +25,9 @@ public class EffectFactory {
 			return new Efeito("Toxina", TipoEfeito.DOT, 200, null, danoPorTick, 50);
 		});
 
+		presets.put("Asfixia", (duracao, valor) ->
+				new Efeito("Asfixia", TipoEfeito.DOT, 99999, null, 5, 50));
+
 		// Choque (Grau 1): Apenas +X TU ao alvo no próximo TU (a duração sempre é 1 TU)
 		presets.put("Choque", (duracao, valor) -> {
 			Map<String, Double> mods = new HashMap<>();

@@ -120,6 +120,13 @@ public class MapGenerator {
 			idChaoBase = "areia";
 			idEfeito = "agua";
 			break;
+		case "Ira Submerso Externo":
+			idChaoBase = "aguaProfunda";
+			break;
+		case "Ira Externo FreeRoam":
+			idChaoBase = "areia";
+			idChaoSecundario = "sandStone";
+			break;
 		case "Exemple":
 			idChaoBase = "floor7";
 			idChaoSecundario = "floor";
