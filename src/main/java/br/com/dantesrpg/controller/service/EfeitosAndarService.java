@@ -65,8 +65,8 @@ public class EfeitosAndarService {
 	private static final int INTERVALO_PESO_TU = 50;
 	private static final int INTERVALO_CIDADE_TU = 100;
 	private static final int INTERVALO_HOLOFOTES_TU = 125;
-	private static final int DANO_EXPLOSAO_WAR = 50;
-	private static final int INVOCACOES_POR_EXPLOSAO_WAR = 3;
+	private static final int DANO_EXPLOSAO_DIMENSION_RIFT = 50;
+	private static final int INVOCACOES_POR_EXPLOSAO_DIMENSION_RIFT = 3;
 	private static final int INTERVALO_INACURACIA_FERVENTE_TU = 200;
 	private static final int DISTANCIA_VENTOS_TILES = 5;
 	private static final double DANO_COLISAO_POR_TILE = 5.0;
@@ -85,8 +85,7 @@ public class EfeitosAndarService {
 			TipoEfeitoAndar.TEMPESTADE_INFINITA,
 			TipoEfeitoAndar.PESO_DOS_PECADOS,
 			TipoEfeitoAndar.CIDADE_DE_DIZ,
-			TipoEfeitoAndar.HOLOFOTES,
-			TipoEfeitoAndar.WAR);
+			TipoEfeitoAndar.HOLOFOTES);
 
 	private final CombatController controller;
 	private final Supplier<EstadoCombate> estadoSupplier;
@@ -94,11 +93,11 @@ public class EfeitosAndarService {
 	private final Supplier<EstadoAndarParty> andarSupplier;
 	private final BooleanSupplier efeitoAtivoSupplier;
 	private final Map<Personagem, EscudoCidade> escudosCidade = new IdentityHashMap<>();
-	private final List<MapController.PontoMapa> epicentrosWarSelecionados = new ArrayList<>();
+	private final List<MapController.PontoMapa> epicentrosDimensionRiftSelecionados = new ArrayList<>();
 
 	private int tuDecorridoNoEfeito;
 	private boolean combateEmAndamento;
-	private boolean selecionandoExplosoesWar;
+	private boolean selecionandoExplosoesDimensionRift;
 
 	public EfeitosAndarService(CombatController controller, Supplier<EstadoCombate> estadoSupplier,
 			Supplier<CombatManager> combatManagerSupplier, Supplier<EstadoAndarParty> andarSupplier,
@@ -146,8 +145,11 @@ public class EfeitosAndarService {
 				() -> concederEscudoPeriodicoCidade(estado));
 		case HOLOFOTES -> executarSeChegou(INTERVALO_HOLOFOTES_TU,
 				() -> abrirAvisoPresenca("Holofotes"));
-		case WAR -> executarSeChegou(INTERVALO_HOLOFOTES_TU,
-				() -> abrirAvisoWar(estado, manager));
+		case DIMENSION_RIFT -> executarSeChegou(INTERVALO_HOLOFOTES_TU,
+				() -> abrirAvisoDimensionRift(estado, manager));
+		case WAR -> {
+			// Efeito reservado para implementação futura.
+		}
 		case INACURACIA_FERVENTE -> executarSeChegou(INTERVALO_INACURACIA_FERVENTE_TU,
 				() -> sortearEExecutarEfeitoAndar(estado, manager));
 		case NENHUM -> {
@@ -203,7 +205,8 @@ public class EfeitosAndarService {
 		case PESO_DOS_PECADOS -> contador("Peso dos Pecados", INTERVALO_PESO_TU);
 		case CIDADE_DE_DIZ -> contador(":)", INTERVALO_CIDADE_TU);
 		case HOLOFOTES -> contador("Holofotes", INTERVALO_HOLOFOTES_TU);
-		case WAR -> contador("War...", INTERVALO_HOLOFOTES_TU);
+		case DIMENSION_RIFT -> contador("Dimension Rift", INTERVALO_HOLOFOTES_TU);
+		case WAR -> Optional.empty();
 		case INACURACIA_FERVENTE -> contador("Inacurácia Fervente", INTERVALO_INACURACIA_FERVENTE_TU);
 		case NENHUM -> Optional.empty();
 		};
@@ -258,8 +261,8 @@ public class EfeitosAndarService {
 		case PESO_DOS_PECADOS -> aplicarPesoDosPecados(estado);
 		case CIDADE_DE_DIZ -> concederEscudoPeriodicoCidade(estado);
 		case HOLOFOTES -> abrirAvisoPresenca("Holofotes");
-		case WAR -> abrirAvisoWar(estado, manager);
-		case INACURACIA_FERVENTE, NENHUM -> throw new IllegalArgumentException(
+		case DIMENSION_RIFT -> abrirAvisoDimensionRift(estado, manager);
+		case WAR, INACURACIA_FERVENTE, NENHUM -> throw new IllegalArgumentException(
 				"Efeito de andar não pode ser sorteado: " + tipo);
 		}
 	}
@@ -483,113 +486,113 @@ public class EfeitosAndarService {
 		escudosCidade.clear();
 	}
 
-	private void abrirAvisoWar(EstadoCombate estado, CombatManager manager) {
+	private void abrirAvisoDimensionRift(EstadoCombate estado, CombatManager manager) {
 		Alert alerta = new Alert(Alert.AlertType.WARNING);
 		ButtonType presencaSegura = new ButtonType("Presença realizada", ButtonData.OK_DONE);
 		ButtonType presencaFalhou = new ButtonType("Houve falha", ButtonData.APPLY);
-		alerta.setTitle("War...");
+		alerta.setTitle("Dimension Rift");
 		alerta.setHeaderText("Realize a presença dos jogadores");
 		alerta.setContentText("Caso alguém falhe, selecione dois epicentros de explosão no mapa.");
 		alerta.getButtonTypes().setAll(presencaSegura, presencaFalhou, ButtonType.CANCEL);
 		prepararDialogo(alerta);
 		alerta.showAndWait().filter(presencaFalhou::equals)
-				.ifPresent(ignorado -> iniciarSelecaoDasExplosoesWar(estado, manager));
+				.ifPresent(ignorado -> iniciarSelecaoDasExplosoesDimensionRift(estado, manager));
 	}
 
-	private void iniciarSelecaoDasExplosoesWar(EstadoCombate estado, CombatManager manager) {
+	private void iniciarSelecaoDasExplosoesDimensionRift(EstadoCombate estado, CombatManager manager) {
 		if (controller.getPrimaryMap() == null) {
-			mostrarAvisoWar("Nenhum mapa está disponível para selecionar os epicentros.");
+			mostrarAvisoDimensionRift("Nenhum mapa está disponível para selecionar os epicentros.");
 			return;
 		}
-		epicentrosWarSelecionados.clear();
-		selecionandoExplosoesWar = true;
+		epicentrosDimensionRiftSelecionados.clear();
+		selecionandoExplosoesDimensionRift = true;
 		controller.forEachMap(mapa -> mapa.entrarModoSelecaoExplosaoAmbiental(
-				ponto -> registrarEpicentroWar(ponto, estado, manager), this::cancelarSelecaoDasExplosoesWar));
-		mostrarAvisoWar("Selecione o primeiro de dois epicentros circulares 3x3 no mapa. "
+				ponto -> registrarEpicentroDimensionRift(ponto, estado, manager), this::cancelarSelecaoDasExplosoesDimensionRift));
+		mostrarAvisoDimensionRift("Selecione o primeiro de dois epicentros circulares 3x3 no mapa. "
 				+ "Clique com o botão direito para cancelar.");
 	}
 
-	private void registrarEpicentroWar(MapController.PontoMapa ponto, EstadoCombate estado, CombatManager manager) {
-		if (!selecionandoExplosoesWar || epicentrosWarSelecionados.contains(ponto)) {
+	private void registrarEpicentroDimensionRift(MapController.PontoMapa ponto, EstadoCombate estado, CombatManager manager) {
+		if (!selecionandoExplosoesDimensionRift || epicentrosDimensionRiftSelecionados.contains(ponto)) {
 			return;
 		}
-		if (epicentrosWarSelecionados.stream()
+		if (epicentrosDimensionRiftSelecionados.stream()
 				.anyMatch(anterior -> distanciaManhattan(anterior, ponto) <= 2)) {
-			mostrarAvisoWar("Os dois epicentros devem ter áreas 3x3 distintas.");
+			mostrarAvisoDimensionRift("Os dois epicentros devem ter áreas 3x3 distintas.");
 			return;
 		}
-		if (!haEspacoParaInvocacoesWar(ponto)) {
-			mostrarAvisoWar("Esse círculo não possui três células livres para as invocações. Escolha outro local.");
-			return;
-		}
-
-		epicentrosWarSelecionados.add(ponto);
-		if (epicentrosWarSelecionados.size() == 1) {
-			mostrarAvisoWar("Primeiro epicentro selecionado. Escolha o segundo local.");
+		if (!haEspacoParaInvocacoesDimensionRift(ponto)) {
+			mostrarAvisoDimensionRift("Esse círculo não possui três células livres para as invocações. Escolha outro local.");
 			return;
 		}
 
-		List<MapController.PontoMapa> epicentros = List.copyOf(epicentrosWarSelecionados);
-		selecionandoExplosoesWar = false;
+		epicentrosDimensionRiftSelecionados.add(ponto);
+		if (epicentrosDimensionRiftSelecionados.size() == 1) {
+			mostrarAvisoDimensionRift("Primeiro epicentro selecionado. Escolha o segundo local.");
+			return;
+		}
+
+		List<MapController.PontoMapa> epicentros = List.copyOf(epicentrosDimensionRiftSelecionados);
+		selecionandoExplosoesDimensionRift = false;
 		controller.forEachMap(MapController::cancelarModoSelecaoExplosaoAmbiental);
-		executarExplosoesWar(epicentros, estado, manager);
-		epicentrosWarSelecionados.clear();
+		executarExplosoesDimensionRift(epicentros, estado, manager);
+		epicentrosDimensionRiftSelecionados.clear();
 	}
 
-	private void cancelarSelecaoDasExplosoesWar() {
-		if (!selecionandoExplosoesWar) {
+	private void cancelarSelecaoDasExplosoesDimensionRift() {
+		if (!selecionandoExplosoesDimensionRift) {
 			return;
 		}
-		selecionandoExplosoesWar = false;
-		epicentrosWarSelecionados.clear();
+		selecionandoExplosoesDimensionRift = false;
+		epicentrosDimensionRiftSelecionados.clear();
 		controller.forEachMap(MapController::cancelarModoSelecaoExplosaoAmbiental);
 	}
 
-	private void executarExplosoesWar(List<MapController.PontoMapa> epicentros,
+	private void executarExplosoesDimensionRift(List<MapController.PontoMapa> epicentros,
 			EstadoCombate estado, CombatManager manager) {
-		List<String> inimigosElegiveis = listarInimigosElegiveisParaWar();
+		List<String> inimigosElegiveis = listarInimigosElegiveisParaDimensionRift();
 		if (inimigosElegiveis.isEmpty()) {
-			mostrarAvisoWar("Não há inimigos elegíveis no bestiário para a invocação de War.");
+			mostrarAvisoDimensionRift("Não há inimigos elegíveis no bestiário para a invocação de Dimension Rift.");
 			return;
 		}
 
 		for (MapController.PontoMapa epicentro : epicentros) {
-			controller.forEachMap(mapa -> mapa.criarExplosaoWar(epicentro.x(), epicentro.y()));
-			aplicarDanoDaExplosaoWar(epicentro, estado, manager);
-			invocarInimigosDaExplosaoWar(epicentro, inimigosElegiveis);
+			controller.forEachMap(mapa -> mapa.criarExplosaoDimensionRift(epicentro.x(), epicentro.y()));
+			aplicarDanoDaExplosaoDimensionRift(epicentro, estado, manager);
+			invocarInimigosDaExplosaoDimensionRift(epicentro, inimigosElegiveis);
 		}
 		controller.atualizarInterfaceTotal();
 		controller.forEachMap(mapa -> mapa.desenharPeoes(estado.getCombatentes()));
 	}
 
-	private void aplicarDanoDaExplosaoWar(MapController.PontoMapa epicentro,
+	private void aplicarDanoDaExplosaoDimensionRift(MapController.PontoMapa epicentro,
 			EstadoCombate estado, CombatManager manager) {
 		for (Personagem personagem : listarCombatentesAtivos(estado)) {
-			if (ocupaCirculoWar(personagem, epicentro)) {
-				aplicarDanoFixo(manager, estado, personagem, DANO_EXPLOSAO_WAR);
+			if (ocupaCirculoDimensionRift(personagem, epicentro)) {
+				aplicarDanoFixo(manager, estado, personagem, DANO_EXPLOSAO_DIMENSION_RIFT);
 			}
 		}
 	}
 
-	private void invocarInimigosDaExplosaoWar(MapController.PontoMapa epicentro, List<String> inimigosElegiveis) {
-		List<MapController.PontoMapa> posicoesLivres = listarPosicoesLivresNoCirculoWar(epicentro);
-		if (posicoesLivres.size() < INVOCACOES_POR_EXPLOSAO_WAR) {
-			mostrarAvisoWar("Uma explosão War ficou sem espaço para todas as invocações.");
+	private void invocarInimigosDaExplosaoDimensionRift(MapController.PontoMapa epicentro, List<String> inimigosElegiveis) {
+		List<MapController.PontoMapa> posicoesLivres = listarPosicoesLivresNoCirculoDimensionRift(epicentro);
+		if (posicoesLivres.size() < INVOCACOES_POR_EXPLOSAO_DIMENSION_RIFT) {
+			mostrarAvisoDimensionRift("Uma explosão Dimension Rift ficou sem espaço para todas as invocações.");
 			return;
 		}
 		java.util.Collections.shuffle(posicoesLivres);
-		for (int indice = 0; indice < INVOCACOES_POR_EXPLOSAO_WAR; indice++) {
+		for (int indice = 0; indice < INVOCACOES_POR_EXPLOSAO_DIMENSION_RIFT; indice++) {
 			MapController.PontoMapa posicao = posicoesLivres.get(indice);
 			String idInimigo = inimigosElegiveis.get(ThreadLocalRandom.current().nextInt(inimigosElegiveis.size()));
 			controller.spawnarMonstro(idInimigo, posicao.x(), posicao.y());
 		}
 	}
 
-	private boolean haEspacoParaInvocacoesWar(MapController.PontoMapa epicentro) {
-		return listarPosicoesLivresNoCirculoWar(epicentro).size() >= INVOCACOES_POR_EXPLOSAO_WAR;
+	private boolean haEspacoParaInvocacoesDimensionRift(MapController.PontoMapa epicentro) {
+		return listarPosicoesLivresNoCirculoDimensionRift(epicentro).size() >= INVOCACOES_POR_EXPLOSAO_DIMENSION_RIFT;
 	}
 
-	private List<MapController.PontoMapa> listarPosicoesLivresNoCirculoWar(MapController.PontoMapa epicentro) {
+	private List<MapController.PontoMapa> listarPosicoesLivresNoCirculoDimensionRift(MapController.PontoMapa epicentro) {
 		MapController mapa = controller.getPrimaryMap();
 		if (mapa == null) {
 			return List.of();
@@ -606,7 +609,7 @@ public class EfeitosAndarService {
 		return posicoes;
 	}
 
-	private boolean ocupaCirculoWar(Personagem personagem, MapController.PontoMapa epicentro) {
+	private boolean ocupaCirculoDimensionRift(Personagem personagem, MapController.PontoMapa epicentro) {
 		for (int y = epicentro.y() - 1; y <= epicentro.y() + 1; y++) {
 			for (int x = epicentro.x() - 1; x <= epicentro.x() + 1; x++) {
 				if (Math.abs(x - epicentro.x()) + Math.abs(y - epicentro.y()) <= 1
@@ -618,14 +621,14 @@ public class EfeitosAndarService {
 		return false;
 	}
 
-	private List<String> listarInimigosElegiveisParaWar() {
+	private List<String> listarInimigosElegiveisParaDimensionRift() {
 		return controller.getBestiarioDatabase().entrySet().stream()
-				.filter(this::inimigoElegivelParaWar)
+				.filter(this::inimigoElegivelParaDimensionRift)
 				.map(Map.Entry::getKey)
 				.toList();
 	}
 
-	private boolean inimigoElegivelParaWar(Map.Entry<String, Map<String, Object>> entrada) {
+	private boolean inimigoElegivelParaDimensionRift(Map.Entry<String, Map<String, Object>> entrada) {
 		Map<String, Object> dados = entrada.getValue();
 		if (!pertenceAAndarNumericoAteSete(dados.get("andar"))
 				|| Boolean.TRUE.equals(dados.get("poderoso"))) {
@@ -681,9 +684,9 @@ public class EfeitosAndarService {
 		return Math.abs(primeiro.x() - segundo.x()) + Math.abs(primeiro.y() - segundo.y());
 	}
 
-	private void mostrarAvisoWar(String mensagem) {
+	private void mostrarAvisoDimensionRift(String mensagem) {
 		Alert alerta = new Alert(Alert.AlertType.INFORMATION, mensagem, ButtonType.OK);
-		alerta.setTitle("War...");
+		alerta.setTitle("Dimension Rift");
 		alerta.setHeaderText(null);
 		prepararDialogo(alerta);
 		alerta.showAndWait();
@@ -908,11 +911,13 @@ public class EfeitosAndarService {
 				? TipoEfeitoAndar.PESO_DOS_PECADOS : TipoEfeitoAndar.CIDADE_DE_DIZ;
 		case ANDAR_7 -> switch (estado.estadoVisual()) {
 			case 1 -> TipoEfeitoAndar.HOLOFOTES;
-			case 3 -> TipoEfeitoAndar.WAR;
 			default -> TipoEfeitoAndar.NENHUM;
 		};
-		case ANDAR_8 -> estado.estadoVisual() == 0
-				? TipoEfeitoAndar.INACURACIA_FERVENTE : TipoEfeitoAndar.NENHUM;
+		case ANDAR_8 -> switch (estado.estadoVisual()) {
+			case 0 -> TipoEfeitoAndar.INACURACIA_FERVENTE;
+			case 1 -> TipoEfeitoAndar.DIMENSION_RIFT;
+			default -> TipoEfeitoAndar.NENHUM;
+		};
 		case NULO, ANDAR_1, ANDAR_9 -> TipoEfeitoAndar.NENHUM;
 		};
 	}
@@ -956,6 +961,7 @@ public class EfeitosAndarService {
 		CIDADE_DE_DIZ,
 		HOLOFOTES,
 		WAR,
+		DIMENSION_RIFT,
 		INACURACIA_FERVENTE;
 
 		private String getNomeExibicao() {
@@ -972,6 +978,7 @@ public class EfeitosAndarService {
 			case CIDADE_DE_DIZ -> "Cidade de Diz";
 			case HOLOFOTES -> "Holofotes";
 			case WAR -> "War...";
+			case DIMENSION_RIFT -> "Dimension Rift";
 			case INACURACIA_FERVENTE -> "Inacurácia Fervente";
 			case NENHUM -> "Nenhum";
 			};

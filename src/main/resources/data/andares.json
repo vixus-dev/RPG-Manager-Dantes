@@ -317,11 +317,33 @@
     }
   },
   {
+    "id": "08-0",
+    "andarId": "ANDAR_8",
+    "estadoVisual": 0,
+    "nome": "8º Andar — Inacurácia Fervente",
+    "opcaoSeletor": "8º Andar - Inacurácia Fervente",
+    "classeCss": "tema-andar-08-1",
+    "temaClaro": false,
+    "paleta": {
+      "canvas": "#101014", "superficie": "#1C1C24", "superficieElevada": "#282832",
+      "primaria": "#FF4FD8", "secundaria": "#43E8FF", "acento": "#FFD84D",
+      "texto": "#FFFFFF", "textoSuave": "#C9C9D6", "textoSobrePrimaria": "#160612",
+      "borda": "#726B8E", "painel": "rgba(28,28,36,0.82)", "card": "rgba(36,36,46,0.70)",
+      "campo": "rgba(15,15,20,0.94)", "hover": "#393244", "pressionado": "#4C3E5B"
+    },
+    "assets": {
+      "bannerMenuEsquerdo": "/themes/andares/andar_08-1/banner_menu_esquerdo.png",
+      "bannerBarraInferior": "/themes/andares/andar_08-1/banner_barra_inferior.png",
+      "fundoLoja": "/themes/andares/andar_08-1/fundo_loja.jpg",
+      "fundoEditor": "/themes/andares/andar_08-1/fundo_editor.jpg"
+    }
+  },
+  {
     "id": "08-1",
     "andarId": "ANDAR_8",
     "estadoVisual": 1,
     "nome": "8º Andar — Fraude",
-    "opcaoSeletor": "8º Andar - Fraude (sem efeitos)",
+    "opcaoSeletor": "8.1º Andar - Fraude (sem efeitos)",
     "classeCss": "tema-andar-08-1",
     "temaClaro": false,
     "paleta": {

@@ -1232,10 +1232,10 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	 * O formato usa a mesma geometria circular (Manhattan) das habilidades de
 	 * área: centro e seus quatro vizinhos ortogonais.
 	 */
-	public void criarExplosaoWar(int centroX, int centroY) {
+	public void criarExplosaoDimensionRift(int centroX, int centroY) {
 		TileDefinition carvao = TileRegistry.getInstance().getById("coal");
 		if (carvao == null) {
-			System.err.println("MAPA: Tile 'coal' não encontrado para a explosão War.");
+			System.err.println("MAPA: Tile 'coal' não encontrado para a explosão Dimension Rift.");
 			return;
 		}
 
