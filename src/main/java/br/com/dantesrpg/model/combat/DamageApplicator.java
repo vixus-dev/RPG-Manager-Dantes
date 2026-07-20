@@ -158,7 +158,7 @@ public class DamageApplicator {
 		}
 
 		// Sistema de Guardião
-		if (tipoAcaoDano == TipoAcao.ATAQUE_BASICO && !alvo.getEfeitosAtivos().containsKey("Guardião")) {
+		if (tipoAcaoDano == TipoAcao.ATAQUE_BASICO && !temEfeitoGuardiao(alvo)) {
 			String faccaoDoAlvo = alvo.getFaccao();
 			if (faccaoDoAlvo == null)
 				faccaoDoAlvo = "INIMIGO";
@@ -168,7 +168,8 @@ public class DamageApplicator {
 			int areaGuarda = 3;
 
 			for (Personagem p : estado.getCombatentes()) {
-				if (p.getEfeitosAtivos().containsKey("Guardião") && faccaoDoAlvo.equals(p.getFaccao()) && p != alvo && p.isVivo()) {
+				if (temEfeitoGuardiao(p) && faccaoDoAlvo.equals(p.getFaccao()) && p != alvo && p.isVivo()) {
+					areaGuarda = Math.max(areaGuarda, obterAlcanceGuarda(p));
 					int dist = Math.max(Math.abs(p.getPosX() - alvo.getPosX()),
 							Math.abs(p.getPosY() - alvo.getPosY()));
 					if (dist <= areaGuarda && dist < menorDistancia) {
@@ -447,6 +448,7 @@ if (getController() != null)
 			if (alvo.getArmaEquipada() != null) {
 				alvo.getArmaEquipada().onDamageTaken(alvo, danoReal, estado, getController());
 			}
+			aplicarChoqueReativo(alvo, ator);
 			if (alvo.getArmaduraEquipada() != null) {
 				alvo.getArmaduraEquipada().onDamageTaken(alvo, ator, danoReal, estado, getController());
 			}
@@ -459,8 +461,14 @@ if (getController() != null)
 				System.out.println(">>> FALSA JUSTIÇA: " + ator.getNome() + " recebe "
 						+ (int) danoRefletido + " de dano refletido! ("
 						+ String.format("%.1f", percentualDano * 100) + "% da vida máxima)");
-				ator.setVidaAtual(Math.max(0, ator.getVidaAtual() - danoRefletido));
+				double vidaAntesReflexao = ator.getVidaAtual();
+				ator.setVidaAtual(Math.max(0, vidaAntesReflexao - danoRefletido), estado, getController());
 				ator.recalcularAtributosEstatisticas();
+				if (vidaAntesReflexao > 0 && !ator.isAtivoNoCombate() && !ator.isVivo()
+						&& combatManager.colocarEmEsperaParaArise(ator, estado)
+						&& getController() != null) {
+					getController().atualizarInterfaceAposMorte();
+				}
 			}
 
 			// Marca do Deserto
@@ -471,5 +479,26 @@ if (getController() != null)
 				}
 			}
 		}
+	}
+
+	private boolean temEfeitoGuardiao(Personagem personagem) {
+		return personagem.getEfeitosAtivos().containsKey("Guardião")
+				|| personagem.getEfeitosAtivos().containsKey("Guardião II");
+	}
+
+	private int obterAlcanceGuarda(Personagem guardiao) {
+		Efeito efeito = guardiao.getEfeitosAtivos().get("Guardião II");
+		if (efeito == null || efeito.getModificadores() == null) return 3;
+		return (int) Math.max(3, efeito.getModificadores().getOrDefault("ALCANCE_GUARDA", 3.0));
+	}
+
+	private void aplicarChoqueReativo(Personagem alvo, Personagem atacante) {
+		if (atacante == null || atacante == alvo || !atacante.isAtivoNoCombate()) return;
+		int chance = alvo.getValorPropriedade("CHOQUE_REATIVO");
+		if (chance <= 0 || Math.random() * 100.0 >= chance) return;
+		Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 20);
+		combatManager.getEffectProcessor().aplicarEfeito(atacante, choque);
+		System.out.println(">>> CHOQUE REATIVO: " + atacante.getNome() + " foi eletrocutado ao atacar "
+				+ alvo.getNome() + ".");
 	}
 }

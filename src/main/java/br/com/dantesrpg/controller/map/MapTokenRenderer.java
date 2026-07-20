@@ -10,9 +10,13 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Renderiza peões (tokens), barras de vida, hitboxes e auras no grid do mapa.
@@ -27,6 +31,7 @@ public class MapTokenRenderer {
 	private final int gridLargura;
 	private final int gridAltura;
 	private final int CELL_SIZE;
+	private final Predicate<Personagem> estaEmAguaProfunda;
 
 	// Estado próprio (movido de MapController)
 	private final Map<Node, Personagem> peaoParaPersonagem = new HashMap<>();
@@ -48,13 +53,15 @@ public class MapTokenRenderer {
 			"zona-aura-master-call-green-75");
 
 	public MapTokenRenderer(GridPane mapGrid, CombatController mainController,
-			Pane[][] celulasDoGrid, int gridLargura, int gridAltura, int cellSize) {
+			Pane[][] celulasDoGrid, int gridLargura, int gridAltura, int cellSize,
+			Predicate<Personagem> estaEmAguaProfunda) {
 		this.mapGrid = mapGrid;
 		this.mainController = mainController;
 		this.celulasDoGrid = celulasDoGrid;
 		this.gridLargura = gridLargura;
 		this.gridAltura = gridAltura;
 		this.CELL_SIZE = cellSize;
+		this.estaEmAguaProfunda = estaEmAguaProfunda;
 	}
 
 	// ========== API PÚBLICA ==========
@@ -150,6 +157,7 @@ public class MapTokenRenderer {
 				}
 
 				peaoContainer.setMouseTransparent(true);
+				adicionarSobreposicaoOxigenio(peaoContainer, p, isPlayer, raioClip, tamanhoTotalPixels);
 				peaoParaPersonagem.put(peaoContainer, p);
 
 				mapGrid.add(peaoContainer, p.getPosX(), p.getPosY());
@@ -277,6 +285,49 @@ public class MapTokenRenderer {
 		}
 
 		desenharBarrasDeVidaObjetos(combatentes);
+	}
+
+	private void adicionarSobreposicaoOxigenio(Pane peaoContainer, Personagem personagem, boolean isPlayer,
+			double raioClip, double tamanhoTotalPixels) {
+		if (!isPlayer || estaEmAguaProfunda == null || !estaEmAguaProfunda.test(personagem)) {
+			return;
+		}
+
+		int oxigenio = personagem.getOxigenio();
+		Circle overlay = new Circle(raioClip);
+		overlay.setCenterX(tamanhoTotalPixels / 2.0);
+		overlay.setCenterY(tamanhoTotalPixels / 2.0);
+		overlay.setMouseTransparent(true);
+		overlay.setFill(criarGradienteOxigenio(oxigenio));
+
+		Label indicador = new Label(String.valueOf(oxigenio));
+		indicador.setMouseTransparent(true);
+		indicador.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white; "
+				+ "-fx-effect: dropshadow(gaussian, #00152d, 3, 0.9, 0, 0);");
+		indicador.layoutXProperty()
+				.bind(peaoContainer.widthProperty().divide(2).subtract(indicador.widthProperty().divide(2)));
+		indicador.layoutYProperty()
+				.bind(peaoContainer.heightProperty().divide(2).subtract(indicador.heightProperty().divide(2)));
+
+		peaoContainer.getChildren().addAll(overlay, indicador);
+	}
+
+	private RadialGradient criarGradienteOxigenio(int oxigenio) {
+		Color azul = Color.rgb(20, 130, 255, 0.38);
+		Color vermelho = Color.rgb(225, 32, 32, 0.52);
+		if (oxigenio <= 0) {
+			return new RadialGradient(0, 0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE,
+					new Stop(0, vermelho), new Stop(1, vermelho));
+		}
+		if (oxigenio >= 100) {
+			return new RadialGradient(0, 0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE,
+					new Stop(0, azul), new Stop(1, azul));
+		}
+
+		double limiteAzul = oxigenio / 100.0;
+		double inicioVermelho = Math.min(1.0, limiteAzul + 0.02);
+		return new RadialGradient(0, 0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE,
+				new Stop(0, azul), new Stop(limiteAzul, azul), new Stop(inicioVermelho, vermelho), new Stop(1, vermelho));
 	}
 
 	/** Adiciona borda vermelha nos peões dos alvos informados. */

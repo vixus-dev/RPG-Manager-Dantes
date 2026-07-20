@@ -1056,7 +1056,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 				this::getPersonagemNaCelula,
 				() -> mainController != null ? mainController.getCombatentes() : new ArrayList<>());
 		tokenRenderer = new MapTokenRenderer(mapGrid, mainController, celulasDoGrid,
-				gridLargura, gridAltura, CELL_SIZE);
+				gridLargura, gridAltura, CELL_SIZE, this::estaEmAguaProfunda);
 		// Recria squadHandler com a nova referência a aoeCalc
 		squadHandler = new SquadModeHandler(this, aoeCalc, toggleMover, toggleMirar, celulasAlcanceMovimento);
 		atualizarSobreposicaoAguaTempestade();
@@ -1665,7 +1665,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		System.out.println("MAPA: " + ator.getNome() + " entrando em modo de seleção...");
 
 		if (habilidade != null && (habilidade.getTipoAlvo() == TipoAlvo.AREA_QUADRADA
-				|| habilidade.getTipoAlvo() == TipoAlvo.AREA)) {
+				|| habilidade.getTipoAlvo() == TipoAlvo.AREA_CIRCULAR || habilidade.getTipoAlvo() == TipoAlvo.AREA)) {
 			setMoverMode(false);
 			System.out.println("MAPA: Modo Mirar Área (AoE) ativado.");
 			calcularEExibirAtaqueRange(ator, habilidade);
@@ -2230,9 +2230,19 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	}
 
 	public br.com.dantesrpg.model.map.TerrainData.EfeitoInstance getEfeitoNoSolo(int x, int y) {
-		if (!dentroDoGrid(x, y))
+		if (gridEfeitos == null || !dentroDoGrid(x, y)
+				|| x >= gridEfeitos.length || y >= gridEfeitos[x].length) {
 			return null;
+		}
 		return gridEfeitos[x][y];
+	}
+
+	public boolean estaEmAguaProfunda(Personagem personagem) {
+		if (personagem == null) {
+			return false;
+		}
+		EfeitoInstance efeito = getEfeitoNoSolo(personagem.getPosX(), personagem.getPosY());
+		return efeito != null && efeito.getTipo() == TipoEfeitoSolo.AGUA_PROFUNDA;
 	}
 
 	public TipoTerreno getTerreno(int x, int y) {

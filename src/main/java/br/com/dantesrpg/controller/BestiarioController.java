@@ -61,6 +61,8 @@ public class BestiarioController {
 	@FXML
 	private ComboBox<String> comboFiltroGrau;
 	@FXML
+	private ComboBox<String> comboFiltroAndar;
+	@FXML
 	private ListView<String> monstroListView;
 
 	// Editor - Header
@@ -76,6 +78,8 @@ public class BestiarioController {
 	private TextField inputRaca;
 	@FXML
 	private TextField inputGrau;
+	@FXML
+	private TextField inputAndar;
 	@FXML
 	private TextField inputVida;
 	@FXML
@@ -187,12 +191,22 @@ public class BestiarioController {
 		comboFiltroGrau.getItems().setAll(graus);
 		comboFiltroGrau.getSelectionModel().selectFirst();
 
+		List<String> andares = bestiarioData.values().stream()
+				.map(this::lerAndar)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
+		andares.add(0, "Todos");
+		comboFiltroAndar.getItems().setAll(andares);
+		comboFiltroAndar.getSelectionModel().selectFirst();
+
 		if (filtrosComListenersConfigurados) {
 			return;
 		}
 		inputBusca.textProperty().addListener(o -> atualizarLista());
 		comboFiltroRaca.valueProperty().addListener(o -> atualizarLista());
 		comboFiltroGrau.valueProperty().addListener(o -> atualizarLista());
+		comboFiltroAndar.valueProperty().addListener(o -> atualizarLista());
 		filtrosComListenersConfigurados = true;
 	}
 
@@ -200,19 +214,22 @@ public class BestiarioController {
 		String busca = inputBusca.getText().toLowerCase();
 		String racaFiltro = comboFiltroRaca.getValue();
 		String grauFiltro = comboFiltroGrau.getValue();
+		String andarFiltro = comboFiltroAndar.getValue();
 
 		List<String> filtrados = bestiarioData.entrySet().stream().filter(entry -> {
 			Map<String, Object> data = entry.getValue();
 			String nome = ((String) data.getOrDefault("nome", "")).toLowerCase();
 			String raca = (String) data.getOrDefault("raca", "");
 			int grau = lerNumero(data, "grau", 0).intValue();
+			String andar = lerAndar(data);
 
 			boolean matchNome = nome.contains(busca) || entry.getKey().toLowerCase().contains(busca);
 			boolean matchRaca = racaFiltro == null || racaFiltro.equals("Todas") || raca.equals(racaFiltro);
 			boolean matchGrau = grauFiltro == null || grauFiltro.equals("Todos")
 					|| String.valueOf(grau).equals(grauFiltro);
+			boolean matchAndar = andarFiltro == null || andarFiltro.equals("Todos") || andar.equals(andarFiltro);
 
-			return matchNome && matchRaca && matchGrau;
+			return matchNome && matchRaca && matchGrau && matchAndar;
 		}).map(Map.Entry::getKey)
 				.sorted()
 				.collect(Collectors.toList());
@@ -229,6 +246,7 @@ public class BestiarioController {
 		inputNome.setText((String) data.getOrDefault("nome", ""));
 		inputRaca.setText((String) data.getOrDefault("raca", ""));
 		inputGrau.setText(formatarInteiro(data, "grau", 0));
+		inputAndar.setText(lerAndar(data));
 		inputVida.setText(formatarInteiro(data, "vida", 10));
 		inputMana.setText(formatarInteiro(data, "mana", 0));
 		inputAgi.setText(formatarInteiro(data, "agilidade", 1));
@@ -260,6 +278,14 @@ public class BestiarioController {
 		return padrao;
 	}
 
+	private String lerAndar(Map<String, Object> data) {
+		Object valor = data.get("andar");
+		if (valor instanceof String andar && !andar.isBlank()) {
+			return andar.trim();
+		}
+		return "Não informado";
+	}
+
 	private Map<String, Object> coletarDadosDoFormulario() {
 		limparErrosFormulario();
 		List<String> erros = new ArrayList<>();
@@ -270,6 +296,7 @@ public class BestiarioController {
 		dados.put("nome", lerTextoObrigatorio(inputNome, "Nome", erros));
 		dados.put("raca", lerTextoObrigatorio(inputRaca, "Raça", erros));
 		dados.put("grau", lerCampoNumerico(inputGrau, "Grau", 0, true, erros));
+		dados.put("andar", lerTextoObrigatorio(inputAndar, "Andar de origem", erros));
 		dados.put("vida", lerCampoNumerico(inputVida, "Vida máxima", 1, false, erros));
 		dados.put("mana", lerCampoNumerico(inputMana, "Mana máxima", 0, false, erros));
 		dados.put("agilidade", lerCampoNumerico(inputAgi, "Destreza", 0, true, erros));
@@ -345,6 +372,7 @@ public class BestiarioController {
 		limparCampoInvalido(inputNome);
 		limparCampoInvalido(inputRaca);
 		limparCampoInvalido(inputGrau);
+		limparCampoInvalido(inputAndar);
 		limparCampoInvalido(inputVida);
 		limparCampoInvalido(inputMana);
 		limparCampoInvalido(inputAgi);
@@ -649,6 +677,7 @@ public class BestiarioController {
 			novo.put("nome", "Novo Monstro");
 			novo.put("raca", "Desconhecido");
 			novo.put("grau", 0.0);
+			novo.put("andar", "Não informado");
 			novo.put("vida", 10.0);
 			novo.put("mana", 0.0);
 			novo.put("agilidade", 1.0);

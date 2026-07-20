@@ -99,8 +99,10 @@ public class Personagem {
 	private int posX = 0;
 	private int posY = 0;
 	private int movimentoRestanteTurno;
+	private int oxigenio = 100;
 	private boolean fugiu = false;
 	private String faccao;
+	private String andar = "Não informado";
 	private String jsonFileName;
 	private String nomeBaseImagem;
 	private int segmentosVida = 0;
@@ -787,6 +789,12 @@ public class Personagem {
 		}
 	}
 
+	public void removerPropriedade(String prop) {
+		if (this.propriedades != null) {
+			this.propriedades.remove(prop);
+		}
+	}
+
 	public boolean isPoderoso() {
 		return poderoso;
 	}
@@ -1106,6 +1114,14 @@ public class Personagem {
 		return faccao;
 	}
 
+	public int getOxigenio() {
+		return oxigenio;
+	}
+
+	public String getAndar() {
+		return andar;
+	}
+
 	public boolean isProtagonista() {
 		return isProtagonista;
 	}
@@ -1355,6 +1371,14 @@ public class Personagem {
 
 	public void setFaccao(String faccao) {
 		this.faccao = faccao;
+	}
+
+	public void setOxigenio(int oxigenio) {
+		this.oxigenio = Math.clamp(oxigenio, 0, 100);
+	}
+
+	public void setAndar(String andar) {
+		this.andar = andar;
 	}
 
 	public void setProtagonista(boolean protagonista) {
