@@ -19,10 +19,10 @@
 
 <HBox fx:id="detailedTurnHudRoot" spacing="0.0" prefWidth="1242.0" prefHeight="650.0" styleClass="turn-hud-root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.DetailedTurnHUDController">
     
-    <VBox fx:id="detailsColumn" spacing="10.0" prefWidth="322.0" style="-fx-border-color: #444; -fx-border-width: 0 1 0 0; -fx-padding: 15;">
+    <VBox fx:id="detailsColumn" spacing="10.0" prefWidth="322.0" styleClass="turn-hud-column, turn-hud-sidebar">
         
-        <Label fx:id="labelNomeAtor" styleClass="label-header" text="Nome do Personagem" style="-fx-font-size: 18px; -fx-text-fill: cyan;"/>
-        <Label fx:id="labelClasseRaca" text="Raça / Classe" style="-fx-text-fill: gray;"/>
+        <Label fx:id="labelNomeAtor" styleClass="label-header, hud-title-primary" text="Nome do Personagem"/>
+        <Label fx:id="labelClasseRaca" text="Raça / Classe" styleClass="hud-text-muted"/>
         
         <Separator />
         
@@ -36,7 +36,7 @@
         </HBox>
         <HBox spacing="10" alignment="CENTER_LEFT">
              <Label text="TU:" style="-fx-font-weight: bold;"/>
-             <Label fx:id="labelTU" text="0" style="-fx-text-fill: yellow;"/>
+             <Label fx:id="labelTU" text="0" styleClass="hud-value-tu"/>
         </HBox>
         <VBox fx:id="municaoContainer" spacing="6.0" visible="false" managed="false" style="-fx-padding: 4 0 0 0;" />
         
@@ -52,12 +52,11 @@
         <Button fx:id="btnDetalhes" text="Ver Atributos Detalhados" onAction="#onDetalhesClick" maxWidth="Infinity"/>
         
         <ScrollPane fx:id="detailedAttributesScrollPane" fitToWidth="true" managed="false" visible="false" 
-                    minHeight="200.0" prefHeight="250.0" 
-                    style="-fx-background: #222; -fx-background-color: #222; -fx-border-color: gray;">
+                    minHeight="200.0" prefHeight="250.0" styleClass="hud-attributes-scroll">
              <content>
-                <VBox fx:id="detailedAttributesPane" spacing="5.0" style="-fx-padding: 10; -fx-background-color: #222;">
+                <VBox fx:id="detailedAttributesPane" spacing="5.0" styleClass="hud-attributes-pane">
                      
-                     <Label text="Atributos S.P.E.C.I.A.L.I.S.T:" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+                     <Label text="Atributos S.P.E.C.I.A.L.I.S.T:" styleClass="hud-section-label"/>
                      <GridPane fx:id="attributesGrid" hgap="10" vgap="5">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="40"/>
@@ -71,12 +70,12 @@
         </ScrollPane>
     </VBox>
 
-    <VBox fx:id="actionSelectorColumn" spacing="10.0" prefWidth="460.0" style="-fx-padding: 15;">
+    <VBox fx:id="actionSelectorColumn" spacing="10.0" prefWidth="460.0" styleClass="turn-hud-column">
         <Label text="Painel de Comando" styleClass="label-header"/>
         
         <HBox spacing="5.0">
-             <Button fx:id="btnAbaAtaques" text="Combate" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAbaAtaquesClick" style="-fx-background-color: #500; -fx-text-fill: white;"/>
-             <Button fx:id="btnAbaItens" text="Itens" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAbaItensClick" style="-fx-background-color: #333; -fx-text-fill: white;"/>
+             <Button fx:id="btnAbaAtaques" text="Combate" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAbaAtaquesClick" styleClass="hud-tab-button, hud-tab-active"/>
+             <Button fx:id="btnAbaItens" text="Itens" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAbaItensClick" styleClass="hud-tab-button"/>
         </HBox>
         
         <Separator />
@@ -94,36 +93,36 @@
 
         <Separator />
         <HBox fx:id="tacticalButtonsBox" spacing="5.0">
-            <Button fx:id="btnMovimentar" text="Movimentar" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onMovimentarClick" style="-fx-base: #004488; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            <Button fx:id="btnPassarVez" text="Passar a Vez" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onPassarVezClick" style="-fx-base: #224422; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            <Button fx:id="btnRecarregar" text="Recarregar" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onRecarregarClick" visible="false" managed="false" style="-fx-base: #333; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            <Button fx:id="btnMovimentar" text="Movimentar" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onMovimentarClick" styleClass="hud-tactical-button, hud-tactical-primary"/>
+            <Button fx:id="btnPassarVez" text="Passar a Vez" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onPassarVezClick" styleClass="hud-tactical-button, hud-tactical-confirm"/>
+            <Button fx:id="btnRecarregar" text="Recarregar" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onRecarregarClick" visible="false" managed="false" styleClass="hud-tactical-button"/>
         </HBox>
     </VBox>
 
-    <VBox fx:id="actionDetailsColumn" spacing="15.0" prefWidth="460.0" style="-fx-border-color: #444; -fx-border-width: 0 0 0 1; -fx-padding: 15; -fx-background-color: #222;" visible="false" managed="false">
+    <VBox fx:id="actionDetailsColumn" spacing="15.0" prefWidth="460.0" styleClass="turn-hud-column, turn-hud-details-column" visible="false" managed="false">
 
-        <Label fx:id="lblActionTitle" text="Ataque Básico" styleClass="label-header" style="-fx-text-fill: cyan; -fx-font-size: 18px;" wrapText="true"/>
-        <Label fx:id="lblActionDesc" text="Descrição..." wrapText="true" style="-fx-text-fill: gray; -fx-font-style: italic;"/>
+        <Label fx:id="lblActionTitle" text="Ataque Básico" styleClass="label-header, hud-title-primary" wrapText="true"/>
+        <Label fx:id="lblActionDesc" text="Descrição..." wrapText="true" styleClass="hud-text-muted, hud-description"/>
 
-        <HBox fx:id="costInfoBox" spacing="15.0" alignment="CENTER_LEFT" style="-fx-background-color: #2a2a2a; -fx-padding: 8; -fx-background-radius: 5;">
+        <HBox fx:id="costInfoBox" spacing="15.0" alignment="CENTER_LEFT" styleClass="hud-info-panel">
             <HBox spacing="5" alignment="CENTER_LEFT">
-                <Label text="TU:" style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
-                <Label fx:id="lblCustoTU" text="0" style="-fx-text-fill: yellow; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                <Label text="TU:" styleClass="hud-text-muted, hud-small-label"/>
+                <Label fx:id="lblCustoTU" text="0" styleClass="hud-value-tu, hud-cost-value"/>
             </HBox>
             <HBox spacing="5" alignment="CENTER_LEFT">
-                <Label text="MP:" style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
-                <Label fx:id="lblCustoMana" text="0" style="-fx-text-fill: #66bbff; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                <Label text="MP:" styleClass="hud-text-muted, hud-small-label"/>
+                <Label fx:id="lblCustoMana" text="0" styleClass="hud-value-mana, hud-cost-value"/>
             </HBox>
         </HBox>
 
         <Separator />
         
-        <VBox fx:id="attackOptionsBox" spacing="15.0" visible="false" managed="false" style="-fx-background-color: #2a2a2a; -fx-padding: 10; -fx-background-radius: 5;">
+        <VBox fx:id="attackOptionsBox" spacing="15.0" visible="false" managed="false" styleClass="hud-info-panel">
             <VBox fx:id="boxSelecaoArmas" spacing="5.0" visible="false" managed="false">
-                <Label text="Armas:" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label text="Armas:" styleClass="hud-section-label"/>
                 <ComboBox fx:id="comboArmasAtaque" maxWidth="Infinity"/>
             </VBox>
-            <Label text="Modo de Ataque:" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Modo de Ataque:" styleClass="hud-section-label"/>
             
             <HBox spacing="0.0">
                 <ToggleButton fx:id="toggleFraco" text="Fraco" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;">
@@ -132,54 +131,53 @@
                 <ToggleButton fx:id="toggleNormal" text="Normal" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" toggleGroup="$grupoModo" style="-fx-background-radius: 0; -fx-border-radius: 0;"/>
                 <ToggleButton fx:id="toggleForte" text="Forte" maxWidth="Infinity" HBox.hgrow="ALWAYS" toggleGroup="$grupoModo" style="-fx-background-radius: 0 5 5 0; -fx-border-radius: 0 5 5 0;"/>
             </HBox>
-            <Label fx:id="lblInfoModo" text="Dano Normal, TU Normal" style="-fx-font-size: 10px; -fx-text-fill: gray;" alignment="CENTER" maxWidth="Infinity"/>
+            <Label fx:id="lblInfoModo" text="Dano Normal, TU Normal" styleClass="hud-text-muted, hud-small-label" alignment="CENTER" maxWidth="Infinity"/>
             
             <Button fx:id="btnCoronhada" text="Coronhada (Melee)" maxWidth="Infinity" visible="false" managed="false"/>
             
             <VBox fx:id="boxRajada" spacing="5.0" visible="false" managed="false">
                 <Separator />
-                <Label text="Rajada / Full Auto:" style="-fx-font-weight: bold; -fx-text-fill: orange;"/>
+                <Label text="Rajada / Full Auto:" styleClass="hud-section-label"/>
                 <Slider fx:id="sliderRajada" min="0" max="5" majorTickUnit="1" minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
-                <Label fx:id="lblInfoRajada" text="+0 Tiros (+0% TU)" style="-fx-font-size: 11px; -fx-text-fill: yellow;"/>
+                <Label fx:id="lblInfoRajada" text="+0 Tiros (+0% TU)" styleClass="hud-value-tu, hud-small-label"/>
             </VBox>
         </VBox>
         
         <VBox fx:id="diceInputsBox" spacing="10.0">
             </VBox>
         
-        <HBox alignment="CENTER" style="-fx-background-color: #333; -fx-padding: 5; -fx-background-radius: 3;">
-             <Label fx:id="labelEstimativaDano" text="Estimativa: 0" style="-fx-font-weight: bold; -fx-text-fill: lightgreen;"/>
+        <HBox alignment="CENTER" styleClass="hud-estimate-panel">
+             <Label fx:id="labelEstimativaDano" text="Estimativa: 0" styleClass="hud-value-positive"/>
         </HBox>
         
         <VBox spacing="10" VBox.vgrow="ALWAYS" alignment="BOTTOM_CENTER">
              <Button fx:id="btnSelecionarAlvo" text="Selecionar Alvo (Mapa)" maxWidth="Infinity" onAction="#onSelecionarAlvoClick" style="-fx-font-weight: bold;"/>
-             <Button fx:id="btnConfirmarAcao" text="CONFIRMAR AÇÃO" maxWidth="Infinity" prefHeight="40" style="-fx-base: #008800; -fx-font-weight: bold; -fx-font-size: 14px;" onAction="#onConfirmarAcaoClick"/>
+             <Button fx:id="btnConfirmarAcao" text="CONFIRMAR AÇÃO" maxWidth="Infinity" prefHeight="40" styleClass="hud-confirm-button" onAction="#onConfirmarAcaoClick"/>
         </VBox>
         
     </VBox>
 
-    <VBox fx:id="diceRollColumn" spacing="12.0" prefWidth="253.0"
-          style="-fx-border-color: #444; -fx-border-width: 0 0 0 1; -fx-padding: 15; -fx-background-color: #1a1a2a;"
+    <VBox fx:id="diceRollColumn" spacing="12.0" prefWidth="253.0" styleClass="turn-hud-column, turn-hud-details-column"
           visible="false" managed="false">
 
-        <Label text="Rolagem" styleClass="label-header" style="-fx-text-fill: #aaaaff; -fx-font-size: 16px;"/>
+        <Label text="Rolagem" styleClass="label-header, hud-title-primary"/>
         <Separator />
 
-        <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: #252535; -fx-padding: 10; -fx-background-radius: 5;">
-            <Label fx:id="lblDiceType" text="d20" style="-fx-text-fill: #888; -fx-font-size: 12px;"/>
-            <Label fx:id="lblDiceResult" text="—" style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
+        <VBox alignment="CENTER" spacing="8.0" styleClass="hud-dice-panel">
+            <Label fx:id="lblDiceType" text="d20" styleClass="hud-text-muted"/>
+            <Label fx:id="lblDiceResult" text="—" styleClass="hud-dice-result"/>
             <Button fx:id="btnRolarDado" text="Rodar" maxWidth="Infinity" onAction="#onRolarDadoClick"
-                    style="-fx-base: #334; -fx-text-fill: cyan; -fx-font-weight: bold;"/>
+                    styleClass="hud-tactical-button, hud-tactical-primary"/>
         </VBox>
 
         <Separator />
 
-        <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: #252535; -fx-padding: 10; -fx-background-radius: 5;">
-            <Label text="Taxa Crítica" style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
-            <Label fx:id="lblCritRate" text="5.0%" style="-fx-text-fill: orange; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+        <VBox alignment="CENTER" spacing="8.0" styleClass="hud-dice-panel">
+            <Label text="Taxa Crítica" styleClass="hud-text-muted, hud-small-label"/>
+            <Label fx:id="lblCritRate" text="5.0%" styleClass="hud-value-tu, hud-cost-value"/>
             <Button fx:id="btnRolarCritico" text="Rolar Crítico" maxWidth="Infinity" onAction="#onRolarCriticoClick"
-                    style="-fx-base: #443; -fx-text-fill: orange; -fx-font-weight: bold;"/>
-            <Label fx:id="lblCritResult" text="—" style="-fx-text-fill: gray; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                    styleClass="hud-tactical-button"/>
+            <Label fx:id="lblCritResult" text="—" styleClass="hud-crit-result"/>
         </VBox>
 
     </VBox>

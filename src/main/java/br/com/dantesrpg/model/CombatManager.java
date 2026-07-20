@@ -48,7 +48,6 @@ public class CombatManager {
 	private AcaoMestreInput lastInput;
 	private Personagem atorAtualAnterior;
 	private TipoAcao ultimoTipoAcao = TipoAcao.MOVIMENTO;
-	private int duracaoChuvaRestante = 0;
 	private Runnable pendingMunicaoConsumption;
 
 	// Subsistemas extraídos
@@ -450,129 +449,8 @@ public class CombatManager {
 			int tempoGlobalAtual = estado.getTickCounter() + 1;
 			estado.setTickCounter(tempoGlobalAtual);
 
-			if (mainController != null && mainController.isEfeitoAndarAtivo()) {
-				String efeito = mainController.getEfeitoAndarAtual();
-				if (efeito.startsWith("2º Andar") && tempoGlobalAtual % 200 == 0) {
-
-} else if (efeito.startsWith("3º Andar") && tempoGlobalAtual % 300 == 0) {
-					// Popup para selecionar alvos do Olho da Gula
-					List<Personagem> combatentesAtivos = estado.getCombatentes().stream()
-							.filter(Personagem::isAtivoNoCombate)
-							.collect(Collectors.toList());
-
-					if (!combatentesAtivos.isEmpty()) {
-						javafx.scene.control.Dialog<List<Personagem>> dialog = new javafx.scene.control.Dialog<>();
-						dialog.setTitle("👁️ O Olho da Gula");
-						dialog.setHeaderText("O Olho se abre! Selecione os alvos que serão observados.\n(50 de dano fixo + Stun)");
-						dialog.getDialogPane().setStyle("-fx-background-color: #1a1a2e; -fx-border-color: #e94560;");
-						dialog.getDialogPane().lookup(".label").setStyle("-fx-text-fill: #eee; -fx-font-size: 13px;");
-
-						javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(8);
-						content.setStyle("-fx-padding: 10;");
-						List<javafx.scene.control.CheckBox> checkBoxes = new ArrayList<>();
-
-						for (Personagem p : combatentesAtivos) {
-							javafx.scene.control.CheckBox cb = new javafx.scene.control.CheckBox(
-									p.getNome() + " (HP: " + (int) p.getVidaAtual() + "/" + (int) p.getVidaMaxima() + ")");
-							cb.setUserData(p);
-							cb.setStyle("-fx-text-fill: " + (p.isProtagonista() ? "#00d4ff" : "#ff6b6b") + "; -fx-font-size: 12px;");
-							checkBoxes.add(cb);
-							content.getChildren().add(cb);
-						}
-
-						javafx.scene.control.ScrollPane scroll = new javafx.scene.control.ScrollPane(content);
-						scroll.setFitToWidth(true);
-						scroll.setMaxHeight(400);
-						scroll.setStyle("-fx-background: #1a1a2e; -fx-background-color: #1a1a2e;");
-						dialog.getDialogPane().setContent(scroll);
-
-						dialog.getDialogPane().getButtonTypes().addAll(
-								javafx.scene.control.ButtonType.OK, javafx.scene.control.ButtonType.CANCEL);
-
-						dialog.setResultConverter(buttonType -> {
-							if (buttonType == javafx.scene.control.ButtonType.OK) {
-								List<Personagem> selecionados = new ArrayList<>();
-								for (javafx.scene.control.CheckBox cb : checkBoxes) {
-									if (cb.isSelected()) {
-										selecionados.add((Personagem) cb.getUserData());
-									}
-								}
-								return selecionados;
-							}
-							return null;
-						});
-
-						Optional<List<Personagem>> resultado = dialog.showAndWait();
-						if (resultado.isPresent() && resultado.get() != null && !resultado.get().isEmpty()) {
-							for (Personagem alvo : resultado.get()) {
-
-damageApplicator.aplicarDanoAoAlvo(null, alvo, 50.0, true, TipoAcao.AMBIENTE, estado);
-								Efeito stun = new Efeito("STUN", TipoEfeito.DEBUFF, 100, null, 0, 0);
-								alvo.adicionarEfeito(stun);
-								alvo.recalcularAtributosEstatisticas();
-							}
-						}
-					}
-				}
-
-				// 4º ANDAR: Dia (Vento Escaldante)
-				else if (efeito.contains("Dia") && tempoGlobalAtual % 35 == 0) {
-
-for (Personagem p : estado.getCombatentes()) {
-						if (p.isAtivoNoCombate() && !p.isProtagonista()) {
-							damageApplicator.aplicarDanoAoAlvo(null, p, 2.5, true, TipoAcao.AMBIENTE, estado);
-						}
-					}
-				}
-
-				// 4º ANDAR: Dia (Vento Escaldante)
-				else if (efeito.contains("Eclipse") && tempoGlobalAtual % 30 == 0) {
-					for (Personagem p : estado.getCombatentes()) {
-						if (p.isAtivoNoCombate() && !p.isProtagonista()) {
-							damageApplicator.aplicarDanoAoAlvo(null, p, 1.3, true, TipoAcao.AMBIENTE, estado);
-						}
-					}
-				}
-
-				// 4º ANDAR: Noite (Vento Congelante)
-				else if (efeito.contains("Noite") && tempoGlobalAtual % 100 == 0) {
-
-Efeito congelante = new Efeito("Vento Congelante", TipoEfeito.DEBUFF, 100, null, 0, 0);
-					for (Personagem p : estado.getCombatentes()) {
-						if (p.isAtivoNoCombate() && !p.isProtagonista())
-							p.adicionarEfeito(congelante);
-					}
-				}
-
-				// 5º ANDAR: Tempestade (Chuva + Raios)
-				else if ("5º Andar - Tempestade".equals(efeito)) {
-					if (tempoGlobalAtual % 100 == 0 && duracaoChuvaRestante <= 0) {
-						if (Math.random() < 0.20) {
-							duracaoChuvaRestante = 300;
-
-}
-					}
-					if (duracaoChuvaRestante > 0) {
-						duracaoChuvaRestante--;
-						if (duracaoChuvaRestante % 50 == 0) {
-							List<Personagem> vivos = estado.getCombatentes().stream()
-									.filter(Personagem::isAtivoNoCombate).collect(Collectors.toList());
-							if (!vivos.isEmpty()) {
-								Personagem alvoRaio = vivos.get(random.nextInt(vivos.size()));
-								if (!alvoRaio.isProtagonista()) {
-
-Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 20);
-									Efeito queimacao = br.com.dantesrpg.model.util.EffectFactory
-											.criarEfeito("Queimação", 0, 15);
-									alvoRaio.adicionarEfeito(choque);
-									alvoRaio.adicionarEfeito(queimacao);
-									damageApplicator.aplicarDanoAoAlvo(null, alvoRaio, 15.0, true, TipoAcao.AMBIENTE, estado);
-								}
-							}
-						}
-						if (duracaoChuvaRestante == 0) {}
-}
-				}
+			if (mainController != null) {
+				mainController.processarTickEfeitoAndar();
 			}
 
 			if (mainController != null && mainController.getMapController() != null) {
@@ -607,7 +485,7 @@ Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 
 						p.registrarDanoSofrido(2, tempoGlobalAtual);
 						if (p.getVidaAtual() <= 0 && !p.isVivo()) {
 
-if (mainController != null) mainController.atualizarInterfaceAposMorte();
+					if (mainController != null) mainController.atualizarInterfaceAposMorte();
 						}
 					}
 
@@ -926,6 +804,12 @@ if (mainController != null) mainController.atualizarInterfaceAposMorte();
 		if (input == null || input.getAtor() == null)
 			return;
 		Personagem ator = input.getAtor();
+		if (input.getHabilidade() != null
+				&& ator.isHabilidadeBloqueadaPorCoral(input.getHabilidade().getNome())) {
+			System.out.println(">>> AÇÃO BLOQUEADA: o coral impede o uso de ["
+					+ input.getHabilidade().getNome() + "] por " + ator.getNome() + ".");
+			return;
+		}
 
 		String nomeAcao = "";
 		if (input.getFantasmaNobre() != null)

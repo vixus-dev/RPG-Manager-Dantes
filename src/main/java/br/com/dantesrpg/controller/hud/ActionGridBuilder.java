@@ -135,7 +135,13 @@ public class ActionGridBuilder {
 	private Button criarBotaoHabilidade(Habilidade hab, Personagem ator) {
 		Button btn = criarBotaoAcao(hab.getNome(), "-fx-base: #333;");
 		String cdName = "CD:" + hab.getNome();
-		if (ator.getEfeitosAtivos().containsKey(cdName)) {
+		if (ator.isHabilidadeBloqueadaPorCoral(hab.getNome())) {
+			btn.setDisable(true);
+			btn.setText("\uD83E\uDEB8 CORAL\n" + hab.getNome());
+			btn.setTooltip(new Tooltip("A Maldição de Coral bloqueou esta habilidade."));
+			btn.setStyle("-fx-base: #7d2935; -fx-text-fill: #ffd5cb; -fx-border-color: #ff7f6e;"
+					+ " -fx-border-width: 2; -fx-opacity: 0.88;");
+		} else if (ator.getEfeitosAtivos().containsKey(cdName)) {
 			btn.setDisable(true);
 			btn.setText(hab.getNome() + "\n(Recarga)");
 		} else if (ator.getManaAtual() < hab.getCustoMana()) {

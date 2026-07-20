@@ -342,6 +342,16 @@
     -fx-background-repeat: no-repeat;
 }
 
+.tempestade-agua-overlay {
+    -fx-background-color: rgba(35, 125, 205, 0.34);
+    -fx-background-image: url('../textures/agua.png');
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-opacity: 0.42;
+    -fx-border-color: rgba(155, 225, 255, 0.32);
+    -fx-border-width: 0 0 1 1;
+}
+
 /* Efeito de Fogo (Overlay Básico) */
 .effect-fire {
     -fx-border-color: orangered;

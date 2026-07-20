@@ -44,6 +44,11 @@ public class EstadoAndarService {
 		return configuracaoAtual.get();
 	}
 
+	public EstadoAndarParty getEstadoAtual() {
+		ConfiguracaoAndar configuracao = configuracaoAtual.get();
+		return configuracao != null ? configuracao.getEstado() : EstadoAndarParty.nulo();
+	}
+
 	public ReadOnlyObjectProperty<ConfiguracaoAndar> configuracaoAtualProperty() {
 		return configuracaoAtual;
 	}

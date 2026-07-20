@@ -367,26 +367,16 @@ public class GerenciadorCombateController {
 			return;
 		}
 
-		String efeito = mainController.getEfeitoAndarAtual();
-		if (efeito == null || efeito.equals("Nenhum")) {
+		var contadorOpt = mainController.getContadorEfeitoAndarAtual();
+		if (contadorOpt.isEmpty()) {
 			lblContadorAndar.setVisible(false);
 			lblContadorAndar.setManaged(false);
 			return;
 		}
 
-		int tickAtual = estadoCombate.getTickCounter();
-		int intervalo = getIntervaloAndar(efeito);
-
-		if (intervalo <= 0) {
-			lblContadorAndar.setVisible(false);
-			lblContadorAndar.setManaged(false);
-			return;
-		}
-
-		int tuRestante = intervalo - (tickAtual % intervalo);
-		if (tuRestante == intervalo) tuRestante = 0; // Acabou de ativar
-
-		String nomeEfeitoCurto = getNomeEfeitoCurto(efeito);
+		var contador = contadorOpt.get();
+		int tuRestante = contador.tuRestante();
+		String nomeEfeitoCurto = contador.nome();
 
 		lblContadorAndar.setVisible(true);
 		lblContadorAndar.setManaged(true);
@@ -401,28 +391,6 @@ public class GerenciadorCombateController {
 			lblContadorAndar.setText(nomeEfeitoCurto + " em " + tuRestante + " TU");
 			lblContadorAndar.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff6b6b; -fx-font-size: 14px; -fx-padding: 4 12; -fx-background-color: rgba(255,50,50,0.1); -fx-background-radius: 5; -fx-border-color: #ff6b6b; -fx-border-radius: 5; -fx-border-width: 1;");
 		}
-	}
-
-	private int getIntervaloAndar(String efeito) {
-		if (efeito.startsWith("2º Andar")) return 200;
-		if (efeito.startsWith("3º Andar")) return 300; // O Olho
-		if (efeito.contains("4º Andar - Dia")) return 100;
-		if (efeito.contains("4º Andar")) return 200;
-		if ("5º Andar - Tempestade".equals(efeito)) return 100;
-		if (efeito.startsWith("7º Andar")) return 150;
-		if (efeito.startsWith("8.1º Andar")) return 200;
-		return 0;
-	}
-
-	private String getNomeEfeitoCurto(String efeito) {
-		if (efeito.startsWith("2º Andar")) return "Arremesso";
-		if (efeito.startsWith("3º Andar")) return "O Olho";
-		if (efeito.contains("Dia")) return "Vento Escaldante";
-		if (efeito.contains("Noite")) return "Vento Congelante";
-		if ("5º Andar - Tempestade".equals(efeito)) return "Tempestade";
-		if (efeito.startsWith("7º Andar")) return "Holofotes";
-		if (efeito.startsWith("8.1º Andar")) return "Cruzes";
-		return efeito;
 	}
 
 	// =====================================================================
@@ -1430,10 +1398,8 @@ public class GerenciadorCombateController {
 	}
 
 	private void configurarEfeitosAndar() {
-		comboEfeitoAndar.getItems().addAll("Nenhum", "1º Andar - Campos Helênicos", "2º Andar - Arremesso",
-				"3º Andar - O Olho", "4º Andar - Dia", "4º Andar - Noite", "4º Andar - Eclipse",
-				"5º Andar - Praia", "5º Andar - Tempestade", "6º Andar - Cidade de Sangue",
-				"7º Andar - Holofotes", "8.1º Andar - Cruzes", "9º Andar - A Sala dos Trovões");
+		// A lista completa vem do catálogo de andares assim que o controller principal é conectado.
+		comboEfeitoAndar.getItems().setAll("Nenhum");
 		comboEfeitoAndar.getSelectionModel().selectFirst();
 
 		comboEfeitoAndar.valueProperty().addListener((o, old, newVal) -> {

@@ -15,7 +15,7 @@ public class HabilidadeFactory {
 	private static final Map<String, Supplier<Habilidade>> registro = new TreeMap<>();
 
 	static {
-		// Genéricas / Armas
+		// Genéricas
 		registro.put("Iaijutsu", Iaijutsu::new);
 		registro.put("Passo Sombrio", PassoSombrio::new);
 		registro.put("Rajada de Drone", RajadaDrone::new);

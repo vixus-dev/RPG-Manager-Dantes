@@ -143,6 +143,8 @@ public class MapController {
 
 	private TipoTerreno[][] gridTerreno;
 	private EfeitoInstance[][] gridEfeitos;
+	private boolean sobreposicaoAguaTempestadeAtiva;
+	private static final String ID_SOBREPOSICAO_AGUA_TEMPESTADE = "tempestade-agua-layer";
 
 	private final String CSS_ALCANCE_MOVIMENTO = "movimento-alcance";
 	private final String CSS_ALCANCE_ATAQUE_MELEE = "ataque-alcance-melee";
@@ -860,6 +862,8 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 
 	public void setMainController(CombatController mainController) {
 		this.mainController = mainController;
+		setSobreposicaoAguaTempestadeAtiva(mainController != null
+				&& mainController.isSobreposicaoAguaTempestadeAtiva());
 	}
 
 	// ========== ACESSORES PARA HELPERS (SquadModeHandler, etc.) ==========
@@ -1055,6 +1059,38 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 				gridLargura, gridAltura, CELL_SIZE);
 		// Recria squadHandler com a nova referência a aoeCalc
 		squadHandler = new SquadModeHandler(this, aoeCalc, toggleMover, toggleMirar, celulasAlcanceMovimento);
+		atualizarSobreposicaoAguaTempestade();
+	}
+
+	/** Exibe uma camada visual de água sobre todas as tiles sem alterar o terreno base. */
+	public void setSobreposicaoAguaTempestadeAtiva(boolean ativa) {
+		this.sobreposicaoAguaTempestadeAtiva = ativa;
+		atualizarSobreposicaoAguaTempestade();
+	}
+
+	private void atualizarSobreposicaoAguaTempestade() {
+		if (celulasDoGrid == null) {
+			return;
+		}
+		for (int x = 0; x < celulasDoGrid.length; x++) {
+			for (int y = 0; y < celulasDoGrid[x].length; y++) {
+				Pane celula = celulasDoGrid[x][y];
+				if (celula == null) {
+					continue;
+				}
+				celula.getChildren().removeIf(node -> ID_SOBREPOSICAO_AGUA_TEMPESTADE.equals(node.getId()));
+				if (sobreposicaoAguaTempestadeAtiva) {
+					Pane agua = new Pane();
+					agua.setId(ID_SOBREPOSICAO_AGUA_TEMPESTADE);
+					agua.getStyleClass().add("tempestade-agua-overlay");
+					agua.setMouseTransparent(true);
+					agua.setPrefSize(CELL_SIZE, CELL_SIZE);
+					agua.setMinSize(CELL_SIZE, CELL_SIZE);
+					agua.setMaxSize(CELL_SIZE, CELL_SIZE);
+					celula.getChildren().add(agua);
+				}
+			}
+		}
 	}
 
 	/**

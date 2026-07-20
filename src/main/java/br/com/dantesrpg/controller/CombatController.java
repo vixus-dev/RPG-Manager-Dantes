@@ -73,6 +73,7 @@ import br.com.dantesrpg.controller.service.CatalogoItensService;
 import br.com.dantesrpg.controller.service.CombatUiRefresher;
 import br.com.dantesrpg.controller.service.EstadoJogadoresService;
 import br.com.dantesrpg.controller.service.EstadoAndarService;
+import br.com.dantesrpg.controller.service.EfeitosAndarService;
 import br.com.dantesrpg.controller.service.FantasmaNobreActionService;
 import br.com.dantesrpg.controller.service.JanelasCombateCoordinator;
 import br.com.dantesrpg.controller.service.MapaCombateCoordinator;
@@ -150,6 +151,9 @@ public class CombatController {
 	private Map<String, Map<String, Object>> bestiarioDatabase;
 	private final CatalogoItensService catalogoItensService = new CatalogoItensService();
 	private final EstadoAndarService estadoAndarService = new EstadoAndarService();
+	private final EfeitosAndarService efeitosAndarService = new EfeitosAndarService(this,
+			() -> estadoCombate, () -> combatManager, estadoAndarService::getEstadoAtual,
+			this::isEfeitoAndarAtivo);
 	private TemaAndarService temaAndarService;
 	private final BestiarioSpawnService bestiarioSpawnService = new BestiarioSpawnService(this, catalogoItensService,
 			() -> estadoCombate);
@@ -486,6 +490,7 @@ public class CombatController {
 
 			// Estabelece Iniciativa
 			estadoCombate.resetarIniciativa();
+			efeitosAndarService.aoIniciarCombate();
 
 		} else {
 			// --- COMBATE ENCERRADO (OFF) ---
@@ -495,6 +500,7 @@ public class CombatController {
 					"-fx-background-color: #333; -fx-text-fill: gray; -fx-border-color: gray; -fx-font-weight: bold; -fx-font-size: 14px;");
 
 			// Distribui XP
+			efeitosAndarService.aoEncerrarCombate();
 			combatManager.distribuirXpAposCombate(estadoCombate);
 
 mapaCombateCoordinator.encerrarEmprestimosOvertime();
@@ -1218,6 +1224,7 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 		if (efeitoMudou) {
 			estadoAndarService.selecionarPorOpcao(efeitoNormalizado);
 		}
+		efeitosAndarService.aoAlterarConfiguracao();
 		System.out.println("GM: Efeito de Andar alterado para: " + efeitoNormalizado + " (Ativo: " + ativo + ")");
 		notificarGerenciadorCombate();
 	}
@@ -1230,6 +1237,7 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 		estadoAndarService.carregarDoPresetEquipado();
 		ConfiguracaoAndar configuracao = estadoAndarService.getConfiguracaoAtual();
 		this.efeitoAndarAtual = configuracao != null ? configuracao.getOpcaoSeletor() : "Nenhum";
+		efeitosAndarService.aoAlterarConfiguracao();
 		aplicarTemaAtual();
 		notificarGerenciadorCombate();
 	}
@@ -1239,6 +1247,12 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 			return;
 		}
 		temaAndarService.registrarRaiz(raiz);
+	}
+
+	public void removerTemaDeRaiz(Parent raiz) {
+		if (temaAndarService != null) {
+			temaAndarService.desregistrarRaiz(raiz);
+		}
 	}
 
 	private void aplicarTemaAtual() {
@@ -1268,6 +1282,18 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 
 	public boolean isEfeitoAndarAtivo() {
 		return efeitoAndarAtivo;
+	}
+
+	public void processarTickEfeitoAndar() {
+		efeitosAndarService.processarTick();
+	}
+
+	public Optional<EfeitosAndarService.ContadorEfeitoAndar> getContadorEfeitoAndarAtual() {
+		return efeitosAndarService.getContadorAtual();
+	}
+
+	public boolean isSobreposicaoAguaTempestadeAtiva() {
+		return efeitosAndarService.isSobreposicaoAguaAtiva();
 	}
 
 	public void salvarEstadoJogadores() {

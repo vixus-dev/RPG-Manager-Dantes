@@ -48,6 +48,10 @@ public class EffectTooltipBuilder {
 		// --- Outros Debuffs ---
 		DESCRICOES.put("Marca do Deserto", "Marca mística que enfraquece o alvo.");
 		DESCRICOES.put("Armadura Quebrada", "A armadura do alvo foi comprometida, reduzindo sua redução de dano em 30%.");
+		DESCRICOES.put("Maldição de Coral",
+				"Um coral infernal bloqueia uma habilidade ativa aleatória. Um novo acerto renova a duração e sorteia novamente.");
+		DESCRICOES.put("Peso dos Pecados",
+				"Reduz a redução de dano do jogador em uma porcentagem igual ao seu Pecado enquanto o efeito de Heresia estiver ativo.");
 
 		// --- Buffs de Status ---
 		DESCRICOES.put("Força Ampliada (+20% Dano)", "Amplia a força, concedendo +20% de dano em todos os ataques.");

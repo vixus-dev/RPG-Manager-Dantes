@@ -50,6 +50,14 @@ public class TemaAndarService {
 		}
 	}
 
+	public void desregistrarRaiz(Parent raiz) {
+		if (raiz == null) {
+			return;
+		}
+		raizesRegistradas.remove(raiz);
+		estilosOriginais.remove(raiz);
+	}
+
 	public void aplicarTema(ConfiguracaoAndar configuracao) {
 		this.configuracaoAtual = configuracao;
 		for (Parent raiz : raizesRegistradas) {

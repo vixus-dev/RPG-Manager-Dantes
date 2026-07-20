@@ -125,6 +125,10 @@ public class PersonagemEffects {
 				reverterControleMental();
 			}
 
+			if ("Maldição de Coral".equals(nomeEfeito)) {
+				personagem.limparHabilidadeBloqueadaPorCoral();
+			}
+
 			if ("Maldição".equals(nomeEfeito)) {
 				if (!personagem.getMaldicoes().isEmpty()) {
 					personagem.getMaldicoes().clear();

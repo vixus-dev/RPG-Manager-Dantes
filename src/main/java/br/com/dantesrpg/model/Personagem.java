@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Personagem {
+	private static final String PREFIXO_HABILIDADE_BLOQUEADA_CORAL = "HABILIDADE_BLOQUEADA_CORAL:";
 
 	// === IDENTIFICAÇÃO ===
 	private String nome;
@@ -684,6 +685,31 @@ public class Personagem {
 
 	public void setUltimaHabilidadeUsada(Habilidade h) {
 		this.ultimaHabilidadeUsada = h;
+	}
+
+	public void bloquearHabilidadePorCoral(String nomeHabilidade) {
+		limparHabilidadeBloqueadaPorCoral();
+		if (nomeHabilidade != null && !nomeHabilidade.isBlank()) {
+			adicionarPropriedade(PREFIXO_HABILIDADE_BLOQUEADA_CORAL + nomeHabilidade);
+		}
+	}
+
+	public void limparHabilidadeBloqueadaPorCoral() {
+		getPropriedades().removeIf(prop -> prop != null
+				&& prop.startsWith(PREFIXO_HABILIDADE_BLOQUEADA_CORAL));
+	}
+
+	public String getHabilidadeBloqueadaPorCoral() {
+		return getPropriedades().stream()
+				.filter(prop -> prop != null && prop.startsWith(PREFIXO_HABILIDADE_BLOQUEADA_CORAL))
+				.map(prop -> prop.substring(PREFIXO_HABILIDADE_BLOQUEADA_CORAL.length()))
+				.findFirst()
+				.orElse(null);
+	}
+
+	public boolean isHabilidadeBloqueadaPorCoral(String nomeHabilidade) {
+		String bloqueada = getHabilidadeBloqueadaPorCoral();
+		return bloqueada != null && nomeHabilidade != null && bloqueada.equalsIgnoreCase(nomeHabilidade);
 	}
 
 	// ========== CLONES / INVOCAÇÕES ==========

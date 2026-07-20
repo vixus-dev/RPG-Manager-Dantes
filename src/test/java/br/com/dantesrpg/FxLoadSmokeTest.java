@@ -72,14 +72,18 @@ public final class FxLoadSmokeTest {
 					if (andar == AndarCampanha.NULO) {
 						continue;
 					}
-					int limite = andar == AndarCampanha.ANDAR_4 ? 3 : andar == AndarCampanha.ANDAR_5 ? 2 : 1;
+					int limite = switch (andar) {
+					case ANDAR_4, ANDAR_5, ANDAR_7 -> 3;
+					case ANDAR_6 -> 2;
+					default -> 1;
+					};
 					for (int estado = 1; estado <= limite; estado++) {
 						temaService.aplicarTema(catalogo.buscarPorEstado(new EstadoAndarParty(andar, estado)));
 					}
 				}
 				validarContrasteTemaClaro(temaService, catalogo, raizLoja);
 				temaService.aplicarTema(catalogo.getConfiguracaoNula());
-				System.out.println("TEMAS_SMOKE_OK=12_VARIANTES_E_NULO");
+				System.out.println("TEMAS_SMOKE_OK=16_VARIANTES_E_NULO");
 			} catch (Throwable erro) {
 				falha.set(erro);
 				erro.printStackTrace();

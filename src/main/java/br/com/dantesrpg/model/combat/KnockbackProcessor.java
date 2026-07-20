@@ -74,6 +74,23 @@ public class KnockbackProcessor {
 	}
 
 	/**
+	 * Calcula um deslocamento ambiental com direção e distância fixas, sem aplicar
+	 * resistência de peso. Usado por efeitos de cenário como os Ventos Infernais.
+	 */
+	public KnockbackResult calcularEmpuxoDirecional(Personagem alvo, int direcaoX, int direcaoY,
+			int distanciaMaxima, MapController mapController) {
+		if (alvo == null || distanciaMaxima <= 0) {
+			return resultadoSemMomento(alvo);
+		}
+		int dx = Integer.signum(direcaoX);
+		int dy = Integer.signum(direcaoY);
+		if (dx == 0 && dy == 0) {
+			return resultadoSemMomento(alvo);
+		}
+		return tracarTrajetoria(alvo, dx, dy, distanciaMaxima, mapController);
+	}
+
+	/**
 	 * Executa o empuxo: move o alvo para a posição final do {@link KnockbackResult}
 	 * e solicita atualização visual (redesenho dos peões).
 	 *
@@ -213,8 +230,10 @@ public class KnockbackProcessor {
 
 	/** Cria um resultado nulo (sem movimento). */
 	private KnockbackResult resultadoSemMomento(Personagem alvo) {
+		int x = alvo != null ? alvo.getPosX() : 0;
+		int y = alvo != null ? alvo.getPosY() : 0;
 		return new KnockbackResult(
-			alvo.getPosX(), alvo.getPosY(),
+			x, y,
 			0, false, null, 0.0,
 			new ArrayList<>(), 0, 0
 		);
