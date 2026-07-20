@@ -33,7 +33,8 @@
     "Lança Cesariana": 1,
     "PocaoDeCuraMédia": 1,
     "Devoradora Primordial": 1,
-    "PocaoDeCuraGrande": 1
+    "PocaoDeCuraGrande": 1,
+    "Martelo de vidro": 1
   },
   "xpAtual": 1007,
   "vidaMaximaBase": 141.0,
@@ -45,7 +46,7 @@
   "segmentos": 0,
   "grau": 2,
   "posX": 5,
-  "posY": 5,
+  "posY": 4,
   "vidas": 2,
   "amuleto2": "Colar da Baleia Azul",
   "amuleto1": "Cranio de esqueleto shiny",
