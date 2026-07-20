@@ -45,7 +45,14 @@ public class WhaWhaSolo extends Habilidade {
 			alvo.recalcularAtributosEstatisticas();
 		}
 
-		int danoFinal = (int) (danoBase * multiplicador);
+		double danoFinal = danoBase * multiplicador;
+		if (ator.isClone()) {
+			Efeito poderDasSombras = ator.getEfeitosAtivos().get("Poder das Sombras");
+			if (poderDasSombras != null) {
+				danoFinal *= 1.0 + poderDasSombras.getModificadores()
+						.getOrDefault("DANO_BONUS_PERCENTUAL", 0.0);
+			}
+		}
 		manager.aplicarDanoAoAlvo(ator, alvo, danoFinal, false, TipoAcao.HABILIDADE, estado);
 	}
 }
