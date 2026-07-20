@@ -522,6 +522,27 @@
       "category": "Chão",
       "texturePath": "agua.png",
       "effect": null
+    },
+    {
+      "id": "aguaProfunda",
+      "name": "Água Profunda",
+      "cssClass": "map-agua-profunda",
+      "rgb": {
+        "r": 16,
+        "g": 72,
+        "b": 150
+      },
+      "terrainType": "PADRAO",
+      "walkable": true,
+      "wall": false,
+      "category": "Efeito",
+      "texturePath": "agua.png",
+      "effect": {
+        "tipo": "AGUA_PROFUNDA",
+        "duracao": 99999,
+        "dano": 0,
+        "permanente": true
+      }
     }
   ]
 }
