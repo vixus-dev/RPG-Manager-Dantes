@@ -990,8 +990,10 @@ public class DetailedTurnHUDController {
 	}
 
 	private void estilizarBotaoAba(Button btn, boolean ativo) {
-		if (ativo) btn.setStyle("-fx-background-color: #555; -fx-text-fill: cyan; -fx-border-color: cyan;");
-		else       btn.setStyle("-fx-background-color: #333; -fx-text-fill: gray; -fx-border-color: #444;");
+		btn.getStyleClass().remove("hud-tab-active");
+		if (ativo) {
+			btn.getStyleClass().add("hud-tab-active");
+		}
 	}
 
 	private Habilidade criarHabilidadeSelecaoAtaqueBasico() {

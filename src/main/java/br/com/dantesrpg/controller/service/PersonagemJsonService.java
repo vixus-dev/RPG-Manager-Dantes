@@ -337,6 +337,9 @@ public class PersonagemJsonService {
 			FantasmaNobre fn = fantasmaNobreFactory.apply(fnNome);
 			if (fn != null) {
 				personagem.setFantasmaNobre(fn);
+				if ("Darrell".equals(nome) && fn instanceof br.com.dantesrpg.model.fantasmasnobres.ModoPolaris) {
+					adicionarSolosOriginaisDarrell(personagem);
+				}
 			}
 			return;
 		}
@@ -358,9 +361,7 @@ public class PersonagemJsonService {
 		}
 		if (nome.equals("Darrell")) {
 			personagem.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.ModoPolaris());
-			personagem.adicionarHabilidadeExtra(new br.com.dantesrpg.model.habilidades.classe.DistortedSolo());
-			personagem.adicionarHabilidadeExtra(new br.com.dantesrpg.model.habilidades.classe.WhaWhaSolo());
-			personagem.adicionarHabilidadeExtra(new br.com.dantesrpg.model.habilidades.classe.PlainSolo());
+			adicionarSolosOriginaisDarrell(personagem);
 		}
 		if (nome.equals("Lilith")) {
 			personagem.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.InvocacaoSangrenta());
@@ -377,6 +378,12 @@ public class PersonagemJsonService {
 		if (nome.equalsIgnoreCase("Servant") || nome.equalsIgnoreCase("Sarvant")) {
 			personagem.setFantasmaNobre(new RevelacaoDeYaweh());
 		}
+	}
+
+	private void adicionarSolosOriginaisDarrell(Personagem personagem) {
+		personagem.adicionarHabilidadeExtra(new br.com.dantesrpg.model.habilidades.classe.DistortedSolo());
+		personagem.adicionarHabilidadeExtra(new br.com.dantesrpg.model.habilidades.classe.WhaWhaSolo());
+		personagem.adicionarHabilidadeExtra(new br.com.dantesrpg.model.habilidades.classe.PlainSolo());
 	}
 
 	private void carregarDadosRaca(Personagem personagem, Map<String, Object> data) {

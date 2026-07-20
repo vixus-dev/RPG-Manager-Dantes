@@ -84,7 +84,7 @@ public class ActionGridBuilder {
 			Item itemModelo = mainController.getItem(entry.getKey());
 			if (itemModelo != null && itemModelo.isUsavelEmCombate()) {
 				int qtd = entry.getValue();
-				Button btn = criarBotaoAcao(itemModelo.getNome() + "\n(x" + qtd + ")", "-fx-base: #333;");
+				Button btn = criarBotaoAcao(itemModelo.getNome() + "\n(x" + qtd + ")", "hud-action-item");
 				btn.setOnAction(e -> selectionCb.onSelected(itemModelo.getNome(), null, itemModelo, null, false));
 				adicionarAoGrid(btn, col++, row);
 				if (col > 1) { col = 0; row++; }
@@ -98,11 +98,11 @@ public class ActionGridBuilder {
 		if (!ator.getEfeitosAtivos().containsKey("Modo Justiça")) {
 			Arma arma = ator.getArmaEquipada();
 			String texto = "Ataque Básico";
-			String estilo = "-fx-base: #500;";
+			String estilo = "hud-action-basic";
 			if (arma != null) {
 				if (arma.isOverclockado()) {
 					texto = arma.getNomeComOverclock();
-					estilo = "-fx-base: #005555; -fx-text-fill: cyan; -fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);";
+					estilo = "hud-action-overclock";
 				}
 				if (arma.isRequerMunicao()) {
 					texto += "\n(" + arma.getMunicaoAtual() + "/" + arma.getMunicaoMaxima() + ")";
@@ -113,7 +113,8 @@ public class ActionGridBuilder {
 			adicionarAoGrid(btn, col++, row);
 		} else {
 			Label lbl = new Label("Ataque Físico Bloqueado\n(Modo Justiça Ativo)");
-			lbl.setStyle("-fx-text-fill: gray; -fx-font-style: italic; -fx-font-size: 10px;");
+			lbl.getStyleClass().add("hud-text-muted");
+			lbl.setStyle("-fx-font-style: italic; -fx-font-size: 10px;");
 			adicionarAoGrid(lbl, col++, row);
 		}
 		return col;
@@ -133,14 +134,13 @@ public class ActionGridBuilder {
 	}
 
 	private Button criarBotaoHabilidade(Habilidade hab, Personagem ator) {
-		Button btn = criarBotaoAcao(hab.getNome(), "-fx-base: #333;");
+		Button btn = criarBotaoAcao(hab.getNome(), "hud-action-item");
 		String cdName = "CD:" + hab.getNome();
 		if (ator.isHabilidadeBloqueadaPorCoral(hab.getNome())) {
 			btn.setDisable(true);
 			btn.setText("\uD83E\uDEB8 CORAL\n" + hab.getNome());
 			btn.setTooltip(new Tooltip("A Maldição de Coral bloqueou esta habilidade."));
-			btn.setStyle("-fx-base: #7d2935; -fx-text-fill: #ffd5cb; -fx-border-color: #ff7f6e;"
-					+ " -fx-border-width: 2; -fx-opacity: 0.88;");
+			btn.getStyleClass().add("hud-action-blocked");
 		} else if (ator.getEfeitosAtivos().containsKey(cdName)) {
 			btn.setDisable(true);
 			btn.setText(hab.getNome() + "\n(Recarga)");
@@ -152,7 +152,7 @@ public class ActionGridBuilder {
 	}
 
 	private Button criarBotaoFantasmaNobre(FantasmaNobre fn, Personagem ator) {
-		Button btn = criarBotaoAcao("FN: " + fn.getNome(), "-fx-base: #400040; -fx-border-color: violet;");
+		Button btn = criarBotaoAcao("FN: " + fn.getNome(), "hud-action-ultimate");
 		if (ator.getEfeitosAtivos().containsKey("CD:" + fn.getNome())) {
 			btn.setDisable(true);
 			btn.setText("FN: " + fn.getNome() + "\n(Recarga)");
@@ -174,12 +174,12 @@ public class ActionGridBuilder {
 		return btn;
 	}
 
-	private Button criarBotaoAcao(String texto, String style) {
+	private Button criarBotaoAcao(String texto, String classeVisual) {
 		Button btn = new Button(texto);
 		btn.setMaxWidth(Double.MAX_VALUE);
 		btn.setPrefHeight(60);
 		btn.setWrapText(true);
-		btn.setStyle(style + " -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
+		btn.getStyleClass().addAll("hud-action-button", classeVisual);
 		return btn;
 	}
 
