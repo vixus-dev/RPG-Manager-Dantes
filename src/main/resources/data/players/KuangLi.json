@@ -1,13 +1,13 @@
 {
   "iniciativaBase": 45,
-  "pecado": 5,
+  "pecado": 6,
   "atributosBase": {
     "FORCA": 15,
     "PERCEPCAO": 5,
     "ENDURANCE": 14,
     "CARISMA": 1,
     "INTELIGENCIA": 4,
-    "DESTREZA": 7,
+    "DESTREZA": 9,
     "SORTE": 3,
     "INSPIRACAO": 5,
     "SAGACIDADE": 1,

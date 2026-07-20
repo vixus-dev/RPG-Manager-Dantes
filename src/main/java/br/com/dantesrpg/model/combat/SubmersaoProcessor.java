@@ -12,7 +12,7 @@ import br.com.dantesrpg.model.util.EffectFactory;
 public final class SubmersaoProcessor {
 
 	public static final String EFEITO_ASFIXIA = "Asfixia";
-	private static final Set<String> ARMADURAS_IMUNES_A_ASFIXIA = Set.of(
+	private static final Set<String> ARMADURAS_COM_OXIGENIO_PRESERVADO = Set.of(
 			"Armadura de Mergulho",
 			"Armadura de Mergulho Militar",
 			"Traje Tático \"Nautilus MK-I\"",
@@ -41,7 +41,9 @@ public final class SubmersaoProcessor {
 	}
 
 	private static void consumirOxigenio(Personagem jogador, int tempoGlobalAtual) {
-		if (tempoGlobalAtual % 20 != 0 || jogador.getOxigenio() <= 0) {
+		if (possuiArmaduraComOxigenioPreservado(jogador)
+				|| tempoGlobalAtual % 20 != 0
+				|| jogador.getOxigenio() <= 0) {
 			return;
 		}
 
@@ -65,18 +67,14 @@ public final class SubmersaoProcessor {
 			jogador.removerEfeito(EFEITO_ASFIXIA);
 			return;
 		}
-		if (possuiArmaduraImuneAAsfixia(jogador)) {
-			jogador.removerEfeito(EFEITO_ASFIXIA);
-			return;
-		}
 		if (!jogador.getEfeitosAtivos().containsKey(EFEITO_ASFIXIA)) {
 			jogador.adicionarEfeito(EffectFactory.criarEfeito(EFEITO_ASFIXIA, 99999, 0));
 		}
 	}
 
-	private static boolean possuiArmaduraImuneAAsfixia(Personagem jogador) {
+	private static boolean possuiArmaduraComOxigenioPreservado(Personagem jogador) {
 		Armadura armadura = jogador.getArmaduraEquipada();
-		return armadura != null && ARMADURAS_IMUNES_A_ASFIXIA.contains(armadura.getNome());
+		return armadura != null && ARMADURAS_COM_OXIGENIO_PRESERVADO.contains(armadura.getNome());
 	}
 
 	private static boolean possuiPingenteEconomizador(Personagem jogador) {

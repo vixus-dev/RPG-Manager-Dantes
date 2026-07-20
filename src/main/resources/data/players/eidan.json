@@ -1,6 +1,6 @@
 {
   "iniciativaBase": 43,
-  "pecado": 7,
+  "pecado": 8,
   "atributosBase": {
     "FORCA": 13,
     "PERCEPCAO": 8,
@@ -14,7 +14,7 @@
     "TOPOR": 2
   },
   "escudoSangueAtual": 0.0,
-  "pontosParaDistribuir": 0,
+  "pontosParaDistribuir": 2,
   "escudoNormalAtual": 0.0,
   "carteira": {
     "prata": 147,
