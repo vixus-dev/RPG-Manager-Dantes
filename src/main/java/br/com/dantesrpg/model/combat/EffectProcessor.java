@@ -218,6 +218,7 @@ public class EffectProcessor {
 		return switch (nomeArma) {
 		case "Sabre do Kraken", "SabreMaldito[inimigo]" -> 0.075;
 		case "Lâminas Gêmeas Maré Alta" -> 0.05;
+		case "MachadoBrutamontesmaldito[inimigo]", "EspadaCapitaomaldito[inimigo]" -> 0.075;
 		case "Dreadnought" -> 0.10;
 		case "MandibulaCoralMaldita" -> 0.025;
 		default -> 0.20;
@@ -252,6 +253,11 @@ alvo.removerEfeito("Charm");
 
 	public void processarHooksDeSistema(Personagem ator, Personagem alvo, Arma arma, AcaoMestreInput input,
 			double danoTick, EstadoCombate estado, double modHabilidade, boolean isCritico) {
+		if (input != null && input.getModoAtaque() == ModoAtaque.CORONHADA && arma != null
+				&& arma.getSpecialAttackEffect() != null && !arma.getSpecialAttackEffect().isBlank()) {
+			processarEfeitoOnHit(ator, alvo, arma, danoTick, estado,
+					new EfeitoOnHit(arma.getSpecialAttackEffect(), arma.getSpecialAttackEffectChance()));
+		}
 
 		if (danoTick > 0 && ator.getRaca() != null) {
 			ator.getRaca().onDamageDealt(ator, alvo, danoTick, estado, getController());

@@ -21,6 +21,7 @@ public abstract class Arma extends Item {
 	private Atributo atributoMultiplicador;
 	private int custoTU;
 	private int alcance;
+	private int bonusAlcanceTemporario;
 	private int wielding = 1;
 	private double penetracaoArmadura;
 
@@ -48,6 +49,9 @@ public abstract class Arma extends Item {
 	private double specialAttackCd = 1.0;
 	private String specialAttackType = "INDIVIDUAL";
 	private int specialAttackSize = 0;
+	private int specialAttackRange = 1;
+	private String specialAttackEffect;
+	private double specialAttackEffectChance;
 
 	// Construtor principal
 	public Arma(String nome, String categoria, String descricao, Raridade raridade, int valorMoedas, int danoBase,
@@ -114,7 +118,11 @@ public abstract class Arma extends Item {
 	}
 
 	public int getAlcance() {
-		return alcance;
+		return Math.max(1, alcance + bonusAlcanceTemporario);
+	}
+
+	public void setBonusAlcanceTemporario(int bonusAlcanceTemporario) {
+		this.bonusAlcanceTemporario = Math.max(0, bonusAlcanceTemporario);
 	}
 
 	public int getMunicaoAtual() {
@@ -371,6 +379,7 @@ public abstract class Arma extends Item {
 	}
 
 	public int getAlcanceAtaqueAlternativoBasico() {
+		if (hasSpecialAttack) return specialAttackRange;
 		return 1;
 	}
 
@@ -459,6 +468,30 @@ public abstract class Arma extends Item {
 
 	public void setSpecialAttackSize(int specialAttackSize) {
 		this.specialAttackSize = specialAttackSize;
+	}
+
+	public int getSpecialAttackRange() {
+		return specialAttackRange;
+	}
+
+	public void setSpecialAttackRange(int specialAttackRange) {
+		this.specialAttackRange = Math.max(1, specialAttackRange);
+	}
+
+	public String getSpecialAttackEffect() {
+		return specialAttackEffect;
+	}
+
+	public void setSpecialAttackEffect(String specialAttackEffect) {
+		this.specialAttackEffect = specialAttackEffect;
+	}
+
+	public double getSpecialAttackEffectChance() {
+		return specialAttackEffectChance;
+	}
+
+	public void setSpecialAttackEffectChance(double specialAttackEffectChance) {
+		this.specialAttackEffectChance = Math.max(0.0, Math.min(1.0, specialAttackEffectChance));
 	}
 
 }
