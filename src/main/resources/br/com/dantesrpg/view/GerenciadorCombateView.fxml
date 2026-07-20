@@ -91,47 +91,47 @@
                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="30" />
                             </columnConstraints>
 
-                            <Label text="Vida:" style="-fx-text-fill: #66ff66; -fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                            <Label text="Vida:" styleClass="texto-status-vida" GridPane.rowIndex="0" GridPane.columnIndex="0" />
                             <TextField fx:id="inputVida" promptText="HP" styleClass="editor-search-field" GridPane.rowIndex="0" GridPane.columnIndex="1" />
-                            <Label fx:id="lblVidaMax" style="-fx-text-fill: #888;" text="/ ???" GridPane.rowIndex="0" GridPane.columnIndex="2" />
+                            <Label fx:id="lblVidaMax" styleClass="texto-secundario-tematico" text="/ ???" GridPane.rowIndex="0" GridPane.columnIndex="2" />
 
-                            <Label text="Escudo (N/S/D):" style="-fx-text-fill: #66bbff; -fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                            <Label text="Escudo (N/S/D):" styleClass="texto-status-escudo" GridPane.rowIndex="1" GridPane.columnIndex="0" />
                             <HBox spacing="6.0" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2">
                                 <TextField fx:id="inputEscudoNormal" promptText="Normal" styleClass="editor-search-field" HBox.hgrow="ALWAYS" />
                                 <TextField fx:id="inputEscudoSangue" promptText="Sangue" styleClass="editor-search-field" HBox.hgrow="ALWAYS" />
                                 <TextField fx:id="inputEscudoDivino" promptText="Divino" styleClass="editor-search-field" HBox.hgrow="ALWAYS" />
                             </HBox>
 
-                            <Label text="Mana:" style="-fx-text-fill: #bb88ff; -fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                            <Label text="Mana:" styleClass="texto-status-mana" GridPane.rowIndex="2" GridPane.columnIndex="0" />
                             <TextField fx:id="inputMana" promptText="MP" styleClass="editor-search-field" GridPane.rowIndex="2" GridPane.columnIndex="1" />
-                            <Label fx:id="lblManaMax" style="-fx-text-fill: #888;" text="/ ???" GridPane.rowIndex="2" GridPane.columnIndex="2" />
+                            <Label fx:id="lblManaMax" styleClass="texto-secundario-tematico" text="/ ???" GridPane.rowIndex="2" GridPane.columnIndex="2" />
 
-                            <Label text="TU:" style="-fx-text-fill: #ffcc44; -fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                            <Label text="TU:" styleClass="texto-status-tu" GridPane.rowIndex="3" GridPane.columnIndex="0" />
                             <TextField fx:id="inputTU" promptText="Turn Units" styleClass="editor-search-field" GridPane.rowIndex="3" GridPane.columnIndex="1" />
 
-                            <Label text="Acúmulos:" style="-fx-text-fill: #ff5555; -fx-font-weight: bold;" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                            <Label text="Acúmulos:" styleClass="texto-status-perigo" GridPane.rowIndex="4" GridPane.columnIndex="0" />
                             <TextField fx:id="inputAcumulos" promptText="Stacks Raça" styleClass="editor-search-field" GridPane.rowIndex="4" GridPane.columnIndex="1" />
-                            <Label fx:id="lblAcumulosMax" style="-fx-text-fill: #888;" text="/ ???" GridPane.rowIndex="4" GridPane.columnIndex="2" />
+                            <Label fx:id="lblAcumulosMax" styleClass="texto-secundario-tematico" text="/ ???" GridPane.rowIndex="4" GridPane.columnIndex="2" />
                         </GridPane>
 
                         <HBox alignment="CENTER" spacing="8.0" style="-fx-padding: 5 0 0 0;">
-                            <Button onAction="#onAplicarStatusClick" style="-fx-background-color: rgba(0, 255, 136, 0.15); -fx-text-fill: #00ff88; -fx-font-weight: bold; -fx-background-radius: 6; -fx-border-color: rgba(0, 255, 136, 0.4); -fx-border-width: 1.5; -fx-font-size: 13px; -fx-cursor: hand;" text="APLICAR STATUS" maxWidth="Infinity" HBox.hgrow="ALWAYS" prefHeight="35"/>
+                            <Button onAction="#onAplicarStatusClick" styleClass="botao-acao-positiva, botao-acao-destaque" text="APLICAR STATUS" maxWidth="Infinity" HBox.hgrow="ALWAYS" prefHeight="35"/>
                         </HBox>
 
                         <Separator style="-fx-padding: 3 0;" />
 
                         <HBox alignment="CENTER" spacing="8.0">
-                            <Button onAction="#onReviverClick" style="-fx-background-color: rgba(0, 255, 136, 0.08); -fx-text-fill: #00ff88; -fx-background-radius: 5; -fx-border-color: rgba(0, 255, 136, 0.25); -fx-border-width: 1; -fx-cursor: hand; -fx-font-size: 11px;" text="Reviver" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                            <Button onAction="#onDescansarClick" style="-fx-background-color: rgba(0, 240, 255, 0.08); -fx-text-fill: #00f0ff; -fx-background-radius: 5; -fx-border-color: rgba(0, 240, 255, 0.25); -fx-border-width: 1; -fx-cursor: hand; -fx-font-size: 11px;" text="Descansar" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                            <Button onAction="#onMatarClick" style="-fx-background-color: rgba(255, 75, 75, 0.08); -fx-text-fill: #ff4b4b; -fx-background-radius: 5; -fx-border-color: rgba(255, 75, 75, 0.25); -fx-border-width: 1; -fx-cursor: hand; -fx-font-size: 11px;" text="Kill" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                            <Button onAction="#onReviverClick" styleClass="botao-acao-positiva, botao-acao-suave" text="Reviver" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                            <Button onAction="#onDescansarClick" styleClass="botao-acao-informativa" text="Descansar" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                            <Button onAction="#onMatarClick" styleClass="botao-acao-perigo, botao-acao-suave" text="Kill" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
                         </HBox>
 
                         <Separator style="-fx-padding: 3 0;" />
                         <Label styleClass="header-label" text="Ações Rápidas (Marionete/Facção)" style="-fx-font-size: 12px; -fx-padding: 0 0 4 0;" />
                         <HBox alignment="CENTER_LEFT" spacing="8.0">
                             <TextField fx:id="inputValorRapido" promptText="Valor" styleClass="editor-search-field" prefWidth="80.0" />
-                            <Button onAction="#onCuraRapidaClick" style="-fx-background-color: rgba(0, 255, 136, 0.12); -fx-text-fill: #00ff88; -fx-background-radius: 5; -fx-border-color: rgba(0, 255, 136, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-size: 11px;" text="Cura (Ignora)" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                            <Button onAction="#onDanoRapidoClick" style="-fx-background-color: rgba(255, 75, 75, 0.12); -fx-text-fill: #ff4b4b; -fx-background-radius: 5; -fx-border-color: rgba(255, 75, 75, 0.3); -fx-border-width: 1; -fx-cursor: hand; -fx-font-size: 11px;" text="Dano Oposto" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                            <Button onAction="#onCuraRapidaClick" styleClass="botao-acao-positiva" text="Cura (Ignora)" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                            <Button onAction="#onDanoRapidoClick" styleClass="botao-acao-perigo" text="Dano Oposto" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
                         </HBox>
                      </VBox>
 

@@ -56,6 +56,7 @@ import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.util.HabilidadeFactory;
 import javafx.util.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -418,7 +419,7 @@ public class LojaController {
 
 		if (ofertasFiltradas.isEmpty()) {
 			Label lblVazio = new Label(ofertasAtuais.isEmpty() ? "Nenhum item disponível nesta loja." : "Nenhum item corresponde aos filtros.");
-			lblVazio.setStyle("-fx-text-fill: #505060; -fx-font-style: italic;");
+			lblVazio.getStyleClass().addAll("texto-secundario-tematico", "texto-italico");
 			itensVendaContainer.getChildren().add(lblVazio);
 			return;
 		}
@@ -474,10 +475,10 @@ public class LojaController {
 
 		// Nome com cor de raridade
 		Label lblNome = new Label(oferta.item.getNomeComOverclock());
-		lblNome.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: " + getCorRaridadeItem(oferta.item) + ";");
+		lblNome.getStyleClass().add("loja-item-nome");
+		ItemVisualUtils.aplicarClasseRaridade(lblNome, oferta.item);
 		if (oferta.item.isOverclockado() || oferta.item.getNome().contains("Overclock")) {
-			lblNome.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; -fx-font-size: 12px; "
-					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
+			lblNome.getStyleClass().add("loja-item-overclock-nome");
 		}
 		ItemVisualUtils.aplicarBrilhoNoInventario(lblNome, oferta.item);
 
@@ -662,7 +663,7 @@ public class LojaController {
 			Map<String, Integer> inventarioAgrupado = inv.getItensAgrupados();
 			if (inventarioAgrupado.isEmpty()) {
 				Label lblVazio = new Label("Inventário vazio.");
-				lblVazio.setStyle("-fx-text-fill: #505060; -fx-font-style: italic;");
+				lblVazio.getStyleClass().addAll("texto-secundario-tematico", "texto-italico");
 				inventarioJogadorContainer.getChildren().add(lblVazio);
 			} else {
 				for (Map.Entry<String, Integer> entry : inventarioAgrupado.entrySet()) {
@@ -697,16 +698,16 @@ public class LojaController {
 		// Nome
 		String nomeExibicao = item.isOverclockado() ? item.getNomeComOverclock() : item.getNome();
 		Label lblNome = new Label(nomeExibicao);
-		lblNome.setStyle("-fx-font-size: 12px; -fx-text-fill: " + getCorRaridadeItem(item) + ";");
+		lblNome.getStyleClass().add("loja-item-nome");
+		ItemVisualUtils.aplicarClasseRaridade(lblNome, item);
 		if (item.isOverclockado()) {
-			lblNome.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; -fx-font-size: 12px; "
-					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
+			lblNome.getStyleClass().add("loja-item-overclock-nome");
 		}
 		ItemVisualUtils.aplicarBrilhoNoInventario(lblNome, item);
 
 		// Quantidade
 		Label lblQtd = new Label("x" + quantidade);
-		lblQtd.setStyle("-fx-text-fill: #808090; -fx-font-size: 11px;");
+		lblQtd.getStyleClass().add("texto-secundario-tematico");
 
 		HBox nomeBox = new HBox(6);
 		nomeBox.setAlignment(Pos.CENTER_LEFT);
@@ -751,15 +752,14 @@ public class LojaController {
 		headerRow.setAlignment(Pos.CENTER_LEFT);
 
 		Label lblSlot = new Label("[" + slotNome + "]");
-		lblSlot.setStyle("-fx-text-fill: #606070; -fx-font-weight: bold; -fx-font-size: 10px;");
+		lblSlot.getStyleClass().addAll("loja-item-slot", "texto-secundario-tematico");
 
 		String nomeExibicao = equipamento.isOverclockado() ? equipamento.getNomeComOverclock() : equipamento.getNome();
 		Label lblNome = new Label(nomeExibicao);
+		lblNome.getStyleClass().add("loja-item-nome");
+		ItemVisualUtils.aplicarClasseRaridade(lblNome, equipamento);
 		if (equipamento.isOverclockado()) {
-			lblNome.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; -fx-font-size: 12px; "
-					+ "-fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);");
-		} else {
-			lblNome.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px;");
+			lblNome.getStyleClass().add("loja-item-overclock-nome");
 		}
 		if (slotNome.contains("Inv")) {
 			ItemVisualUtils.aplicarBrilhoNoInventario(lblNome, equipamento);
@@ -1266,11 +1266,10 @@ mainController.salvarEstadoJogadores();
 		// Nome com cor de raridade
 		String nomeExibicao = item.isOverclockado() ? item.getNomeComOverclock() : item.getNome();
 		previewNome.setText(nomeExibicao);
-		String corNome = getCorRaridadeItem(item);
-		previewNome.setStyle("-fx-text-fill: " + corNome + "; -fx-font-weight: bold; -fx-font-size: 16px; "
-				+ "-fx-border-color: transparent transparent #3a3a4a transparent; -fx-border-width: 0 0 2 0; -fx-padding: 0 0 8 0;");
+		ItemVisualUtils.aplicarClasseRaridade(previewNome, item);
+		previewNome.getStyleClass().remove("loja-item-overclock-nome");
 		if (item.isOverclockado()) {
-			previewNome.setStyle(previewNome.getStyle() + " -fx-effect: dropshadow(gaussian, cyan, 4, 0.3, 0, 0);");
+			previewNome.getStyleClass().add("loja-item-overclock-nome");
 		}
 
 		// Descrição
@@ -1345,7 +1344,7 @@ mainController.salvarEstadoJogadores();
 		// AoE Preview para a Arma
 		addPreviewSeparator();
 		Label lblAoe = new Label("Alcance / Área de Efeito (Preview)");
-		lblAoe.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold; -fx-font-size: 11px;");
+		lblAoe.getStyleClass().addAll("texto-preview-aviso", "loja-preview-subtitulo");
 		previewStatsPane.getChildren().add(lblAoe);
 		previewStatsPane.getChildren().add(criarGraficoAoE(arma.getTipoAlvo(), arma.getTamanhoArea(), arma.getAlcance(), arma.getAnguloCone()));
 
@@ -1373,12 +1372,12 @@ mainController.salvarEstadoJogadores();
 		if (item.getHabilidadesConcedidasNomes() != null && !item.getHabilidadesConcedidasNomes().isEmpty()) {
 			addPreviewSeparator();
 			Label lblHeader = new Label("Habilidades Concedidas");
-			lblHeader.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold; -fx-font-size: 12px; -fx-underline: true;");
+			lblHeader.getStyleClass().addAll("texto-preview-aviso", "loja-preview-link");
 			previewStatsPane.getChildren().add(lblHeader);
 
 			for (String nomeHab : item.getHabilidadesConcedidasNomes()) {
 				Label lblHab = new Label("\u2022 " + nomeHab);
-				lblHab.setStyle("-fx-text-fill: #f39c12; -fx-cursor: hand; -fx-font-size: 12px; -fx-underline: true;");
+				lblHab.getStyleClass().addAll("texto-preview-aviso", "loja-preview-link");
 
 				Habilidade hab = HabilidadeFactory.criarHabilidadePorNome(nomeHab);
 				if (hab != null) {
@@ -1463,8 +1462,22 @@ mainController.salvarEstadoJogadores();
 
 	private void addPreviewStat(String text, String color) {
 		Label l = new Label(text);
-		l.setStyle("-fx-text-fill: " + color + "; -fx-font-weight: bold; -fx-font-size: 12px;");
+		l.getStyleClass().addAll("loja-preview-stat", getClasseCorPreview(color));
 		previewStatsPane.getChildren().add(l);
+	}
+
+	private String getClasseCorPreview(String cor) {
+		String corNormalizada = cor == null ? "" : cor.toLowerCase(Locale.ROOT);
+		return switch (corNormalizada) {
+			case "cyan", "#00ffff", "#00e5ff" -> "texto-preview-informativo";
+			case "#2ecc71", "#66ff66" -> "texto-preview-positivo";
+			case "#e74c3c", "#ff6b6b", "#ff5555" -> "texto-preview-perigo";
+			case "#f39c12", "#f1c40f", "#ffd700", "#e67e22", "#ffcc44" -> "texto-preview-aviso";
+			case "#3498db", "#66bbff" -> "texto-preview-azul";
+			case "#9b59b6", "#bb88ff", "#ff00ff" -> "texto-preview-roxo";
+			case "#e91e9c" -> "texto-preview-rosa";
+			default -> "texto-preview-neutro";
+		};
 	}
 
 	private void addPreviewSeparator() {
@@ -1477,7 +1490,7 @@ mainController.salvarEstadoJogadores();
 	private void exibirModificadoresPreview(Map<Atributo, Integer> modAtr, Map<String, Double> modStatus) {
 		if (modAtr != null && !modAtr.isEmpty()) {
 			Label lblHeader = new Label("Atributos");
-			lblHeader.setStyle("-fx-text-fill: #707080; -fx-font-size: 10px; -fx-font-weight: bold;");
+			lblHeader.getStyleClass().addAll("texto-preview-neutro", "loja-preview-categoria");
 			previewStatsPane.getChildren().add(lblHeader);
 
 			modAtr.forEach((atr, val) -> {
@@ -1487,7 +1500,7 @@ mainController.salvarEstadoJogadores();
 		}
 		if (modStatus != null && !modStatus.isEmpty()) {
 			Label lblHeader = new Label("Modificadores");
-			lblHeader.setStyle("-fx-text-fill: #707080; -fx-font-size: 10px; -fx-font-weight: bold;");
+			lblHeader.getStyleClass().addAll("texto-preview-neutro", "loja-preview-categoria");
 			previewStatsPane.getChildren().add(lblHeader);
 
 			modStatus.forEach((key, val) -> {
@@ -1659,24 +1672,7 @@ mainController.salvarEstadoJogadores();
 	}
 
 	private String getCorRaridadeItem(Item item) {
-		if (item instanceof Arma) {
-			Raridade r = ((Arma) item).getRaridade();
-			if (r != null) return getCorRaridade(r);
-		}
-		return "#c0c0c0";
-	}
-
-	private String getCorRaridade(Raridade r) {
-		switch (r) {
-			case COMUM: return "#c0c0c0";
-			case INCOMUM: return "#2ecc71";
-			case RARO: return "#3498db";
-			case EPICO: return "#9b59b6";
-			case LENDARIO: return "#f39c12";
-			case UNICO: return "#e74c3c";
-			case MITICO: return "#ff00ff";
-			default: return "#c0c0c0";
-		}
+		return ItemVisualUtils.obterCorRaridade(item);
 	}
 
 	private String getCorAtributo(Atributo atr) {

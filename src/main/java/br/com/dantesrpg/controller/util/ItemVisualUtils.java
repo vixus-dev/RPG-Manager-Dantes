@@ -5,6 +5,7 @@ import br.com.dantesrpg.model.Arma;
 import br.com.dantesrpg.model.Armadura;
 import br.com.dantesrpg.model.Item;
 import br.com.dantesrpg.model.enums.Raridade;
+import java.util.Locale;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
@@ -23,6 +24,7 @@ public final class ItemVisualUtils {
 	private static final String EFEITO_ITEM_TIMELINE_KEY = ItemVisualUtils.class.getName() + ".efeitoItemTimeline";
 	private static final String EFEITO_ITEM_CANVAS_KEY = ItemVisualUtils.class.getName() + ".efeitoItemCanvas";
 	private static final String COR_SHINY = "#ffd700";
+	private static final String PREFIXO_CLASSE_RARIDADE = "raridade-texto-";
 	private static final double INTERVALO_ANIMACAO_MS = 33;
 	private static final double EXTRAVASAMENTO_EFEITO = 6;
 	private static final double CENTRO_DA_BORDA = 1;
@@ -65,21 +67,29 @@ public final class ItemVisualUtils {
 		}
 	}
 
+	public static void aplicarClasseRaridade(Label label, Item item) {
+		if (label == null) return;
+		label.getStyleClass().removeIf(classe -> classe.startsWith(PREFIXO_CLASSE_RARIDADE));
+		Raridade raridade = obterRaridade(item);
+		String sufixo = raridade != null ? raridade.name().toLowerCase(Locale.ROOT) : "sem-classificacao";
+		label.getStyleClass().add(PREFIXO_CLASSE_RARIDADE + sufixo);
+	}
+
 	public static void aplicarBrilhoNoInventario(Label label, Item item) {
 		if (label == null || item == null || !item.isShiny()) return;
 		pararAnimacao(label);
-		String corRaridade = obterCorRaridade(item);
-		label.setStyle("-fx-text-fill: " + corRaridade + "; -fx-font-size: 12px; "
+		aplicarClasseRaridade(label, item);
+		label.setStyle("-fx-font-size: 12px; "
 				+ "-fx-effect: dropshadow(gaussian, " + COR_SHINY + ", 7, 0.65, 0, 0);");
 	}
 
 	public static void aplicarPulsacaoEquipado(Label label, Item item) {
 		if (label == null || item == null || !item.isShiny()) return;
 		pararAnimacao(label);
+		aplicarClasseRaridade(label, item);
 
-		String corRaridade = obterCorRaridade(item);
-		String estiloRaridade = criarEstiloEquipado(corRaridade);
-		String estiloShiny = criarEstiloEquipado(COR_SHINY);
+		String estiloRaridade = criarEstiloEquipado(4, 0.35);
+		String estiloShiny = criarEstiloEquipado(8, 0.72);
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.ZERO, event -> label.setStyle(estiloRaridade)),
 				new KeyFrame(Duration.seconds(0.75), event -> label.setStyle(estiloShiny)),
@@ -275,9 +285,9 @@ public final class ItemVisualUtils {
 		return valor - Math.floor(valor);
 	}
 
-	private static String criarEstiloEquipado(String cor) {
-		return "-fx-text-fill: " + cor + "; -fx-font-weight: bold; -fx-font-size: 12px; "
-				+ "-fx-effect: dropshadow(gaussian, " + COR_SHINY + ", 5, 0.6, 0, 0);";
+	private static String criarEstiloEquipado(double raio, double intensidade) {
+		return "-fx-font-weight: bold; -fx-font-size: 12px; "
+				+ "-fx-effect: dropshadow(gaussian, " + COR_SHINY + ", " + raio + ", " + intensidade + ", 0, 0);";
 	}
 
 }

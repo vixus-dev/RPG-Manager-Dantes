@@ -859,9 +859,7 @@ public class EditorJogadorController {
             Label lblSlot = new Label(slotName);
             lblSlot.getStyleClass().add("equipment-slot-label");
             Label lblVazio = new Label("— Slot Vazio —");
-            lblVazio.setStyle(
-                "-fx-text-fill: #404050; -fx-font-style: italic; -fx-font-size: 11px;"
-            );
+            lblVazio.getStyleClass().addAll("texto-secundario-tematico", "texto-italico");
             card.getChildren().addAll(lblSlot, lblVazio);
             return card;
         }
@@ -887,7 +885,7 @@ public class EditorJogadorController {
                 .getStyleClass()
                 .add("name-" + raridade.name().toLowerCase());
         } else {
-            lblNome.setStyle("-fx-text-fill: white;");
+            lblNome.getStyleClass().add("name-sem-classificacao");
         }
         HBox.setHgrow(lblNome, Priority.ALWAYS);
 
@@ -1289,14 +1287,12 @@ public class EditorJogadorController {
         }
 
         Label lblNome = new Label(item.getNomeComOverclock());
-        String corRaridade = getCorRaridadeItem(item);
-        lblNome.setStyle(
-            "-fx-text-fill: " + corRaridade + "; -fx-font-size: 12px;"
-        );
+        lblNome.getStyleClass().add("editor-item-nome");
+        ItemVisualUtils.aplicarClasseRaridade(lblNome, item);
         HBox.setHgrow(lblNome, Priority.ALWAYS);
 
         Label lblQtd = new Label("x" + quantidade);
-        lblQtd.setStyle("-fx-text-fill: #808090; -fx-font-size: 11px;");
+        lblQtd.getStyleClass().add("texto-secundario-tematico");
 
         row.getChildren().addAll(lblIcone, lblNome, lblQtd);
 
@@ -1307,49 +1303,12 @@ public class EditorJogadorController {
 		return card;
     }
 
-    private String getCorRaridadeItem(Item item) {
-        if (item instanceof Arma) {
-            Raridade r = ((Arma) item).getRaridade();
-            if (r != null) return getCorRaridade(r);
-        }
-		if (item instanceof Armadura) {
-			Raridade r = ((Armadura) item).getRaridade();
-			if (r != null) return getCorRaridade(r);
-		}
-		if (item instanceof Amuleto) {
-			Raridade r = ((Amuleto) item).getRaridade();
-			if (r != null) return getCorRaridade(r);
-		}
-        return "#c0c0c0";
-    }
-
-    private String getCorRaridade(Raridade r) {
-        switch (r) {
-            case COMUM:
-                return "#c0c0c0";
-            case INCOMUM:
-                return "#2ecc71";
-            case RARO:
-                return "#3498db";
-            case EPICO:
-                return "#9b59b6";
-            case LENDARIO:
-                return "#f39c12";
-            case UNICO:
-                return "#e74c3c";
-            case MITICO:
-                return "#ff00ff";
-            default:
-                return "#c0c0c0";
-        }
-    }
-
     private HBox criarCelulaHabilidade(Habilidade hab) {
         HBox row = new HBox(8);
         row.setAlignment(Pos.CENTER_LEFT);
 
         Label lblNome = new Label(hab.getNome());
-        lblNome.setStyle("-fx-text-fill: white; -fx-font-size: 12px;");
+        lblNome.getStyleClass().add("editor-habilidade-nome");
         HBox.setHgrow(lblNome, Priority.ALWAYS);
 
         // Custo TU

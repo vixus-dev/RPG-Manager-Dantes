@@ -13,7 +13,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 public final class FxLoadSmokeTest {
 	private FxLoadSmokeTest() {
@@ -27,6 +31,7 @@ public final class FxLoadSmokeTest {
 			try {
 				TemaAndarService temaService = null;
 				CatalogoTemasAndar catalogo = new CatalogoTemasAndar();
+				Parent raizLoja = null;
 				String[] views = {
 						"CombatView.fxml",
 						"LojaView.fxml",
@@ -52,6 +57,9 @@ public final class FxLoadSmokeTest {
 					} else if (temaService != null) {
 						temaService.registrarRaiz(raiz);
 					}
+					if ("LojaView.fxml".equals(view)) {
+						raizLoja = raiz;
+					}
 					new Scene(raiz);
 					raiz.applyCss();
 					System.out.println("FXML_SMOKE_OK=" + view + ":" + raiz.getClass().getSimpleName());
@@ -69,6 +77,7 @@ public final class FxLoadSmokeTest {
 						temaService.aplicarTema(catalogo.buscarPorEstado(new EstadoAndarParty(andar, estado)));
 					}
 				}
+				validarContrasteTemaClaro(temaService, catalogo, raizLoja);
 				temaService.aplicarTema(catalogo.getConfiguracaoNula());
 				System.out.println("TEMAS_SMOKE_OK=12_VARIANTES_E_NULO");
 			} catch (Throwable erro) {
@@ -87,5 +96,48 @@ public final class FxLoadSmokeTest {
 		if (falha.get() != null) {
 			throw new IllegalStateException("Falha no smoke test de FXML.", falha.get());
 		}
+	}
+
+	private static void validarContrasteTemaClaro(TemaAndarService temaService,
+			CatalogoTemasAndar catalogo, Parent raizLoja) {
+		if (!(raizLoja instanceof Pane)) {
+			throw new IllegalStateException("Raiz da loja não permite validar contraste.");
+		}
+		Label amostra = new Label("Item comum");
+		amostra.getStyleClass().addAll("loja-item-nome", "raridade-texto-comum");
+		StackPane cardInventario = new StackPane(amostra);
+		cardInventario.getStyleClass().add("editor-inventory-item-card");
+		((Pane) raizLoja).getChildren().add(cardInventario);
+
+		temaService.aplicarTema(catalogo.buscarPorEstado(
+				new EstadoAndarParty(AndarCampanha.ANDAR_5, 1)));
+		raizLoja.applyCss();
+		double contraste = calcularContraste((Color) amostra.getTextFill(), Color.web("#FFF8DF"));
+		if (contraste < 4.5) {
+			throw new IllegalStateException("Contraste insuficiente no tema Praia: " + contraste);
+		}
+		double opacidadeCard = ((Color) cardInventario.getBackground().getFills().get(0).getFill()).getOpacity();
+		if (opacidadeCard > 0.72) {
+			throw new IllegalStateException("Card de inventário não ficou translúcido: " + opacidadeCard);
+		}
+		((Pane) raizLoja).getChildren().remove(cardInventario);
+		System.out.println("CONTRASTE_SMOKE_OK=" + String.format("%.2f", contraste)
+				+ "; CARD_OPACIDADE=" + String.format("%.2f", opacidadeCard));
+	}
+
+	private static double calcularContraste(Color primeira, Color segunda) {
+		double clara = Math.max(luminancia(primeira), luminancia(segunda));
+		double escura = Math.min(luminancia(primeira), luminancia(segunda));
+		return (clara + 0.05) / (escura + 0.05);
+	}
+
+	private static double luminancia(Color cor) {
+		return 0.2126 * linearizar(cor.getRed())
+				+ 0.7152 * linearizar(cor.getGreen())
+				+ 0.0722 * linearizar(cor.getBlue());
+	}
+
+	private static double linearizar(double canal) {
+		return canal <= 0.03928 ? canal / 12.92 : Math.pow((canal + 0.055) / 1.055, 2.4);
 	}
 }

@@ -2317,6 +2317,117 @@
     -fx-background-color: #2c8752;
 }
 
+/* Textos semânticos: mantêm o visual escuro atual e permitem contraste por tema. */
+.raridade-texto-comum,
+.raridade-texto-sem-classificacao {
+    -fx-text-fill: #c0c0c0;
+}
+
+.editor-habilidade-nome { -fx-text-fill: white; }
+
+.raridade-texto-incomum { -fx-text-fill: #2ecc71; }
+.raridade-texto-raro { -fx-text-fill: #3498db; }
+.raridade-texto-epico { -fx-text-fill: #9b59b6; }
+.raridade-texto-lendario { -fx-text-fill: #f1c40f; }
+.raridade-texto-unico { -fx-text-fill: #00e5ff; }
+.raridade-texto-mitico { -fx-text-fill: #e74c3c; }
+
+.editor-habilidade-nome,
+.editor-item-nome,
+.loja-item-nome {
+    -fx-font-size: 12px;
+}
+
+.loja-item-nome { -fx-font-weight: bold; }
+.loja-item-slot { -fx-font-size: 10px; -fx-font-weight: bold; }
+.texto-secundario-tematico { -fx-text-fill: #808090; -fx-font-size: 11px; }
+.texto-italico { -fx-font-style: italic; }
+.name-sem-classificacao { -fx-text-fill: white; }
+
+.loja-item-overclock-nome {
+    -fx-text-fill: cyan;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, cyan, 3, 0.2, 0, 0);
+}
+
+.texto-preview-neutro { -fx-text-fill: #cccccc; }
+.texto-preview-positivo { -fx-text-fill: #2ecc71; }
+.texto-preview-perigo { -fx-text-fill: #e74c3c; }
+.texto-preview-aviso { -fx-text-fill: #f39c12; }
+.texto-preview-informativo { -fx-text-fill: #00ffff; }
+.texto-preview-azul { -fx-text-fill: #3498db; }
+.texto-preview-roxo { -fx-text-fill: #bb88ff; }
+.texto-preview-rosa { -fx-text-fill: #e91e9c; }
+
+.loja-preview-subtitulo { -fx-font-size: 11px; -fx-font-weight: bold; }
+.loja-preview-link { -fx-font-size: 12px; -fx-font-weight: bold; -fx-underline: true; -fx-cursor: hand; }
+.loja-preview-categoria { -fx-font-size: 10px; -fx-font-weight: bold; }
+
+.texto-status-vida,
+.texto-status-escudo,
+.texto-status-mana,
+.texto-status-tu,
+.texto-status-perigo {
+    -fx-font-weight: bold;
+}
+
+.texto-status-vida { -fx-text-fill: #66ff66; }
+.texto-status-escudo { -fx-text-fill: #66bbff; }
+.texto-status-mana { -fx-text-fill: #bb88ff; }
+.texto-status-tu { -fx-text-fill: #ffcc44; }
+.texto-status-perigo { -fx-text-fill: #ff5555; }
+
+.botao-acao-positiva,
+.botao-acao-informativa,
+.botao-acao-perigo {
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-font-size: 11px;
+    -fx-cursor: hand;
+}
+
+.botao-acao-positiva {
+    -fx-background-color: rgba(0, 255, 136, 0.12);
+    -fx-text-fill: #00ff88;
+    -fx-border-color: rgba(0, 255, 136, 0.3);
+}
+
+.botao-acao-informativa {
+    -fx-background-color: rgba(0, 240, 255, 0.08);
+    -fx-text-fill: #00f0ff;
+    -fx-border-color: rgba(0, 240, 255, 0.25);
+}
+
+.botao-acao-perigo {
+    -fx-background-color: rgba(255, 75, 75, 0.12);
+    -fx-text-fill: #ff4b4b;
+    -fx-border-color: rgba(255, 75, 75, 0.3);
+}
+
+.botao-acao-positiva.botao-acao-suave {
+    -fx-background-color: rgba(0, 255, 136, 0.08);
+    -fx-border-color: rgba(0, 255, 136, 0.25);
+}
+
+.botao-acao-perigo.botao-acao-suave {
+    -fx-background-color: rgba(255, 75, 75, 0.08);
+    -fx-border-color: rgba(255, 75, 75, 0.25);
+}
+
+.botao-acao-destaque {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-width: 1.5;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.botao-acao-positiva.botao-acao-destaque {
+    -fx-background-color: rgba(0, 255, 136, 0.15);
+    -fx-border-color: rgba(0, 255, 136, 0.4);
+}
+
 /* =========================================================
    TEMAS REATIVOS POR ANDAR
    Os tokens são injetados pelo TemaAndarService somente quando
@@ -2471,8 +2582,19 @@
 .tema-andar-ativo .editor-column,
 .tema-andar-ativo .bento-card,
 .tema-andar-ativo .equipment-card,
-.tema-andar-ativo .equipment-card-empty {
+.tema-andar-ativo .equipment-card-empty,
+.tema-andar-ativo .editor-inventory-item-card {
     -fx-background-color: -andar-card;
+}
+
+.tema-andar-ativo .editor-inventory-item-card {
+    -fx-border-color: -andar-borda;
+    -fx-border-width: 1;
+}
+
+.tema-andar-ativo .editor-inventory-item-card:hover {
+    -fx-background-color: -andar-hover;
+    -fx-border-color: -andar-primaria;
 }
 
 .tema-andar-ativo .bento-card:hover,
@@ -2492,6 +2614,10 @@
 .tema-andar-ativo .editor-ranks-label,
 .tema-andar-ativo .origin-info-content {
     -fx-text-fill: -andar-texto;
+}
+
+.tema-andar-ativo .equipment-stat {
+    -fx-text-fill: -andar-texto-suave;
 }
 
 .tema-andar-ativo .character-header .label-class {
@@ -2565,6 +2691,85 @@
 .tema-andar-08-1 .character-header,
 .tema-andar-08-1 .bento-card:hover {
     -fx-border-color: linear-gradient(to right, #FF4FD8, #43E8FF, #73FF8C, #FFD84D, #9C6BFF);
+}
+
+/* Contraste reforçado para Campos Helênicos, Deserto diurno e Praia. */
+.tema-andar-claro .editor-habilidade-nome,
+.tema-andar-claro .raridade-texto-comum,
+.tema-andar-claro .raridade-texto-sem-classificacao,
+.tema-andar-claro .name-comum,
+.tema-andar-claro .name-sem-classificacao {
+    -fx-text-fill: -andar-texto;
+}
+
+.tema-andar-claro .raridade-texto-incomum,
+.tema-andar-claro .name-incomum { -fx-text-fill: #116B35; }
+.tema-andar-claro .raridade-texto-raro,
+.tema-andar-claro .name-raro { -fx-text-fill: #155FA0; }
+.tema-andar-claro .raridade-texto-epico,
+.tema-andar-claro .name-epico { -fx-text-fill: #6F3788; }
+.tema-andar-claro .raridade-texto-lendario,
+.tema-andar-claro .name-lendario { -fx-text-fill: #8A5500; }
+.tema-andar-claro .raridade-texto-unico,
+.tema-andar-claro .name-unico { -fx-text-fill: #00758A; }
+.tema-andar-claro .raridade-texto-mitico,
+.tema-andar-claro .name-mitico { -fx-text-fill: #A92D3B; }
+
+.tema-andar-claro .texto-secundario-tematico,
+.tema-andar-claro .loja-tipo-icone,
+.tema-andar-claro .equipment-slot-label {
+    -fx-text-fill: -andar-texto-suave;
+}
+
+.tema-andar-claro .equipment-stat-primary {
+    -fx-background-color: rgba(25, 42, 50, 0.86);
+    -fx-text-fill: #FFFFFF;
+}
+
+.tema-andar-claro .equipment-stat-positive { -fx-text-fill: #08783F; }
+.tema-andar-claro .equipment-stat-negative { -fx-text-fill: #B4232C; }
+
+.tema-andar-claro .loja-item-overclock-nome { -fx-text-fill: #006A78; }
+.tema-andar-claro .loja-lbl-qtd { -fx-text-fill: -andar-texto; }
+
+.tema-andar-claro .texto-preview-neutro { -fx-text-fill: -andar-texto-suave; }
+.tema-andar-claro .texto-preview-positivo { -fx-text-fill: #08783F; }
+.tema-andar-claro .texto-preview-perigo { -fx-text-fill: #B4232C; }
+.tema-andar-claro .texto-preview-aviso { -fx-text-fill: #855500; }
+.tema-andar-claro .texto-preview-informativo { -fx-text-fill: #006A78; }
+.tema-andar-claro .texto-preview-azul { -fx-text-fill: #155FA0; }
+.tema-andar-claro .texto-preview-roxo { -fx-text-fill: #6D3D91; }
+.tema-andar-claro .texto-preview-rosa { -fx-text-fill: #9D1B6B; }
+
+.tema-andar-claro .texto-status-vida { -fx-text-fill: #08783F; }
+.tema-andar-claro .texto-status-escudo { -fx-text-fill: #176A9A; }
+.tema-andar-claro .texto-status-mana { -fx-text-fill: #6D3D91; }
+.tema-andar-claro .texto-status-tu { -fx-text-fill: #855500; }
+.tema-andar-claro .texto-status-perigo { -fx-text-fill: #B4232C; }
+
+.tema-andar-claro .botao-acao-positiva {
+    -fx-background-color: rgba(8, 120, 63, 0.14);
+    -fx-text-fill: #075E33;
+    -fx-border-color: rgba(8, 120, 63, 0.55);
+}
+
+.tema-andar-claro .botao-acao-informativa {
+    -fx-background-color: rgba(0, 106, 120, 0.13);
+    -fx-text-fill: #005A67;
+    -fx-border-color: rgba(0, 106, 120, 0.5);
+}
+
+.tema-andar-claro .botao-acao-perigo {
+    -fx-background-color: rgba(180, 35, 44, 0.12);
+    -fx-text-fill: #9E1F29;
+    -fx-border-color: rgba(180, 35, 44, 0.5);
+}
+
+.tema-andar-claro .loja-btn-comprar:disabled {
+    -fx-background-color: rgba(55, 65, 70, 0.16);
+    -fx-text-fill: #4C565A;
+    -fx-border-color: rgba(55, 65, 70, 0.38);
+    -fx-opacity: 1;
 }
 
 .bestiary-field-error {
