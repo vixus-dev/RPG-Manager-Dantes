@@ -299,7 +299,7 @@
     "andarId": "ANDAR_7",
     "estadoVisual": 3,
     "nome": "7º Andar — Violência: Fim",
-    "opcaoSeletor": "7º Andar - Violência - Fim (War...)",
+    "opcaoSeletor": "7º Andar - Violência - Fim (War... — sem efeito)",
     "classeCss": "tema-andar-07-1",
     "temaClaro": false,
     "paleta": {
@@ -343,7 +343,7 @@
     "andarId": "ANDAR_8",
     "estadoVisual": 1,
     "nome": "8º Andar — Fraude",
-    "opcaoSeletor": "8.1º Andar - Fraude (sem efeitos)",
+    "opcaoSeletor": "8.1º Andar - Fraude (Dimension Rift)",
     "classeCss": "tema-andar-08-1",
     "temaClaro": false,
     "paleta": {
