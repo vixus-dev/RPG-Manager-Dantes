@@ -453,9 +453,23 @@ public class CatalogoItensService {
 					String specialType = (String) armaData.getOrDefault("SpecialAttackType", "INDIVIDUAL");
 					armaFinal.setSpecialAttackType(specialType);
 
-					Object sizeObj = armaData.get("specialAttackSize");
+					Object sizeObj = armaData.containsKey("SpecialAttackSize")
+							? armaData.get("SpecialAttackSize") : armaData.get("specialAttackSize");
 					if (sizeObj instanceof Number) {
 						armaFinal.setSpecialAttackSize(((Number) sizeObj).intValue());
+					}
+
+					Object rangeObj = armaData.get("SpecialAttackRange");
+					if (rangeObj instanceof Number) {
+						armaFinal.setSpecialAttackRange(((Number) rangeObj).intValue());
+					}
+
+					String effectName = (String) armaData.getOrDefault("SpecialAttackEffect", null);
+					if (effectName != null && !effectName.isBlank()) {
+						armaFinal.setSpecialAttackEffect(effectName);
+						Object effectChanceObj = armaData.get("SpecialAttackEffectChance");
+						armaFinal.setSpecialAttackEffectChance(effectChanceObj instanceof Number
+								? ((Number) effectChanceObj).doubleValue() : 1.0);
 					}
 
 					System.out.println("ARMORIA: Arma '" + nome + "' possui Ataque Especial: "
