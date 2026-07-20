@@ -36,7 +36,7 @@ public class DamageResolutionController {
 	private Personagem atacante;
 	private Habilidade habilidade;
 	private EstadoCombate estado;
-	private List<DamageCell> celulasDeDano = new ArrayList<>();
+	private List<DamageTargetRow> linhasDeDano = new ArrayList<>();
 
 	// --- CONTRA-ATAQUE ---
 	// Ordem de seleção dos alvos que contra-atacarão (o 1º selecionado age primeiro).
@@ -55,8 +55,8 @@ public class DamageResolutionController {
 	public void initialize() {
 		damageGrid = new GridPane();
 		damageGrid.setPadding(new Insets(10));
-		damageGrid.setHgap(15);
-		damageGrid.setVgap(15);
+		damageGrid.setHgap(10);
+		damageGrid.setVgap(8);
 		damageGrid.setStyle("-fx-background-color: #2b2b2b;");
 		damageGrid.setAlignment(Pos.TOP_CENTER);
 
@@ -78,7 +78,7 @@ public class DamageResolutionController {
 
 		lblTituloHabilidade.setText("Resolução: " + (habilidade != null ? habilidade.getNome() : "Ataque Básico"));
 		damageGrid.getChildren().clear();
-		celulasDeDano.clear();
+		linhasDeDano.clear();
 		filaContraAtaque.clear();
 		checkBoxesContraAtaque.clear();
 		this.alvoUnico = null;
@@ -92,34 +92,19 @@ public class DamageResolutionController {
 			cbContraAtaqueUnico.setManaged(!multiAlvo);
 		}
 
-		int maxColunas = 0;
-		for (List<DamageEvent> lista : mapaDanos.values()) {
-			if (lista.size() > maxColunas)
-				maxColunas = lista.size();
-		}
-
 		// --- CABEÇALHO ---
-		Label lblCorner = new Label("Alvo");
-		lblCorner.setTextFill(Color.LIGHTGRAY);
-		damageGrid.add(lblCorner, 0, 0);
-
-		for (int i = 0; i < maxColunas; i++) {
-			Label lblTick = new Label("Evento " + (i + 1));
-			lblTick.setTextFill(Color.CYAN);
-			lblTick.setFont(Font.font("System", FontWeight.BOLD, 14));
-			lblTick.setAlignment(Pos.CENTER);
-			damageGrid.add(lblTick, i + 1, 0);
-		}
+		adicionarCabecalho("Alvo", 0);
+		adicionarCabecalho("Ticks", 1);
+		adicionarCabecalho("Reação", 2);
+		adicionarCabecalho("Dado", 3);
+		adicionarCabecalho("Ticks afetados", 4);
+		adicionarCabecalho("Resumo", 5);
 
 		// --- LINHAS (ALVOS) ---
 		int row = 1;
 		for (Map.Entry<Personagem, List<DamageEvent>> entry : mapaDanos.entrySet()) {
 			Personagem alvo = entry.getKey();
 			List<DamageEvent> eventos = entry.getValue();
-
-			Label lblNome = new Label(alvo.getNome());
-			lblNome.setTextFill(Color.WHITE);
-			lblNome.setFont(Font.font("System", FontWeight.BOLD, 14));
 
 			// Multi-alvo: cada linha ganha seu próprio checkbox logo abaixo do nome.
 			// Alvo único: só guardamos a referência do alvo (o checkbox está ao lado do botão).
@@ -139,23 +124,33 @@ public class DamageResolutionController {
 				});
 				checkBoxesContraAtaque.put(alvo, cbContra);
 
-				VBox cabecalhoAlvo = new VBox(3);
-				cabecalhoAlvo.setAlignment(Pos.CENTER_LEFT);
-				cabecalhoAlvo.getChildren().addAll(lblNome, cbContra);
-				damageGrid.add(cabecalhoAlvo, 0, row);
+				// A linha compacta abaixo mantém o checkbox junto do nome do alvo.
+				DamageTargetRow linha = new DamageTargetRow(alvo, eventos, cbContra);
+				adicionarLinha(linha, row);
 			} else {
 				this.alvoUnico = alvo;
-				damageGrid.add(lblNome, 0, row);
-			}
-
-			for (int col = 0; col < eventos.size(); col++) {
-				DamageEvent evento = eventos.get(col);
-				DamageCell cell = new DamageCell(alvo, evento, col);
-				damageGrid.add(cell.getNode(), col + 1, row);
-				celulasDeDano.add(cell);
+				DamageTargetRow linha = new DamageTargetRow(alvo, eventos, null);
+				adicionarLinha(linha, row);
 			}
 			row++;
 		}
+	}
+
+	private void adicionarCabecalho(String texto, int coluna) {
+		Label label = new Label(texto);
+		label.setTextFill(Color.CYAN);
+		label.setFont(Font.font("System", FontWeight.BOLD, 12));
+		damageGrid.add(label, coluna, 0);
+	}
+
+	private void adicionarLinha(DamageTargetRow linha, int row) {
+		linhasDeDano.add(linha);
+		damageGrid.add(linha.getAlvoNode(), 0, row);
+		damageGrid.add(linha.getQuantidadeTicksNode(), 1, row);
+		damageGrid.add(linha.getReacaoNode(), 2, row);
+		damageGrid.add(linha.getDadoNode(), 3, row);
+		damageGrid.add(linha.getSliderNode(), 4, row);
+		damageGrid.add(linha.getResumoNode(), 5, row);
 	}
 
 	/**
@@ -185,8 +180,8 @@ public class DamageResolutionController {
 
 		// Aplica os danos
 		double danoTotalCausado = 0;
-		for (DamageCell cell : celulasDeDano) {
-			danoTotalCausado += cell.aplicarDanoFinal();
+		for (DamageTargetRow linha : linhasDeDano) {
+			danoTotalCausado += linha.aplicarDanos();
 		}
 
 		// Hook: Bash Strike — retorno de dano ao atacante
@@ -218,202 +213,207 @@ public class DamageResolutionController {
 		btnConfirmar.getScene().getWindow().hide();
 	}
 
-	// --- CÉLULA ---
-	private class DamageCell {
-		private VBox container;
-		private Label lblTituloTick;
-		private Label lblDanoOriginal;
-		private ComboBox<String> cmbReacao;
-		private TextField txtInputDado;
-		private Label lblResultado;
-		private Label lblInfoExtra;
+	// --- LINHA COMPACTA POR ALVO ---
+	private class DamageTargetRow {
+		private final Personagem alvo;
+		private final List<DamageEvent> eventos;
+		private final ComboBox<String> cmbReacao = new ComboBox<>();
+		private final TextField txtInputDado = new TextField();
+		private final Slider sliderTicksAfetados = new Slider();
+		private final Label lblQuantidadeTicks = new Label();
+		private final Label lblQuantidadeTotal = new Label();
+		private final Label lblResumo = new Label();
+		private final Label lblInfoReacao = new Label();
+		private final VBox alvoNode = new VBox(2);
+		private final VBox sliderNode = new VBox(2);
 
-		private Personagem alvo;
-		private DamageEvent evento;
-
-		public DamageCell(Personagem alvo, DamageEvent evento, int tickIndex) {
+		DamageTargetRow(Personagem alvo, List<DamageEvent> eventos, CheckBox checkboxContraAtaque) {
 			this.alvo = alvo;
-			this.evento = evento;
-			createUI();
+			this.eventos = eventos != null ? eventos : List.of();
+			configurarInterface(checkboxContraAtaque);
 		}
 
-		private void createUI() {
-			container = new VBox(5);
-			container.setPadding(new Insets(8));
-			String bordaColor = evento.isCritico() ? "red" : "#555";
-			String borderStyle = evento.isCritico() ? "-fx-border-width: 2;" : "";
-			container.setStyle("-fx-border-color: " + bordaColor + "; " + borderStyle
-					+ " -fx-border-radius: 5; -fx-background-color: #333; -fx-background-radius: 5;");
-			container.setPrefWidth(180);
-			container.setAlignment(Pos.CENTER_LEFT);
+		private void configurarInterface(CheckBox checkboxContraAtaque) {
+			Label lblNome = new Label(alvo.getNome());
+			lblNome.setTextFill(Color.WHITE);
+			lblNome.setFont(Font.font("System", FontWeight.BOLD, 13));
+			alvoNode.setAlignment(Pos.CENTER_LEFT);
+			alvoNode.getChildren().add(lblNome);
+			if (checkboxContraAtaque != null) {
+				alvoNode.getChildren().add(checkboxContraAtaque);
+			}
 
-			lblTituloTick = new Label(evento.getLabel());
-			lblTituloTick.setStyle("-fx-font-size: 10px; -fx-text-fill: lightgrey;");
+			lblQuantidadeTotal.setText(eventos.size() + " ataques");
+			lblQuantidadeTotal.setTextFill(Color.LIGHTGRAY);
+			lblQuantidadeTotal.setFont(Font.font("System", 11));
 
-			lblDanoOriginal = new Label("Dano: " + Math.round(evento.getValorDano()));
-			lblDanoOriginal.setTextFill(Color.web("#ff6666"));
-			lblDanoOriginal.setFont(Font.font("System", FontWeight.BOLD, 12));
-
-			cmbReacao = new ComboBox<>();
 			cmbReacao.getItems().addAll("Nada", "Esquiva", "Bloqueio");
 			cmbReacao.setValue("Nada");
-			cmbReacao.setPrefWidth(160);
+			cmbReacao.setPrefWidth(110);
 
-			txtInputDado = new TextField();
-			txtInputDado.setPromptText("Valor do Dado");
+			txtInputDado.setPromptText("Dado");
+			txtInputDado.setPrefWidth(70);
 			txtInputDado.setVisible(false);
 			txtInputDado.setManaged(false);
 
-			lblInfoExtra = new Label("");
-			lblInfoExtra.setTextFill(Color.YELLOW);
-			lblInfoExtra.setFont(Font.font("System", 10));
+			sliderTicksAfetados.setMin(0);
+			sliderTicksAfetados.setMax(eventos.size());
+			sliderTicksAfetados.setValue(eventos.size());
+			sliderTicksAfetados.setMajorTickUnit(Math.max(1, eventos.size()));
+			sliderTicksAfetados.setMinorTickCount(Math.max(0, Math.min(4, eventos.size() - 1)));
+			sliderTicksAfetados.setSnapToTicks(true);
+			sliderTicksAfetados.setShowTickMarks(false);
+			sliderTicksAfetados.setPrefWidth(165);
+			sliderTicksAfetados.valueProperty().addListener((obs, antigo, novo) -> atualizarResumo());
+			lblQuantidadeTicks.setText(eventos.size() + "/" + eventos.size());
+			lblQuantidadeTicks.setTextFill(Color.CYAN);
+			lblQuantidadeTicks.setFont(Font.font("System", FontWeight.BOLD, 11));
+			sliderNode.setAlignment(Pos.CENTER_LEFT);
+			sliderNode.getChildren().addAll(sliderTicksAfetados, lblQuantidadeTicks);
 
-			lblResultado = new Label("Final: " + Math.round(evento.getValorDano()));
-			lblResultado.setTextFill(Color.WHITE);
-
+			lblInfoReacao.setTextFill(Color.YELLOW);
+			lblInfoReacao.setFont(Font.font("System", 10));
+			lblResumo.setTextFill(Color.WHITE);
+			lblResumo.setFont(Font.font("System", 11));
 			cmbReacao.setOnAction(e -> atualizarEstadoInterface());
-			txtInputDado.textProperty().addListener((obs, oldVal, newVal) -> calcularResultadoTempoReal(newVal));
-
-			container.getChildren().addAll(lblTituloTick, lblDanoOriginal, cmbReacao, txtInputDado, lblInfoExtra,
-					lblResultado);
+			txtInputDado.textProperty().addListener((obs, antigo, novo) -> atualizarResumo());
+			atualizarResumo();
 		}
 
-		public Node getNode() {
-			return container;
+		Node getAlvoNode() {
+			return alvoNode;
+		}
+
+		Node getQuantidadeTicksNode() {
+			return lblQuantidadeTotal;
+		}
+
+		Node getReacaoNode() {
+			return cmbReacao;
+		}
+
+		Node getDadoNode() {
+			return txtInputDado;
+		}
+
+		Node getSliderNode() {
+			return sliderNode;
+		}
+
+		Node getResumoNode() {
+			VBox resumo = new VBox(2, lblInfoReacao, lblResumo);
+			resumo.setPrefWidth(205);
+			return resumo;
 		}
 
 		private void atualizarEstadoInterface() {
 			String selecao = cmbReacao.getValue();
 			txtInputDado.clear();
-			lblInfoExtra.setText("");
+			txtInputDado.setVisible(!"Nada".equals(selecao));
+			txtInputDado.setManaged(!"Nada".equals(selecao));
 
-			if (selecao.equals("Nada")) {
-				txtInputDado.setVisible(false);
-				txtInputDado.setManaged(false);
-				lblResultado.setText("Final: " + Math.round(evento.getValorDano()));
-				lblResultado.setTextFill(Color.WHITE);
+			if ("Esquiva".equals(selecao)) {
+				int grau = atacante != null ? atacante.getGrau() : 0;
+				lblInfoReacao.setText("Dif: " + (2 + grau * 2) + " - afeta os primeiros ticks");
+			} else if ("Bloqueio".equals(selecao)) {
+				lblInfoReacao.setText("Dado x 4,5% - afeta os primeiros ticks");
 			} else {
-				txtInputDado.setVisible(true);
-				txtInputDado.setManaged(true);
-
-				if (selecao.equals("Esquiva")) {
-					int grau = (atacante != null) ? atacante.getGrau() : 0;
-					int dificuldade = 2 + (grau * 2);
-					lblInfoExtra.setText("Dif: " + dificuldade + " (Grau " + grau + ")");
-				} else if (selecao.equals("Bloqueio")) {
-					double bonus = 0;
-					if (alvo != null && alvo.getEfeitosAtivos().containsKey("Manto Divino")) {
-						br.com.dantesrpg.model.Efeito manto = alvo.getEfeitosAtivos().get("Manto Divino");
-						if (manto.getModificadores() != null) {
-							bonus = manto.getModificadores().getOrDefault("BONUS_BLOQUEIO", 2.0);
-						} else {
-							bonus = 2.0;
-						}
-					}
-					if (bonus > 0) {
-						lblInfoExtra.setText(String.format("Dado + %.0f (Manto Divino) x 4.5%% = Redução", bonus));
-					} else {
-						lblInfoExtra.setText("Dado x 4.5% = Redução");
-					}
-				}
+				lblInfoReacao.setText("");
 			}
+			atualizarResumo();
 		}
 
-		private void calcularResultadoTempoReal(String input) {
-			if (input == null || input.isEmpty() || !input.matches("\\d+")) {
-				lblResultado.setText("...");
-				return;
+		private void atualizarResumo() {
+			int quantidadeAfetada = obterQuantidadeTicksAfetados();
+			lblQuantidadeTicks.setText(quantidadeAfetada + "/" + eventos.size());
+			double danoPrevisto = calcularDanoPrevisto(quantidadeAfetada);
+			lblResumo.setText("Dano previsto: " + Math.round(danoPrevisto));
+			lblResumo.setTextFill("Nada".equals(cmbReacao.getValue()) ? Color.WHITE : Color.ORANGE);
+		}
+
+		private int obterQuantidadeTicksAfetados() {
+			return (int) Math.round(sliderTicksAfetados.getValue());
+		}
+
+		private int obterValorDado() {
+			String texto = txtInputDado.getText();
+			if (texto == null || !texto.matches("\\d+")) {
+				return 0;
 			}
-			int valorInput = Integer.parseInt(input);
+			return Integer.parseInt(texto);
+		}
+
+		private double obterBonusMantoDivino() {
+			if (alvo == null || !alvo.getEfeitosAtivos().containsKey("Manto Divino")) {
+				return 0;
+			}
+			br.com.dantesrpg.model.Efeito manto = alvo.getEfeitosAtivos().get("Manto Divino");
+			return manto.getModificadores() != null
+					? manto.getModificadores().getOrDefault("BONUS_BLOQUEIO", 2.0)
+					: 2.0;
+		}
+
+		private double calcularDanoPrevisto(int quantidadeAfetada) {
 			String selecao = cmbReacao.getValue();
-
-			if (selecao.equals("Esquiva")) {
-				int grau = (atacante != null) ? atacante.getGrau() : 0;
-				int dificuldade = 2 + (grau * 2);
-
-				if (valorInput >= dificuldade) {
-					lblResultado.setText("SUCESSO (0 Dano)");
-					lblResultado.setTextFill(Color.GREEN);
-				} else {
-					lblResultado.setText("FALHA (" + Math.round(evento.getValorDano()) + ")");
-					lblResultado.setTextFill(Color.RED);
+			int valorDado = obterValorDado();
+			int dificuldade = 2 + ((atacante != null ? atacante.getGrau() : 0) * 2);
+			double danoTotal = 0;
+			for (int i = 0; i < eventos.size(); i++) {
+				double dano = eventos.get(i).getValorDano();
+				if (i < quantidadeAfetada && "Esquiva".equals(selecao) && valorDado >= dificuldade) {
+					dano = 0;
+				} else if (i < quantidadeAfetada && "Bloqueio".equals(selecao)) {
+					double bonus = i == 0 ? obterBonusMantoDivino() : 0;
+					dano *= 1.0 - Math.min(1.0, (valorDado + bonus) * 0.045);
 				}
-
-			} else if (selecao.equals("Bloqueio")) {
-				double bonus = 0;
-				if (alvo != null && alvo.getEfeitosAtivos().containsKey("Manto Divino")) {
-					br.com.dantesrpg.model.Efeito manto = alvo.getEfeitosAtivos().get("Manto Divino");
-					if (manto.getModificadores() != null) {
-						bonus = manto.getModificadores().getOrDefault("BONUS_BLOQUEIO", 2.0);
-					} else {
-						bonus = 2.0;
-					}
-				}
-				double valorFinal = valorInput + bonus;
-				double percentualReducao = valorFinal * 0.045;
-				if (percentualReducao > 1.0)
-					percentualReducao = 1.0;
-				double danoReduzido = evento.getValorDano() * (1.0 - percentualReducao);
-				String pctTexto = String.format("%.1f%%", percentualReducao * 100);
-				if (bonus > 0) {
-					lblResultado.setText(String.format("Reduz %s (Dado+%.0f) -> %d", pctTexto, bonus, Math.round(danoReduzido)));
-				} else {
-					lblResultado.setText("Reduz " + pctTexto + " -> " + Math.round(danoReduzido));
-				}
-				lblResultado.setTextFill(Color.ORANGE);
+				danoTotal += dano;
 			}
+			return danoTotal;
 		}
 
-		public double aplicarDanoFinal() {
+		double aplicarDanos() {
+			int quantidadeAfetada = obterQuantidadeTicksAfetados();
+			double danoTotal = 0;
+			for (int i = 0; i < eventos.size(); i++) {
+				danoTotal += aplicarDanoFinal(eventos.get(i), i < quantidadeAfetada);
+			}
+			return danoTotal;
+		}
+
+		private double aplicarDanoFinal(DamageEvent evento, boolean aplicarReacao) {
 			double danoFinal = evento.getValorDano();
 			String selecao = cmbReacao.getValue();
+			int valorInput = aplicarReacao && !"Nada".equals(selecao) ? obterValorDado() : 0;
 
-			try {
-				int valorInput = 0;
-				if (txtInputDado.isVisible() && !txtInputDado.getText().isEmpty()) {
-					valorInput = Integer.parseInt(txtInputDado.getText());
+			if (aplicarReacao && "Esquiva".equals(selecao)) {
+				int grau = atacante != null ? atacante.getGrau() : 0;
+				if (valorInput >= 2 + grau * 2) {
+					danoFinal = 0;
+					System.out.println(">>> " + alvo.getNome() + " ESQUIVOU do tick " + evento.getLabel() + "!");
 				}
-
-				if (selecao.equals("Esquiva")) {
-					int grau = (atacante != null) ? atacante.getGrau() : 0;
-					if (valorInput >= (2 + (grau * 2))) {
-						danoFinal = 0;
-						System.out.println(">>> " + alvo.getNome() + " ESQUIVOU!");
-					}
-				} else if (selecao.equals("Bloqueio")) {
-					double bonus = 0;
-					if (alvo != null && alvo.getEfeitosAtivos().containsKey("Manto Divino")) {
-						br.com.dantesrpg.model.Efeito manto = alvo.getEfeitosAtivos().get("Manto Divino");
-						if (manto.getModificadores() != null) {
-							bonus = manto.getModificadores().getOrDefault("BONUS_BLOQUEIO", 2.0);
-						} else {
-							bonus = 2.0;
-						}
-						alvo.removerEfeito("Manto Divino");
-						alvo.recalcularAtributosEstatisticas();
-					}
-					double percentual = Math.min(1.0, (valorInput + bonus) * 0.045);
-					danoFinal = danoFinal * (1.0 - percentual);
-					System.out.println(">>> " + alvo.getNome() + " BLOQUEOU (Manto Divino Bônus: +" + bonus + "). Dano: " + danoFinal);
+			} else if (aplicarReacao && "Bloqueio".equals(selecao)) {
+				double bonus = obterBonusMantoDivino();
+				if (bonus > 0) {
+					alvo.removerEfeito("Manto Divino");
+					alvo.recalcularAtributosEstatisticas();
 				}
-			} catch (Exception e) {
+				double percentual = Math.min(1.0, (valorInput + bonus) * 0.045);
+				danoFinal *= 1.0 - percentual;
+				System.out.println(">>> " + alvo.getNome() + " BLOQUEOU " + evento.getLabel() + ". Dano: " + danoFinal);
 			}
 
-			// SE HOUVER DANO, CHAMAMOS O COMBAT MANAGER PARA APLICAR (COM LOGICA DE MORTE, ETC)
 			if (mainController != null) {
-				// Aplica o dano no HP (Só se for > 0 para não poluir log)
 				if (danoFinal > 0) {
-					TipoAcao tipo = (habilidade != null) ? TipoAcao.HABILIDADE : TipoAcao.ATAQUE_BASICO;
-					if (evento.getLabel().contains("Eco"))
+					TipoAcao tipo = habilidade != null ? TipoAcao.HABILIDADE : TipoAcao.ATAQUE_BASICO;
+					if (evento.getLabel().contains("Eco")) {
 						tipo = TipoAcao.ECO;
-
+					}
 					mainController.getCombatManager().aplicarDanoAoAlvoResolvido(atacante, alvo, danoFinal, false,
 							tipo, estado, 0);
 					evento.aplicarEfeitos(danoFinal);
 				} else {
 					System.out.println(">>> Dano anulado (Esquiva/Bloqueio total). Efeitos on-hit cancelados.");
 				}
-
 			}
 			return danoFinal;
 		}

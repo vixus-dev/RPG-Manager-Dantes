@@ -122,7 +122,10 @@ public class JanelasCombateCoordinator {
 			Stage stage = new Stage();
 			stage.setTitle("Resolução de Dano");
 			stage.setScene(new Scene(root));
-			stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight() * 0.80);
+			stage.setWidth(900);
+			stage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight() * 0.55, 520));
+			stage.setMinWidth(760);
+			stage.setMinHeight(280);
 			stage.setOnHidden(e -> {
 				CombatManager combatManager = combatManagerSupplier.get();
 				if (combatManager != null) {
