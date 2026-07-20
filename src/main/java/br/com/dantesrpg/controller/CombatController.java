@@ -1213,6 +1213,22 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 		notificarGerenciadorCombate();
 	}
 
+	/** Exibe ao mestre a habilidade que a Intoxicação por Coral bloqueou. */
+	public void mostrarAlertaHabilidadeBloqueadaPorCoral(Personagem alvo, Habilidade habilidade) {
+		Runnable exibir = () -> {
+			javafx.scene.control.Alert alerta = new javafx.scene.control.Alert(
+					javafx.scene.control.Alert.AlertType.WARNING);
+			alerta.setTitle("Intoxicação por Coral");
+			alerta.setHeaderText(alvo.getNome() + " foi enraizado pelo coral.");
+			alerta.setContentText(habilidade == null
+					? "O alvo não possui uma habilidade ativa que possa ser bloqueada."
+					: "Habilidade bloqueada por 300 TU: " + habilidade.getNome());
+			alerta.show();
+		};
+		if (javafx.application.Platform.isFxApplicationThread()) exibir.run();
+		else javafx.application.Platform.runLater(exibir);
+	}
+
 	public void setEfeitoAndar(String efeito, boolean ativo) {
 		String efeitoNormalizado = efeito == null || efeito.isBlank() ? "Nenhum" : efeito;
 		boolean efeitoMudou = !efeitoNormalizado.equals(this.efeitoAndarAtual);
@@ -1389,6 +1405,7 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				FXMLLoader loader = new FXMLLoader(
 						getClass().getResource("/br/com/dantesrpg/view/CriarView.fxml"));
 				criarViewNode = loader.load();
+				aplicarTemaEmRaiz(criarViewNode);
 				criarController = loader.getController();
 			}
 			criarController.inicializar(this);
