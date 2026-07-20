@@ -39,6 +39,7 @@
                     <ComboBox fx:id="comboFiltroRaca" maxWidth="Infinity" promptText="Todas as Raças" HBox.hgrow="ALWAYS" />
                     <ComboBox fx:id="comboFiltroGrau" prefWidth="96.0" promptText="Grau" />
                 </HBox>
+                <ComboBox fx:id="comboFiltroAndar" maxWidth="Infinity" promptText="Todos os Andares" />
 
                 <ListView fx:id="monstroListView" styleClass="bestiary-list" VBox.vgrow="ALWAYS" />
 
@@ -78,34 +79,37 @@
                             <Label text="Grau" GridPane.columnIndex="2" GridPane.rowIndex="0" />
                             <TextField fx:id="inputGrau" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
-                            <Label text="Vida Máx." GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                            <TextField fx:id="inputVida" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                            <Label text="Mana Máx." GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                            <TextField fx:id="inputMana" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                            <Label text="Andar de Origem" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <TextField fx:id="inputAndar" promptText="Ex.: 1º Andar" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
 
-                            <Label text="Destreza" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                            <TextField fx:id="inputAgi" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                            <Label text="Resistência (%)" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                            <TextField fx:id="inputDef" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                            <Label text="Vida Máx." GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                            <TextField fx:id="inputVida" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                            <Label text="Mana Máx." GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                            <TextField fx:id="inputMana" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
-                            <Label text="XP" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                            <TextField fx:id="inputXP" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                            <Label text="Segmentos" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                            <TextField fx:id="inputSegmentos" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                            <Label text="Destreza" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                            <TextField fx:id="inputAgi" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                            <Label text="Resistência (%)" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                            <TextField fx:id="inputDef" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 
-                            <Label text="Peso" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                            <ComboBox fx:id="comboPeso" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                            <Label text="Tamanho" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                            <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                            <Label text="XP" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                            <TextField fx:id="inputXP" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                            <Label text="Segmentos" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                            <TextField fx:id="inputSegmentos" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+
+                            <Label text="Peso" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                            <ComboBox fx:id="comboPeso" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                            <Label text="Tamanho" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                            <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="3" GridPane.rowIndex="5">
                                 <TextField fx:id="inputTamanhoX" promptText="X" />
                                 <Label text="x" />
                                 <TextField fx:id="inputTamanhoY" promptText="Y" />
                             </HBox>
 
-                            <Label text="Arma" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                            <ComboBox fx:id="comboArma" editable="true" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5" />
+                            <Label text="Arma" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                            <ComboBox fx:id="comboArma" editable="true" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
 
-                            <CheckBox fx:id="chkPoderoso" text="Poderoso" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
+                            <CheckBox fx:id="chkPoderoso" text="Poderoso" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
                         </GridPane>
                     </VBox>
 

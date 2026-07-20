@@ -342,6 +342,15 @@
     -fx-background-repeat: no-repeat;
 }
 
+.map-agua-profunda {
+    -fx-background-color: #104896;
+    -fx-background-image: url('../textures/agua.png');
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-blend-mode: multiply;
+}
+
 .tempestade-agua-overlay {
     -fx-background-color: rgba(35, 125, 205, 0.34);
     -fx-background-image: url('../textures/agua.png');
@@ -2767,6 +2776,232 @@
     -fx-background-color: rgba(0, 106, 120, 0.13);
     -fx-text-fill: #005A67;
     -fx-border-color: rgba(0, 106, 120, 0.5);
+}
+
+/* HUD detalhada: usa os mesmos tokens do andar, inclusive nas janelas separadas. */
+.tema-andar-ativo.turn-hud-root {
+    -fx-background-color: -andar-canvas;
+    -fx-border-color: -andar-borda;
+    -fx-border-width: 1;
+    -fx-text-fill: -andar-texto;
+}
+
+.tema-andar-ativo .turn-hud-column {
+    -fx-padding: 15;
+    -fx-background-color: -andar-painel;
+}
+
+.tema-andar-ativo .turn-hud-sidebar {
+    -fx-border-color: transparent -andar-borda transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.tema-andar-ativo .turn-hud-details-column {
+    -fx-background-color: -andar-card;
+    -fx-border-color: transparent transparent transparent -andar-borda;
+    -fx-border-width: 0 0 0 1;
+}
+
+.tema-andar-ativo.turn-hud-root .label {
+    -fx-text-fill: -andar-texto;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-title-primary {
+    -fx-text-fill: -andar-primaria;
+    -fx-font-size: 18px;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-text-muted {
+    -fx-text-fill: -andar-texto-suave;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-section-label {
+    -fx-text-fill: -andar-texto;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-small-label {
+    -fx-font-size: 11px;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-description {
+    -fx-font-style: italic;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-value-tu {
+    -fx-text-fill: -andar-acento;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.tema-andar-claro.turn-hud-root .hud-value-tu {
+    -fx-text-fill: #855500;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-value-mana {
+    -fx-text-fill: -andar-secundaria;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-value-positive {
+    -fx-text-fill: #08783F;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.tema-andar-escuro.turn-hud-root .hud-value-positive {
+    -fx-text-fill: #73FF8C;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-cost-value {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.turn-hud-root .button,
+.tema-andar-ativo.turn-hud-root .toggle-button {
+    -fx-background-color: -andar-superficie-elevada;
+    -fx-text-fill: -andar-texto;
+    -fx-border-color: -andar-borda;
+    -fx-border-width: 1;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.turn-hud-root .button:hover,
+.tema-andar-ativo.turn-hud-root .toggle-button:hover {
+    -fx-background-color: -andar-hover;
+    -fx-border-color: -andar-primaria;
+}
+
+.tema-andar-ativo.turn-hud-root .button:pressed,
+.tema-andar-ativo.turn-hud-root .toggle-button:selected {
+    -fx-background-color: -andar-pressionado;
+    -fx-border-color: -andar-acento;
+}
+
+.tema-andar-ativo.turn-hud-root .button:disabled {
+    -fx-background-color: -andar-campo;
+    -fx-text-fill: -andar-texto-suave;
+    -fx-border-color: -andar-borda;
+    -fx-opacity: 0.68;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-tab-active,
+.tema-andar-ativo.turn-hud-root .hud-confirm-button {
+    -fx-background-color: -andar-primaria;
+    -fx-text-fill: -andar-texto-sobre-primaria;
+    -fx-border-color: -andar-acento;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-tab-active:hover,
+.tema-andar-ativo.turn-hud-root .hud-confirm-button:hover {
+    -fx-background-color: -andar-pressionado;
+    -fx-text-fill: -andar-texto;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-tactical-primary {
+    -fx-border-color: -andar-primaria;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-tactical-confirm {
+    -fx-border-color: #08783F;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-action-button {
+    -fx-pref-height: 60;
+    -fx-wrap-text: true;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-action-basic {
+    -fx-background-color: -andar-pressionado;
+    -fx-border-color: -andar-primaria;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-action-ultimate {
+    -fx-background-color: -andar-card;
+    -fx-border-color: -andar-acento;
+    -fx-border-width: 2;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-action-overclock {
+    -fx-background-color: -andar-hover;
+    -fx-border-color: -andar-secundaria;
+    -fx-effect: dropshadow(gaussian, -andar-secundaria, 5, 0.25, 0, 0);
+}
+
+.tema-andar-ativo.turn-hud-root .hud-action-blocked {
+    -fx-background-color: rgba(180, 44, 50, 0.18);
+    -fx-text-fill: #8E2028;
+    -fx-border-color: #B4232C;
+    -fx-border-width: 2;
+}
+
+.tema-andar-ativo.tema-andar-escuro.turn-hud-root .hud-action-blocked {
+    -fx-text-fill: #FFD5CB;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-info-panel,
+.tema-andar-ativo.turn-hud-root .hud-estimate-panel,
+.tema-andar-ativo.turn-hud-root .hud-dice-panel,
+.tema-andar-ativo.turn-hud-root .hud-attributes-pane {
+    -fx-background-color: -andar-campo;
+    -fx-border-color: -andar-borda;
+    -fx-border-width: 1;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 10;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-estimate-panel {
+    -fx-padding: 5;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-dice-panel {
+    -fx-alignment: center;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-dice-result {
+    -fx-text-fill: -andar-primaria;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-crit-result {
+    -fx-text-fill: -andar-texto-suave;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.turn-hud-root .hud-attributes-scroll,
+.tema-andar-ativo.turn-hud-root .hud-attributes-scroll > .viewport {
+    -fx-background-color: -andar-campo;
+    -fx-background: -andar-campo;
+    -fx-border-color: -andar-borda;
+}
+
+/* Campos e rótulos do editor/criador não podem depender da cor do fundo ilustrado. */
+.tema-andar-ativo .editor-field-label {
+    -fx-text-fill: -andar-texto-suave;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo.tema-andar-claro .editor-field-label {
+    -fx-text-fill: #3D585D;
+}
+
+.tema-andar-ativo .editor-section-accent {
+    -fx-text-fill: -andar-primaria;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tema-andar-ativo .editor-inventory-item-card .label {
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.36), 1, 0, 0, 0);
+}
+
+.tema-andar-ativo.tema-andar-claro .editor-inventory-item-card .label {
+    -fx-effect: none;
 }
 
 .tema-andar-claro .botao-acao-perigo {

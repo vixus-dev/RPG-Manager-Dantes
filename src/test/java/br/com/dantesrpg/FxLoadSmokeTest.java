@@ -36,6 +36,7 @@ public final class FxLoadSmokeTest {
 						"CombatView.fxml",
 						"LojaView.fxml",
 						"EditorJogadorView.fxml",
+						"CriarView.fxml",
 						"GerenciadorCombateView.fxml",
 						"DetailedTurnHUD.fxml",
 						"DamageResolutionView.fxml",
