@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.controller.MapController;
@@ -61,11 +65,28 @@ public class EfeitosAndarService {
 	private static final int INTERVALO_PESO_TU = 50;
 	private static final int INTERVALO_CIDADE_TU = 100;
 	private static final int INTERVALO_HOLOFOTES_TU = 125;
+	private static final int DANO_EXPLOSAO_WAR = 50;
+	private static final int INVOCACOES_POR_EXPLOSAO_WAR = 3;
+	private static final int INTERVALO_INACURACIA_FERVENTE_TU = 200;
 	private static final int DISTANCIA_VENTOS_TILES = 5;
 	private static final double DANO_COLISAO_POR_TILE = 5.0;
 	private static final int DURACAO_MALDICAO_CORAL_TU = 300;
 	private static final String EFEITO_MALDICAO_CORAL = "Maldição de Coral";
 	private static final String EFEITO_PESO_DOS_PECADOS = "Peso dos Pecados";
+	private static final Pattern ANDAR_NUMERICO = Pattern.compile("^(\\d+(?:[.,]\\d+)?)$");
+	private static final List<TipoEfeitoAndar> EFEITOS_SORTEAVEIS_INACURACIA = List.of(
+			TipoEfeitoAndar.VENTOS_INFERNAIS,
+			TipoEfeitoAndar.OLHO_DA_GULA,
+			TipoEfeitoAndar.GANANCIA_DIA,
+			TipoEfeitoAndar.GANANCIA_NOITE,
+			TipoEfeitoAndar.GANANCIA_ECLIPSE,
+			TipoEfeitoAndar.INTOXICACAO_CORAL,
+			TipoEfeitoAndar.RADAR_PRESENCA,
+			TipoEfeitoAndar.TEMPESTADE_INFINITA,
+			TipoEfeitoAndar.PESO_DOS_PECADOS,
+			TipoEfeitoAndar.CIDADE_DE_DIZ,
+			TipoEfeitoAndar.HOLOFOTES,
+			TipoEfeitoAndar.WAR);
 
 	private final CombatController controller;
 	private final Supplier<EstadoCombate> estadoSupplier;
@@ -73,9 +94,11 @@ public class EfeitosAndarService {
 	private final Supplier<EstadoAndarParty> andarSupplier;
 	private final BooleanSupplier efeitoAtivoSupplier;
 	private final Map<Personagem, EscudoCidade> escudosCidade = new IdentityHashMap<>();
+	private final List<MapController.PontoMapa> epicentrosWarSelecionados = new ArrayList<>();
 
 	private int tuDecorridoNoEfeito;
 	private boolean combateEmAndamento;
+	private boolean selecionandoExplosoesWar;
 
 	public EfeitosAndarService(CombatController controller, Supplier<EstadoCombate> estadoSupplier,
 			Supplier<CombatManager> combatManagerSupplier, Supplier<EstadoAndarParty> andarSupplier,
@@ -97,6 +120,10 @@ public class EfeitosAndarService {
 
 		tuDecorridoNoEfeito++;
 		TipoEfeitoAndar tipo = resolverTipoAtual();
+		executarEfeito(tipo, estado, manager);
+	}
+
+	private void executarEfeito(TipoEfeitoAndar tipo, EstadoCombate estado, CombatManager manager) {
 		switch (tipo) {
 		case VENTOS_INFERNAIS -> executarSeChegou(INTERVALO_VENTOS_TU,
 				() -> abrirVentosInfernais(estado, manager));
@@ -120,12 +147,13 @@ public class EfeitosAndarService {
 		case HOLOFOTES -> executarSeChegou(INTERVALO_HOLOFOTES_TU,
 				() -> abrirAvisoPresenca("Holofotes"));
 		case WAR -> executarSeChegou(INTERVALO_HOLOFOTES_TU,
-				() -> abrirAvisoPresenca("War..."));
+				() -> abrirAvisoWar(estado, manager));
+		case INACURACIA_FERVENTE -> executarSeChegou(INTERVALO_INACURACIA_FERVENTE_TU,
+				() -> sortearEExecutarEfeitoAndar(estado, manager));
 		case NENHUM -> {
 			// O andar selecionado não possui efeito mecânico.
 		}
 		}
-
 	}
 
 	public void aoAlterarConfiguracao() {
@@ -176,6 +204,7 @@ public class EfeitosAndarService {
 		case CIDADE_DE_DIZ -> contador(":)", INTERVALO_CIDADE_TU);
 		case HOLOFOTES -> contador("Holofotes", INTERVALO_HOLOFOTES_TU);
 		case WAR -> contador("War...", INTERVALO_HOLOFOTES_TU);
+		case INACURACIA_FERVENTE -> contador("Inacurácia Fervente", INTERVALO_INACURACIA_FERVENTE_TU);
 		case NENHUM -> Optional.empty();
 		};
 	}
@@ -203,6 +232,35 @@ public class EfeitosAndarService {
 	private void executarSeChegou(int intervalo, Runnable acao) {
 		if (tuDecorridoNoEfeito > 0 && tuDecorridoNoEfeito % intervalo == 0) {
 			acao.run();
+		}
+	}
+
+	private void sortearEExecutarEfeitoAndar(EstadoCombate estado, CombatManager manager) {
+		TipoEfeitoAndar efeitoSorteado = EFEITOS_SORTEAVEIS_INACURACIA.get(
+				ThreadLocalRandom.current().nextInt(EFEITOS_SORTEAVEIS_INACURACIA.size()));
+		System.out.println(">>> INACURÁCIA FERVENTE: efeito sorteado — " + efeitoSorteado.getNomeExibicao());
+		executarEfeitoImediato(efeitoSorteado, estado, manager);
+	}
+
+	private void executarEfeitoImediato(TipoEfeitoAndar tipo, EstadoCombate estado, CombatManager manager) {
+		switch (tipo) {
+		case VENTOS_INFERNAIS -> abrirVentosInfernais(estado, manager);
+		case OLHO_DA_GULA -> abrirOlhoDaGula(estado, manager);
+		case GANANCIA_DIA -> aplicarSolDaGanancia(estado, manager, 2.5);
+		case GANANCIA_NOITE -> aplicarVentosGelados(estado);
+		case GANANCIA_ECLIPSE -> aplicarSolDaGanancia(estado, manager, 1.3);
+		case INTOXICACAO_CORAL -> abrirIntoxicacaoDeCoral(estado);
+		case RADAR_PRESENCA -> abrirAvisoPresenca("Radar de Presença");
+		case TEMPESTADE_INFINITA -> {
+			abrirTempestadeInfinita(estado, manager);
+			abrirIntoxicacaoDeCoral(estado);
+		}
+		case PESO_DOS_PECADOS -> aplicarPesoDosPecados(estado);
+		case CIDADE_DE_DIZ -> concederEscudoPeriodicoCidade(estado);
+		case HOLOFOTES -> abrirAvisoPresenca("Holofotes");
+		case WAR -> abrirAvisoWar(estado, manager);
+		case INACURACIA_FERVENTE, NENHUM -> throw new IllegalArgumentException(
+				"Efeito de andar não pode ser sorteado: " + tipo);
 		}
 	}
 
@@ -423,6 +481,212 @@ public class EfeitosAndarService {
 			}
 		}
 		escudosCidade.clear();
+	}
+
+	private void abrirAvisoWar(EstadoCombate estado, CombatManager manager) {
+		Alert alerta = new Alert(Alert.AlertType.WARNING);
+		ButtonType presencaSegura = new ButtonType("Presença realizada", ButtonData.OK_DONE);
+		ButtonType presencaFalhou = new ButtonType("Houve falha", ButtonData.APPLY);
+		alerta.setTitle("War...");
+		alerta.setHeaderText("Realize a presença dos jogadores");
+		alerta.setContentText("Caso alguém falhe, selecione dois epicentros de explosão no mapa.");
+		alerta.getButtonTypes().setAll(presencaSegura, presencaFalhou, ButtonType.CANCEL);
+		prepararDialogo(alerta);
+		alerta.showAndWait().filter(presencaFalhou::equals)
+				.ifPresent(ignorado -> iniciarSelecaoDasExplosoesWar(estado, manager));
+	}
+
+	private void iniciarSelecaoDasExplosoesWar(EstadoCombate estado, CombatManager manager) {
+		if (controller.getPrimaryMap() == null) {
+			mostrarAvisoWar("Nenhum mapa está disponível para selecionar os epicentros.");
+			return;
+		}
+		epicentrosWarSelecionados.clear();
+		selecionandoExplosoesWar = true;
+		controller.forEachMap(mapa -> mapa.entrarModoSelecaoExplosaoAmbiental(
+				ponto -> registrarEpicentroWar(ponto, estado, manager), this::cancelarSelecaoDasExplosoesWar));
+		mostrarAvisoWar("Selecione o primeiro de dois epicentros circulares 3x3 no mapa. "
+				+ "Clique com o botão direito para cancelar.");
+	}
+
+	private void registrarEpicentroWar(MapController.PontoMapa ponto, EstadoCombate estado, CombatManager manager) {
+		if (!selecionandoExplosoesWar || epicentrosWarSelecionados.contains(ponto)) {
+			return;
+		}
+		if (epicentrosWarSelecionados.stream()
+				.anyMatch(anterior -> distanciaManhattan(anterior, ponto) <= 2)) {
+			mostrarAvisoWar("Os dois epicentros devem ter áreas 3x3 distintas.");
+			return;
+		}
+		if (!haEspacoParaInvocacoesWar(ponto)) {
+			mostrarAvisoWar("Esse círculo não possui três células livres para as invocações. Escolha outro local.");
+			return;
+		}
+
+		epicentrosWarSelecionados.add(ponto);
+		if (epicentrosWarSelecionados.size() == 1) {
+			mostrarAvisoWar("Primeiro epicentro selecionado. Escolha o segundo local.");
+			return;
+		}
+
+		List<MapController.PontoMapa> epicentros = List.copyOf(epicentrosWarSelecionados);
+		selecionandoExplosoesWar = false;
+		controller.forEachMap(MapController::cancelarModoSelecaoExplosaoAmbiental);
+		executarExplosoesWar(epicentros, estado, manager);
+		epicentrosWarSelecionados.clear();
+	}
+
+	private void cancelarSelecaoDasExplosoesWar() {
+		if (!selecionandoExplosoesWar) {
+			return;
+		}
+		selecionandoExplosoesWar = false;
+		epicentrosWarSelecionados.clear();
+		controller.forEachMap(MapController::cancelarModoSelecaoExplosaoAmbiental);
+	}
+
+	private void executarExplosoesWar(List<MapController.PontoMapa> epicentros,
+			EstadoCombate estado, CombatManager manager) {
+		List<String> inimigosElegiveis = listarInimigosElegiveisParaWar();
+		if (inimigosElegiveis.isEmpty()) {
+			mostrarAvisoWar("Não há inimigos elegíveis no bestiário para a invocação de War.");
+			return;
+		}
+
+		for (MapController.PontoMapa epicentro : epicentros) {
+			controller.forEachMap(mapa -> mapa.criarExplosaoWar(epicentro.x(), epicentro.y()));
+			aplicarDanoDaExplosaoWar(epicentro, estado, manager);
+			invocarInimigosDaExplosaoWar(epicentro, inimigosElegiveis);
+		}
+		controller.atualizarInterfaceTotal();
+		controller.forEachMap(mapa -> mapa.desenharPeoes(estado.getCombatentes()));
+	}
+
+	private void aplicarDanoDaExplosaoWar(MapController.PontoMapa epicentro,
+			EstadoCombate estado, CombatManager manager) {
+		for (Personagem personagem : listarCombatentesAtivos(estado)) {
+			if (ocupaCirculoWar(personagem, epicentro)) {
+				aplicarDanoFixo(manager, estado, personagem, DANO_EXPLOSAO_WAR);
+			}
+		}
+	}
+
+	private void invocarInimigosDaExplosaoWar(MapController.PontoMapa epicentro, List<String> inimigosElegiveis) {
+		List<MapController.PontoMapa> posicoesLivres = listarPosicoesLivresNoCirculoWar(epicentro);
+		if (posicoesLivres.size() < INVOCACOES_POR_EXPLOSAO_WAR) {
+			mostrarAvisoWar("Uma explosão War ficou sem espaço para todas as invocações.");
+			return;
+		}
+		java.util.Collections.shuffle(posicoesLivres);
+		for (int indice = 0; indice < INVOCACOES_POR_EXPLOSAO_WAR; indice++) {
+			MapController.PontoMapa posicao = posicoesLivres.get(indice);
+			String idInimigo = inimigosElegiveis.get(ThreadLocalRandom.current().nextInt(inimigosElegiveis.size()));
+			controller.spawnarMonstro(idInimigo, posicao.x(), posicao.y());
+		}
+	}
+
+	private boolean haEspacoParaInvocacoesWar(MapController.PontoMapa epicentro) {
+		return listarPosicoesLivresNoCirculoWar(epicentro).size() >= INVOCACOES_POR_EXPLOSAO_WAR;
+	}
+
+	private List<MapController.PontoMapa> listarPosicoesLivresNoCirculoWar(MapController.PontoMapa epicentro) {
+		MapController mapa = controller.getPrimaryMap();
+		if (mapa == null) {
+			return List.of();
+		}
+		List<MapController.PontoMapa> posicoes = new ArrayList<>();
+		for (int y = epicentro.y() - 1; y <= epicentro.y() + 1; y++) {
+			for (int x = epicentro.x() - 1; x <= epicentro.x() + 1; x++) {
+				if (Math.abs(x - epicentro.x()) + Math.abs(y - epicentro.y()) <= 1
+						&& mapa.isCelulaDisponivelParaSpawn(x, y)) {
+					posicoes.add(new MapController.PontoMapa(x, y));
+				}
+			}
+		}
+		return posicoes;
+	}
+
+	private boolean ocupaCirculoWar(Personagem personagem, MapController.PontoMapa epicentro) {
+		for (int y = epicentro.y() - 1; y <= epicentro.y() + 1; y++) {
+			for (int x = epicentro.x() - 1; x <= epicentro.x() + 1; x++) {
+				if (Math.abs(x - epicentro.x()) + Math.abs(y - epicentro.y()) <= 1
+						&& personagem.ocupa(x, y)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private List<String> listarInimigosElegiveisParaWar() {
+		return controller.getBestiarioDatabase().entrySet().stream()
+				.filter(this::inimigoElegivelParaWar)
+				.map(Map.Entry::getKey)
+				.toList();
+	}
+
+	private boolean inimigoElegivelParaWar(Map.Entry<String, Map<String, Object>> entrada) {
+		Map<String, Object> dados = entrada.getValue();
+		if (!pertenceAAndarNumericoAteSete(dados.get("andar"))
+				|| Boolean.TRUE.equals(dados.get("poderoso"))) {
+			return false;
+		}
+
+		String raca = String.valueOf(dados.getOrDefault("raca", "")).toLowerCase(Locale.ROOT);
+		if (raca.contains("corte infernal") || raca.contains("colosso")
+				|| raca.contains("prime") || raca.contains("deus")) {
+			return false;
+		}
+		return !possuiMarcadorDeEliteOuChefe(entrada.getKey(), dados);
+	}
+
+	private boolean pertenceAAndarNumericoAteSete(Object valorAndar) {
+		String andar = String.valueOf(valorAndar).trim();
+		if (andar.toUpperCase(Locale.ROOT).startsWith("P")) {
+			return false;
+		}
+		Matcher matcher = ANDAR_NUMERICO.matcher(andar);
+		return matcher.matches() && Double.parseDouble(matcher.group(1).replace(',', '.')) <= 7.0;
+	}
+
+	private boolean possuiMarcadorDeEliteOuChefe(String id, Map<String, Object> dados) {
+		Set<String> termos = Set.of("elite", "chefe", "boss");
+		if (contemTermoDeEliteOuChefe(id, termos) || contemTermoDeEliteOuChefe(dados.get("nome"), termos)) {
+			return true;
+		}
+		for (Map.Entry<String, Object> campo : dados.entrySet()) {
+			String chave = campo.getKey().toLowerCase(Locale.ROOT);
+			if ((chave.contains("elite") || chave.contains("chefe") || chave.contains("boss"))
+					&& Boolean.TRUE.equals(campo.getValue())) {
+				return true;
+			}
+			if (chave.contains("categoria") || chave.contains("tipo") || chave.contains("tag")) {
+				if (contemTermoDeEliteOuChefe(campo.getValue(), termos)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean contemTermoDeEliteOuChefe(Object valor, Set<String> termos) {
+		if (valor == null) {
+			return false;
+		}
+		String texto = String.valueOf(valor).toLowerCase(Locale.ROOT);
+		return termos.stream().anyMatch(texto::contains);
+	}
+
+	private int distanciaManhattan(MapController.PontoMapa primeiro, MapController.PontoMapa segundo) {
+		return Math.abs(primeiro.x() - segundo.x()) + Math.abs(primeiro.y() - segundo.y());
+	}
+
+	private void mostrarAvisoWar(String mensagem) {
+		Alert alerta = new Alert(Alert.AlertType.INFORMATION, mensagem, ButtonType.OK);
+		alerta.setTitle("War...");
+		alerta.setHeaderText(null);
+		prepararDialogo(alerta);
+		alerta.showAndWait();
 	}
 
 	private void abrirAvisoPresenca(String nomeEfeito) {
@@ -647,7 +911,9 @@ public class EfeitosAndarService {
 			case 3 -> TipoEfeitoAndar.WAR;
 			default -> TipoEfeitoAndar.NENHUM;
 		};
-		case NULO, ANDAR_1, ANDAR_8, ANDAR_9 -> TipoEfeitoAndar.NENHUM;
+		case ANDAR_8 -> estado.estadoVisual() == 0
+				? TipoEfeitoAndar.INACURACIA_FERVENTE : TipoEfeitoAndar.NENHUM;
+		case NULO, ANDAR_1, ANDAR_9 -> TipoEfeitoAndar.NENHUM;
 		};
 	}
 
@@ -689,6 +955,26 @@ public class EfeitosAndarService {
 		PESO_DOS_PECADOS,
 		CIDADE_DE_DIZ,
 		HOLOFOTES,
-		WAR
+		WAR,
+		INACURACIA_FERVENTE;
+
+		private String getNomeExibicao() {
+			return switch (this) {
+			case VENTOS_INFERNAIS -> "Ventos Infernais";
+			case OLHO_DA_GULA -> "Olho da Gula";
+			case GANANCIA_DIA -> "Sol da Ganância";
+			case GANANCIA_NOITE -> "Ventos Gelados";
+			case GANANCIA_ECLIPSE -> "Sol do Eclipse";
+			case INTOXICACAO_CORAL -> "Intoxicação de Coral";
+			case RADAR_PRESENCA -> "Radar de Presença";
+			case TEMPESTADE_INFINITA -> "Tempestade Infinita";
+			case PESO_DOS_PECADOS -> "Peso dos Pecados";
+			case CIDADE_DE_DIZ -> "Cidade de Diz";
+			case HOLOFOTES -> "Holofotes";
+			case WAR -> "War...";
+			case INACURACIA_FERVENTE -> "Inacurácia Fervente";
+			case NENHUM -> "Nenhum";
+			};
+		}
 	}
 }

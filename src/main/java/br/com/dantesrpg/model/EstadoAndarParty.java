@@ -6,7 +6,11 @@ public record EstadoAndarParty(AndarCampanha andar, int estadoVisual) {
 
 	public EstadoAndarParty {
 		andar = andar != null ? andar : AndarCampanha.NULO;
-		estadoVisual = andar == AndarCampanha.NULO ? 0 : Math.max(1, estadoVisual);
+		estadoVisual = switch (andar) {
+		case NULO -> 0;
+		case ANDAR_8 -> Math.max(0, estadoVisual);
+		default -> Math.max(1, estadoVisual);
+		};
 	}
 
 	public static EstadoAndarParty nulo() {

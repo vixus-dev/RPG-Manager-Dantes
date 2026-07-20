@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.function.Consumer;
 import javafx.scene.input.MouseEvent;
 
 import javafx.scene.control.ToggleButton;
@@ -125,6 +126,9 @@ public class MapController {
 
 	private boolean modoSpawnInimigo = false;
 	private String idMonstroEmSpawn = null;
+	private boolean modoSelecaoExplosaoAmbiental = false;
+	private Consumer<PontoMapa> aoSelecionarExplosaoAmbiental;
+	private Runnable aoCancelarSelecaoExplosaoAmbiental;
 
 	private boolean modoEditor = false;
 	private TileDefinition editorTile = null;
@@ -322,11 +326,38 @@ public class MapController {
 	}
 
 	private void onMouseMovedNoGrid(MouseEvent event) {
+		if (modoSelecaoExplosaoAmbiental) {
+			desenharPreviewExplosaoAmbiental(event.getX(), event.getY());
+			return;
+		}
 		if (!modoSelecaoAlvo || isMoverMode() || habilidadeAtual == null) {
 			limparCanvas();
 			return;
 		}
 		desenharVisualAoE(event.getX(), event.getY());
+	}
+
+	private void desenharPreviewExplosaoAmbiental(double mouseX, double mouseY) {
+		limparCanvas();
+		if (aoeCanvas == null) {
+			return;
+		}
+
+		int x = (int) (mouseX / CELL_SIZE);
+		int y = (int) (mouseY / CELL_SIZE);
+		if (!dentroDoGrid(x, y)) {
+			return;
+		}
+
+		GraphicsContext gc = aoeCanvas.getGraphicsContext2D();
+		double raio = CELL_SIZE * 1.5;
+		double centroX = x * CELL_SIZE + CELL_SIZE / 2.0;
+		double centroY = y * CELL_SIZE + CELL_SIZE / 2.0;
+		gc.setFill(Color.rgb(235, 92, 32, 0.32));
+		gc.setStroke(Color.rgb(255, 181, 54, 0.92));
+		gc.setLineWidth(2);
+		gc.fillOval(centroX - raio, centroY - raio, raio * 2, raio * 2);
+		gc.strokeOval(centroX - raio, centroY - raio, raio * 2, raio * 2);
 	}
 
 	public void limparCanvas() {
@@ -591,6 +622,11 @@ public class MapController {
 				event.consume();
 				return;
 			}
+			if (modoSelecaoExplosaoAmbiental) {
+				cancelarModoSelecaoExplosaoAmbiental();
+				event.consume();
+				return;
+			}
 			if (modoSpawnInimigo) {
 				System.out.println("GM: Modo SPAWN cancelado via clique na célula.");
 				mainController.notifySpawnConcluido();
@@ -644,6 +680,18 @@ public class MapController {
 		}
 
 		// Modos Especiais
+		if (modoSelecaoExplosaoAmbiental) {
+			if (paredesGrid[x][y]) {
+				System.out.println("MAPA: O epicentro da explosão deve ser uma célula transitável.");
+				return;
+			}
+			Consumer<PontoMapa> seletor = aoSelecionarExplosaoAmbiental;
+			if (seletor != null) {
+				seletor.accept(new PontoMapa(x, y));
+			}
+			return;
+		}
+
 		if (modoEditor) {
 			if (editorTile != null) {
 				aplicarTileNoEditor(cell, editorTile, x, y);
@@ -1175,6 +1223,31 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 
 					aplicarEfeitoNoSolo(x, y, fogo);
 				}
+			}
+		}
+	}
+
+	/**
+	 * Converte o círculo 3x3 de uma explosão ambiental em carvão queimando.
+	 * O formato usa a mesma geometria circular (Manhattan) das habilidades de
+	 * área: centro e seus quatro vizinhos ortogonais.
+	 */
+	public void criarExplosaoWar(int centroX, int centroY) {
+		TileDefinition carvao = TileRegistry.getInstance().getById("coal");
+		if (carvao == null) {
+			System.err.println("MAPA: Tile 'coal' não encontrado para a explosão War.");
+			return;
+		}
+
+		for (int y = centroY - 1; y <= centroY + 1; y++) {
+			for (int x = centroX - 1; x <= centroX + 1; x++) {
+				if (Math.abs(x - centroX) + Math.abs(y - centroY) > 1
+						|| !dentroDoGrid(x, y) || paredesGrid[x][y]) {
+					continue;
+				}
+				aplicarTileSomenteVisual(carvao, x, y);
+				aplicarEfeitoNoSolo(x, y,
+						new EfeitoInstance(TipoEfeitoSolo.FOGO, 0, 0, null));
 			}
 		}
 	}
@@ -2066,6 +2139,33 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		System.out.println("MAPA: Modo Spawn Ativo (" + quantidade + " cargas) para: " + idMonstro);
 	}
 
+	/** Ativa a seleção, no mapa, de um epicentro para uma explosão ambiental. */
+	public void entrarModoSelecaoExplosaoAmbiental(Consumer<PontoMapa> aoSelecionar, Runnable aoCancelar) {
+		sairModoSelecao();
+		this.modoSelecaoExplosaoAmbiental = true;
+		this.aoSelecionarExplosaoAmbiental = aoSelecionar;
+		this.aoCancelarSelecaoExplosaoAmbiental = aoCancelar;
+		setMoverMode(false);
+		if (mapGrid != null && mapGrid.getScene() != null) {
+			mapGrid.getScene().setCursor(javafx.scene.Cursor.CROSSHAIR);
+		}
+	}
+
+	public void cancelarModoSelecaoExplosaoAmbiental() {
+		boolean estavaSelecionando = modoSelecaoExplosaoAmbiental;
+		Runnable aoCancelar = aoCancelarSelecaoExplosaoAmbiental;
+		modoSelecaoExplosaoAmbiental = false;
+		aoSelecionarExplosaoAmbiental = null;
+		aoCancelarSelecaoExplosaoAmbiental = null;
+		limparCanvas();
+		if (mapGrid != null && mapGrid.getScene() != null) {
+			mapGrid.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
+		}
+		if (estavaSelecionando && aoCancelar != null) {
+			aoCancelar.run();
+		}
+	}
+
 	/**
 	 * Cancela o modo spawn local deste MapController. Chamado pelo CombatController
 	 * quando as cargas se esgotam em qualquer instância, para manter embedded e
@@ -2249,6 +2349,13 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		if (!dentroDoGrid(x, y) || gridTerreno == null)
 			return TipoTerreno.PADRAO;
 		return gridTerreno[x][y];
+	}
+
+	public boolean isCelulaDisponivelParaSpawn(int x, int y) {
+		return dentroDoGrid(x, y) && !paredesGrid[x][y] && getPersonagemNaCelula(x, y) == null;
+	}
+
+	public record PontoMapa(int x, int y) {
 	}
 
 	private void limparHitboxesExtras() {
