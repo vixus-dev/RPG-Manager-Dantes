@@ -1,0 +1,15 @@
+{
+  "tipo": "sangue",
+  "itensOfertados": [
+    { "id": "Couraça do Capitão", "precoPecado": 2 },
+    { "id": "Casaco do Corsário", "precoPecado": 6 },
+    { "id": "Ampulheta das Marés", "precoPecado": 6 },
+    { "id": "Monóculo do Navegador Abissal", "precoPecado": 6 },
+    { "id": "Corrente do Carcereiro", "precoPecado": 8 },
+    { "id": "Katana das Ondas", "precoPecado": 12 },
+    { "id": "Núcleo Abissal", "precoPecado": 25 },
+    { "id": "Relógio de Bolso do Mar", "precoVidaMaximaBase": 10 },
+    { "id": "trabuco flamejante", "precoVidaMaximaBase": 20 },
+    { "id": "Armadura Leviatã", "precoVidaMaximaBase": 50 }
+  ]
+}

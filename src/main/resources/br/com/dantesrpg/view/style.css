@@ -1369,6 +1369,25 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 255, 255, 0.3), 6, 0, 0, 0);
 }
 
+.loja-badge-sangue {
+    -fx-background-color: #3a0a12;
+    -fx-text-fill: #ff5c70;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 8;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #ff5c70;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(255, 92, 112, 0.35), 6, 0, 0, 0);
+}
+
+.loja-recurso-sangue {
+    -fx-text-fill: #ff5c70;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
 /* --- MOEDAS --- */
 .moeda-container {
     -fx-background-color: #16161e;
@@ -1479,6 +1498,8 @@
 .loja-preco-ouro { -fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 12px; }
 .loja-preco-prata { -fx-text-fill: #c0c0c0; -fx-font-weight: bold; -fx-font-size: 12px; }
 .loja-preco-bronze { -fx-text-fill: #cd7f32; -fx-font-weight: bold; -fx-font-size: 12px; }
+.loja-preco-sangue { -fx-text-fill: #ff5c70; -fx-font-weight: bold; -fx-font-size: 12px; }
+.loja-preco-vida { -fx-text-fill: #ff9f43; -fx-font-weight: bold; -fx-font-size: 12px; }
 
 /* --- BOTÃO COMPRAR --- */
 .loja-btn-comprar {

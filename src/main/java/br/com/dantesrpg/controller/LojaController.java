@@ -92,19 +92,45 @@ public class LojaController {
 	private CombatController mainController;
 	private List<Oferta> ofertasAtuais = new ArrayList<>();
 	private boolean modoOverclock = false;
+	private boolean modoSangue = false;
 	private HBox cardOfertaSelecionado;
+
+	private enum TipoCustoOferta {
+		MOEDAS,
+		PECADOS,
+		VIDA_MAXIMA_BASE
+	}
 
 	private class Oferta {
 		Item item;
 		double desconto;
+		TipoCustoOferta tipoCusto;
+		int preco;
 
 		public Oferta(Item item, double desconto) {
+			this(item, desconto, TipoCustoOferta.MOEDAS, 0);
+		}
+
+		public Oferta(Item item, double desconto, TipoCustoOferta tipoCusto, int preco) {
 			this.item = item;
 			this.desconto = desconto;
+			this.tipoCusto = tipoCusto;
+			this.preco = preco;
 		}
 
 		public int getPrecoFinal() {
+			if (tipoCusto != TipoCustoOferta.MOEDAS) {
+				return preco;
+			}
 			return (int) (item.getValorMoedas() * (1.0 - desconto));
+		}
+
+		public String getDescricaoCusto() {
+			return switch (tipoCusto) {
+			case PECADOS -> "Pecados recebidos";
+			case VIDA_MAXIMA_BASE -> "Vida máxima base";
+			case MOEDAS -> traduzirMoeda(item.getTipoMoeda());
+			};
 		}
 	}
 
@@ -264,6 +290,7 @@ public class LojaController {
 	private void carregarLoja(String nomeArquivo) {
 		this.ofertasAtuais.clear();
 		this.modoOverclock = false;
+		this.modoSangue = false;
 		Gson gson = new Gson();
 
 		// Tenta carregar primeiro com '/data/Lojas/' (capitalizado), depois com '/data/lojas/'
@@ -294,6 +321,8 @@ public class LojaController {
 			String tipoLoja = (String) data.getOrDefault("tipo", "normal");
 			if ("overclock".equalsIgnoreCase(tipoLoja)) {
 				this.modoOverclock = true;
+			} else if ("sangue".equalsIgnoreCase(tipoLoja)) {
+				this.modoSangue = true;
 			}
 
 			List<Map<String, Object>> listaItens = (List<Map<String, Object>>) data.get("itensOfertados");
@@ -308,7 +337,14 @@ public class LojaController {
 
 					Item itemModelo = mainController.getItem(idItem);
 					if (itemModelo != null) {
-						this.ofertasAtuais.add(new Oferta(itemModelo, desconto));
+						if (modoSangue) {
+							Oferta ofertaSangue = criarOfertaDeSangue(itemModelo, entry);
+							if (ofertaSangue != null) {
+								this.ofertasAtuais.add(ofertaSangue);
+							}
+						} else {
+							this.ofertasAtuais.add(new Oferta(itemModelo, desconto));
+						}
 					}
 				}
 			}
@@ -317,6 +353,55 @@ public class LojaController {
 			System.err.println("Erro ao carregar loja: " + nomeArquivo);
 			e.printStackTrace();
 		}
+	}
+
+	private Oferta criarOfertaDeSangue(Item item, Map<String, Object> entry) {
+		TipoCustoOferta tipoCusto = determinarTipoCustoSangue(entry);
+		Object precoJson = obterPrecoSangue(entry, tipoCusto);
+		if (!(precoJson instanceof Number)) {
+			System.err.println("Oferta de sangue ignorada: preço não informado para " + item.getNome());
+			return null;
+		}
+
+		int preco = ((Number) precoJson).intValue();
+		if (preco < 0) {
+			System.err.println("Oferta de sangue ignorada: preço negativo para " + item.getNome());
+			return null;
+		}
+		return new Oferta(item, 0.0, tipoCusto, preco);
+	}
+
+	private TipoCustoOferta determinarTipoCustoSangue(Map<String, Object> entry) {
+		Object tipoCustoJson = entry.get("tipoCusto");
+		if (tipoCustoJson instanceof String) {
+			String tipoCusto = ((String) tipoCustoJson).toUpperCase(Locale.ROOT);
+			if (tipoCusto.contains("VIDA")) {
+				return TipoCustoOferta.VIDA_MAXIMA_BASE;
+			}
+			if (tipoCusto.contains("PECADO")) {
+				return TipoCustoOferta.PECADOS;
+			}
+		}
+
+		if (entry.containsKey("precoVidaMaximaBase") || entry.containsKey("custoVidaMaximaBase")) {
+			return TipoCustoOferta.VIDA_MAXIMA_BASE;
+		}
+		return TipoCustoOferta.PECADOS;
+	}
+
+	private Object obterPrecoSangue(Map<String, Object> entry, TipoCustoOferta tipoCusto) {
+		if (entry.containsKey("preco")) {
+			return entry.get("preco");
+		}
+		if (tipoCusto == TipoCustoOferta.VIDA_MAXIMA_BASE) {
+			if (entry.containsKey("precoVidaMaximaBase")) return entry.get("precoVidaMaximaBase");
+			if (entry.containsKey("custoVidaMaximaBase")) return entry.get("custoVidaMaximaBase");
+		}
+		if (entry.containsKey("precoPecado")) return entry.get("precoPecado");
+		if (entry.containsKey("precoPecados")) return entry.get("precoPecados");
+		if (entry.containsKey("precoSangue")) return entry.get("precoSangue");
+		if (entry.containsKey("custoPecado")) return entry.get("custoPecado");
+		return entry.get("custoVidaMaximaBase");
 	}
 
 	// =============================================
@@ -332,8 +417,30 @@ public class LojaController {
 
 		atualizarHeader();
 		atualizarMoedas();
+		atualizarTooltipsCompradores();
 		atualizarCatalogo();
 		atualizarInventarioJogador();
+	}
+
+	private void atualizarTooltipsCompradores() {
+		for (javafx.scene.Node node : compradoresContainer.getChildren()) {
+			if (!(node instanceof VBox)) continue;
+			Personagem personagem = (Personagem) node.getUserData();
+			if (personagem == null) continue;
+
+			String tooltipText;
+			if (modoSangue) {
+				tooltipText = personagem.getNome()
+						+ "\n Vida Base: " + formatarNumero(personagem.getVidaMaximaBase())
+						+ "\n Pecado: " + personagem.getPecado();
+			} else {
+				tooltipText = personagem.getNome()
+						+ "\n\u2B50 Ouro: " + personagem.getInventario().getMoedasOuro()
+						+ "\n\u25C9 Prata: " + personagem.getInventario().getMoedasPrata()
+						+ "\n\u25CF Bronze: " + personagem.getInventario().getMoedasBronze();
+			}
+			Tooltip.install(node, new Tooltip(tooltipText));
+		}
 	}
 
 	private void atualizarHeader() {
@@ -343,19 +450,43 @@ public class LojaController {
 		}
 
 		// Badge de tipo
-		if (modoOverclock) {
+		if (modoSangue) {
+			labelTipoLoja.setText("\uD83E\uDE78 LOJA DE SANGUE");
+			labelTipoLoja.getStyleClass().removeAll("loja-badge-normal", "loja-badge-overclock", "loja-badge-sangue");
+			labelTipoLoja.getStyleClass().add("loja-badge-sangue");
+		} else if (modoOverclock) {
 			labelTipoLoja.setText("\u26A1 OVERCLOCK");
-			labelTipoLoja.getStyleClass().removeAll("loja-badge-normal", "loja-badge-overclock");
+			labelTipoLoja.getStyleClass().removeAll("loja-badge-normal", "loja-badge-overclock", "loja-badge-sangue");
 			labelTipoLoja.getStyleClass().add("loja-badge-overclock");
 		} else {
 			labelTipoLoja.setText("COMPRA & VENDA");
-			labelTipoLoja.getStyleClass().removeAll("loja-badge-normal", "loja-badge-overclock");
+			labelTipoLoja.getStyleClass().removeAll("loja-badge-normal", "loja-badge-overclock", "loja-badge-sangue");
 			labelTipoLoja.getStyleClass().add("loja-badge-normal");
 		}
 	}
 
 	private void atualizarMoedas() {
 		Inventario inv = jogadorAtual.getInventario();
+		if (modoSangue) {
+			labelMoedasOuro.setText("\u2764 " + formatarNumero(jogadorAtual.getVidaMaximaBase()) + " Vida Base");
+			labelMoedasPrata.setText("\u2620 " + jogadorAtual.getPecado() + " Pecados");
+			labelMoedasOuro.getStyleClass().removeAll("moeda-ouro", "moeda-prata", "moeda-bronze", "loja-recurso-sangue");
+			labelMoedasPrata.getStyleClass().removeAll("moeda-ouro", "moeda-prata", "moeda-bronze", "loja-recurso-sangue");
+			labelMoedasOuro.getStyleClass().add("loja-recurso-sangue");
+			labelMoedasPrata.getStyleClass().add("loja-recurso-sangue");
+			labelMoedasBronze.setVisible(false);
+			labelMoedasBronze.setManaged(false);
+			return;
+		}
+
+		labelMoedasBronze.setVisible(true);
+		labelMoedasBronze.setManaged(true);
+		labelMoedasOuro.getStyleClass().removeAll("moeda-ouro", "moeda-prata", "moeda-bronze", "loja-recurso-sangue");
+		labelMoedasPrata.getStyleClass().removeAll("moeda-ouro", "moeda-prata", "moeda-bronze", "loja-recurso-sangue");
+		labelMoedasBronze.getStyleClass().removeAll("moeda-ouro", "moeda-prata", "moeda-bronze", "loja-recurso-sangue");
+		labelMoedasOuro.getStyleClass().add("moeda-ouro");
+		labelMoedasPrata.getStyleClass().add("moeda-prata");
+		labelMoedasBronze.getStyleClass().add("moeda-bronze");
 		labelMoedasOuro.setText("\u2B50 " + inv.getMoedasOuro() + " Ouro");
 		labelMoedasPrata.setText("\u25C9 " + inv.getMoedasPrata() + " Prata");
 		labelMoedasBronze.setText("\u25CF " + inv.getMoedasBronze() + " Bronze");
@@ -501,8 +632,7 @@ public class LojaController {
 
 		// Preço
 		int precoFinal = oferta.getPrecoFinal();
-		String moedaTipo = oferta.item.getTipoMoeda();
-		Label lblPreco = criarLabelPreco(precoFinal, moedaTipo);
+		Label lblPreco = criarLabelPreco(precoFinal, oferta);
 
 		// Botão Comprar
 		Button btnComprar = new Button("Comprar");
@@ -528,20 +658,12 @@ public class LojaController {
 			int total = precoFinal * novaQtd;
 			
 			// Atualiza o display de moedas no card
-			String icone;
-			if ("OURO".equalsIgnoreCase(moedaTipo)) {
-				icone = "\u2B50";
-			} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
-				icone = "\u25C9";
-			} else {
-				icone = "\u25CF";
-			}
-			lblPreco.setText(icone + " " + total);
+			lblPreco.setText(formatarPreco(total, oferta));
 
-			boolean ok = verificarPodeComprar(total, moedaTipo);
+			boolean ok = verificarPodeComprar(total, oferta);
 			btnComprar.setDisable(!ok);
 			if (!ok) {
-				Tooltip tp = new Tooltip("Moedas insuficientes! Exige " + total + " " + traduzirMoeda(moedaTipo));
+				Tooltip tp = new Tooltip("Recurso insuficiente! Exige " + total + " " + oferta.getDescricaoCusto());
 				tp.setShowDelay(Duration.millis(300));
 				btnComprar.setTooltip(tp);
 			} else {
@@ -567,15 +689,15 @@ public class LojaController {
 
 		btnComprar.setOnAction(e -> comprarItem(oferta, qtdHolder[0]));
 
-		boolean podeComprar = verificarPodeComprar(precoFinal, moedaTipo);
+		boolean podeComprar = verificarPodeComprar(precoFinal, oferta);
 		btnComprar.setDisable(!podeComprar);
 		if (!podeComprar) {
-			Tooltip tp = new Tooltip("Moedas insuficientes!");
+			Tooltip tp = new Tooltip("Recurso insuficiente: " + oferta.getDescricaoCusto() + "!");
 			tp.setShowDelay(Duration.millis(300));
 			btnComprar.setTooltip(tp);
 		}
 
-		if (!modoOverclock) {
+		if (!modoOverclock && !modoSangue) {
 			Button btnBarganhar = new Button("Barganhar");
 			btnBarganhar.getStyleClass().add("loja-btn-barganhar");
 			btnBarganhar.setOnAction(e -> abrirModalBarganha(oferta, qtdHolder[0]));
@@ -658,6 +780,23 @@ public class LojaController {
 							criarCardOverclock(itemModelo, slotLabel));
 				}
 			}
+		} else if (modoSangue) {
+			adicionarSeparadorCategoria("Itens do jogador");
+			Map<String, Integer> inventarioAgrupado = inv.getItensAgrupados();
+			if (inventarioAgrupado.isEmpty()) {
+				Label lblVazio = new Label("Inventário vazio.");
+				lblVazio.getStyleClass().addAll("texto-secundario-tematico", "texto-italico");
+				inventarioJogadorContainer.getChildren().add(lblVazio);
+			} else {
+				for (Map.Entry<String, Integer> entry : inventarioAgrupado.entrySet()) {
+					Item itemModelo = mainController.getItem(entry.getKey());
+					if (itemModelo != null) {
+						int ocGrau = inv.getOverclockDoItem(entry.getKey());
+						if (ocGrau > 0) itemModelo.setGrauOverclock(ocGrau);
+						inventarioJogadorContainer.getChildren().add(criarCardVendaJogador(itemModelo, entry.getValue()));
+					}
+				}
+			}
 		} else {
 			// Modo loja normal
 			Map<String, Integer> inventarioAgrupado = inv.getItensAgrupados();
@@ -715,11 +854,13 @@ public class LojaController {
 		HBox.setHgrow(nomeBox, Priority.ALWAYS);
 
 		// Botão Vender
-		Button btnVender = new Button("Vender");
-		btnVender.getStyleClass().add("loja-btn-vender");
-		btnVender.setOnAction(e -> venderItemManual(item));
-
-		card.getChildren().addAll(lblIcone, nomeBox, btnVender);
+		card.getChildren().addAll(lblIcone, nomeBox);
+		if (!modoSangue) {
+			Button btnVender = new Button("Vender");
+			btnVender.getStyleClass().add("loja-btn-vender");
+			btnVender.setOnAction(e -> venderItemManual(item));
+			card.getChildren().add(btnVender);
+		}
 		return card;
 	}
 
@@ -938,16 +1079,20 @@ public class LojaController {
 		Inventario inv = jogadorAtual.getInventario();
 		int precoUnitario = oferta.getPrecoFinal();
 		int precoTotal = precoUnitario * quantidade;
-		String moedaTipo = oferta.item.getTipoMoeda();
 
 		boolean sucesso = false;
 
-		if ("OURO".equalsIgnoreCase(moedaTipo)) {
-			if (inv.gastarOuro(precoTotal)) sucesso = true;
-		} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
-			if (inv.gastarPrata(precoTotal)) sucesso = true;
+		if (modoSangue) {
+			sucesso = aplicarCustoSangue(oferta, precoTotal);
 		} else {
-			if (inv.gastarBronze(precoTotal)) sucesso = true;
+			String moedaTipo = oferta.item.getTipoMoeda();
+			if ("OURO".equalsIgnoreCase(moedaTipo)) {
+				if (inv.gastarOuro(precoTotal)) sucesso = true;
+			} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
+				if (inv.gastarPrata(precoTotal)) sucesso = true;
+			} else {
+				if (inv.gastarBronze(precoTotal)) sucesso = true;
+			}
 		}
 
 		if (sucesso) {
@@ -967,15 +1112,37 @@ public class LojaController {
 			}
 
 			// Enviar log de transação normal
+			String descricaoCusto = modoSangue ? oferta.getDescricaoCusto() : traduzirMoeda(oferta.item.getTipoMoeda());
 			String logMsg = String.format("[LOJA] %s comprou %dx %s por %d %s",
-					jogadorAtual.getNome(), quantidade, oferta.item.getNome(), precoTotal, traduzirMoeda(moedaTipo));
+					jogadorAtual.getNome(), quantidade, oferta.item.getNome(), precoTotal, descricaoCusto);
+			System.out.println(logMsg);
 
-mainController.salvarEstadoJogadores();
+			mainController.salvarEstadoJogadores();
 			atualizarUI();
 		} else {
-			Alert alert = new Alert(Alert.AlertType.WARNING, "Moeda incorreta ou insuficiente!");
+			Alert alert = new Alert(Alert.AlertType.WARNING,
+					modoSangue ? "Recurso insuficiente para realizar esta compra!" : "Moeda incorreta ou insuficiente!");
 			alert.show();
 		}
+	}
+
+	private boolean aplicarCustoSangue(Oferta oferta, int precoTotal) {
+		if (!verificarPodeComprar(precoTotal, oferta)) {
+			return false;
+		}
+
+		if (oferta.tipoCusto == TipoCustoOferta.PECADOS) {
+			jogadorAtual.setPecado(jogadorAtual.getPecado() + precoTotal);
+			return true;
+		}
+
+		double vidaBaseNova = jogadorAtual.getVidaMaximaBase() - precoTotal;
+		if (vidaBaseNova < 1.0) {
+			return false;
+		}
+		jogadorAtual.setVidaMaximaBase(vidaBaseNova);
+		jogadorAtual.recalcularAtributosEstatisticas();
+		return true;
 	}
 
 	private void abrirModalBarganha(Oferta oferta, int quantidade) {
@@ -1691,28 +1858,36 @@ mainController.salvarEstadoJogadores();
 		}
 	}
 
-	private Label criarLabelPreco(int preco, String moedaTipo) {
-		String icone;
+	private Label criarLabelPreco(int preco, Oferta oferta) {
 		String classePreco;
-		String texto;
 
-		if ("OURO".equalsIgnoreCase(moedaTipo)) {
-			icone = "\u2B50";
+		if (oferta.tipoCusto == TipoCustoOferta.PECADOS) {
+			classePreco = "loja-preco-sangue";
+		} else if (oferta.tipoCusto == TipoCustoOferta.VIDA_MAXIMA_BASE) {
+			classePreco = "loja-preco-vida";
+		} else if ("OURO".equalsIgnoreCase(oferta.item.getTipoMoeda())) {
 			classePreco = "loja-preco-ouro";
-			texto = icone + " " + preco;
-		} else if ("PRATA".equalsIgnoreCase(moedaTipo)) {
-			icone = "\u25C9";
+		} else if ("PRATA".equalsIgnoreCase(oferta.item.getTipoMoeda())) {
 			classePreco = "loja-preco-prata";
-			texto = icone + " " + preco;
 		} else {
-			icone = "\u25CF";
 			classePreco = "loja-preco-bronze";
-			texto = icone + " " + preco;
 		}
 
-		Label lbl = new Label(texto);
+		Label lbl = new Label(formatarPreco(preco, oferta));
 		lbl.getStyleClass().add(classePreco);
 		return lbl;
+	}
+
+	private String formatarPreco(int preco, Oferta oferta) {
+		if (oferta.tipoCusto == TipoCustoOferta.PECADOS) {
+			return "\u2620 +" + preco;
+		}
+		if (oferta.tipoCusto == TipoCustoOferta.VIDA_MAXIMA_BASE) {
+			return "\u2764 -" + preco;
+		}
+		if ("OURO".equalsIgnoreCase(oferta.item.getTipoMoeda())) return "\u2B50 " + preco;
+		if ("PRATA".equalsIgnoreCase(oferta.item.getTipoMoeda())) return "\u25C9 " + preco;
+		return "\u25CF " + preco;
 	}
 
 	private boolean verificarPodeComprar(int preco, String moedaTipo) {
@@ -1720,6 +1895,17 @@ mainController.salvarEstadoJogadores();
 		if ("OURO".equalsIgnoreCase(moedaTipo)) return inv.getMoedasOuro() >= preco;
 		if ("PRATA".equalsIgnoreCase(moedaTipo)) return inv.getMoedasPrata() >= preco;
 		return inv.getMoedasBronze() >= preco;
+	}
+
+	private boolean verificarPodeComprar(int preco, Oferta oferta) {
+		if (preco < 0 || jogadorAtual == null) return false;
+		if (oferta.tipoCusto == TipoCustoOferta.PECADOS) {
+			return true;
+		}
+		if (oferta.tipoCusto == TipoCustoOferta.VIDA_MAXIMA_BASE) {
+			return jogadorAtual.getVidaMaximaBase() - preco >= 1.0;
+		}
+		return verificarPodeComprar(preco, oferta.item.getTipoMoeda());
 	}
 
 	private String getBadgeDescontoClass(double desconto) {
