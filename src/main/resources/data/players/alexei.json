@@ -1,6 +1,6 @@
 {
   "iniciativaBase": 27,
-  "pecado": 9,
+  "pecado": 37,
   "atributosBase": {
     "FORCA": 20,
     "PERCEPCAO": 16,
@@ -20,10 +20,10 @@
   "carteira": {
     "prata": 64,
     "ouro": 0,
-    "bronze": 17308
+    "bronze": 27308
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 74.0,
+  "vidaAtual": 50.0,
   "contadorTU": 3,
   "fantasmaNobre": "RingOfTheUndyingWill",
   "armaduraEquipada": "Exoesqueleto Oceânico",
@@ -33,7 +33,7 @@
     "Espada Atômica": 1,
     "MoedaDeAjuda": 1
   },
-  "xpAtual": 1021,
+  "xpAtual": 1421,
   "vidaMaximaBase": 104.0,
   "classe": "Pugilista",
   "armasEquipadas": [
@@ -47,10 +47,10 @@
   "grau": 2,
   "posX": 4,
   "posY": 4,
-  "vidas": 1,
+  "vidas": 3,
   "amuleto2": "Anel Esofágico",
   "amuleto1": "Medalhão da Promessa SHINY",
-  "manaAtual": 6.0,
+  "manaAtual": 2.0,
   "escudoDivinoAtual": 0.0,
   "raca": "Humano",
   "nivel": 9,

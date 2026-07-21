@@ -22,16 +22,17 @@
     "bronze": 28160
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 138.0,
-  "contadorTU": 2,
+  "vidaAtual": 68.25,
+  "contadorTU": 0,
   "fantasmaNobre": "ProfetaDeBehemoth",
-  "armaduraEquipada": "Colete Militar",
+  "armaduraEquipada": "Armadura de Mergulho Militar",
   "armaEquipada": "Machado Rita",
   "inventario": {
     "PocaoDeCuraMédia": 1,
+    "Colete Militar": 1,
     "Bastão Primordial Behemoth": 1
   },
-  "xpAtual": 450,
+  "xpAtual": 850,
   "vidaMaximaBase": 93.0,
   "classe": "Campeão",
   "armasEquipadas": [

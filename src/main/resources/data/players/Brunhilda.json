@@ -1,6 +1,6 @@
 {
   "iniciativaBase": 22,
-  "pecado": 2,
+  "pecado": 3,
   "atributosBase": {
     "FORCA": 17,
     "PERCEPCAO": 2,
@@ -15,25 +15,26 @@
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
-  "escudoNormalAtual": 0.0,
+  "escudoNormalAtual": 38.0,
   "carteira": {
     "prata": 0,
     "ouro": 0,
-    "bronze": 0
+    "bronze": 10000
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 32.0,
+  "vidaAtual": 1.0,
   "contadorTU": 4,
   "fantasmaNobre": "Fimbulwinter",
-  "armaduraEquipada": "Peitoral da Guarda de Marfim",
+  "armaduraEquipada": "Armadura Leviatã",
   "armaEquipada": "Tridente",
   "inventario": {
-    "P E D R A": 6,
+    "Peitoral da Guarda de Marfim": 1,
+    "PocaoDeCuraMédia": 1,
     "Sabre do Kraken": 1,
     "Machado Jötunbani": 1
   },
   "xpAtual": 100,
-  "vidaMaximaBase": 105.0,
+  "vidaMaximaBase": 55.0,
   "classe": "Barbaro",
   "armasEquipadas": [
     "Tridente"
@@ -46,7 +47,7 @@
   "vidas": 0,
   "amuleto2": "Colar de Tinta Seca",
   "amuleto1": "Medalhão da Promessa",
-  "manaAtual": 5.5,
+  "manaAtual": 1.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Orc",
   "nivel": 8,
