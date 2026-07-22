@@ -71,6 +71,7 @@ import br.com.dantesrpg.model.AcaoMestreInput;
 import br.com.dantesrpg.controller.service.BestiarioSpawnService;
 import br.com.dantesrpg.controller.service.CatalogoItensService;
 import br.com.dantesrpg.controller.service.CombatUiRefresher;
+import br.com.dantesrpg.controller.service.CriadorLojasService;
 import br.com.dantesrpg.controller.service.EstadoJogadoresService;
 import br.com.dantesrpg.controller.service.EstadoAndarService;
 import br.com.dantesrpg.controller.service.EfeitosAndarService;
@@ -917,21 +918,6 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 	private void carregarMetadadosDoMapa(File imagemFile) {
 		mapaCombateCoordinator.carregarMetadadosDoMapa(imagemFile);
 	}
-	@FXML
-	private void onSalvarEstadoClick() {
-		salvarEstadoJogadores(); // Chama o método que já criamos anteriormente
-
-		// Feedback visual simples no console
-		System.out.println("GM: Botão 'Salvar Estado' acionado na Toolbar.");
-
-		javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-				javafx.scene.control.Alert.AlertType.INFORMATION);
-		alert.setTitle("Sistema");
-		alert.setHeaderText(null);
-		alert.setContentText("Estado de todos os jogadores salvo com sucesso!");
-		alert.show();
-	}
-
 	// Ação do Botão Salvar
 	public void onSalvarMapaJsonClick() {
 		mapaCombateCoordinator.salvarMapaJson();
@@ -1125,6 +1111,14 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 
 	public void salvarPersonagem(Personagem personagem) {
 		personagemJsonService.salvarPersonagem(personagem);
+	}
+
+	public javafx.scene.layout.GridPane criarFormularioDePersonagem(Runnable aposSalvar) {
+		return reforcosDialogService.criarFormularioCriacaoParaAba(aposSalvar);
+	}
+
+	public Node criarEditorDeLojas(Runnable aposSalvar) {
+		return new CriadorLojasService(() -> armoryDatabase, () -> itempediaDatabase).criarEditor(aposSalvar);
 	}
 
 	private Arma getArma(String nomeArma) {
@@ -1385,11 +1379,6 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 	@FXML
 	private void onBestiarioClick() {
 		abrirJanelaBestiario();
-	}
-
-	@FXML
-	private void onAbrirMapaExternoClick() {
-		launchMapWindow();
 	}
 
 	public void abrirJanelaBestiario() {

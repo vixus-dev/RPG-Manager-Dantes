@@ -1,10 +1,14 @@
 package br.com.dantesrpg.controller.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -48,12 +52,15 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser;
 
 public class ReforcosDialogService {
 
@@ -117,9 +124,8 @@ public class ReforcosDialogService {
 		Runnable refreshPresetsList = () -> atualizarListaPresets(lvPresets);
 
 		Tab tabGerenciar = criarAbaGerenciar(lvReforcos, lvAtivos, refreshLists);
-		Tab tabCriar = criarAbaCriar(tabPane, refreshLists);
 		Tab tabPresets = criarAbaPresets(lvPresets, lvAtivos, refreshLists, refreshPresetsList);
-		tabPane.getTabs().addAll(tabGerenciar, tabCriar, tabPresets);
+		tabPane.getTabs().addAll(tabGerenciar, tabPresets);
 
 		BorderPane root = new BorderPane();
 		root.setCenter(tabPane);
@@ -531,26 +537,12 @@ public class ReforcosDialogService {
 		return p;
 	}
 
-	private Tab criarAbaCriar(TabPane tabPane, Runnable refreshLists) {
-		Tab tabCriar = new Tab("Criador de Personagens");
-		tabCriar.setClosable(false);
-
-		ScrollPane scrollCriar = new ScrollPane();
-		scrollCriar.setFitToWidth(true);
-		scrollCriar.setStyle("-fx-background: #121218; -fx-background-color: #121218;");
-
-		VBox formLayout = new VBox(15);
-		formLayout.setPadding(new Insets(20));
-		formLayout.setStyle("-fx-background-color: #121218;");
-
-		GridPane grid = criarFormularioCriacao(tabPane, refreshLists);
-		formLayout.getChildren().addAll(grid);
-		scrollCriar.setContent(formLayout);
-		tabCriar.setContent(scrollCriar);
-		return tabCriar;
+	/** Cria o formulário para a aba principal de criação. */
+	public GridPane criarFormularioCriacaoParaAba(Runnable aposSalvar) {
+		return criarFormularioCriacao(aposSalvar);
 	}
 
-	private GridPane criarFormularioCriacao(TabPane tabPane, Runnable refreshLists) {
+	private GridPane criarFormularioCriacao(Runnable aposSalvar) {
 		GridPane grid = new GridPane();
 		grid.setHgap(15);
 		grid.setVgap(12);
@@ -560,6 +552,30 @@ public class ReforcosDialogService {
 		TextField tfNome = new TextField();
 		tfNome.setPromptText("Nome do Personagem");
 		grid.add(tfNome, 1, 0);
+
+		final File[] imagemSelecionada = new File[1];
+		ImageView previewImagem = new ImageView();
+		previewImagem.setFitWidth(96);
+		previewImagem.setFitHeight(96);
+		previewImagem.setPreserveRatio(true);
+		Button btnSelecionarImagem = new Button("Selecionar imagem");
+		Label lblImagem = new Label("Nenhuma imagem selecionada");
+		lblImagem.setStyle("-fx-text-fill: #a0a0b0;");
+		btnSelecionarImagem.setOnAction(evento -> {
+			FileChooser seletor = new FileChooser();
+			seletor.setTitle("Selecionar imagem do personagem");
+			seletor.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+					"Imagens", "*.png", "*.jpg", "*.jpeg", "*.webp"));
+			File arquivo = seletor.showOpenDialog(btnSelecionarImagem.getScene().getWindow());
+			if (arquivo == null) {
+				return;
+			}
+			imagemSelecionada[0] = arquivo;
+			previewImagem.setImage(new Image(arquivo.toURI().toString(), 96, 96, true, true));
+			lblImagem.setText(arquivo.getName());
+		});
+		VBox boxImagem = new VBox(6, new Label("Retrato e Token:"), btnSelecionarImagem, lblImagem, previewImagem);
+		grid.add(boxImagem, 2, 0, 1, 7);
 
 		grid.add(new Label("Raça:"), 0, 1);
 		ComboBox<String> cbRaca = new ComboBox<>();
@@ -659,6 +675,11 @@ public class ReforcosDialogService {
 			aplicarEquipamentos(personagem, cbArma.getValue(), cbArmadura.getValue(), cbAmuleto1.getValue(),
 					cbAmuleto2.getValue(), cbFantasma.getValue());
 			salvarPersonagem.accept(personagem);
+			try {
+				salvarImagemPersonagem(imagemSelecionada[0], personagem.getJsonFileName());
+			} catch (IOException ex) {
+				mostrarAvisoImagem(ex.getMessage());
+			}
 
 			if (rbPrincipal.isSelected()) {
 				adicionarAoCombate(personagem);
@@ -666,12 +687,44 @@ public class ReforcosDialogService {
 
 			resetarFormulario(tfNome, cbRaca, cbClasse, spNivel, spVida, spIniciativa, spAtributos, cbArma, cbArmadura,
 					cbAmuleto1, cbAmuleto2, cbFantasma, rbReforco);
+			imagemSelecionada[0] = null;
+			previewImagem.setImage(null);
+			lblImagem.setText("Nenhuma imagem selecionada");
 			mostrarConfirmacaoCriacao(nome);
-			refreshLists.run();
-			tabPane.getSelectionModel().select(0);
+			if (aposSalvar != null) {
+				aposSalvar.run();
+			}
 		});
 
 		return grid;
+	}
+
+	private void salvarImagemPersonagem(File imagem, String nomeArquivoPersonagem) throws IOException {
+		if (imagem == null) {
+			return;
+		}
+		String nomeBase = nomeArquivoPersonagem.replaceFirst("(?i)\\.json$", "");
+		String extensao = obterExtensao(imagem.getName());
+		if (extensao.isEmpty()) {
+			throw new IOException("A imagem selecionada não possui uma extensão válida.");
+		}
+		File raizRecursos = new File(System.getProperty("user.dir"), "src/main/resources");
+		for (String pasta : List.of("tokens", "portraits")) {
+			File destino = new File(new File(raizRecursos, pasta), nomeBase + extensao);
+			destino.getParentFile().mkdirs();
+			Files.copy(imagem.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+	}
+
+	private String obterExtensao(String nomeArquivo) {
+		int indice = nomeArquivo.lastIndexOf('.');
+		return indice < 0 ? "" : nomeArquivo.substring(indice).toLowerCase();
+	}
+
+	private void mostrarAvisoImagem(String mensagem) {
+		Alert alerta = new Alert(Alert.AlertType.WARNING,
+				"A ficha foi salva, mas não foi possível salvar as imagens: " + mensagem);
+		alerta.showAndWait();
 	}
 
 	private void atualizarListas(ListView<Personagem> lvReforcos, ListView<Personagem> lvAtivos) {
@@ -819,8 +872,12 @@ public class ReforcosDialogService {
 		Classe classe = mapearClasse.apply(classeNome);
 		Personagem personagem = new Personagem(nome, raca, classe, nivel, atrBase, vidaMaxBase, iniciativaBase);
 		personagem.setFaccao("JOGADOR");
-		personagem.setJsonFileName(nome.toLowerCase() + ".json");
+		personagem.setJsonFileName(normalizarNomeArquivo(nome) + ".json");
 		return personagem;
+	}
+
+	private String normalizarNomeArquivo(String nome) {
+		return nome.trim().toLowerCase(Locale.ROOT).replaceAll("\\s+", "_");
 	}
 
 	private void aplicarEquipamentos(Personagem personagem, String armaVal, String armaduraVal, String amuleto1Val,
