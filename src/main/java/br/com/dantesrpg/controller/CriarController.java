@@ -14,8 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -87,6 +90,13 @@ public class CriarController {
 	@FXML private Button btnResetarForm;
 	@FXML private Button btnConfirmarCriar;
 	@FXML private Button btnAbaCriarItem;
+	@FXML private Button btnAbaCriarPersonagem;
+	@FXML private Button btnAbaCriarLoja;
+	@FXML private ScrollPane painelCriarItem;
+	@FXML private ScrollPane painelCriarPersonagem;
+	@FXML private ScrollPane painelCriarLoja;
+	@FXML private VBox containerCriarPersonagem;
+	@FXML private VBox containerCriarLoja;
 
 	private CombatController mainController;
 
@@ -225,6 +235,51 @@ public class CriarController {
 
 	public void inicializar(CombatController controller) {
 		this.mainController = controller;
+		if (containerCriarPersonagem.getChildren().isEmpty()) {
+			GridPane formulario = mainController.criarFormularioDePersonagem(mainController::atualizarInterfaceTotal);
+			containerCriarPersonagem.getChildren().add(formulario);
+		}
+		if (containerCriarLoja.getChildren().isEmpty()) {
+			Node editor = mainController.criarEditorDeLojas(mainController::atualizarInterfaceTotal);
+			containerCriarLoja.getChildren().add(editor);
+		}
+	}
+
+	@FXML
+	private void onAbaCriarItemClick() {
+		alternarAbaCriacao(true);
+	}
+
+	@FXML
+	private void onAbaCriarPersonagemClick() {
+		alternarAbaCriacao(1);
+	}
+
+	@FXML
+	private void onAbaCriarLojaClick() {
+		alternarAbaCriacao(2);
+	}
+
+	private void alternarAbaCriacao(boolean exibirItens) {
+		alternarAbaCriacao(exibirItens ? 0 : 1);
+	}
+
+	private void alternarAbaCriacao(int aba) {
+		atualizarPainel(painelCriarItem, aba == 0);
+		atualizarPainel(painelCriarPersonagem, aba == 1);
+		atualizarPainel(painelCriarLoja, aba == 2);
+		atualizarSelecaoAba(btnAbaCriarItem, aba == 0);
+		atualizarSelecaoAba(btnAbaCriarPersonagem, aba == 1);
+		atualizarSelecaoAba(btnAbaCriarLoja, aba == 2);
+	}
+
+	private void atualizarPainel(ScrollPane painel, boolean visivel) { painel.setVisible(visivel); painel.setManaged(visivel); }
+
+	private void atualizarSelecaoAba(Button botao, boolean selecionado) {
+		botao.getStyleClass().remove("player-select-button-selected");
+		if (selecionado) {
+			botao.getStyleClass().add("player-select-button-selected");
+		}
 	}
 
 	private void onCategoriaChanged(String novaCategoria) {

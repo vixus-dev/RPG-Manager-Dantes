@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import java.net.URL?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
@@ -24,7 +25,9 @@
             <Label text="Criação" styleClass="header-label" maxWidth="Infinity"/>
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                 <VBox spacing="6.0">
-                    <Button text="Criar Item" fx:id="btnAbaCriarItem" maxWidth="Infinity" styleClass="player-select-button, player-select-button-selected"/>
+                    <Button text="Criar Item" fx:id="btnAbaCriarItem" onAction="#onAbaCriarItemClick" maxWidth="Infinity" styleClass="player-select-button, player-select-button-selected"/>
+                    <Button text="Criar Personagem" fx:id="btnAbaCriarPersonagem" onAction="#onAbaCriarPersonagemClick" maxWidth="Infinity" styleClass="player-select-button"/>
+                    <Button text="Criar Loja" fx:id="btnAbaCriarLoja" onAction="#onAbaCriarLojaClick" maxWidth="Infinity" styleClass="player-select-button"/>
                 </VBox>
             </ScrollPane>
         </VBox>
@@ -32,7 +35,8 @@
 
     <!-- CONTEÚDO PRINCIPAL -->
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 15;">
+        <StackPane>
+        <ScrollPane fx:id="painelCriarItem" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 15;">
             <VBox spacing="15.0">
                 <!-- Bento Card 1: Informações Gerais -->
                 <VBox styleClass="bento-card" spacing="12.0">
@@ -304,6 +308,17 @@
                 </HBox>
             </VBox>
         </ScrollPane>
+        <ScrollPane fx:id="painelCriarPersonagem" fitToWidth="true" visible="false" managed="false" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 15;">
+            <content>
+                <VBox fx:id="containerCriarPersonagem" spacing="15.0" styleClass="bento-card" />
+            </content>
+        </ScrollPane>
+        <ScrollPane fx:id="painelCriarLoja" fitToWidth="true" visible="false" managed="false" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 15;">
+            <content>
+                <VBox fx:id="containerCriarLoja" spacing="15.0" />
+            </content>
+        </ScrollPane>
+        </StackPane>
     </center>
 
     <stylesheets>
