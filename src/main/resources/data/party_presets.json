@@ -54,6 +54,14 @@
       ],
       "andarAtual": "ANDAR_9",
       "estadoVisualAndar": 1
+    },
+    {
+      "name": "EquipeTeste",
+      "characterNames": [
+        "paulo"
+      ],
+      "andarAtual": "NULO",
+      "estadoVisualAndar": 0
     }
   ]
 }

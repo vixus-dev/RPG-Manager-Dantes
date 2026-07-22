@@ -1,0 +1,60 @@
+{
+  "iniciativaBase": 0,
+  "pecado": 0,
+  "atributosBase": {
+    "FORCA": 8,
+    "PERCEPCAO": 8,
+    "ENDURANCE": 8,
+    "CARISMA": 8,
+    "INTELIGENCIA": 8,
+    "DESTREZA": 8,
+    "SORTE": 8,
+    "INSPIRACAO": 8,
+    "SAGACIDADE": 8,
+    "TOPOR": 8
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 42.0,
+  "contadorTU": 49,
+  "fantasmaNobre": "GodsWill",
+  "armaduraEquipada": "Peitoral de Couro",
+  "armaEquipada": "Espada Longa",
+  "inventario": {
+    "Armadura Leviatã": 1,
+    "trabuco flamejante": 1
+  },
+  "xpAtual": 52,
+  "vidaMaximaBase": 30.0,
+  "classe": "Paladino",
+  "armasEquipadas": [
+    "Espada Longa"
+  ],
+  "nome": "Paulo",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 13,
+  "posY": 7,
+  "vidas": 0,
+  "amuleto2": "Placa de Metal",
+  "amuleto1": "Botas de Placa",
+  "manaAtual": 11.0,
+  "escudoDivinoAtual": 0.0,
+  "raca": "Humano",
+  "nivel": 1,
+  "racaData": {
+    "contratoAtivoDividaRestante": 0.0,
+    "estadoEmprestimo": "NENHUM",
+    "vidaNegativaAcumulada": 0.0,
+    "contratoAtivoValorTotal": 0.0,
+    "filaContratos": []
+  },
+  "wieldingMaximo": 2
+}
