@@ -4261,7 +4261,7 @@
     "descricao": "Pistola que causa dano de fogo",
     "raridade": "COMUM",
     "shiny": false,
-    "andar": "",
+    "andar": "0",
     "valorMoedas": 0.0,
     "tipoMoeda": "BRONZE",
     "danoBase": 8.0,
