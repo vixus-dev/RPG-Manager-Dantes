@@ -9,6 +9,7 @@ import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAcao;
 import br.com.dantesrpg.model.enums.TipoAlvo;
+import br.com.dantesrpg.model.util.IdoloUtils;
 
 import java.util.List;
 
@@ -33,12 +34,14 @@ public class DamageApplicator {
 
 	public void aplicarDanoAoAlvo(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado) {
-		aplicarDanoAoAlvoInterno(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, 0, false);
+		aplicarDanoAoAlvoInterno(ator, alvo, aplicarBonusDanoRadiante(ator, dano), ignoraEscudo, tipoAcaoDano, estado,
+				0, false);
 	}
 
 	public void aplicarDanoAoAlvo(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal) {
-		aplicarDanoAoAlvoInterno(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, ataqueTotal, false);
+		aplicarDanoAoAlvoInterno(ator, alvo, aplicarBonusDanoRadiante(ator, dano), ignoraEscudo, tipoAcaoDano, estado,
+				ataqueTotal, false);
 	}
 
 	public void aplicarDanoAoAlvoResolvido(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
@@ -48,7 +51,12 @@ public class DamageApplicator {
 
 	public void aplicarDanoAoAlvoResolvido(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal) {
-		aplicarDanoAoAlvoInterno(ator, alvo, dano, ignoraEscudo, tipoAcaoDano, estado, ataqueTotal, true);
+		aplicarDanoAoAlvoInterno(ator, alvo, aplicarBonusDanoRadiante(ator, dano), ignoraEscudo, tipoAcaoDano, estado,
+				ataqueTotal, true);
+	}
+
+	private double aplicarBonusDanoRadiante(Personagem ator, double dano) {
+		return ator == null ? dano : ator.aplicarMultiplicadorDanoRadiante(dano);
 	}
 
 	// ========== FANTASMA DO DESERTO ==========
@@ -90,6 +98,10 @@ public class DamageApplicator {
 			boolean skipVinculoDano) {
 		if (alvo == null || dano <= 0)
 			return;
+		if (IdoloUtils.temBencao(alvo)) {
+			System.out.println(">>> BÊNÇÃO DO ÍDOLO: " + alvo.getNome() + " ignorou todo o dano recebido.");
+			return;
+		}
 
 		if ((tipoAcaoDano == TipoAcao.ATAQUE_BASICO || tipoAcaoDano == TipoAcao.HABILIDADE)
 				&& ator != null && ator.getEfeitosAtivos().containsKey("Gatilho")) {

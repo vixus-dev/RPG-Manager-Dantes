@@ -18,6 +18,7 @@ import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.util.CharacterImageResolver;
 import br.com.dantesrpg.model.util.ImageCache;
 import br.com.dantesrpg.model.util.EffectIconResolver;
+import br.com.dantesrpg.model.util.IdoloUtils;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -461,7 +462,7 @@ public class CombatUiRefresher {
 		int maxTU = 400;
 
 		for (Personagem personagem : ordenadosPorTU) {
-			if (!personagem.isAtivoNoCombate()) {
+			if (!personagem.isAtivoNoCombate() || IdoloUtils.naoPossuiTurno(personagem)) {
 				continue;
 			}
 			if (personagem.isClone()) {
@@ -884,7 +885,7 @@ public class CombatUiRefresher {
 			return null;
 		}
 		return estado.getCombatentes().stream()
-				.filter(Personagem::isAtivoNoCombate)
+				.filter(personagem -> personagem.isAtivoNoCombate() && !IdoloUtils.naoPossuiTurno(personagem))
 				.min(Comparator.comparingInt(Personagem::getContadorTU)
 						.thenComparing((p1, p2) -> Boolean.compare(p2.isProtagonista(), p1.isProtagonista()))
 						.thenComparing((p1, p2) -> Integer.compare(p2.getPlacarIniciativa(), p1.getPlacarIniciativa())))

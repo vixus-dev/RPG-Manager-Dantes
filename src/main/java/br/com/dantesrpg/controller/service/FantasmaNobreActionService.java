@@ -156,7 +156,7 @@ ator.getInventario().removerItem(essencia);
 
 	private void aplicarCustosCooldownEHook(Personagem ator, FantasmaNobre fantasmaNobre, CombatManager combatManager) {
 		int custoManaFinal = fantasmaNobre.getCustoMana();
-		int custoTUFinal = fantasmaNobre.getCustoTU();
+		int custoTUFinal = (int) (fantasmaNobre.getCustoTU() * (1.0 - ator.getReducaoTURadiante()));
 		ator.setManaAtual(ator.getManaAtual() - custoManaFinal);
 		ator.setContadorTU(ator.getContadorTU() + custoTUFinal);
 		System.out.println(ator.getNome() + " gasta " + custoManaFinal + " MP e " + custoTUFinal + " TUs.");

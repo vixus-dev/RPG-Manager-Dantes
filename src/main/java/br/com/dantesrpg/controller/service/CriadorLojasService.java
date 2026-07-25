@@ -29,18 +29,21 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Slider;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -59,18 +62,24 @@ public class CriadorLojasService {
 	private final ObservableList<OfertaEditavel> ofertas = FXCollections.observableArrayList();
 	private final Map<String, Map<String, Object>> catalogo = new LinkedHashMap<>();
 	private final Map<String, String> categoriasPorItem = new HashMap<>();
-	private final Map<String, Spinner<Integer>> regrasRaridade = new LinkedHashMap<>();
-	private final Map<String, Spinner<Integer>> regrasCategoria = new LinkedHashMap<>();
+	private final Map<String, Slider> regrasRaridade = new LinkedHashMap<>();
+	private final Map<String, Slider> regrasCategoria = new LinkedHashMap<>();
+	private final Map<String, CheckBox> filtrosAndar = new LinkedHashMap<>();
 
 	private TextField txtNomeLoja;
 	private ComboBox<String> comboModulo;
-	private ListView<String> listaAndares;
-	private ComboBox<String> comboItemDisponivel;
+	private ListView<String> listaItensDisponiveis;
 	private TextField txtBuscaItem;
+	private ComboBox<String> comboTipoItem;
+	private ComboBox<String> comboRaridadeItem;
 	private ListView<OfertaEditavel> listaOfertas;
+	private Spinner<Integer> spinnerTotalGeracao;
+	private ToggleButton alternarEdicao;
+	private ComboBox<String> comboLojas;
+	private boolean ajustandoSliders;
 	private Runnable aposSalvar;
 
-	private record OfertaEditavel(String id, double desconto, int preco, String tipoCusto) { }
+	private record OfertaEditavel(String id, double desconto, int preco, String tipoCusto, boolean bloqueada) { }
 
 	public CriadorLojasService(Supplier<Map<String, Map<String, Object>>> armorySupplier,
 			Supplier<Map<String, Map<String, Object>>> itempediaSupplier) {
@@ -103,12 +112,20 @@ public class CriadorLojasService {
 		comboModulo = new ComboBox<>(FXCollections.observableArrayList("Padrão", "Overclock", "Loja de Sangue"));
 		comboModulo.setValue("Padrão");
 		comboModulo.getStyleClass().add("loja-combo");
-		ComboBox<String> comboLojas = new ComboBox<>();
+		alternarEdicao = new ToggleButton("Alavanca: criar nova loja");
+		alternarEdicao.getStyleClass().add("editor-btn-reset");
+		alternarEdicao.selectedProperty().addListener((obs, anterior, editando) -> {
+			alternarEdicao.setText(editando ? "Alavanca: editar loja existente" : "Alavanca: criar nova loja");
+			comboLojas.setDisable(!editando);
+			if (!editando) limparEditor();
+		});
+		comboLojas = new ComboBox<>();
 		comboLojas.getItems().addAll(listarLojas());
 		comboLojas.setPromptText("Carregar loja existente");
 		comboLojas.getStyleClass().add("loja-combo");
+		comboLojas.setDisable(true);
 		comboLojas.setOnAction(evento -> {
-			if (comboLojas.getValue() != null) carregarLoja(comboLojas.getValue());
+			if (alternarEdicao.isSelected() && comboLojas.getValue() != null) carregarLoja(comboLojas.getValue());
 		});
 		Button btnNova = new Button("Nova loja");
 		btnNova.getStyleClass().add("editor-btn-reset");
@@ -119,38 +136,69 @@ public class CriadorLojasService {
 		campos.add(rotulo("Editar loja"), 2, 0);
 		campos.add(txtNomeLoja, 0, 1);
 		campos.add(comboModulo, 1, 1);
-		campos.add(comboLojas, 2, 1);
-		campos.add(btnNova, 3, 1);
+		campos.add(alternarEdicao, 2, 1);
+		campos.add(comboLojas, 3, 1);
+		campos.add(btnNova, 4, 1);
 		card.getChildren().addAll(titulo, campos);
 		return card;
 	}
 
 	private Node criarAreaPrincipal() {
-		HBox area = new HBox(14);
+		FlowPane area = new FlowPane(14, 14);
 		area.setAlignment(Pos.TOP_LEFT);
-		VBox.setVgrow(area, Priority.ALWAYS);
 		area.getChildren().addAll(criarPainelPool(), criarPainelOfertas(), criarPainelRegras());
-		for (Node painel : area.getChildren()) HBox.setHgrow(painel, Priority.ALWAYS);
+		((VBox) area.getChildren().get(0)).setPrefWidth(330);
+		((VBox) area.getChildren().get(1)).setMinWidth(560);
+		((VBox) area.getChildren().get(1)).setPrefWidth(640);
+		((VBox) area.getChildren().get(2)).setPrefWidth(330);
 		return area;
 	}
 
 	private Node criarPainelPool() {
 		VBox painel = painel("Pool disponível");
-		listaAndares = new ListView<>(FXCollections.observableArrayList(listarAndares()));
-		listaAndares.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		listaAndares.setPrefHeight(105);
-		listaAndares.getSelectionModel().getSelectedItems().addListener(
-				(javafx.collections.ListChangeListener<String>) alteracao -> atualizarItensDisponiveis());
+		FlowPane andares = new FlowPane(8, 6);
+		for (String andar : listarAndares()) {
+			CheckBox checkbox = new CheckBox("Andar " + andar);
+			checkbox.setStyle("-fx-text-fill: #d6d6e3;");
+			checkbox.selectedProperty().addListener((obs, anterior, atual) -> atualizarItensDisponiveis());
+			filtrosAndar.put(andar, checkbox);
+			andares.getChildren().add(checkbox);
+		}
+		Node listaAndares = andares;
 		txtBuscaItem = new TextField();
 		txtBuscaItem.setPromptText("Filtrar pool por nome...");
 		txtBuscaItem.getStyleClass().add("editor-search-field");
 		txtBuscaItem.textProperty().addListener((obs, anterior, atual) -> atualizarItensDisponiveis());
-		comboItemDisponivel = new ComboBox<>();
-		comboItemDisponivel.setMaxWidth(Double.MAX_VALUE);
+		comboTipoItem = new ComboBox<>(FXCollections.observableArrayList("Todos os tipos", "Arma", "Armadura", "Amuleto", "Consumível"));
+		comboTipoItem.setValue("Todos os tipos");
+		comboTipoItem.setMaxWidth(Double.MAX_VALUE);
+		comboTipoItem.setOnAction(evento -> atualizarItensDisponiveis());
+		comboRaridadeItem = new ComboBox<>(FXCollections.observableArrayList("Todas as raridades"));
+		comboRaridadeItem.getItems().addAll(RARIDADES);
+		comboRaridadeItem.setValue("Todas as raridades");
+		comboRaridadeItem.setMaxWidth(Double.MAX_VALUE);
+		comboRaridadeItem.setOnAction(evento -> atualizarItensDisponiveis());
+		listaItensDisponiveis = new ListView<>();
+		listaItensDisponiveis.setPrefHeight(280);
+		listaItensDisponiveis.setPlaceholder(new Label("Nenhum item encontrado nesta pool."));
+		listaItensDisponiveis.setCellFactory(lista -> new ListCell<>() {
+			@Override protected void updateItem(String id, boolean vazio) {
+				super.updateItem(id, vazio);
+				if (vazio || id == null) { setText(null); return; }
+				Map<String, Object> dados = catalogo.get(id);
+				setText(id + "  ·  " + categoriasPorItem.getOrDefault(id, "Item") + "  ·  "
+						+ String.valueOf(dados.getOrDefault("raridade", "COMUM")) + "  ·  Andar "
+						+ String.valueOf(dados.getOrDefault("andar", "0")));
+			}
+		});
+		Node comboItemDisponivel = listaItensDisponiveis;
 		Button adicionar = new Button("Adicionar item");
 		adicionar.getStyleClass().add("editor-btn-save");
 		adicionar.setOnAction(evento -> adicionarItemSelecionado());
 		painel.getChildren().addAll(rotulo("Andares da pool (Ctrl para selecionar vários; vazio = todos)"), listaAndares, txtBuscaItem, comboItemDisponivel, adicionar);
+		int indiceLista = painel.getChildren().indexOf(listaItensDisponiveis);
+		painel.getChildren().add(indiceLista, comboTipoItem);
+		painel.getChildren().add(indiceLista + 1, comboRaridadeItem);
 		atualizarItensDisponiveis();
 		return painel;
 	}
@@ -176,21 +224,26 @@ public class CriadorLojasService {
 		GridPane regras = new GridPane();
 		regras.setHgap(8);
 		regras.setVgap(6);
-		int linha = 0;
+		spinnerTotalGeracao = new Spinner<>(0, 99, 0);
+		spinnerTotalGeracao.setEditable(true);
+		spinnerTotalGeracao.valueProperty().addListener((obs, anterior, atual) -> atualizarLimitesSliders());
+		regras.add(new Label("Total de itens"), 0, 0);
+		regras.add(spinnerTotalGeracao, 1, 0);
+		int linha = 1;
 		for (String raridade : RARIDADES) {
 			regras.add(new Label(raridade), 0, linha);
-			Spinner<Integer> spinner = spinnerQuantidade();
-			regras.add(spinner, 1, linha++);
-			regrasRaridade.put(raridade, spinner);
+			Slider slider = criarSliderDistribuicao();
+			regras.add(slider, 1, linha++);
+			regrasRaridade.put(raridade, slider);
 		}
 		Label categorias = new Label("Por categoria");
 		categorias.getStyleClass().add("editor-section-accent");
 		regras.add(categorias, 0, linha++, 2, 1);
 		for (String categoria : CATEGORIAS) {
 			regras.add(new Label(categoria), 0, linha);
-			Spinner<Integer> spinner = spinnerQuantidade();
-			regras.add(spinner, 1, linha++);
-			regrasCategoria.put(categoria, spinner);
+			Slider slider = criarSliderDistribuicao();
+			regras.add(slider, 1, linha++);
+			regrasCategoria.put(categoria, slider);
 		}
 		Button gerar = new Button("Gerar itens aleatórios");
 		gerar.getStyleClass().add("editor-btn-save");
@@ -251,13 +304,18 @@ public class CriadorLojasService {
 				custo.setManaged(custo.isVisible());
 				Button remover = new Button("Remover");
 				remover.getStyleClass().add("editor-btn-reset");
+				remover.setDisable(oferta.bloqueada());
 				remover.setOnAction(evento -> ofertas.remove(oferta));
+				ToggleButton cadeado = new ToggleButton(oferta.bloqueada() ? "🔒 Permanente" : "🔓 Temporário");
+				cadeado.setSelected(oferta.bloqueada());
+				cadeado.setOnAction(evento -> atualizarBloqueio(oferta, cadeado.isSelected()));
 				HBox campos = new HBox(6, rotulo("Preço"), preco, rotulo("Desc. %"), desconto, custo, remover);
 				preco.setOnAction(evento -> substituirOferta(oferta, preco.getText(), desconto.getText(), custo.getValue()));
 				desconto.setOnAction(evento -> substituirOferta(oferta, preco.getText(), desconto.getText(), custo.getValue()));
 				preco.focusedProperty().addListener((obs, tinhaFoco, temFoco) -> { if (!temFoco) substituirOferta(oferta, preco.getText(), desconto.getText(), custo.getValue()); });
 				desconto.focusedProperty().addListener((obs, tinhaFoco, temFoco) -> { if (!temFoco) substituirOferta(oferta, preco.getText(), desconto.getText(), custo.getValue()); });
 				custo.valueProperty().addListener((obs, ant, atual) -> substituirOferta(oferta, preco.getText(), desconto.getText(), atual));
+				campos.getChildren().add(cadeado);
 				card.getChildren().addAll(nome, campos);
 				setGraphic(card);
 			}
@@ -267,7 +325,12 @@ public class CriadorLojasService {
 	private void substituirOferta(OfertaEditavel anterior, String preco, String desconto, String custo) {
 		int indice = ofertas.indexOf(anterior);
 		if (indice < 0) return;
-		ofertas.set(indice, new OfertaEditavel(anterior.id(), lerDouble(desconto) / 100.0, lerInteiro(preco), custo));
+		ofertas.set(indice, new OfertaEditavel(anterior.id(), lerDouble(desconto) / 100.0, lerInteiro(preco), custo, anterior.bloqueada()));
+	}
+
+	private void atualizarBloqueio(OfertaEditavel anterior, boolean bloqueada) {
+		int indice = ofertas.indexOf(anterior);
+		if (indice >= 0) ofertas.set(indice, new OfertaEditavel(anterior.id(), anterior.desconto(), anterior.preco(), anterior.tipoCusto(), bloqueada));
 	}
 
 	private void carregarCatalogo() {
@@ -288,38 +351,44 @@ public class CriadorLojasService {
 	}
 
 	private void atualizarItensDisponiveis() {
-		if (comboItemDisponivel == null) return;
+		if (listaItensDisponiveis == null) return;
 		String busca = txtBuscaItem.getText() == null ? "" : txtBuscaItem.getText().trim().toLowerCase(Locale.ROOT);
 		List<String> itens = catalogo.entrySet().stream().filter(entrada -> pertenceAoAndar(entrada.getValue()))
+				.filter(entrada -> "Todos os tipos".equals(comboTipoItem.getValue())
+						|| comboTipoItem.getValue().equalsIgnoreCase(categoriasPorItem.get(entrada.getKey())))
+				.filter(entrada -> "Todas as raridades".equals(comboRaridadeItem.getValue())
+						|| comboRaridadeItem.getValue().equalsIgnoreCase(String.valueOf(entrada.getValue().getOrDefault("raridade", "COMUM"))))
 				.map(Map.Entry::getKey).filter(nome -> nome.toLowerCase(Locale.ROOT).contains(busca)).sorted().toList();
-		comboItemDisponivel.setItems(FXCollections.observableArrayList(itens));
-		if (!itens.isEmpty()) comboItemDisponivel.setValue(itens.get(0));
+		listaItensDisponiveis.setItems(FXCollections.observableArrayList(itens));
+		if (!itens.isEmpty()) listaItensDisponiveis.getSelectionModel().select(0);
 	}
 
 	private boolean pertenceAoAndar(Map<String, Object> dados) {
-		List<String> andaresSelecionados = listaAndares.getSelectionModel().getSelectedItems();
+		List<String> andaresSelecionados = filtrosAndar.entrySet().stream()
+				.filter(entrada -> entrada.getValue().isSelected()).map(Map.Entry::getKey).toList();
 		return andaresSelecionados.isEmpty() || andaresSelecionados.contains(String.valueOf(dados.getOrDefault("andar", "0")));
 	}
 
 	private void adicionarItemSelecionado() {
-		String id = comboItemDisponivel.getValue();
+		String id = listaItensDisponiveis.getSelectionModel().getSelectedItem();
 		if (id == null) return;
 		ofertas.add(criarOferta(id));
 	}
 
 	private OfertaEditavel criarOferta(String id) {
 		int preco = valorBase(id);
-		return new OfertaEditavel(id, 0, preco, "MOEDAS");
+		return new OfertaEditavel(id, 0, preco, "MOEDAS", false);
 	}
 
 	private void gerarItensAleatorios() {
+		ofertas.removeIf(oferta -> !oferta.bloqueada());
 		List<String> pool = poolAtual();
-		for (Map.Entry<String, Spinner<Integer>> regra : regrasRaridade.entrySet()) {
+		for (Map.Entry<String, Slider> regra : regrasRaridade.entrySet()) {
 			adicionarAleatorios(pool.stream().filter(id -> regra.getKey().equalsIgnoreCase(
-					String.valueOf(catalogo.get(id).getOrDefault("raridade", "COMUM")))).toList(), regra.getValue().getValue());
+					String.valueOf(catalogo.get(id).getOrDefault("raridade", "COMUM")))).toList(), (int) regra.getValue().getValue());
 		}
-		for (Map.Entry<String, Spinner<Integer>> regra : regrasCategoria.entrySet()) {
-			adicionarAleatorios(pool.stream().filter(id -> regra.getKey().equalsIgnoreCase(categoriasPorItem.get(id))).toList(), regra.getValue().getValue());
+		for (Map.Entry<String, Slider> regra : regrasCategoria.entrySet()) {
+			adicionarAleatorios(pool.stream().filter(id -> regra.getKey().equalsIgnoreCase(categoriasPorItem.get(id))).toList(), (int) regra.getValue().getValue());
 		}
 	}
 
@@ -348,7 +417,8 @@ public class CriadorLojasService {
 				double desconto = mapa.get("desconto") instanceof Number n ? n.doubleValue() : 0;
 				int preco = mapa.get("preco") instanceof Number n ? n.intValue() : valorBase(id);
 				String custo = mapa.containsKey("tipoCusto") ? String.valueOf(mapa.get("tipoCusto")) : "MOEDAS";
-				ofertas.add(new OfertaEditavel(id, desconto, preco, custo));
+				boolean bloqueada = mapa.get("bloqueado") instanceof Boolean b && b;
+				ofertas.add(new OfertaEditavel(id, desconto, preco, custo, bloqueada));
 			}
 		} catch (Exception ex) { mostrarAlerta(Alert.AlertType.ERROR, "Não foi possível carregar a loja", ex.getMessage()); }
 	}
@@ -363,6 +433,7 @@ public class CriadorLojasService {
 		List<Map<String, Object>> itens = new ArrayList<>();
 		for (OfertaEditavel oferta : ofertas) {
 			Map<String, Object> item = new LinkedHashMap<>(); item.put("id", oferta.id());
+			if (oferta.bloqueada()) item.put("bloqueado", true);
 			if ("Loja de Sangue".equals(modulo)) { item.put("tipoCusto", oferta.tipoCusto()); item.put("preco", oferta.preco()); }
 			else item.put("desconto", calcularDescontoParaPreco(oferta));
 			itens.add(item);
@@ -380,7 +451,33 @@ public class CriadorLojasService {
 	private int andarNumerico(String andar) { try { return Integer.parseInt(andar); } catch (NumberFormatException ex) { return Integer.MAX_VALUE; } }
 	private List<String> listarLojas() { return FileLoader.listarArquivosDeDiretorio("/data/Lojas/", ".json").stream().map(nome -> nome.replaceFirst("(?i)\\.json$", "")).sorted().toList(); }
 	private void limparEditor() { txtNomeLoja.clear(); comboModulo.setValue("Padrão"); ofertas.clear(); }
-	private Spinner<Integer> spinnerQuantidade() { Spinner<Integer> spinner = new Spinner<>(0, 99, 0); spinner.setEditable(true); spinner.setPrefWidth(70); return spinner; }
+	private Slider criarSliderDistribuicao() {
+		Slider slider = new Slider(0, 0, 0);
+		slider.setMajorTickUnit(1);
+		slider.setMinorTickCount(0);
+		slider.setSnapToTicks(true);
+		slider.setShowTickLabels(true);
+		slider.setPrefWidth(190);
+		slider.valueProperty().addListener((obs, anterior, atual) -> atualizarLimitesSliders());
+		return slider;
+	}
+
+	private void atualizarLimitesSliders() {
+		if (ajustandoSliders || spinnerTotalGeracao == null) return;
+		ajustandoSliders = true;
+		atualizarLimitesDoGrupo(new ArrayList<>(regrasRaridade.values()));
+		atualizarLimitesDoGrupo(new ArrayList<>(regrasCategoria.values()));
+		ajustandoSliders = false;
+	}
+
+	private void atualizarLimitesDoGrupo(List<Slider> sliders) {
+		for (Slider slider : sliders) {
+			double usadosPorOutros = sliders.stream().filter(outro -> outro != slider).mapToDouble(Slider::getValue).sum();
+			double maximo = Math.max(0, spinnerTotalGeracao.getValue() - usadosPorOutros);
+			slider.setMax(maximo);
+			if (slider.getValue() > maximo) slider.setValue(maximo);
+		}
+	}
 	private VBox painel(String titulo) { VBox painel = new VBox(9); painel.setPadding(new Insets(10)); painel.setStyle("-fx-background-color: #1b1b25; -fx-background-radius: 8;"); Label label = new Label(titulo); label.getStyleClass().add("editor-section-accent"); painel.getChildren().add(label); return painel; }
 	private Label rotulo(String texto) { Label label = new Label(texto); label.getStyleClass().add("editor-field-label"); return label; }
 	private int lerInteiro(String valor) { try { return Math.max(0, Integer.parseInt(valor)); } catch (NumberFormatException ex) { return 0; } }

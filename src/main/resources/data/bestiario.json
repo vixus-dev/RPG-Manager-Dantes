@@ -1268,6 +1268,26 @@
     "id": "GuardiaoRecife",
     "poderoso": false
   },
+  "Idolo": {
+    "nome": "Ídolo",
+    "raca": "Anjo-menor",
+    "andar": "6",
+    "grau": 0.0,
+    "vida": 1.0,
+    "mana": 0.0,
+    "agilidade": 0.0,
+    "defesa": 0.0,
+    "arma": null,
+    "xpReward": 0.0,
+    "peso": "imovel",
+    "tamanhoX": 1.0,
+    "tamanhoY": 1.0,
+    "propriedades": [
+      "IDOLO",
+      "SEM_TURNO"
+    ],
+    "poderoso": false
+  },
   "Enguia rochosa": {
     "nome": "Enguia rochosa",
     "raca": "Demônio",

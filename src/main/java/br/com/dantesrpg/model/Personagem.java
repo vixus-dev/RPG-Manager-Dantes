@@ -24,6 +24,9 @@ import java.util.Queue;
 
 public class Personagem {
 	private static final String PREFIXO_HABILIDADE_BLOQUEADA_CORAL = "HABILIDADE_BLOQUEADA_CORAL:";
+	private static final double MULTIPLICADOR_VIDA_RADIANTE = 5.0;
+	private static final double MULTIPLICADOR_DANO_RADIANTE = 1.5;
+	private static final double REDUCAO_TU_RADIANTE = 0.15;
 
 	// === IDENTIFICAÇÃO ===
 	private String nome;
@@ -120,6 +123,7 @@ public class Personagem {
 	private boolean isProtagonista = false;
 	private boolean isAusente = false;
 	private boolean poderoso = false;
+	private boolean radiante = false;
 	private List<String> propriedades = new ArrayList<>();
 
 	// === EMPUXO (KNOCKBACK) ===
@@ -282,7 +286,7 @@ public class Personagem {
 		this.reducaoDanoTopor = 0.0;
 		this.reducaoDoTTopor = 0.0;
 		this.reducaoCuraPercentual = 0.0;
-		this.vidaMaxima = (double) this.vidaMaximaBase;
+		this.vidaMaxima = this.vidaMaximaBase;
 		this.atributosFinais = new EnumMap<>(Atributo.class);
 		if (this.atributosBase != null) this.atributosFinais.putAll(this.atributosBase);
 	}
@@ -447,6 +451,10 @@ public class Personagem {
 
 		// Maldições: reduzem teto de HP máximo por porcentagem
 		this.vidaMaxima -= br.com.dantesrpg.model.util.MaldicaoUtils.getReducaoHpMaximoTotal(this);
+
+		if (radiante) {
+			this.vidaMaxima *= MULTIPLICADOR_VIDA_RADIANTE;
+		}
 
 
 	}
@@ -801,6 +809,22 @@ public class Personagem {
 
 	public void setPoderoso(boolean poderoso) {
 		this.poderoso = poderoso;
+	}
+
+	public boolean isRadiante() {
+		return radiante;
+	}
+
+	public void setRadiante(boolean radiante) {
+		this.radiante = radiante;
+	}
+
+	public double aplicarMultiplicadorDanoRadiante(double dano) {
+		return radiante ? dano * MULTIPLICADOR_DANO_RADIANTE : dano;
+	}
+
+	public double getReducaoTURadiante() {
+		return radiante ? REDUCAO_TU_RADIANTE : 0.0;
 	}
 
 	// === EMPUXO (KNOCKBACK) ===

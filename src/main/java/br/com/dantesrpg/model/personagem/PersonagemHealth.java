@@ -5,6 +5,7 @@ import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.racas.Humano;
 import br.com.dantesrpg.model.util.ContratoDeVidaUtils;
+import br.com.dantesrpg.model.util.IdoloUtils;
 
 import java.util.Queue;
 
@@ -39,6 +40,10 @@ public class PersonagemHealth {
 
 		if (Math.abs(novaVida - vidaAntiga) < 0.01)
 			return;
+		if (novaVida < vidaAntiga && IdoloUtils.temBencao(personagem)) {
+			System.out.println(">>> BÊNÇÃO DO ÍDOLO: " + personagem.getNome() + " ignorou todo o dano recebido.");
+			return;
+		}
 
 		double delta = novaVida - vidaAntiga;
 
@@ -61,6 +66,10 @@ public class PersonagemHealth {
 
 		if (personagem.getRaca() != null && Math.abs(personagem.getVidaAtual() - vidaAntiga) > 0.01) {
 			personagem.getRaca().onHpChanged(personagem, vidaAntiga, personagem.getVidaAtual(), estado, controller);
+		}
+
+		if (vidaAntiga > 0 && personagem.getVidaAtual() <= 0) {
+			IdoloUtils.removerBencaoConcedidaPor(personagem, estado);
 		}
 	}
 

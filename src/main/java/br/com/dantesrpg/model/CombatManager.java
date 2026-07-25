@@ -22,6 +22,7 @@ import br.com.dantesrpg.model.habilidades.classe.WhaWhaSolo;
 import br.com.dantesrpg.model.racas.Elfo;
 import br.com.dantesrpg.model.map.TerrainData.EfeitoInstance;
 import br.com.dantesrpg.model.map.TerrainData.TipoEfeitoSolo;
+import br.com.dantesrpg.model.util.IdoloUtils;
 import java.text.Normalizer;
 import java.util.Comparator;
 import java.util.Random;
@@ -275,7 +276,8 @@ public class CombatManager {
 		if (!estado.isCombateAtivo())
 			return;
 
-		Personagem proximoAtor = estado.getCombatentes().stream().filter(p -> p.isAtivoNoCombate())
+		Personagem proximoAtor = estado.getCombatentes().stream()
+				.filter(p -> p.isAtivoNoCombate() && !IdoloUtils.naoPossuiTurno(p))
 				.min(java.util.Comparator.comparingInt(Personagem::getContadorTU)
 						.thenComparing((p1, p2) -> Boolean.compare(p2.isProtagonista(), p1.isProtagonista()))
 						.thenComparing((p1, p2) -> Integer.compare(p2.getPlacarIniciativa(), p1.getPlacarIniciativa())))
@@ -1688,6 +1690,8 @@ for (Personagem p : jogadoresVivos) {
 			}
 			custoExtraFixo += conjurador.getRaca().getCustoTUExtra(conjurador, habilidade, tipoAcaoAtual);
 		}
+
+		modTU -= conjurador.getReducaoTURadiante();
 
 		if (conjurador.getEfeitosAtivos().containsKey("Meio Dia") && estado != null) {
 			double totalEscudoInfernal = estado.getCombatentes().stream()
