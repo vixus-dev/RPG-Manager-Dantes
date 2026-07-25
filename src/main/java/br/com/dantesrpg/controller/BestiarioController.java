@@ -102,6 +102,8 @@ public class BestiarioController {
 	private ComboBox<String> comboArma;
 	@FXML
 	private CheckBox chkPoderoso;
+	@FXML
+	private CheckBox chkRadiante;
 
 	// Editor - Extras
 	@FXML
@@ -257,6 +259,7 @@ public class BestiarioController {
 		inputTamanhoY.setText(formatarInteiro(data, "tamanhoY", 1));
 		comboPeso.setValue((String) data.getOrDefault("peso", PesoEntidade.MEDIO_PADRAO.getJsonId()));
 		chkPoderoso.setSelected(Boolean.TRUE.equals(data.get("poderoso")));
+		chkRadiante.setSelected(Boolean.TRUE.equals(data.get("radiante")));
 
 		String nomeArma = (String) data.getOrDefault("arma", "");
 		comboArma.setValue(nomeArma);
@@ -319,6 +322,7 @@ public class BestiarioController {
 		dados.put("arma", comboArma.getValue());
 		dados.put("peso", peso);
 		dados.put("poderoso", chkPoderoso.isSelected());
+		dados.put("radiante", chkRadiante.isSelected());
 		dados.put("propriedades", obterPropriedadesSelecionadas());
 		if (idSelecionado != null && bestiarioData.containsKey(idSelecionado)) {
 			Map<String, Object> original = bestiarioData.get(idSelecionado);
@@ -690,6 +694,7 @@ public class BestiarioController {
 			novo.put("peso", PesoEntidade.MEDIO_PADRAO.getJsonId());
 			novo.put("propriedades", new ArrayList<>());
 			novo.put("poderoso", false);
+			novo.put("radiante", false);
 
 			bestiarioData.put(idLimpo, novo);
 			atualizarLista();

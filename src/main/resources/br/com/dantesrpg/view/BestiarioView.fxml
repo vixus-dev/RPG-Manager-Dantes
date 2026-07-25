@@ -109,7 +109,10 @@
                             <Label text="Arma" GridPane.columnIndex="0" GridPane.rowIndex="6" />
                             <ComboBox fx:id="comboArma" editable="true" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
 
-                            <CheckBox fx:id="chkPoderoso" text="Poderoso" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+                            <HBox spacing="16.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
+                                <CheckBox fx:id="chkPoderoso" text="Poderoso" />
+                                <CheckBox fx:id="chkRadiante" text="Radiante" />
+                            </HBox>
                         </GridPane>
                     </VBox>
 

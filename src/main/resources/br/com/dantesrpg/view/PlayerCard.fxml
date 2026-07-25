@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="90.0" prefWidth="260.0" styleClass="player-card" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.PlayerCardController">
@@ -45,6 +46,8 @@
                    preserveRatio="false"
                    smooth="true"
                    cache="true" />
+        <Rectangle fx:id="filtroRadianteRetrato" width="120.0" height="90.0" mouseTransparent="true"
+                   opacity="0.42" styleClass="portrait-radiante-overlay" visible="false" />
     </children>
 </StackPane>
 

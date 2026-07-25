@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +26,10 @@ import br.com.dantesrpg.model.enums.PesoEntidade;
 import br.com.dantesrpg.model.racas.RaçaPlaceholder;
 import br.com.dantesrpg.model.util.ArmaduraUtils;
 import br.com.dantesrpg.model.util.FileLoader;
+import br.com.dantesrpg.model.util.IdoloUtils;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
 
 public class BestiarioSpawnService {
 
@@ -112,6 +114,7 @@ public class BestiarioSpawnService {
 		}
 		monstro.setPropriedades(propriedadesMalditas);
 		monstro.setPoderoso(Boolean.TRUE.equals(dadosMalditos.get("poderoso")));
+		monstro.setRadiante(Boolean.TRUE.equals(dadosMalditos.get("radiante")));
 
 		equiparArma(monstro, (String) dadosMalditos.getOrDefault("arma", null));
 		monstro.recalcularAtributosEstatisticas();
@@ -253,9 +256,9 @@ public class BestiarioSpawnService {
 		String pesoStr = (String) data.getOrDefault("peso", "medio_padrao");
 		String andar = (String) data.getOrDefault("andar", "Não informado");
 
+		boolean radiante = Boolean.TRUE.equals(data.get("radiante"));
 		Map<Atributo, Integer> atributos = atributosBase(agilidade);
-		long qtdExistente = estado.getCombatentes().stream().filter(p -> p.getNome().startsWith(nomeBase)).count();
-		String nomeFinal = nomeBase + " " + (qtdExistente + 1);
+		String nomeFinal = definirNomeSpawnado(nomeBase, radiante, estado.getCombatentes());
 
 		String racaStr = (String) data.getOrDefault("raca", "Criatura");
 		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1, atributos,
@@ -283,8 +286,9 @@ public class BestiarioSpawnService {
 		
 		boolean poderoso = data.containsKey("poderoso") && (Boolean) data.get("poderoso");
 		monstro.setPoderoso(poderoso);
+		monstro.setRadiante(radiante);
 		
-		equiparArma(monstro, nomeArma);
+		equiparArma(monstro, nomeArma, data.containsKey("arma"));
 		aplicarEscudosDePropriedade(monstro, vidaMax);
 
 		monstro.recalcularAtributosEstatisticas();
@@ -292,6 +296,7 @@ public class BestiarioSpawnService {
 		estado.getCombatentes().add(monstro);
 
 		controller.atualizarInterfaceTotal();
+		solicitarAlvoParaBencaoDoIdolo(monstro, estado);
 		System.out.println("SPAWN: " + nomeFinal + " (Segmentos: " + segmentos + ")");
 	}
 
@@ -335,11 +340,9 @@ public class BestiarioSpawnService {
 			tamanhoY = 24;
 		}
 
+		boolean radiante = Boolean.TRUE.equals(dadosMonstro.get("radiante"));
 		List<String> props = lerPropriedades(dadosMonstro);
-		List<Personagem> existentes = estado.getCombatentes().stream()
-				.filter(p -> p.getNome().startsWith(nome))
-				.collect(Collectors.toList());
-		String nomeFinal = definirNomeSpawnado(nome, existentes);
+		String nomeFinal = definirNomeSpawnado(nome, radiante, estado.getCombatentes());
 
 		String racaStr = (String) dadosMonstro.getOrDefault("raca", "Criatura");
 		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1,
@@ -365,8 +368,9 @@ public class BestiarioSpawnService {
 		
 		boolean poderoso = dadosMonstro.containsKey("poderoso") && (Boolean) dadosMonstro.get("poderoso");
 		monstro.setPoderoso(poderoso);
+		monstro.setRadiante(radiante);
 
-		equiparArma(monstro, nomeArma);
+		equiparArma(monstro, nomeArma, dadosMonstro.containsKey("arma"));
 		aplicarEscudosDePropriedade(monstro, vida);
 		aplicarFantasmaNobreMonstro(idMonstro, monstro);
 
@@ -375,6 +379,7 @@ public class BestiarioSpawnService {
 		estado.getCombatentes().add(monstro);
 
 		controller.atualizarInterfaceTotal();
+		solicitarAlvoParaBencaoDoIdolo(monstro, estado);
 		System.out.println("GM: Monstro spawnado: " + nomeFinal + " [Custom: "
 				+ (this.templateSpawnCustomizado != null) + "]");
 	}
@@ -411,21 +416,41 @@ public class BestiarioSpawnService {
 		return props;
 	}
 
-	private String definirNomeSpawnado(String nome, List<Personagem> existentes) {
-		if (existentes.isEmpty()) {
-			return nome;
+	private String definirNomeSpawnado(String nomeBase, boolean radiante, List<Personagem> combatentes) {
+		String nomeVariante = radiante ? nomeBase + " Radiante" : nomeBase;
+		List<Personagem> existentesDaVariante = combatentes.stream()
+				.filter(personagem -> pertenceAVariante(personagem, nomeBase, radiante))
+				.toList();
+
+		if (existentesDaVariante.isEmpty()) {
+			return nomeVariante;
 		}
 
-		Optional<Personagem> purista = existentes.stream().filter(p -> p.getNome().equals(nome)).findFirst();
-		if (purista.isPresent()) {
-			purista.get().setNome(nome + " 1");
-			System.out.println("GM: " + nome + " original foi renomeado para " + nome + " 1");
-		}
+		existentesDaVariante.stream()
+				.filter(personagem -> personagem.getNome().equals(nomeVariante))
+				.findFirst()
+				.ifPresent(personagem -> {
+					personagem.setNome(nomeVariante + " 1");
+					System.out.println("GM: " + nomeVariante + " original foi renomeado para " + nomeVariante + " 1");
+				});
 
-		return nome + " " + (existentes.size() + 1);
+		return nomeVariante + " " + (existentesDaVariante.size() + 1);
+	}
+
+	private boolean pertenceAVariante(Personagem personagem, String nomeBase, boolean radiante) {
+		return personagem != null && personagem.isRadiante() == radiante
+				&& (personagem.getNome().equals(nomeBase) || personagem.getNome().startsWith(nomeBase + " "));
 	}
 
 	private void equiparArma(Personagem monstro, String nomeArma) {
+		equiparArma(monstro, nomeArma, false);
+	}
+
+	private void equiparArma(Personagem monstro, String nomeArma, boolean armaFoiInformadaNoBestiario) {
+		if (armaFoiInformadaNoBestiario && nomeArma == null) {
+			monstro.setArmaEquipada(null);
+			return;
+		}
 		if (nomeArma != null && !nomeArma.isEmpty()) {
 			Arma arma = catalogoItensService.getArma(nomeArma);
 			if (arma != null) {
@@ -434,6 +459,58 @@ public class BestiarioSpawnService {
 			}
 		}
 		monstro.setArmaEquipada(catalogoItensService.getArma("Punhos"));
+	}
+
+	private void solicitarAlvoParaBencaoDoIdolo(Personagem idolo, EstadoCombate estado) {
+		if (!IdoloUtils.isIdolo(idolo)) {
+			return;
+		}
+
+		Runnable solicitarSelecao = () -> {
+			List<Personagem> candidatos = estado.getCombatentes().stream()
+					.filter(Personagem::isAtivoNoCombate)
+					.filter(personagem -> personagem != idolo)
+					.filter(personagem -> "INIMIGO".equalsIgnoreCase(personagem.getFaccao()))
+					.toList();
+
+			if (candidatos.isEmpty()) {
+				Alert alerta = new Alert(Alert.AlertType.WARNING);
+				alerta.setTitle("Bênção do Ídolo");
+				alerta.setHeaderText("Não há outro inimigo para receber a bênção.");
+				alerta.setContentText("Adicione outro inimigo ao campo antes de spawnar o Ídolo.");
+				alerta.showAndWait();
+				return;
+			}
+
+			List<String> nomesCandidatos = candidatos.stream().map(Personagem::getNome).toList();
+			ChoiceDialog<String> dialogo = new ChoiceDialog<>(nomesCandidatos.get(0), nomesCandidatos);
+			dialogo.setTitle("Bênção do Ídolo");
+			dialogo.setHeaderText("Selecione o inimigo que receberá a Bênção do Ídolo.");
+			dialogo.setContentText("Inimigo:");
+
+			Personagem alvo;
+			do {
+				String nomeSelecionado = dialogo.showAndWait().orElse(null);
+				alvo = candidatos.stream().filter(personagem -> personagem.getNome().equals(nomeSelecionado)).findFirst()
+						.orElse(null);
+				if (alvo == null) {
+					Alert alerta = new Alert(Alert.AlertType.WARNING);
+					alerta.setTitle("Bênção do Ídolo");
+					alerta.setHeaderText("A seleção de um inimigo é obrigatória.");
+					alerta.setContentText("O Ídolo só pode entrar em campo após conceder sua bênção.");
+					alerta.showAndWait();
+				}
+			} while (alvo == null);
+
+			IdoloUtils.aplicarBencao(idolo, alvo);
+			controller.atualizarInterfaceTotal();
+		};
+
+		if (Platform.isFxApplicationThread()) {
+			solicitarSelecao.run();
+		} else {
+			Platform.runLater(solicitarSelecao);
+		}
 	}
 
 	private void aplicarEscudosDePropriedade(Personagem monstro, double vidaBase) {

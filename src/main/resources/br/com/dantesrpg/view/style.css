@@ -50,6 +50,9 @@
 .bar-track { -fx-fill: black; -fx-stroke: transparent; }
 .hp-bar-fill { -fx-fill: linear-gradient(to right, #00FF00, #33AA33); -fx-stroke: transparent; }
 .hp-bar-fill-cursed { -fx-fill: linear-gradient(to right, #00ffff, #168fbd); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, #00ffff, 5, 0.35, 0, 0); }
+.hp-bar-fill-radiante { -fx-fill: linear-gradient(to right, #ff4f8b, #ff9f43, #ffe66d, #63e6be, #4dabf7, #b197fc); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, #ffe66d, 6, 0.45, 0, 0); }
+.hp-bar-fill-idolo { -fx-fill: linear-gradient(to right, #ffffff, #eeeeee); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, #ffffff, 6, 0.45, 0, 0); }
+.portrait-radiante-overlay { -fx-fill: linear-gradient(to bottom right, #ff4f8b, #ff9f43, #ffe66d, #63e6be, #4dabf7, #b197fc); }
 .mp-bar-fill { -fx-fill: linear-gradient(to right, #00FFFF, #0077FF); -fx-stroke: transparent; }
 .passive-bar-fill { -fx-fill: linear-gradient(to right, #FFFF00, #FFAA00); -fx-stroke: transparent; }
 .passive-bar-fill.race-elf { -fx-fill: linear-gradient(to right, #FFD700, #FFAA00); }

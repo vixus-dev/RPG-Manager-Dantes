@@ -16,10 +16,12 @@ import br.com.dantesrpg.model.util.EffectTooltipBuilder;
 import br.com.dantesrpg.model.util.CharacterImageResolver;
 import br.com.dantesrpg.model.util.ImageCache;
 import br.com.dantesrpg.model.util.EffectIconResolver;
+import br.com.dantesrpg.model.util.IdoloUtils;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Node;
+import javafx.scene.shape.Rectangle;
 
 public class PlayerCardController {
 
@@ -27,6 +29,8 @@ public class PlayerCardController {
 	private Polygon diamondShape;
 	@FXML
 	private ImageView imgPersonagem;
+	@FXML
+	private Rectangle filtroRadianteRetrato;
 	@FXML
 	private Label labelNome;
 	@FXML
@@ -341,9 +345,11 @@ public class PlayerCardController {
 			}
 
 			hpBarPolygon.getStyleClass().clear();
-			hpBarPolygon.getStyleClass().add(personagem.getValorPropriedade("MALDITO") > 0
-					? "hp-bar-fill-cursed"
-					: "hp-bar-fill");
+			hpBarPolygon.getStyleClass().add(IdoloUtils.temBencao(personagem)
+					? "hp-bar-fill-idolo"
+					: personagem.isRadiante()
+							? "hp-bar-fill-radiante"
+							: personagem.getValorPropriedade("MALDITO") > 0 ? "hp-bar-fill-cursed" : "hp-bar-fill");
 		}
 	}
 
@@ -703,8 +709,16 @@ public class PlayerCardController {
 			if (portraitImage == null || portraitImage.isError())
 				throw new Exception();
 			imgPersonagem.setImage(portraitImage);
+			atualizarFiltroRadianteRetrato(personagem.isRadiante());
 		} catch (Exception e) {
 			imgPersonagem.setImage(null);
+			atualizarFiltroRadianteRetrato(false);
+		}
+	}
+
+	private void atualizarFiltroRadianteRetrato(boolean exibir) {
+		if (filtroRadianteRetrato != null) {
+			filtroRadianteRetrato.setVisible(exibir);
 		}
 	}
 
