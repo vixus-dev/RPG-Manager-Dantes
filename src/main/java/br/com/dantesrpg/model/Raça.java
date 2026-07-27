@@ -85,6 +85,10 @@ public abstract class Raça {
 		// Padrao: nao faz nada
 	}
 
+	public void onCriticalHitTaken(Personagem personagem, Personagem atacante, EstadoCombate estado) {
+		// Padrao: nao faz nada
+	}
+
 	public void onActionUsed(Personagem personagem, TipoAcao tipoAcaoAnterior, TipoAcao tipoAcaoAtual,
 			EstadoCombate estado) {
 		// Padrao: nao faz nada

@@ -261,7 +261,7 @@ public class BestiarioSpawnService {
 		String nomeFinal = definirNomeSpawnado(nomeBase, radiante, estado.getCombatentes());
 
 		String racaStr = (String) data.getOrDefault("raca", "Criatura");
-		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1, atributos,
+		Personagem monstro = new Personagem(nomeFinal, criarRaca(idMonstro, racaStr), new ClassePlaceholder(), 1, atributos,
 				vidaMax, 0);
 		monstro.setArmaduraNatural(ArmaduraUtils.calcularPontosParaReducaoPercentual(defesa));
 		monstro.setFaccao("INIMIGO");
@@ -294,6 +294,7 @@ public class BestiarioSpawnService {
 		monstro.recalcularAtributosEstatisticas();
 		monstro.setVidaAtual(monstro.getVidaMaxima());
 		estado.getCombatentes().add(monstro);
+		monstro.getRaca().onCombatStart(monstro, estado);
 
 		controller.atualizarInterfaceTotal();
 		solicitarAlvoParaBencaoDoIdolo(monstro, estado);
@@ -345,7 +346,7 @@ public class BestiarioSpawnService {
 		String nomeFinal = definirNomeSpawnado(nome, radiante, estado.getCombatentes());
 
 		String racaStr = (String) dadosMonstro.getOrDefault("raca", "Criatura");
-		Personagem monstro = new Personagem(nomeFinal, new RaçaPlaceholder(racaStr), new ClassePlaceholder(), 1,
+		Personagem monstro = new Personagem(nomeFinal, criarRaca(idMonstro, racaStr), new ClassePlaceholder(), 1,
 				atributosBase(agilidade), vida, 0);
 		monstro.setArmaduraNatural(ArmaduraUtils.calcularPontosParaReducaoPercentual(defesa));
 		monstro.setVidaMaxima(vida);
@@ -377,6 +378,7 @@ public class BestiarioSpawnService {
 		monstro.recalcularAtributosEstatisticas();
 		monstro.setVidaAtual(monstro.getVidaMaxima());
 		estado.getCombatentes().add(monstro);
+		monstro.getRaca().onCombatStart(monstro, estado);
 
 		controller.atualizarInterfaceTotal();
 		solicitarAlvoParaBencaoDoIdolo(monstro, estado);
@@ -386,6 +388,16 @@ public class BestiarioSpawnService {
 
 	private EstadoCombate getEstado() {
 		return estadoSupplier.get();
+	}
+
+	private br.com.dantesrpg.model.Raça criarRaca(String idMonstro, String nomeRaca) {
+		if ("GutterMan".equalsIgnoreCase(idMonstro)) {
+			return new br.com.dantesrpg.model.racas.GutterMan();
+		}
+		if ("GutterTank".equalsIgnoreCase(idMonstro)) {
+			return new br.com.dantesrpg.model.racas.GutterTank();
+		}
+		return new RaçaPlaceholder(nomeRaca);
 	}
 
 	private Map<Atributo, Integer> atributosBase(int agilidade) {
@@ -551,6 +563,9 @@ public class BestiarioSpawnService {
 		}
 		if (idMonstro.equalsIgnoreCase("Escanor")) {
 			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.InefavelSol());
+		}
+		if (idMonstro.equalsIgnoreCase("ATorreDevastadaXVI")) {
+			monstro.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.GravityCiclone());
 		}
 	}
 }

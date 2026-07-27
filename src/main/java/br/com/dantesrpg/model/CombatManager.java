@@ -40,6 +40,8 @@ public class CombatManager {
 	private static final int RAIO_ARISE = 1;
 	private static final int DURACAO_FOGO_AMALDICOADO_TU = 50;
 	private static final double PERCENTUAL_MALDICAO_FOGO_AMALDICOADO = 0.25;
+	private static final String EFEITO_VENENO_GAS = "Veneno do GasLeak";
+	private static final int DURACAO_VENENO_GAS_TU = 50;
 
 	// ========== CAMPOS ==========
 
@@ -454,6 +456,7 @@ public class CombatManager {
 			if (mainController != null) {
 				mainController.processarTickEfeitoAndar();
 			}
+			auraManager.processarTick(estado, tempoGlobalAtual);
 
 			if (mainController != null && mainController.getMapController() != null) {
 				mainController.getMapController().avancarTempoTerreno(1);
@@ -800,6 +803,13 @@ public class CombatManager {
 								br.com.dantesrpg.model.fantasmasnobres.RevelacaoDeYaweh
 										.reverterDespertarDivino(p);
 							}
+							if (nomeEfeito.equals(br.com.dantesrpg.model.fantasmasnobres.GravityCiclone.EFEITO)
+									&& mainController != null) {
+								mainController.removerDominio(
+										br.com.dantesrpg.model.fantasmasnobres.GravityCiclone.ID_DOMINIO);
+								domainManager.limparFusoesComDominio(
+										br.com.dantesrpg.model.fantasmasnobres.GravityCiclone.ID_DOMINIO);
+							}
 							if (nomeEfeito.equals("ALL OUT PIRATE")) {
 								br.com.dantesrpg.model.habilidades.boss.AllOutPirate.reverter(p);
 							}
@@ -853,8 +863,15 @@ public class CombatManager {
 
 		String acaoNome = (input.getHabilidade() != null) ? input.getHabilidade().getNome() : "Ataque Básico";
 
-	List<Personagem> alvos = input.getAlvos();
+		List<Personagem> alvos = input.getAlvos();
 		Habilidade habilidade = input.getHabilidade();
+		if (habilidade != null) {
+			String motivoBloqueio = habilidade.getMotivoBloqueio(ator, alvos, estado);
+			if (motivoBloqueio != null) {
+				System.out.println(">>> " + motivoBloqueio);
+				return;
+			}
+		}
 		String tipoParaVerificacao = (habilidade == null) ? "ATAQUE" : "HABILIDADE";
 
 		if (ator.getEfeitosAtivos().containsKey("Domínio: Idle Death Gamble")
@@ -1082,6 +1099,13 @@ public class CombatManager {
 		}
 
 		// --- CÁLCULO FINAL DE CUSTO (Universal) ---
+		if (br.com.dantesrpg.model.fantasmasnobres.GrandeRegente.temReservaAtiva(ator, input)) {
+			int reservado = br.com.dantesrpg.model.fantasmasnobres.GrandeRegente.consumirMovimentoReservado(ator, input);
+			custoTUBase = (int) Math.round(custoTUBase * (1.0 + 0.05 * reservado));
+			System.out.println(">>> GRANDE REGENTE: " + reservado + " movimento convertido em +"
+					+ (reservado * 10) + "% dano e +" + (reservado * 5) + "% TU.");
+		}
+
 		int custoManaFinal = calcularCustoManaFinal(ator, habilidade, custoManaBase);
 		if (custoManaFinal > 0)
 			ator.setManaAtual(ator.getManaAtual() - custoManaFinal);
@@ -1493,6 +1517,17 @@ for (Personagem p : jogadoresVivos) {
 			return;
 
 		if (efeitoSolo.expirou()) {
+			return;
+		}
+
+		if (efeitoSolo.getTipo() == TipoEfeitoSolo.GAS) {
+			if (mainController == null || !mainController.isPlayer(ator)) {
+				return;
+			}
+			Efeito venenoGas = new Efeito(EFEITO_VENENO_GAS, TipoEfeito.DOT,
+					DURACAO_VENENO_GAS_TU, null, efeitoSolo.getDanoPorTick(), 25);
+			effectProcessor.aplicarEfeitoAmbiental(ator, venenoGas);
+			System.out.println(">>> " + ator.getNome() + " foi contaminado pelo gás: 3 de dano a cada 25 TU.");
 			return;
 		}
 
