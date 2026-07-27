@@ -35,6 +35,9 @@ public class EffectTooltipBuilder {
 		DESCRICOES.put("Sono",
 				"Acumula sonolência. 5 acúmulos = Dormindo (300 TU). O alvo acorda após receber 2 ticks de dano.");
 		DESCRICOES.put("STUN", "Atordoa o alvo, fazendo-o perder o próximo turno.");
+		DESCRICOES.put("Imobilizado", "O alvo não pode se mover durante a duração do efeito.");
+		DESCRICOES.put("Paleta Amarela", "A tinta amarela permanece por 100 TU e causa dano ao desaparecer.");
+		DESCRICOES.put("Descolorido", "Recebe dano equivalente a 40% do golpe original a cada 50 TU.");
 		DESCRICOES.put("Lento", "Retarda o alvo, aumentando o custo em TU de todas as habilidades em +30%.");
 		DESCRICOES.put("Charm",
 				"Acúmulos baseados em Carisma do atacante. Ao atingir 100 acúmulos, o alvo entra em transe por 100 TU.");
@@ -44,6 +47,7 @@ public class EffectTooltipBuilder {
 		DESCRICOES.put("Dilaceramento", "Ferida profunda que reduz a cura recebida em 25%.");
 		DESCRICOES.put("Corta Cura", "Reduz a cura recebida pelo alvo em 25%.");
 		DESCRICOES.put("Corta Cura+", "Versão potente. Reduz a cura recebida pelo alvo em 40%.");
+		DESCRICOES.put("Paleta Vermelha", "Reduz a cura recebida em 30% e a armadura bruta em duas vezes o dado de Inspiração.");
 
 		// --- Outros Debuffs ---
 		DESCRICOES.put("Marca do Deserto", "Marca mística que enfraquece o alvo.");

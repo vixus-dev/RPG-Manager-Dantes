@@ -53,6 +53,7 @@ public class EffectProcessor {
 		if (alvo.getValorPropriedade("IMUNIDADE_CONTROLE") > 0) {
 			if (nomeEf.contains("sono") || nomeEf.contains("dormindo") || nomeEf.contains("atordoado")
 					|| nomeEf.contains("stun") || nomeEf.contains("medo") || nomeEf.contains("paralisia")
+					|| nomeEf.contains("imobilizado")
 					|| nomeEf.contains("congelado")) {
 				System.out.println(">>> IMUNE! " + alvo.getNome() + " ignorou o controle: " + efeito.getNome());
 				return;

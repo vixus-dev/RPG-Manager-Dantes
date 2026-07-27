@@ -903,6 +903,15 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		Set<Pane> celulas;
 		if (cssClass.equals(CSS_ALCANCE_MOVIMENTO)) {
 			celulas = aoeCalc.calcularCelulasMovimento(startX, startY, maxDist, dominiosAtivos);
+		} else if (habilidadeAtual != null && habilidadeAtual.ignoraParedes()) {
+			celulas = new LinkedHashSet<>();
+			for (int x = 0; x < gridLargura; x++) {
+				for (int y = 0; y < gridAltura; y++) {
+					if (Math.max(Math.abs(x - startX), Math.abs(y - startY)) <= maxDist) {
+						celulas.add(celulasDoGrid[x][y]);
+					}
+				}
+			}
 		} else {
 			celulas = aoeCalc.calcularCelulasAtaque(startX, startY, maxDist);
 			if (habilidadeAtual != null && habilidadeAtual.afetaSiMesmo()) {
@@ -1875,6 +1884,19 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		if (topToolbar != null && !topToolbar.getItems().contains(labelContadorAlvos)) {
 			topToolbar.getItems().add(labelContadorAlvos);
 		}
+	}
+
+	/** Aplica uma parede ou chão neste mapa; o chamador sincroniza mapas abertos. */
+	public void aplicarParedeDaArteDoCaos(int x, int y, boolean criar) {
+		if (!dentroDoGrid(x, y)) return;
+		if (celulasDoGrid[x][y] == null) return;
+		Pane cell = celulasDoGrid[x][y];
+		cell.getStyleClass().removeAll(TileRegistry.getInstance().getAllCssClasses());
+		TileDefinition tile = TileRegistry.getInstance().getById(criar ? "wall" : "floor");
+		if (tile == null) tile = TileRegistry.getInstance().getDefault();
+		aplicarTileNaCelula(cell, tile, x, y);
+		cell.getStyleClass().add("map-cell");
+		gridEfeitos[x][y] = null;
 	}
 
 	private void atualizarTextoContadorSelecao() {

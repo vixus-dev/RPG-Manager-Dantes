@@ -140,7 +140,8 @@ public class Anao extends Raça {
 
 	@Override
 	public boolean podeSeMover(Personagem personagem) {
-		return !estaEmPostura(personagem);
+		return !estaEmPostura(personagem)
+				&& (personagem == null || !personagem.getEfeitosAtivos().containsKey("Imobilizado"));
 	}
 
 	@Override

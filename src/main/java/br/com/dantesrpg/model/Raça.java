@@ -139,7 +139,7 @@ public abstract class Raça {
 	}
 
 	public boolean podeSeMover(Personagem personagem) {
-		return true;
+		return personagem == null || !personagem.getEfeitosAtivos().containsKey("Imobilizado");
 	}
 
 	public boolean isImuneMovimentoForcado(Personagem personagem) {
