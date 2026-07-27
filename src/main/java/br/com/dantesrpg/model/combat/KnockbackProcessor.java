@@ -177,6 +177,11 @@ public class KnockbackProcessor {
 			int nextX = curX + dx;
 			int nextY = curY + dy;
 
+			if (mapController != null && mapController.tentarCruzarBordaDominio(alvo, curX, curY, nextX, nextY)) {
+				colidiu = true;
+				break;
+			}
+
 			// Colisão com borda do mapa
 			if (mapController != null && (nextX < 0 || nextY < 0
 					|| nextX >= mapController.getGridLargura()
