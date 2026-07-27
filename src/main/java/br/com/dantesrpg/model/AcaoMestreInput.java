@@ -5,10 +5,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import br.com.dantesrpg.model.enums.ModoAtaque;
+import br.com.dantesrpg.model.map.CoordenadaMapa;
 
 import java.util.List;
 
 public class AcaoMestreInput {
+	public record AreaSelecionada(CoordenadaMapa epicentro, List<Personagem> alvos) {
+		public AreaSelecionada {
+			if (epicentro == null) {
+				throw new IllegalArgumentException("O epicentro da área não pode ser nulo.");
+			}
+			alvos = alvos == null ? List.of() : List.copyOf(alvos);
+		}
+	}
+
 	private Personagem ator;
 	private Item itemSendoUsado;
 	private List<Personagem> alvos;
@@ -17,15 +27,16 @@ public class AcaoMestreInput {
 	private List<Arma> armasSelecionadas = new ArrayList<>();
 	private ModoAtaque modoAtaque = ModoAtaque.NORMAL;
 	private int tirosExtras = 0;
+	/** Movimento separado para potencializar uma ação, sem confundir com rajadas. */
+	private int movimentoReservado = 0;
 	private String opcaoEscolhida;
-	private int epicentroX = -1;
-	private int epicentroY = -1;
+	private List<AreaSelecionada> areasSelecionadas = new ArrayList<>();
 	private Map<String, Integer> resultadosDados;
 	private Boolean criticoManual = null; // null = auto, true = crit forçado, false = sem crit
 
 	public AcaoMestreInput(Personagem ator, List<Personagem> alvos, Habilidade habilidade) {
 		this.ator = ator;
-		this.alvos = alvos;
+		this.alvos = alvos == null ? new ArrayList<>() : new ArrayList<>(alvos);
 		this.habilidade = habilidade;
 		this.fantasmaNobre = null;
 		this.itemSendoUsado = null;
@@ -35,7 +46,7 @@ public class AcaoMestreInput {
 	// Construtor para o Fantasma nobre
 	public AcaoMestreInput(Personagem ator, List<Personagem> alvos, FantasmaNobre fn) {
 		this.ator = ator;
-		this.alvos = alvos;
+		this.alvos = alvos == null ? new ArrayList<>() : new ArrayList<>(alvos);
 		this.habilidade = null;
 		this.fantasmaNobre = fn; // Green fn
 		this.itemSendoUsado = null;
@@ -88,17 +99,60 @@ public class AcaoMestreInput {
 	}
 
 	public void setEpicentro(int x, int y) {
-		this.epicentroX = x;
-		this.epicentroY = y;
+		this.areasSelecionadas = new ArrayList<>(
+				List.of(new AreaSelecionada(new CoordenadaMapa(x, y), this.alvos)));
 	}
 
 	// mais getters
 	public int getEpicentroX() {
-		return epicentroX;
+		return areasSelecionadas.isEmpty() ? -1 : areasSelecionadas.get(0).epicentro().x();
 	}
 
 	public int getEpicentroY() {
-		return epicentroY;
+		return areasSelecionadas.isEmpty() ? -1 : areasSelecionadas.get(0).epicentro().y();
+	}
+
+	public List<AreaSelecionada> getAreasSelecionadas() {
+		return List.copyOf(areasSelecionadas);
+	}
+
+	public List<CoordenadaMapa> getEpicentros() {
+		return areasSelecionadas.stream().map(AreaSelecionada::epicentro).toList();
+	}
+
+	public void setAreasSelecionadas(List<AreaSelecionada> areas) {
+		this.areasSelecionadas = new ArrayList<>();
+		if (areas != null) {
+			for (AreaSelecionada area : areas) {
+				if (area == null) {
+					throw new IllegalArgumentException("A lista de áreas selecionadas não pode conter valores nulos.");
+				}
+				this.areasSelecionadas.add(area);
+			}
+		}
+		this.alvos.clear();
+		for (AreaSelecionada area : this.areasSelecionadas) {
+			this.alvos.addAll(area.alvos());
+		}
+	}
+
+	/**
+	 * Retorna o índice humano (1..N) da área que originou o impacto na lista
+	 * achatada de alvos. Retorna -1 quando a ação não possui áreas estruturadas.
+	 */
+	public int getNumeroAreaDoImpacto(int indiceImpacto) {
+		if (indiceImpacto < 0) {
+			return -1;
+		}
+		int inicio = 0;
+		for (int indiceArea = 0; indiceArea < areasSelecionadas.size(); indiceArea++) {
+			int fim = inicio + areasSelecionadas.get(indiceArea).alvos().size();
+			if (indiceImpacto < fim) {
+				return indiceArea + 1;
+			}
+			inicio = fim;
+		}
+		return -1;
 	}
 
 	public String getOpcaoEscolhida() {
@@ -123,6 +177,14 @@ public class AcaoMestreInput {
 
 	public void setTirosExtras(int extras) {
 		this.tirosExtras = extras;
+	}
+
+	public int getMovimentoReservado() {
+		return movimentoReservado;
+	}
+
+	public void setMovimentoReservado(int movimentoReservado) {
+		this.movimentoReservado = Math.max(0, movimentoReservado);
 	}
 
 	public Boolean getCriticoManual() {

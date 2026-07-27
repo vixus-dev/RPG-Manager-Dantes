@@ -128,7 +128,7 @@ public class AoEShapeCalculator {
 	public List<Personagem> encontrarAlvosNaForma(int centroX, int centroY, Habilidade habilidade, Personagem ator) {
 		List<Personagem> alvosEncontrados = new ArrayList<>();
 		boolean atravessaParedes = habilidade.ignoraParedes();
-		TipoAlvo tipo = habilidade.getTipoAlvo();
+		TipoAlvo tipo = habilidade.getTipoAlvoEfetivo();
 
 		Set<Pane> celulasDaForma = new HashSet<>();
 

@@ -1614,7 +1614,8 @@ mainController.salvarEstadoJogadores();
 
 		Label lblAoe = new Label("Alcance / Área de Efeito");
 		lblAoe.setStyle("-fx-text-fill: #00ffff; -fx-font-weight: bold; -fx-font-size: 12px;");
-		content.getChildren().addAll(lblAoe, criarGraficoAoE(hab.getTipoAlvo(), hab.getTamanhoArea(), hab.getAlcanceMaximo(), hab.getAnguloCone()));
+		content.getChildren().addAll(lblAoe, criarGraficoAoE(hab.getTipoAlvoEfetivo(),
+				hab.getTamanhoArea(), hab.getAlcanceMaximo(), hab.getAnguloCone()));
 
 		dialogPane.setContent(content);
 		dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);

@@ -12,6 +12,7 @@ import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.ModoAtaque;
 import br.com.dantesrpg.model.enums.TipoAcao;
 import br.com.dantesrpg.model.racas.Marionette;
+import br.com.dantesrpg.model.fantasmasnobres.GrandeRegente;
 import br.com.dantesrpg.model.util.DamageEvent;
 import br.com.dantesrpg.model.util.DiceRoller;
 import br.com.dantesrpg.model.util.ArmaduraUtils;
@@ -186,10 +187,15 @@ public class DamageCalculator {
 		int rolagemNatural = (input != null) ? input.getResultadoDado("DADO_ATRIBUTO_NATURAL") : 0;
 
 		// Geração de Eventos de Dano
-		for (Personagem alvo : alvos) {
+		for (int indiceImpacto = 0; indiceImpacto < alvos.size(); indiceImpacto++) {
+			Personagem alvo = alvos.get(indiceImpacto);
 			if (!isAlvoValido(alvo))
 				continue;
 			List<DamageEvent> eventosDoAlvo = new ArrayList<>();
+			String prefixoArea = obterPrefixoArea(input, indiceImpacto);
+			double multiplicadorHabilidadeAlvo = habilidade != null
+				? habilidade.getMultiplicadorModificado(ator, alvo, estado)
+				: multiplicadorHabilidade;
 
 			if (isAtaqueBasico) {
 				for (Arma armaDoTick : armasDaAcao) {
@@ -206,9 +212,11 @@ public class DamageCalculator {
 						double multiplicadorFinal = multiplicadorHabilidade * modModo;
 
 						Boolean criticoManual = (input != null) ? input.getCriticoManual() : null;
-						double modCritico = calcularModificadorCritico(ator, rolagemDadoAtributo, rolagemNatural, armaDoTick, i, estavaEmStealth,
-								multiplicadorFinal, isTiroEspecial, criticoManual);
-						boolean isCrit = (modCritico > 1.0);
+						ResultadoCritico resultadoCritico = calcularModificadorCritico(ator, rolagemDadoAtributo,
+								rolagemNatural, armaDoTick, i, estavaEmStealth, multiplicadorFinal,
+								isTiroEspecial, criticoManual);
+						double modCritico = resultadoCritico.multiplicador();
+						boolean isCrit = resultadoCritico.critico();
 
 						double danoBruto = calcularDanoFinalTick(ator, armaDoTick, rolagemDadoAtributo, alvo, estado, input,
 								multiplicadorFinal, modCritico, fatorSorte, isTiroEspecial, danoBaseHabilidade);
@@ -217,13 +225,14 @@ public class DamageCalculator {
 						String labelTick = (armasDaAcao.size() > 1 || baseTicksDaArma > 1)
 								? "Hit - " + armaDoTick.getNome() + (baseTicksDaArma > 1 ? " (" + (i + 1) + ")" : "")
 								: "Ataque";
+						labelTick = prefixoArea + labelTick;
 
 						eventosDoAlvo.add(criarEventoDano(danoLiquido, labelTick, isCrit, ator, alvo, armaDoTick, input, estado,
 								isTiroEspecial, multiplicadorHabilidade));
 
 						// Eco (Combo)
 						if (ator.getEfeitosAtivos().containsKey("Combo!")) {
-							eventosDoAlvo.add(new DamageEvent(danoLiquido * 0.30, "Eco", false, null));
+							eventosDoAlvo.add(new DamageEvent(danoLiquido * 0.30, prefixoArea + "Eco", false, null));
 						}
 						// Cascata Marionette
 						if (ator.getRaca() instanceof Marionette && isCrit) {
@@ -248,13 +257,15 @@ public class DamageCalculator {
 							String labelRajada = (armasDaAcao.size() > 1)
 									? "Rajada - " + armaDoTick.getNome() + " (" + (k + 1) + ")"
 									: "Rajada " + (k + 1);
+							labelRajada = prefixoArea + labelRajada;
 
 							eventosDoAlvo.add(criarEventoDano(danoLiquidoRajada, labelRajada, isCritRajada, ator, alvo,
 									armaDoTick, input, estado, isTiroEspecial, multiplicadorHabilidade));
 
 							// Eco (Combo)
 							if (ator.getEfeitosAtivos().containsKey("Combo!")) {
-								eventosDoAlvo.add(new DamageEvent(danoLiquidoRajada * 0.30, "Eco", false, null));
+								eventosDoAlvo.add(new DamageEvent(danoLiquidoRajada * 0.30,
+										prefixoArea + "Eco", false, null));
 							}
 						}
 					}
@@ -262,29 +273,31 @@ public class DamageCalculator {
 			} else {
 				for (int i = 0; i < ticksBase; i++) {
 					double modModo = 1.0;
-					double multiplicadorFinal = multiplicadorHabilidade * modModo;
+					double multiplicadorFinal = multiplicadorHabilidadeAlvo * modModo;
 
 					Boolean criticoManual = (input != null) ? input.getCriticoManual() : null;
-					double modCritico = calcularModificadorCritico(ator, rolagemDadoAtributo, rolagemNatural, armaPrincipal, i, estavaEmStealth,
-							multiplicadorFinal, isTiroEspecial, criticoManual);
-					boolean isCrit = (modCritico > 1.0);
+					ResultadoCritico resultadoCritico = calcularModificadorCritico(ator, rolagemDadoAtributo,
+							rolagemNatural, armaPrincipal, i, estavaEmStealth, multiplicadorFinal,
+							isTiroEspecial, criticoManual);
+					double modCritico = resultadoCritico.multiplicador();
+					boolean isCrit = resultadoCritico.critico();
 
 					double danoBruto = calcularDanoFinalTick(ator, armaPrincipal, rolagemDadoAtributo, alvo, estado, input,
 							multiplicadorFinal, modCritico, fatorSorte, isTiroEspecial, danoBaseHabilidade);
 					double danoLiquido = aplicarReducaoArmadura(danoBruto, ator, alvo, estado, armaPrincipal);
 
-					String labelTick = (ticksBase > 1) ? "Hit " + (i + 1) : "Ataque";
+					String labelTick = prefixoArea + ((ticksBase > 1) ? "Hit " + (i + 1) : "Ataque");
 					eventosDoAlvo.add(criarEventoDano(danoLiquido, labelTick, isCrit, ator, alvo, armaPrincipal, input, estado,
-							isTiroEspecial, multiplicadorHabilidade));
+							isTiroEspecial, multiplicadorHabilidadeAlvo));
 
 					// Eco (Combo)
 					if (ator.getEfeitosAtivos().containsKey("Combo!")) {
-						eventosDoAlvo.add(new DamageEvent(danoLiquido * 0.30, "Eco", false, null));
+						eventosDoAlvo.add(new DamageEvent(danoLiquido * 0.30, prefixoArea + "Eco", false, null));
 					}
 				}
 			}
 
-			matrizDeDanos.put(alvo, eventosDoAlvo);
+			matrizDeDanos.computeIfAbsent(alvo, ignorado -> new ArrayList<>()).addAll(eventosDoAlvo);
 		}
 
 		finalizarAcao(ator, isTiroEspecial, alvos);
@@ -433,15 +446,22 @@ public class DamageCalculator {
 		dano *= getMultiplicadorBonusDanoComArma(ator, arma, alvo, estado, input);
 		dano *= modHabilidade;
 		dano *= modCritico;
+		if (GrandeRegente.temReservaAtiva(ator, input)) {
+			dano *= 1.0 + 0.10 * GrandeRegente.obterMovimentoReservado(input);
+		}
 
 		return Math.max(0, dano);
 	}
 
 	// ========== MODIFICADOR CRÍTICO ==========
 
-	private double calcularModificadorCritico(Personagem ator, int rolagem, int rolagemNatural, Arma arma, int tickIndex,
-			boolean stealth, double modHabilidade, boolean isTiroEspecial, Boolean criticoManual) {
+	private record ResultadoCritico(double multiplicador, boolean critico) {
+	}
+
+	private ResultadoCritico calcularModificadorCritico(Personagem ator, int rolagem, int rolagemNatural, Arma arma,
+			int tickIndex, boolean stealth, double modHabilidade, boolean isTiroEspecial, Boolean criticoManual) {
 		double mod = 1.0;
+		boolean critico = false;
 
 		if (tickIndex == 0) {
 			int tipoDado = DiceRoller
@@ -456,6 +476,7 @@ public class DamageCalculator {
 		if (criticoManual != null) {
 			if (criticoManual) {
 				mod *= (1 + ator.getDanoCritico());
+				critico = true;
 				System.out.println(">>> ACERTO CRÍTICO! (Manual)");
 			}
 		} else {
@@ -467,16 +488,18 @@ public class DamageCalculator {
 
 			if (Math.random() < (ator.getTaxaCritica() + bonusCritRate)) {
 				mod *= (1 + ator.getDanoCritico());
+				critico = true;
 				System.out.println(">>> ACERTO CRÍTICO!");
 			}
 		}
 
 		if (tickIndex == 0 && stealth && modHabilidade == 1.0 && mod == 1.0) {
 			mod = (1 + ator.getDanoCritico());
+			critico = true;
 			System.out.println(">>> Stealth: Crítico Garantido!");
 		}
 
-		return mod;
+		return new ResultadoCritico(mod, critico);
 	}
 
 	// ========== REDUÇÃO DE ARMADURA ==========
@@ -660,6 +683,14 @@ public class DamageCalculator {
 			return true;
 		}
 		return false;
+	}
+
+	private String obterPrefixoArea(AcaoMestreInput input, int indiceImpacto) {
+		if (input == null || input.getAreasSelecionadas().size() <= 1) {
+			return "";
+		}
+		int numeroArea = input.getNumeroAreaDoImpacto(indiceImpacto);
+		return numeroArea > 0 ? "Área " + numeroArea + " - " : "";
 	}
 
 	private void finalizarAcao(Personagem ator, boolean isTiroEspecial, List<Personagem> alvos) {

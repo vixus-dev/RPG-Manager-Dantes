@@ -2113,7 +2113,7 @@ public class EditorJogadorController {
         }
 
         // Desenhar área de efeito
-        desenharAOEPreview(hab.getTipoAlvo(), hab.getTamanhoArea());
+        desenharAOEPreview(hab.getTipoAlvoEfetivo(), hab.getTamanhoArea());
     }
 
     private void desenharAOEPreview(
