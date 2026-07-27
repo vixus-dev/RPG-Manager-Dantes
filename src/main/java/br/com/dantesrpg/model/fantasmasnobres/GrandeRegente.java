@@ -46,6 +46,20 @@ public class GrandeRegente extends FantasmaNobre {
 		return input == null ? 0 : Math.max(0, input.getMovimentoReservado());
 	}
 
+	public static boolean temReservaAtiva(Personagem personagem, AcaoMestreInput input) {
+		return personagem != null && personagem.getFantasmaNobre() instanceof GrandeRegente
+				&& personagem.getEfeitosAtivos().containsKey(EFEITO_GRANDE_REGENTE)
+				&& obterMovimentoReservado(input) > 0;
+	}
+
+	public static int consumirMovimentoReservado(Personagem personagem, AcaoMestreInput input) {
+		if (!temReservaAtiva(personagem, input)) return 0;
+		int reservado = Math.min(obterMovimentoReservado(input), personagem.getMovimentoRestanteTurno());
+		input.setMovimentoReservado(reservado);
+		personagem.setMovimentoRestanteTurno(personagem.getMovimentoRestanteTurno() - reservado);
+		return reservado;
+	}
+
 	@Override
 	public void onCombatStart(Personagem conjurador, EstadoCombate estado, CombatManager manager) {
 		if (!conjurador.getEfeitosAtivos().containsKey(EFEITO_GRANDE_REGENTE)) {

@@ -154,7 +154,9 @@ public class CriarController {
 		comboArmaWielding.setValue("1 Mão");
 
 		for (TipoAlvo t : TipoAlvo.values()) {
-			comboArmaAlvo.getItems().add(t.name());
+			if (t != TipoAlvo.MULTI_AOE) {
+				comboArmaAlvo.getItems().add(t.name());
+			}
 		}
 		comboArmaAlvo.setValue(TipoAlvo.INDIVIDUAL.name());
 
