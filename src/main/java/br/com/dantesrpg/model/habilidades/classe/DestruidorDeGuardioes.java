@@ -13,7 +13,7 @@ public class DestruidorDeGuardioes extends Habilidade {
 
 	@Override
 	public double getMultiplicadorModificado(Personagem ator, Personagem alvo, EstadoCombate estado) {
-		if (alvo != null && alvo.getEfeitosAtivos().containsKey("Guardião")) {
+		if (alvo != null && alvo.getEfeitosAtivos().containsKey("Shield")) {
 			System.out.println(">>> Destruidor de Guardiões acerta um Guardião! Dano 300%!");
 			return 3.0; // Retorna o multiplicador de 300%
 		}

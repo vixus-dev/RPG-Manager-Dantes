@@ -154,16 +154,22 @@ public class DiceInputsBuilder {
 		if (listaOpcoes != null && !listaOpcoes.isEmpty()) {
 			ToggleGroup group = new ToggleGroup();
 			toggleGroupOpcoes = group;
-
-			FlowPane flow = new FlowPane(5, 5);
-			flow.setPrefWrapLength(300);
-			for (String opt : listaOpcoes) {
-				ToggleButton tb = new ToggleButton(formatarNomeOpcao(opt));
-				tb.setToggleGroup(group);
-				tb.setUserData(opt);
-				tb.setPrefWidth(120);
-				tb.setStyle("-fx-base: #333;");
-				flow.getChildren().add(tb);
+			javafx.scene.Node seletor;
+			boolean usarRosaDosVentos = hab instanceof br.com.dantesrpg.model.habilidades.boss.GravityPunch;
+			if (usarRosaDosVentos) {
+				seletor = criarRosaDosVentos(group, listaOpcoes);
+			} else {
+				FlowPane flow = new FlowPane(5, 5);
+				flow.setPrefWrapLength(300);
+				for (String opt : listaOpcoes) {
+					ToggleButton tb = new ToggleButton(formatarNomeOpcao(opt));
+					tb.setToggleGroup(group);
+					tb.setUserData(opt);
+					tb.setPrefWidth(120);
+					tb.setStyle("-fx-base: #333;");
+					flow.getChildren().add(tb);
+				}
+				seletor = flow;
 			}
 
 			if (onOpcaoChanged != null) {
@@ -176,7 +182,7 @@ public class DiceInputsBuilder {
 
 			Label lblHeader = new Label("Configurar Ação:");
 			lblHeader.setStyle("-fx-text-fill: #00FFFF; -fx-font-weight: bold; -fx-padding: 5 0 0 0;");
-			diceInputsBox.getChildren().addAll(lblHeader, flow);
+			diceInputsBox.getChildren().addAll(lblHeader, seletor);
 		}
 
 		return new DiceInputsResult(inputDadoAtributo, inputsExtras, tipoDado, toggleGroupOpcoes);
@@ -311,6 +317,30 @@ public class DiceInputsBuilder {
 			adicionarInputExtra("DADO_ATRIBUTO", "Rolagem DES/SAG:", inputsExtras);
 			adicionarInputExtra("DADO_CHANCE_CACADA_1D6", "Qtd. Tiros (1d6):", inputsExtras);
 		}
+	}
+
+	private GridPane criarRosaDosVentos(ToggleGroup grupo, List<String> direcoes) {
+		GridPane rosa = new GridPane();
+		rosa.setAlignment(javafx.geometry.Pos.CENTER);
+		rosa.setHgap(5);
+		rosa.setVgap(5);
+		Map<String, int[]> posicoes = Map.of(
+				"NO", new int[] { 0, 0 }, "N", new int[] { 1, 0 }, "NE", new int[] { 2, 0 },
+				"O", new int[] { 0, 1 }, "L", new int[] { 2, 1 },
+				"SO", new int[] { 0, 2 }, "S", new int[] { 1, 2 }, "SE", new int[] { 2, 2 });
+		for (String direcao : direcoes) {
+			int[] posicao = posicoes.get(direcao);
+			if (posicao == null) continue;
+			ToggleButton botao = new ToggleButton(direcao);
+			botao.setToggleGroup(grupo);
+			botao.setUserData(direcao);
+			botao.getStyleClass().add("hud-wind-rose-button");
+			rosa.add(botao, posicao[0], posicao[1]);
+		}
+		Label centro = new Label("GRAV.");
+		centro.getStyleClass().add("hud-wind-rose-center");
+		rosa.add(centro, 1, 1);
+		return rosa;
 	}
 
 	private void adicionarPainelJusticaDourada(Personagem ator, Map<String, TextField> inputsExtras) {

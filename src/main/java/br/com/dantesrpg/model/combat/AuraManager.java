@@ -32,6 +32,21 @@ public class AuraManager {
 		return combatManager.getMainController();
 	}
 
+	/** Processa domínios cujas regras dependem do relógio global de TU. */
+	public void processarTick(EstadoCombate estado, int tempoGlobalAtual) {
+		if (estado == null || getController() == null || tempoGlobalAtual % 25 != 0) return;
+		Dominio ciclone = getController().getDominio(
+				br.com.dantesrpg.model.fantasmasnobres.GravityCiclone.ID_DOMINIO);
+		if (ciclone == null) return;
+
+		for (Personagem personagem : estado.getCombatentes()) {
+			if (personagem == null || !personagem.isAtivoNoCombate() || !ciclone.contemPersonagem(personagem)) continue;
+			combatManager.getDamageApplicator().aplicarDanoAoAlvo(null, personagem, 4, false,
+					br.com.dantesrpg.model.enums.TipoAcao.AMBIENTE, estado);
+			System.out.println(">>> Gravity Ciclone: " + personagem.getNome() + " sofre 4 de dano.");
+		}
+	}
+
 	// ========== ATUALIZAÇÃO DE AURAS ==========
 
 	public void atualizarAuras(EstadoCombate estado) {

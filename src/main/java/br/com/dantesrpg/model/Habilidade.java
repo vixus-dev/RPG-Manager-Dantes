@@ -93,6 +93,24 @@ public abstract class Habilidade {
 		return alvo;
 	}
 
+	/**
+	 * Formato de cada área quando o tipo principal é {@link TipoAlvo#MULTI_AOE}.
+	 */
+	public TipoAlvo getSubtipoArea() {
+		return TipoAlvo.AREA_CIRCULAR;
+	}
+
+	public TipoAlvo getTipoAlvoEfetivo() {
+		if (alvo != TipoAlvo.MULTI_AOE) {
+			return alvo;
+		}
+		TipoAlvo subtipo = getSubtipoArea();
+		if (subtipo == null || !subtipo.isFormatoAreaComEpicentro()) {
+			throw new IllegalStateException("Subtipo de MULTI_AOE inválido em [" + nome + "]: " + subtipo);
+		}
+		return subtipo;
+	}
+
 	public double getMultiplicadorDeDano() {
 		return multiplicadorDeDano;
 	}
@@ -114,6 +132,11 @@ public abstract class Habilidade {
 	}
 
 	public List<String> getOpcoesSelection() {
+		return null;
+	}
+
+	/** Validação contextual antes de consumir custos; {@code null} permite a execução. */
+	public String getMotivoBloqueio(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado) {
 		return null;
 	}
 
@@ -145,6 +168,14 @@ public abstract class Habilidade {
 		return 1; // Padrão
 	}
 
+	/**
+	 * Quantidade de áreas selecionáveis de uma habilidade
+	 * {@link TipoAlvo#MULTI_AOE}.
+	 */
+	public int getNumeroDeAreas() {
+		return 1;
+	}
+
 	public int getAlcanceMaximo() {
 		return -1;
 	}
@@ -174,5 +205,15 @@ public abstract class Habilidade {
 	public void executar(Personagem conjurador, int alvoX, int alvoY, List<Personagem> alvos, EstadoCombate estado,
 			CombatManager manager) {
 		executar(conjurador, alvos, estado, manager);
+	}
+
+	public void executar(Personagem conjurador, List<AcaoMestreInput.AreaSelecionada> areas,
+			List<Personagem> alvos, EstadoCombate estado, CombatManager manager) {
+		if (areas != null && !areas.isEmpty()) {
+			AcaoMestreInput.AreaSelecionada primeiraArea = areas.get(0);
+			executar(conjurador, primeiraArea.epicentro().x(), primeiraArea.epicentro().y(), alvos, estado, manager);
+			return;
+		}
+		executar(conjurador, -1, -1, alvos, estado, manager);
 	}
 }

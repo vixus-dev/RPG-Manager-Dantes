@@ -33,6 +33,19 @@ public abstract class FantasmaNobre {
 	 */
 	public abstract int getNumeroDeAlvos();
 
+	public TipoAlvo getSubtipoArea() {
+		return TipoAlvo.AREA_CIRCULAR;
+	}
+
+	public int getNumeroDeAreas() {
+		return 1;
+	}
+
+	/** Permite que FNs com parâmetros da HUD ajustem o custo sem criar exceções no serviço. */
+	public int getCustoTU(Personagem conjurador, AcaoMestreInput input) {
+		return getCustoTU();
+	}
+
 	public List<String> getOpcoesSelection() {
 		return null; // PadrÃ£o: sem opÃ§Ãµes
 	}
@@ -46,6 +59,9 @@ public abstract class FantasmaNobre {
 	}
 
 	public void onCombatStart(Personagem conjurador, EstadoCombate estado, CombatManager manager) {
+	}
+
+	public void onCombatEnd(Personagem conjurador, EstadoCombate estado, CombatManager manager) {
 	}
 
 	public void onTurnStart(Personagem conjurador, EstadoCombate estado, CombatManager manager) {
