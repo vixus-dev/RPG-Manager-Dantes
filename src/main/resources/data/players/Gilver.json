@@ -1,0 +1,47 @@
+{
+  "iniciativaBase": 0,
+  "pecado": 0,
+  "atributosBase": {
+    "FORCA": 3,
+    "PERCEPCAO": 12,
+    "ENDURANCE": 18,
+    "CARISMA": 5,
+    "INTELIGENCIA": 14,
+    "DESTREZA": 16,
+    "SORTE": 1,
+    "INSPIRACAO": 20,
+    "SAGACIDADE": 1,
+    "TOPOR": 5
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 100.0,
+  "contadorTU": 79,
+  "fantasmaNobre": "AArteDoCaos",
+  "armaEquipada": "Pincel Gigante",
+  "inventario": {},
+  "xpAtual": 0,
+  "vidaMaximaBase": 100.0,
+  "classe": "Mago",
+  "armasEquipadas": [
+    "Pincel Gigante"
+  ],
+  "nome": "Gilver",
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 6,
+  "posY": 6,
+  "vidas": 3,
+  "manaAtual": 6.5,
+  "escudoDivinoAtual": 0.0,
+  "raca": "Half-Demon",
+  "nivel": 1,
+  "wieldingMaximo": 2
+}
