@@ -23,6 +23,9 @@ public class Dominio {
 	private String texturePath;   // Caminho do sprite overlay (ex: "/effects/sangue_negro.png"), null = sem overlay
 	private double overlayOpacity = 0.7; // Opacidade do sprite overlay (0.0 = transparente, 1.0 = opaco)
 	private boolean disputavel = true; // Define se o domínio entra em batalhas de expansão
+	private final boolean formatoCircular;
+	private double danoAoCruzarBorda;
+	private int choqueAoCruzarBordaTU;
 
 	// Coordenadas das células do domínio (para checagem rápida O(1))
 	private final Set<Long> coordenadas = new HashSet<>();
@@ -33,6 +36,12 @@ public class Dominio {
 
 	public Dominio(String id, String nomeEfeito, Personagem dono, int centroX, int centroY, int tamanho,
 			String cssClass) {
+		this(id, nomeEfeito, dono, centroX, centroY, tamanho, cssClass, false);
+	}
+
+	/** Cria um domínio quadrado ou circular. O formato circular usa raio euclidiano. */
+	public Dominio(String id, String nomeEfeito, Personagem dono, int centroX, int centroY, int tamanho,
+			String cssClass, boolean formatoCircular) {
 		this.id = id;
 		this.nomeEfeito = nomeEfeito;
 		this.dono = dono;
@@ -40,11 +49,16 @@ public class Dominio {
 		this.centroY = centroY;
 		this.raio = (tamanho - 1) / 2;
 		this.cssClass = cssClass;
+		this.formatoCircular = formatoCircular;
 
 		// Pré-calcula todas as coordenadas da área
 		for (int y = centroY - raio; y <= centroY + raio; y++) {
 			for (int x = centroX - raio; x <= centroX + raio; x++) {
-				coordenadas.add(coordKey(x, y));
+				int dx = x - centroX;
+				int dy = y - centroY;
+				if (!formatoCircular || (dx * dx) + (dy * dy) <= raio * raio) {
+					coordenadas.add(coordKey(x, y));
+				}
 			}
 		}
 	}
@@ -59,6 +73,7 @@ public class Dominio {
 		this.nomeEfeito = nomeEfeito;
 		this.dono = null;
 		this.cssClass = cssClass;
+		this.formatoCircular = false;
 		this.isFusao = true;
 		this.dominiosOriginais.addAll(originais);
 		this.coordenadas.addAll(coordenadasUnidas);
@@ -218,6 +233,24 @@ public class Dominio {
 
 	public boolean isFusao() {
 		return isFusao;
+	}
+
+	public boolean isFormatoCircular() {
+		return formatoCircular;
+	}
+
+	/** Configura uma punição aplicada a quem tenta atravessar a borda do domínio. */
+	public void configurarPenalidadeBorda(double dano, int choqueTU) {
+		this.danoAoCruzarBorda = Math.max(0.0, dano);
+		this.choqueAoCruzarBordaTU = Math.max(0, choqueTU);
+	}
+
+	public double getDanoAoCruzarBorda() {
+		return danoAoCruzarBorda;
+	}
+
+	public int getChoqueAoCruzarBordaTU() {
+		return choqueAoCruzarBordaTU;
 	}
 
 	public List<Dominio> getDominiosOriginais() {
