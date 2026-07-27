@@ -299,6 +299,7 @@
   },
   "ATorreDevastadaXVI": {
     "nome": "A torre devastada - XVI?",
+    "nomeBaseImagem" : "ATorreDevastadaXVI",
     "raca": "Corte Infernal",
     "andar": "E0",
     "grau": 0.0,
