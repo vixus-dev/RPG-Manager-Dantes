@@ -23,7 +23,7 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": 100.0,
-  "contadorTU": 79,
+  "contadorTU": 23,
   "fantasmaNobre": "AArteDoCaos",
   "armaEquipada": "Pincel Gigante",
   "inventario": {},
@@ -37,11 +37,11 @@
   "segmentos": 0,
   "grau": 0,
   "posX": 6,
-  "posY": 6,
+  "posY": 4,
   "vidas": 3,
-  "manaAtual": 6.5,
+  "manaAtual": 16.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Half-Demon",
-  "nivel": 1,
+  "nivel": 10,
   "wieldingMaximo": 2
 }
