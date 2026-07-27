@@ -1357,6 +1357,13 @@ public class ReforcosDialogService {
 			EstadoCombate estado = estadoSupplier.get();
 			if (estado == null) return;
 
+			for (Personagem personagem : estado.getCombatentes()) {
+				if (personagem != null && "JOGADOR".equals(personagem.getFaccao())
+						&& personagem.getJsonFileName() != null) {
+					salvarPersonagem.accept(personagem);
+				}
+			}
+
 			estado.getCombatentes().removeIf(p -> p != null && "JOGADOR".equals(p.getFaccao()));
 
 			int count = 0;
@@ -1365,8 +1372,6 @@ public class ReforcosDialogService {
 				if (p != null) {
 					p.setFaccao("JOGADOR");
 					p.recalcularAtributosEstatisticas();
-					p.setVidaAtual(p.getVidaMaxima());
-					p.setManaAtual(p.getManaMaxima());
 					posicionarNaEntrada(p);
 					estado.getCombatentes().add(p);
 					count++;

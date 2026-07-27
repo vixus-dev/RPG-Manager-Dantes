@@ -278,6 +278,9 @@ public class CatalogoItensService {
 		if (armaData.containsKey("overclock")) {
 			arma.setGrauOverclock(((Number) armaData.get("overclock")).intValue());
 		}
+		if (arma.isRequerMunicao() && armaData.containsKey("municaoAtual")) {
+			arma.setMunicaoAtual(((Number) armaData.get("municaoAtual")).intValue());
+		}
 
 		if (arma instanceof Grimorio && armaData.containsKey("magiasSalvas")) {
 			Grimorio grimorio = (Grimorio) arma;
@@ -300,7 +303,7 @@ public class CatalogoItensService {
 		if (arma == null) {
 			return null;
 		}
-		if (!(arma instanceof Grimorio) && arma.getGrauOverclock() <= 0) {
+		if (!(arma instanceof Grimorio) && !arma.isRequerMunicao() && arma.getGrauOverclock() <= 0) {
 			return arma.getNome();
 		}
 
@@ -308,6 +311,9 @@ public class CatalogoItensService {
 		armaData.put("nome", arma.getNome());
 		if (arma.getGrauOverclock() > 0) {
 			armaData.put("overclock", arma.getGrauOverclock());
+		}
+		if (arma.isRequerMunicao()) {
+			armaData.put("municaoAtual", arma.getMunicaoAtual());
 		}
 		if (arma instanceof Grimorio) {
 			Grimorio grimorio = (Grimorio) arma;
