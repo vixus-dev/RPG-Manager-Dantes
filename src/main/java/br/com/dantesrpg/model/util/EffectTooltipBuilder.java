@@ -84,6 +84,12 @@ public class EffectTooltipBuilder {
 		DESCRICOES.put("O Vazio", "Aura opressora que enfraquece todos próximos, reduzindo seus atributos.");
 		DESCRICOES.put("Ringue da Vontade",
 				"Campo de combate 7x7 fechado (400 TU). Ninguém entra ou sai. Passivas do Punho Infinito amplificadas dentro da área.");
+		DESCRICOES.put("Cerca Elétrica",
+				"Campo de contenção 5x5 ativo por 500 TU. Aliados recuperam 10% de HP máximo e 1 MP a cada 100 TU; inimigos recebem Choque de +5 TU.");
+		DESCRICOES.put("Restauração da Cerca Elétrica",
+				"O personagem está dentro da Cerca Elétrica e receberá 10% de HP máximo e 1 MP a cada 100 TU.");
+		DESCRICOES.put("Supressão da Cerca Elétrica",
+				"Dentro da Cerca Elétrica, o dano causado é reduzido em 25%.");
 		DESCRICOES.put("Modo Engaged", "Modo de combate engajado. Modificadores aumentados pela arma.");
 		DESCRICOES.put("Dormindo", "O alvo está dormindo. Ações bloqueadas por 300 TU. Acorda após 2 ticks de dano.");
 
