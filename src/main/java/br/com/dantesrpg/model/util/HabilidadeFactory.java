@@ -149,6 +149,10 @@ public class HabilidadeFactory {
 		registro.put("Toque de Mana", ToqueDeMana::new);
 		registro.put("Arqui-magia", ArquiMagia::new);
 		registro.put("Bênção Solar", br.com.dantesrpg.model.habilidades.BencaoSolar::new);
+		registro.put("Ampliação elemental", AmpliaçãoElemental::new);
+		registro.put("Manipulação elemental", ManipulacaoElemental::new);
+		registro.put("Maestria elemental", MaestriaElemental::new);
+		registro.put("Mastermind", Mastermind::new);
 
 		// KuangLi - Profeta de Behemoth
 		registro.put("Mergulho", Mergulho::new);

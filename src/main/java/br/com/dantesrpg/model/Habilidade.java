@@ -81,6 +81,11 @@ public abstract class Habilidade {
 		return custoTU;
 	}
 
+	/** Permite ajustar o custo fixo conforme o personagem que usa a habilidade. */
+	public int getCustoTUModificado(Personagem conjurador) {
+		return getCustoTU();
+	}
+
 	public int getNivelNecessario() {
 		return nivelNecessario;
 	}
