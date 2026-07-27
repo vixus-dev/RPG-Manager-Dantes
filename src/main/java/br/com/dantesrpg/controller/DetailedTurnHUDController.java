@@ -1120,7 +1120,8 @@ public class DetailedTurnHUDController {
 				opcao = (String) toggleGroupOpcoes.getSelectedToggle().getUserData();
 				paleta.setOpcaoSelecionada(opcao);
 			}
-			final String corSelecionada = opcao;
+			final String corSelecionada = opcao != null
+					? opcao : br.com.dantesrpg.model.habilidades.PaletaDeCores.VERMELHO;
 			final TipoAlvo tipoCor = switch (corSelecionada) {
 			case br.com.dantesrpg.model.habilidades.PaletaDeCores.AMARELO -> TipoAlvo.AREA_QUADRADA;
 			case br.com.dantesrpg.model.habilidades.PaletaDeCores.PRETO -> TipoAlvo.LINHA;

@@ -51,12 +51,9 @@ public class PaletaDeCores extends Habilidade {
 
 	@Override
 	public TipoAlvo getTipoAlvo() {
-		return switch (opcaoSelecionada) {
-		case AZUL -> TipoAlvo.INDIVIDUAL;
-		case AMARELO -> TipoAlvo.AREA_QUADRADA;
-		case PRETO -> TipoAlvo.LINHA;
-		default -> TipoAlvo.INDIVIDUAL;
-		};
+		if (AMARELO.equals(opcaoSelecionada)) return TipoAlvo.AREA_QUADRADA;
+		if (PRETO.equals(opcaoSelecionada)) return TipoAlvo.LINHA;
+		return TipoAlvo.INDIVIDUAL;
 	}
 
 	@Override
