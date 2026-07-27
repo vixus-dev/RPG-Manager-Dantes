@@ -1,5 +1,6 @@
 {
   "iniciativaBase": 12,
+  "pecado": 1,
   "atributosBase": {
     "FORCA": 3,
     "PERCEPCAO": 6,
@@ -33,16 +34,21 @@
   "vidaMaximaBase": 42.0,
   "classe": "Mestre das Balas",
   "armasEquipadas": [
-    "Pistola de fogo",
-    "Pistola de fogo"
+    {
+      "municaoAtual": 6,
+      "nome": "Pistola de fogo"
+    },
+    {
+      "municaoAtual": 6,
+      "nome": "Pistola de fogo"
+    }
   ],
   "nome": "Etham",
   "segmentos": 0,
-  "pecado": 1,
-  "vidas": 0,
   "grau": 0,
-  "posX": 2,
-  "posY": 2,
+  "posX": 5,
+  "posY": 5,
+  "vidas": 0,
   "manaAtual": 7.0,
   "escudoDivinoAtual": 0.0,
   "raca": "Elfo",

@@ -486,6 +486,9 @@ public class CombatController {
 					p.getRaca().onCombatStart(p, estadoCombate);
 				}
 				// Reset de movimento para começar fresco
+				if (p.getFantasmaNobre() != null) {
+					p.getFantasmaNobre().onCombatStart(p, estadoCombate, combatManager);
+				}
 				p.setMovimentoRestanteTurno(p.getMovimento());
 			}
 
@@ -508,6 +511,11 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 			mapaCombateCoordinator.encerrarContratosBarbaros();
 			mapaCombateCoordinator.encerrarPosturasAnao();
 			limparClonesDoCombate();
+			for (Personagem p : estadoCombate.getCombatentes()) {
+				if (p.getFantasmaNobre() != null) {
+					p.getFantasmaNobre().onCombatEnd(p, estadoCombate, combatManager);
+				}
+			}
 
 			// Limpa dados temporários
 			estadoCombate.setAtorAtual(null);
@@ -977,8 +985,23 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 		}
 	}
 
+	public void adicionarAlvosMultiArea(List<AcaoMestreInput.AreaSelecionada> areas) {
+		if (detailedTurnHudController != null) {
+			detailedTurnHudController.adicionarAlvosMultiArea(areas);
+
+			if (detailedTurnHudStage != null) {
+				detailedTurnHudStage.show();
+				detailedTurnHudStage.toFront();
+				detailedTurnHudStage.requestFocus();
+			}
+		}
+	}
+
 	public void notificarMovimentoRealizado() {
 		mapaCombateCoordinator.notificarMovimentoRealizado();
+		if (detailedTurnHudController != null) {
+			detailedTurnHudController.atualizarReservaGrandeRegente();
+		}
 	}
 
 	public void adicionarAlvosSelecionados(List<Personagem> alvos) {
@@ -1005,6 +1028,10 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 
 	public CombatManager getCombatManager() {
 		return this.combatManager;
+	}
+
+	public EstadoCombate getEstadoCombate() {
+		return estadoCombate;
 	}
 
 	public void resolverAcaoFugir(Personagem ator) {

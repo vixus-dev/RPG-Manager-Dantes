@@ -145,6 +145,13 @@
         
         <VBox fx:id="diceInputsBox" spacing="10.0">
             </VBox>
+
+        <VBox fx:id="boxGrandeRegente" spacing="5.0" visible="false" managed="false" styleClass="hud-info-panel">
+            <Separator />
+            <Label text="Grande Regente — Movimento investido:" styleClass="hud-section-label"/>
+            <Slider fx:id="sliderGrandeRegente" min="0" max="10" majorTickUnit="1" minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
+            <Label fx:id="lblInfoGrandeRegente" text="0 quadrados: Bola 1x1." styleClass="hud-value-tu, hud-small-label" wrapText="true"/>
+        </VBox>
         
         <HBox alignment="CENTER" styleClass="hud-estimate-panel">
              <Label fx:id="labelEstimativaDano" text="Estimativa: 0" styleClass="hud-value-positive"/>

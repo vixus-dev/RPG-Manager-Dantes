@@ -21,6 +21,7 @@ import br.com.dantesrpg.model.fantasmasnobres.AndJusticeForMySelf;
 import br.com.dantesrpg.model.fantasmasnobres.ApostadorIncansavel;
 import br.com.dantesrpg.model.fantasmasnobres.GodsWill;
 import br.com.dantesrpg.model.fantasmasnobres.Fimbulwinter;
+import br.com.dantesrpg.model.fantasmasnobres.GrandeRegente;
 import br.com.dantesrpg.model.fantasmasnobres.InvocacaoMurasame;
 import br.com.dantesrpg.model.fantasmasnobres.InvocacaoSangrenta;
 import br.com.dantesrpg.model.fantasmasnobres.IraDeAnthyros;
@@ -89,7 +90,7 @@ public class FantasmaNobreActionService {
 
 		System.out.println(">>> " + ator.getNome() + " está ativando: " + fantasmaNobre.getNome() + "!");
 		fantasmaNobre.executar(ator, input.getAlvos(), estado, input, combatManager);
-		aplicarCustosCooldownEHook(ator, fantasmaNobre, combatManager);
+		aplicarCustosCooldownEHook(ator, fantasmaNobre, input, combatManager);
 		fecharHudEAvancar.run();
 	}
 
@@ -106,7 +107,7 @@ ator.getInventario().removerItem(essencia);
 
 		Personagem servoInvocado = criarServo(ator, essencia);
 		adicionarInvocacaoAoCombate(servoInvocado, ator);
-		aplicarCustosCooldownEHook(ator, fantasmaNobre, combatManager);
+		aplicarCustosCooldownEHook(ator, fantasmaNobre, null, combatManager);
 		fecharHudEAvancar.run();
 	}
 
@@ -123,6 +124,8 @@ ator.getInventario().removerItem(essencia);
 				return new ApostadorIncansavel();
 			case "GodsWill":
 				return new GodsWill();
+			case "GrandeRegente":
+				return new GrandeRegente();
 			case "Fimbulwinter":
 				return new Fimbulwinter();
 			case "InvocacaoMurasame":
@@ -154,9 +157,10 @@ ator.getInventario().removerItem(essencia);
 		}
 	}
 
-	private void aplicarCustosCooldownEHook(Personagem ator, FantasmaNobre fantasmaNobre, CombatManager combatManager) {
+	private void aplicarCustosCooldownEHook(Personagem ator, FantasmaNobre fantasmaNobre, AcaoMestreInput input,
+			CombatManager combatManager) {
 		int custoManaFinal = fantasmaNobre.getCustoMana();
-		int custoTUFinal = (int) (fantasmaNobre.getCustoTU() * (1.0 - ator.getReducaoTURadiante()));
+		int custoTUFinal = (int) (fantasmaNobre.getCustoTU(ator, input) * (1.0 - ator.getReducaoTURadiante()));
 		ator.setManaAtual(ator.getManaAtual() - custoManaFinal);
 		ator.setContadorTU(ator.getContadorTU() + custoTUFinal);
 		System.out.println(ator.getNome() + " gasta " + custoManaFinal + " MP e " + custoTUFinal + " TUs.");

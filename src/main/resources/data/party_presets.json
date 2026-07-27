@@ -1,5 +1,5 @@
 {
-  "equippedSlotName": "Equipe 1",
+  "equippedSlotName": "Encore E0",
   "presets": [
     {
       "name": "Equipe 1",
@@ -59,6 +59,14 @@
       "name": "EquipeTeste",
       "characterNames": [
         "paulo"
+      ],
+      "andarAtual": "NULO",
+      "estadoVisualAndar": 0
+    },
+    {
+      "name": "Encore E0",
+      "characterNames": [
+        "Invictus"
       ],
       "andarAtual": "NULO",
       "estadoVisualAndar": 0

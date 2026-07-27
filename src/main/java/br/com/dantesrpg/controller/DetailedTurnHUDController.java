@@ -79,6 +79,12 @@ public class DetailedTurnHUDController {
 	private Slider sliderRajada;
 	@FXML
 	private Label lblInfoRajada;
+	@FXML
+	private VBox boxGrandeRegente;
+	@FXML
+	private Slider sliderGrandeRegente;
+	@FXML
+	private Label lblInfoGrandeRegente;
 
 	// Inputs e Confirmação
 	@FXML
@@ -125,6 +131,7 @@ public class DetailedTurnHUDController {
 
 	// Alvos selecionados no mapa
 	private List<Personagem> alvosNoMapa = new ArrayList<>();
+	private List<AcaoMestreInput.AreaSelecionada> areasNoMapa = new ArrayList<>();
 	private int epicentroX = -1, epicentroY = -1;
 
 	// --- Subsystems (instanciados em initialize()) ---
@@ -142,6 +149,7 @@ public class DetailedTurnHUDController {
 			atualizarCustosExibidos();
 			enviarTUPreview();
 		});
+		sliderGrandeRegente.valueProperty().addListener((obs, oldVal, newVal) -> atualizarReservaGrandeRegente());
 
 		// Listener para o Grupo de Modos
 		grupoModo.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
@@ -173,6 +181,7 @@ public class DetailedTurnHUDController {
 		this.atorAtual = ator;
 		this.mainController = controller;
 		this.alvosNoMapa.clear();
+		this.areasNoMapa.clear();
 
 		// Reconstrói ActionGridBuilder com o controller correto
 		actionGridBuilder = new ActionGridBuilder(actionsGrid, mainController);
@@ -377,7 +386,9 @@ public class DetailedTurnHUDController {
 		this.fantasmaNobreSelecionado = fn;
 		this.isAtaqueBasico = isBasicAttack;
 		this.alvosNoMapa.clear();
+		this.areasNoMapa.clear();
 		this.epicentroX = -1;
+		this.epicentroY = -1;
 
 		// Mostra painel
 		actionDetailsColumn.setVisible(true);
@@ -413,6 +424,7 @@ public class DetailedTurnHUDController {
 			boxSelecaoArmas.setVisible(false);
 			boxSelecaoArmas.setManaged(false);
 		}
+		configurarReservaGrandeRegente();
 
 		// Inputs de Dados (delegado ao builder)
 		gerarInputsDeDados();
@@ -442,7 +454,10 @@ public class DetailedTurnHUDController {
 		} else if (habilidadeSelecionada != null) {
 			base = habilidadeSelecionada.getCustoTU();
 		} else if (fantasmaNobreSelecionado != null) {
-			base = fantasmaNobreSelecionado.getCustoTU();
+			base = fantasmaNobreSelecionado instanceof br.com.dantesrpg.model.fantasmasnobres.GrandeRegente
+					? (int) Math.round(fantasmaNobreSelecionado.getCustoTU()
+							* (1.0 + 0.05 * obterMovimentoReservadoGrandeRegente()))
+					: fantasmaNobreSelecionado.getCustoTU();
 		} else if (itemSelecionado != null) {
 			base = itemSelecionado.getCustoTU();
 		}
@@ -500,7 +515,8 @@ public class DetailedTurnHUDController {
 		else if (fantasmaNobreSelecionado != null) tipo = fantasmaNobreSelecionado.getTipoAlvo();
 		else if (itemSelecionado != null) return false;
 
-		return (tipo == TipoAlvo.INDIVIDUAL || tipo == TipoAlvo.MULTIPLOS || tipo == TipoAlvo.AREA_QUADRADA
+		return (tipo == TipoAlvo.INDIVIDUAL || tipo == TipoAlvo.MULTIPLOS || tipo == TipoAlvo.MULTI_AOE
+				|| tipo == TipoAlvo.AREA_QUADRADA
 				|| tipo == TipoAlvo.AREA_CIRCULAR || tipo == TipoAlvo.AREA || tipo == TipoAlvo.LINHA
 				|| tipo == TipoAlvo.CONE);
 	}
@@ -738,6 +754,40 @@ public class DetailedTurnHUDController {
 		return (int) sliderRajada.getValue();
 	}
 
+	private void configurarReservaGrandeRegente() {
+		boolean ativo = fantasmaNobreSelecionado instanceof br.com.dantesrpg.model.fantasmasnobres.GrandeRegente;
+		boxGrandeRegente.setVisible(ativo);
+		boxGrandeRegente.setManaged(ativo);
+		if (!ativo) return;
+		sliderGrandeRegente.setMin(0);
+		sliderGrandeRegente.setMax(atorAtual == null ? 0 : atorAtual.getMovimentoRestanteTurno());
+		sliderGrandeRegente.setValue(0);
+		atualizarReservaGrandeRegente();
+	}
+
+	private int obterMovimentoReservadoGrandeRegente() {
+		if (sliderGrandeRegente == null || !(fantasmaNobreSelecionado instanceof br.com.dantesrpg.model.fantasmasnobres.GrandeRegente)) {
+			return 0;
+		}
+		return (int) Math.round(sliderGrandeRegente.getValue());
+	}
+
+	/** Mantém a reserva compatível com o movimento que restar depois de deslocar no mapa. */
+	public void atualizarReservaGrandeRegente() {
+		if (sliderGrandeRegente == null || lblInfoGrandeRegente == null
+				|| !(fantasmaNobreSelecionado instanceof br.com.dantesrpg.model.fantasmasnobres.GrandeRegente)) return;
+		int disponivel = atorAtual == null ? 0 : atorAtual.getMovimentoRestanteTurno();
+		sliderGrandeRegente.setMax(disponivel);
+		if (sliderGrandeRegente.getValue() > disponivel) sliderGrandeRegente.setValue(disponivel);
+		int reservado = obterMovimentoReservadoGrandeRegente();
+		int diametro = br.com.dantesrpg.model.fantasmasnobres.GrandeRegente.calcularDiametro(reservado);
+		lblInfoGrandeRegente.setText(reservado + " quadrado(s): +" + (reservado * 10)
+				+ "% dano, +" + (reservado * 5) + "% TU, Bola " + diametro + "x" + diametro + ".");
+		atualizarEstimativaDano();
+		atualizarCustosExibidos();
+		enviarTUPreview();
+	}
+
 	@FXML
 	private void onConfirmarAcaoClick() {
 		if (atorAtual != null && atorAtual.isClone() && habilidadeSelecionada != null && !verificaSePrecisaAlvo()) {
@@ -748,6 +798,9 @@ public class DetailedTurnHUDController {
 		AcaoMestreInput input;
 		if (fantasmaNobreSelecionado != null) {
 			input = new AcaoMestreInput(atorAtual, alvosNoMapa, fantasmaNobreSelecionado);
+			if (fantasmaNobreSelecionado instanceof br.com.dantesrpg.model.fantasmasnobres.GrandeRegente) {
+				input.setMovimentoReservado(obterMovimentoReservadoGrandeRegente());
+			}
 		} else {
 			List<Personagem> alvosFinais = new ArrayList<>(alvosNoMapa);
 			if (itemSelecionado != null && alvosFinais.isEmpty()) alvosFinais.add(atorAtual);
@@ -855,7 +908,11 @@ public class DetailedTurnHUDController {
 			input.setOpcaoEscolhida(selectedId);
 		}
 
-		if (epicentroX != -1) input.setEpicentro(epicentroX, epicentroY);
+		if (!areasNoMapa.isEmpty()) {
+			input.setAreasSelecionadas(areasNoMapa);
+		} else if (epicentroX != -1) {
+			input.setEpicentro(epicentroX, epicentroY);
+		}
 
 		// Dado de atributo principal
 		if (inputDadoAtributo != null && !inputDadoAtributo.getText().isEmpty()) {
@@ -946,6 +1003,12 @@ public class DetailedTurnHUDController {
 		} catch (Exception ignored) {}
 
 		int dano = mainController.getCombatManager().estimarDano(atorAtual, habilidadeSelecionada, null, rolagem, rolagemBruta, 0);
+		if (fantasmaNobreSelecionado instanceof br.com.dantesrpg.model.fantasmasnobres.GrandeRegente) {
+			int danoGrandeRegente = (int) Math.round(20 * (1.0 + 0.10 * obterMovimentoReservadoGrandeRegente()));
+			labelEstimativaDano.setText("Dano Base Est.: " + danoGrandeRegente);
+			labelEstimativaDano.setStyle("-fx-font-weight: bold; -fx-text-fill: lightgreen;");
+			return;
+		}
 
 		double modVisual = 1.0;
 		if (isAtaqueBasico) {
@@ -1048,9 +1111,14 @@ public class DetailedTurnHUDController {
 			habilidadeParaSelecionar = habilidadeSelecionada;
 		} else if (fantasmaNobreSelecionado != null) {
 			FantasmaNobre fnRef = fantasmaNobreSelecionado;
+			final int tamanhoArea = fnRef instanceof br.com.dantesrpg.model.fantasmasnobres.GrandeRegente
+					? br.com.dantesrpg.model.fantasmasnobres.GrandeRegente.calcularDiametro(obterMovimentoReservadoGrandeRegente())
+					: fnRef.getTamanhoArea();
 			Habilidade dummyFN = new Habilidade(fnRef.getNome(), "", TipoHabilidade.ATIVA, 0, 0, 0,
-					fnRef.getTipoAlvo(), fnRef.getTamanhoArea(), 0, 0, null) {
+					fnRef.getTipoAlvo(), tamanhoArea, 0, 0, null) {
 				@Override public int getAlcanceMaximo() { return 99; }
+				@Override public TipoAlvo getSubtipoArea() { return fnRef.getSubtipoArea(); }
+				@Override public int getNumeroDeAreas() { return fnRef.getNumeroDeAreas(); }
 				@Override public void executar(Personagem c, List<Personagem> a, EstadoCombate es, CombatManager m) {}
 			};
 			habilidadeParaSelecionar = dummyFN;
@@ -1067,8 +1135,8 @@ public class DetailedTurnHUDController {
 	}
 
 	public void adicionarAlvos(List<Personagem> alvos) {
-		this.alvosNoMapa = alvos;
-		btnSelecionarAlvo.setText("Alvos: " + alvos.size());
+		this.alvosNoMapa = alvos == null ? new ArrayList<>() : new ArrayList<>(alvos);
+		btnSelecionarAlvo.setText("Alvos: " + this.alvosNoMapa.size());
 		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");
 		btnConfirmarAcao.setDisable(false);
 	}
@@ -1076,12 +1144,36 @@ public class DetailedTurnHUDController {
 	public void adicionarAlvosArea(List<Personagem> alvos, int x, int y) {
 		this.epicentroX = x;
 		this.epicentroY = y;
+		this.areasNoMapa = new ArrayList<>(List.of(new AcaoMestreInput.AreaSelecionada(
+				new br.com.dantesrpg.model.map.CoordenadaMapa(x, y), alvos)));
 		adicionarAlvos(alvos);
+	}
+
+	public void adicionarAlvosMultiArea(List<AcaoMestreInput.AreaSelecionada> areas) {
+		this.areasNoMapa = areas == null ? new ArrayList<>() : new ArrayList<>(areas);
+		this.alvosNoMapa = new ArrayList<>();
+		for (AcaoMestreInput.AreaSelecionada area : this.areasNoMapa) {
+			this.alvosNoMapa.addAll(area.alvos());
+		}
+		if (this.areasNoMapa.isEmpty()) {
+			this.epicentroX = -1;
+			this.epicentroY = -1;
+		} else {
+			this.epicentroX = this.areasNoMapa.get(0).epicentro().x();
+			this.epicentroY = this.areasNoMapa.get(0).epicentro().y();
+		}
+		btnSelecionarAlvo.setText("Áreas: " + this.areasNoMapa.size()
+				+ " | impactos: " + this.alvosNoMapa.size());
+		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");
+		btnConfirmarAcao.setDisable(false);
 	}
 
 	public void adicionarAlvo(Personagem alvo) {
 		if (alvo == null) return;
 		this.alvosNoMapa.clear();
+		this.areasNoMapa.clear();
+		this.epicentroX = -1;
+		this.epicentroY = -1;
 		this.alvosNoMapa.add(alvo);
 		btnSelecionarAlvo.setText("Alvo: " + alvo.getNome());
 		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");

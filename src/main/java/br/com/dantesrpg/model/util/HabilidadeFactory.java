@@ -33,6 +33,7 @@ public class HabilidadeFactory {
 		registro.put("Arremesso de Orb", ArremessoDeOrb::new);
 		registro.put("Pisotear", PisarOrb::new);
 		registro.put("Bola de Fogo", BolaDeFogo::new);
+		registro.put("Morte Viltrumita", MorteViltrumita::new);
 		registro.put("Barragem de Espadas", LaminasDaJustiça::new);
 		registro.put("Cura Suprema", CuraSuprema::new);
 		registro.put("Mordida", Mordida::new);
@@ -165,6 +166,16 @@ public class HabilidadeFactory {
 		registro.put("IS THAT ALL YOU GOT?", IsThatAllYouGot::new);
 		registro.put("WHERE IS YOUR DREAM?", WhereIsYourDream::new);
 		registro.put("THIS IS MY SEA.", ThisIsMySea::new);
+
+		// GutterMan
+		registro.put("Shield Bash", ShieldBash::new);
+		registro.put("shield Restock", ShieldRestock::new);
+		registro.put("ROCKET LAUNCHER", RocketLauncher::new);
+		registro.put("GasLeak", GasLeak::new);
+
+		// A Torre Devastada - XVI
+		registro.put("Multiplos Detritos", MultiplosDetritos::new);
+		registro.put("Gravity Punch", GravityPunch::new);
 	}
 
 	public static Habilidade criarHabilidadePorNome(String nome) {
