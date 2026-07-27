@@ -34,22 +34,51 @@ public class AuraManager {
 
 	/** Processa domínios cujas regras dependem do relógio global de TU. */
 	public void processarTick(EstadoCombate estado, int tempoGlobalAtual) {
-		if (estado == null || getController() == null || tempoGlobalAtual % 25 != 0) return;
-		Dominio ciclone = getController().getDominio(
-				br.com.dantesrpg.model.fantasmasnobres.GravityCiclone.ID_DOMINIO);
-		if (ciclone == null) return;
+		if (estado == null || getController() == null) return;
+
+		if (tempoGlobalAtual % 25 == 0) {
+			Dominio ciclone = getController().getDominio(
+					br.com.dantesrpg.model.fantasmasnobres.GravityCiclone.ID_DOMINIO);
+			if (ciclone != null) {
+				for (Personagem personagem : estado.getCombatentes()) {
+					if (personagem == null || !personagem.isAtivoNoCombate() || !ciclone.contemPersonagem(personagem)) continue;
+					combatManager.getDamageApplicator().aplicarDanoAoAlvo(null, personagem, 4, false,
+							br.com.dantesrpg.model.enums.TipoAcao.AMBIENTE, estado);
+					System.out.println(">>> Gravity Ciclone: " + personagem.getNome() + " sofre 4 de dano.");
+				}
+			}
+		}
+
+		if (tempoGlobalAtual % 100 == 0) {
+			processarTickCercaEletrica(estado);
+		}
+	}
+
+	private void processarTickCercaEletrica(EstadoCombate estado) {
+		Dominio cerca = getController().getDominio(
+				br.com.dantesrpg.model.fantasmasnobres.AstrapiVasileas.ID_DOMINIO);
+		if (cerca == null || cerca.getDono() == null) return;
 
 		for (Personagem personagem : estado.getCombatentes()) {
-			if (personagem == null || !personagem.isAtivoNoCombate() || !ciclone.contemPersonagem(personagem)) continue;
-			combatManager.getDamageApplicator().aplicarDanoAoAlvo(null, personagem, 4, false,
-					br.com.dantesrpg.model.enums.TipoAcao.AMBIENTE, estado);
-			System.out.println(">>> Gravity Ciclone: " + personagem.getNome() + " sofre 4 de dano.");
+			if (personagem == null || !personagem.isAtivoNoCombate() || !cerca.contemPersonagem(personagem)) continue;
+			if (mesmaFaccao(personagem, cerca.getDono())) {
+				double cura = personagem.getVidaMaxima() * 0.10;
+				personagem.regenerarVidaFracionada(cura, estado, getController());
+				personagem.setManaAtual(Math.min(personagem.getManaMaxima(), personagem.getManaAtual() + 1));
+				System.out.println(">>> Cerca Elétrica: " + personagem.getNome() + " recupera 10% de HP e 1 MP.");
+			} else {
+				combatManager.getEffectProcessor().aplicarEfeito(personagem,
+						br.com.dantesrpg.model.util.EffectFactory.criarEfeito("Choque", 1, 5));
+				System.out.println(">>> Cerca Elétrica: " + personagem.getNome() + " recebe Choque (+5 TU).");
+			}
 		}
 	}
 
 	// ========== ATUALIZAÇÃO DE AURAS ==========
 
 	public void atualizarAuras(EstadoCombate estado) {
+		atualizarCercaEletrica(estado);
+
 		// --- BÊNÇÃO DA JUSTIÇA (Darrell) ---
 		Personagem darrell = estado.getCombatentes().stream()
 				.filter(p -> p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Modo Justiça")).findFirst()
@@ -499,6 +528,38 @@ public class AuraManager {
 				}
 			} else if (efeitoExistente != null) {
 				mestre.removerEfeito(keyBuff);
+			}
+		}
+	}
+
+	private void atualizarCercaEletrica(EstadoCombate estado) {
+		if (estado == null || getController() == null) return;
+		Dominio cerca = getController().getDominio(
+				br.com.dantesrpg.model.fantasmasnobres.AstrapiVasileas.ID_DOMINIO);
+
+		for (Personagem personagem : estado.getCombatentes()) {
+			if (personagem == null) continue;
+			boolean aliadoDentro = cerca != null && cerca.getDono() != null && personagem.isAtivoNoCombate()
+					&& cerca.contemPersonagem(personagem) && mesmaFaccao(personagem, cerca.getDono());
+			boolean inimigoDentro = cerca != null && cerca.getDono() != null && personagem.isAtivoNoCombate()
+					&& cerca.contemPersonagem(personagem) && !mesmaFaccao(personagem, cerca.getDono());
+			boolean temRestauracao = personagem.getEfeitosAtivos().containsKey("Restauração da Cerca Elétrica");
+			boolean temDebuff = personagem.getEfeitosAtivos().containsKey("Supressão da Cerca Elétrica");
+
+			if (aliadoDentro && !temRestauracao) {
+				personagem.adicionarEfeito(new Efeito("Restauração da Cerca Elétrica", TipoEfeito.BUFF,
+						9999, Map.of(), 0, 0));
+				System.out.println(">>> Cerca Elétrica: " + personagem.getNome() + " recebe a restauração do campo.");
+			} else if (!aliadoDentro && temRestauracao) {
+				personagem.removerEfeito("Restauração da Cerca Elétrica");
+			}
+
+			if (inimigoDentro && !temDebuff) {
+				personagem.adicionarEfeito(new Efeito("Supressão da Cerca Elétrica", TipoEfeito.DEBUFF,
+						9999, Map.of("DANO_BONUS_PERCENTUAL", -0.25), 0, 0));
+				System.out.println(">>> Cerca Elétrica: dano de " + personagem.getNome() + " reduzido em 25%.");
+			} else if (!inimigoDentro && temDebuff) {
+				personagem.removerEfeito("Supressão da Cerca Elétrica");
 			}
 		}
 	}

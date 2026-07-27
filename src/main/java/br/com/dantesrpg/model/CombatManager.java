@@ -810,6 +810,13 @@ public class CombatManager {
 								domainManager.limparFusoesComDominio(
 										br.com.dantesrpg.model.fantasmasnobres.GravityCiclone.ID_DOMINIO);
 							}
+							if (nomeEfeito.equals(br.com.dantesrpg.model.fantasmasnobres.AstrapiVasileas.EFEITO)
+									&& mainController != null) {
+								mainController.removerDominio(
+										br.com.dantesrpg.model.fantasmasnobres.AstrapiVasileas.ID_DOMINIO);
+								domainManager.limparFusoesComDominio(
+										br.com.dantesrpg.model.fantasmasnobres.AstrapiVasileas.ID_DOMINIO);
+							}
 							if (nomeEfeito.equals("ALL OUT PIRATE")) {
 								br.com.dantesrpg.model.habilidades.boss.AllOutPirate.reverter(p);
 							}

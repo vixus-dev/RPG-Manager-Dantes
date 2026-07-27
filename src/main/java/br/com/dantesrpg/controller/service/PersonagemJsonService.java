@@ -356,6 +356,9 @@ public class PersonagemJsonService {
 		if (nome.equals("Lyria")) {
 			personagem.setFantasmaNobre(new ApostadorIncansavel());
 		}
+		if (nome.equals("Cassandra")) {
+			personagem.setFantasmaNobre(new br.com.dantesrpg.model.fantasmasnobres.AstrapiVasileas());
+		}
 		if (nome.equals("Eidan")) {
 			personagem.setFantasmaNobre(new VigiliaEterna());
 		}

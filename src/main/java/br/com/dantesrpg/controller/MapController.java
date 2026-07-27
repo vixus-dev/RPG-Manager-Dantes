@@ -1554,6 +1554,13 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		if (personagem == null) return false;
 		for (Dominio dominio : dominiosAtivos.values()) {
 			if (!dominio.bloqueiaMovimento(origemX, origemY, destinoX, destinoY)) continue;
+			if (dominio.exigeTesteDestrezaParaSair()) {
+				if (resolverTesteDestrezaParaSair(personagem, dominio)) {
+					return false;
+				}
+				aplicarDanoFalhaSaida(personagem, dominio);
+				return true;
+			}
 
 			if (dominio.getDanoAoCruzarBorda() > 0.0 && mainController != null
 					&& mainController.getCombatManager() != null) {
@@ -1571,6 +1578,53 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			return true;
 		}
 		return false;
+	}
+
+	private boolean resolverTesteDestrezaParaSair(Personagem personagem, Dominio dominio) {
+		Personagem dono = dominio.getDono();
+		if (dono == null) return false;
+
+		int dadoPersonagem = br.com.dantesrpg.model.util.DiceRoller.getTipoDado(
+				personagem.getAtributosFinais().getOrDefault(br.com.dantesrpg.model.enums.Atributo.DESTREZA, 1));
+		int dadoDono = br.com.dantesrpg.model.util.DiceRoller.getTipoDado(
+				dono.getAtributosFinais().getOrDefault(br.com.dantesrpg.model.enums.Atributo.DESTREZA, 1));
+
+		javafx.scene.control.TextInputDialog testePersonagem = new javafx.scene.control.TextInputDialog();
+		testePersonagem.setTitle("Cerca Elétrica");
+		testePersonagem.setHeaderText(personagem.getNome() + " tenta atravessar a cerca.");
+		testePersonagem.setContentText("Teste de Destreza de " + personagem.getNome() + " (d" + dadoPersonagem + "): ");
+		java.util.Optional<String> resultadoPersonagem = testePersonagem.showAndWait();
+		if (resultadoPersonagem.isEmpty()) return false;
+
+		javafx.scene.control.TextInputDialog testeDono = new javafx.scene.control.TextInputDialog();
+		testeDono.setTitle("Cerca Elétrica");
+		testeDono.setHeaderText(dono.getNome() + " sustenta a contenção.");
+		testeDono.setContentText("Teste de Destreza de " + dono.getNome() + " (d" + dadoDono + "): ");
+		java.util.Optional<String> resultadoDono = testeDono.showAndWait();
+		if (resultadoDono.isEmpty()) return false;
+
+		try {
+			int rolagemPersonagem = Integer.parseInt(resultadoPersonagem.get().trim());
+			int rolagemDono = Integer.parseInt(resultadoDono.get().trim());
+			boolean sucesso = rolagemPersonagem > rolagemDono;
+			System.out.println(">>> Cerca Elétrica: " + personagem.getNome() + " rolou " + rolagemPersonagem
+					+ " vs " + dono.getNome() + " " + rolagemDono + ". "
+					+ (sucesso ? "A saída foi bem-sucedida." : "A contenção resistiu."));
+			return sucesso;
+		} catch (NumberFormatException e) {
+			System.out.println(">>> Cerca Elétrica: resultado de Destreza inválido; a saída falhou.");
+			return false;
+		}
+	}
+
+	private void aplicarDanoFalhaSaida(Personagem personagem, Dominio dominio) {
+		if (dominio.getDanoAoFalharSaida() > 0.0 && mainController != null
+				&& mainController.getCombatManager() != null) {
+			mainController.getCombatManager().getDamageApplicator().aplicarDanoAoAlvo(
+					dominio.getDono(), personagem, dominio.getDanoAoFalharSaida(), false,
+					br.com.dantesrpg.model.enums.TipoAcao.AMBIENTE, mainController.getEstadoCombate());
+		}
+		System.out.println(">>> " + personagem.getNome() + " falhou ao sair de " + dominio.getNomeEfeito() + ".");
 	}
 
 	/** Cria uma zona de escombros persistente que bloqueia movimento e linha de visão. */

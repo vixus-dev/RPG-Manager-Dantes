@@ -122,6 +122,8 @@ ator.getInventario().removerItem(essencia);
 				return new AndJusticeForMySelf();
 			case "ApostadorIncansavel":
 				return new ApostadorIncansavel();
+			case "AstrapiVasileas":
+				return new br.com.dantesrpg.model.fantasmasnobres.AstrapiVasileas();
 			case "GodsWill":
 				return new GodsWill();
 			case "GrandeRegente":

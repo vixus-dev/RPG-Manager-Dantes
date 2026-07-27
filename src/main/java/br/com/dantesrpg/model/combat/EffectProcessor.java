@@ -169,6 +169,10 @@ public class EffectProcessor {
 			aplicarEfeito(alvo, choque);
 			System.out.println(">>> Balanço Temerário aplicou Choque em " + alvo.getNome() + " (+20 TU no próximo TU).");
 		}
+
+		if (arma != null) {
+			arma.onAttackHit(ator, alvo, danoCausado, estado, combatManager);
+		}
 	}
 
 	private void processarEfeitoOnHit(Personagem ator, Personagem alvo, Arma arma, double danoCausado,

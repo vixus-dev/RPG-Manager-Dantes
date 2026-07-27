@@ -26,6 +26,8 @@ public class Dominio {
 	private final boolean formatoCircular;
 	private double danoAoCruzarBorda;
 	private int choqueAoCruzarBordaTU;
+	private boolean exigeTesteDestrezaParaSair;
+	private double danoAoFalharSaida;
 
 	// Coordenadas das células do domínio (para checagem rápida O(1))
 	private final Set<Long> coordenadas = new HashSet<>();
@@ -154,7 +156,24 @@ public class Dominio {
 		}
 		boolean origemDentro = contemCoordenada(origemX, origemY);
 		boolean destinoDentro = contemCoordenada(destinoX, destinoY);
+		if (exigeTesteDestrezaParaSair) {
+			return origemDentro && !destinoDentro;
+		}
 		return origemDentro != destinoDentro;
+	}
+
+	/** Configura uma barreira que permite entrada, mas exige teste para sair. */
+	public void configurarTesteDestrezaParaSair(double danoAoFalhar) {
+		this.exigeTesteDestrezaParaSair = true;
+		this.danoAoFalharSaida = Math.max(0.0, danoAoFalhar);
+	}
+
+	public boolean exigeTesteDestrezaParaSair() {
+		return exigeTesteDestrezaParaSair;
+	}
+
+	public double getDanoAoFalharSaida() {
+		return danoAoFalharSaida;
 	}
 
 	/** Verifica se este domínio tem tiles em comum com outro. */

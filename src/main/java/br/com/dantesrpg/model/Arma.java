@@ -341,6 +341,16 @@ public abstract class Arma extends Item {
 		// Padrão: não faz nada
 	}
 
+	/**
+	 * Hook de impacto com acesso ao pipeline de combate. Mantém a sobrecarga
+	 * legada para armas já existentes e permite que uma arma aplique efeitos
+	 * respeitando imunidades pelo EffectProcessor.
+	 */
+	public void onAttackHit(Personagem ator, Personagem alvo, double danoCausado, EstadoCombate estado,
+			CombatManager manager) {
+		onAttackHit(ator, alvo, danoCausado, estado);
+	}
+
 	public void onDamageTaken(Personagem ator, double danoRecebido, EstadoCombate estado, CombatController controller) {
 
 	}

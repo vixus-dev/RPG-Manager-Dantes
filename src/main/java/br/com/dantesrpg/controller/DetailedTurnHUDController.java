@@ -1150,6 +1150,29 @@ public class DetailedTurnHUDController {
 				@Override public void executar(Personagem c, List<Personagem> a, EstadoCombate es, CombatManager m) { }
 			};
 		}
+		if (origem instanceof br.com.dantesrpg.model.habilidades.classe.ManipulacaoElemental manipulacao) {
+			String opcao = manipulacao.getOpcaoSelecionada();
+			if (toggleGroupOpcoes != null && toggleGroupOpcoes.getSelectedToggle() != null) {
+				opcao = (String) toggleGroupOpcoes.getSelectedToggle().getUserData();
+				manipulacao.setOpcaoSelecionada(opcao);
+			}
+			final TipoAlvo tipoManipulacao = manipulacao.getTipoAlvo();
+			final int tamanhoManipulacao = manipulacao.getTamanhoArea();
+			final int alcanceManipulacao = manipulacao.getAlcanceMaximo();
+			final double multiplicadorManipulacao = manipulacao.getMultiplicadorDeDano();
+			final int custoTUManipulacao = manipulacao.getCustoTUModificado(atorAtual);
+			origemSelecao = new Habilidade(manipulacao.getNome(), manipulacao.getDescricao(), manipulacao.getTipo(),
+					manipulacao.getCustoMana(), custoTUManipulacao, manipulacao.getNivelNecessario(), tipoManipulacao,
+					tamanhoManipulacao, multiplicadorManipulacao, manipulacao.getTicksDeDano(),
+					manipulacao.getEfeitosAplicados()) {
+				@Override public int getAlcanceMaximo() { return alcanceManipulacao; }
+				@Override public boolean afetaInimigos() { return manipulacao.afetaInimigos(); }
+				@Override public boolean afetaAliados() { return manipulacao.afetaAliados(); }
+				@Override public boolean afetaSiMesmo() { return manipulacao.afetaSiMesmo(); }
+				@Override public boolean ignoraParedes() { return manipulacao.ignoraParedes(); }
+				@Override public void executar(Personagem c, List<Personagem> a, EstadoCombate es, CombatManager m) { }
+			};
+		}
 
 		if (!podeUsarReservaGrandeRegente() || !origemSelecao.getTipoAlvoEfetivo().isFormatoAreaComEpicentro()) {
 			return origemSelecao;
@@ -1190,6 +1213,10 @@ public class DetailedTurnHUDController {
 					&& toggleGroupOpcoes != null && toggleGroupOpcoes.getSelectedToggle() != null) {
 				paleta.setOpcaoSelecionada((String) toggleGroupOpcoes.getSelectedToggle().getUserData());
 			}
+			if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.classe.ManipulacaoElemental manipulacao
+					&& toggleGroupOpcoes != null && toggleGroupOpcoes.getSelectedToggle() != null) {
+				manipulacao.setOpcaoSelecionada((String) toggleGroupOpcoes.getSelectedToggle().getUserData());
+			}
 			habilidadeParaSelecionar = criarHabilidadeSelecaoComGrandeRegente(habilidadeSelecionada);
 		} else if (fantasmaNobreSelecionado != null) {
 			FantasmaNobre fnRef = fantasmaNobreSelecionado;
@@ -1198,7 +1225,7 @@ public class DetailedTurnHUDController {
 					: fnRef.getTamanhoArea();
 			Habilidade dummyFN = new Habilidade(fnRef.getNome(), "", TipoHabilidade.ATIVA, 0, 0, 0,
 					fnRef.getTipoAlvo(), tamanhoArea, 0, 0, null) {
-				@Override public int getAlcanceMaximo() { return 99; }
+				@Override public int getAlcanceMaximo() { return fnRef.getAlcanceMaximo(); }
 				@Override public TipoAlvo getSubtipoArea() { return fnRef.getSubtipoArea(); }
 				@Override public int getNumeroDeAreas() { return fnRef.getNumeroDeAreas(); }
 				@Override public boolean ignoraParedes() {

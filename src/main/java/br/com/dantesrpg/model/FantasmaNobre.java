@@ -41,6 +41,11 @@ public abstract class FantasmaNobre {
 		return 1;
 	}
 
+	/** Alcance máximo para selecionar o epicentro de um Fantasma Nobre. */
+	public int getAlcanceMaximo() {
+		return 99;
+	}
+
 	/** Permite que FNs com parâmetros da HUD ajustem o custo sem criar exceções no serviço. */
 	public int getCustoTU(Personagem conjurador, AcaoMestreInput input) {
 		return getCustoTU();

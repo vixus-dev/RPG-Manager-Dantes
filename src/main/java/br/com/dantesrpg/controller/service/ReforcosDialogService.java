@@ -854,7 +854,7 @@ public class ReforcosDialogService {
 	private ComboBox<String> criarComboFantasmas() {
 		ComboBox<String> cbFantasma = new ComboBox<>();
 		cbFantasma.getItems().add("(Nenhum)");
-		cbFantasma.getItems().addAll("AcertoDeContas", "AndJusticeForMySelf", "ApostadorIncansavel", "GodsWill",
+		cbFantasma.getItems().addAll("AcertoDeContas", "AndJusticeForMySelf", "ApostadorIncansavel", "AstrapiVasileas", "GodsWill",
 				"Fimbulwinter", "InvocacaoMurasame", "InvocacaoSangrenta", "IraDeAnthyros", "JihoGekkyuden", "LuaSombria",
 				"ModoPolaris", "ProfetaDeBehemoth", "RevelacaoDeYaweh", "RingOfTheUndyingWill", "Ritual", "TheMastersCall",
 				"VigiliaEterna");

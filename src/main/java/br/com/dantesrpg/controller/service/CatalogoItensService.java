@@ -108,6 +108,8 @@ public class CatalogoItensService {
 
 		if (nomeArma.equals("Punho Infinito"))
 			return new br.com.dantesrpg.model.armas.unicas.PunhoInfinito();
+		if (nomeArma.equals("Astrapí Vasiléas Sword"))
+			return new br.com.dantesrpg.model.armas.unicas.AstrapiVasileasSword();
 		if (nomeArma.equals("Murasame"))
 			return new br.com.dantesrpg.model.armas.unicas.Murasame();
 		if (nomeArma.equals("Terrore"))
