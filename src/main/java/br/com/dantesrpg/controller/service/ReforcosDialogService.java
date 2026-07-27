@@ -589,6 +589,7 @@ public class ReforcosDialogService {
 		cbClasse.getItems().addAll("Barbaro", "Pugilista", "Feiticeiro", "Mestre das Balas", "Pistoleiro",
 				"Ladino", "Paladino", "Ilusionista", "Invocador", "Campeão");
 		cbClasse.setValue("Pugilista");
+		cbClasse.getItems().add("Mago");
 		grid.add(cbClasse, 1, 2);
 
 		grid.add(new Label("Nível:"), 0, 3);

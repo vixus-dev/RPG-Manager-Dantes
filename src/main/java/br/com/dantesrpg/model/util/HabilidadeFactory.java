@@ -4,6 +4,7 @@ import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.habilidades.*;
 import br.com.dantesrpg.model.habilidades.boss.*;
 import br.com.dantesrpg.model.habilidades.classe.*;
+import br.com.dantesrpg.model.habilidades.PaletaDeCores;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -16,6 +17,7 @@ public class HabilidadeFactory {
 
 	static {
 		// Genéricas
+		registro.put("Paleta de Cores", PaletaDeCores::new);
 		registro.put("Iaijutsu", Iaijutsu::new);
 		registro.put("Passo Sombrio", PassoSombrio::new);
 		registro.put("Rajada de Drone", RajadaDrone::new);
@@ -141,6 +143,11 @@ public class HabilidadeFactory {
 		registro.put("Aprimorar Poção", AprimorarPocao::new);
 		registro.put("Arremessar Poção", ArremessarPocao::new);
 		registro.put("Mestre Filosofal", MestreFilosofal::new);
+		registro.put("Esfera Arcana", EsferaArcana::new);
+		registro.put("Lança Arcana", LancaArcana::new);
+		registro.put("Escudo Mágico", EscudoMagico::new);
+		registro.put("Toque de Mana", ToqueDeMana::new);
+		registro.put("Arqui-magia", ArquiMagia::new);
 		registro.put("Bênção Solar", br.com.dantesrpg.model.habilidades.BencaoSolar::new);
 
 		// KuangLi - Profeta de Behemoth

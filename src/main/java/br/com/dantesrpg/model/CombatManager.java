@@ -1632,6 +1632,10 @@ for (Personagem p : jogadoresVivos) {
 	// ========== CÁLCULOS DE CUSTO ==========
 
 	private int calcularCustoManaFinal(Personagem conjurador, Habilidade habilidade, int custoManaBase) {
+		if (habilidade != null && !habilidade.getNome().equals("Arqui-magia")
+				&& conjurador.getEfeitosAtivos().containsKey("Arqui-magia")) {
+			return 0;
+		}
 		if (habilidade != null && habilidade.getNome().equals("Fulgor Negro")
 				&& conjurador.getEfeitosAtivos().containsKey("Restrição Celestial")) {
 			return 0;

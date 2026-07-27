@@ -697,6 +697,9 @@ public class DetailedTurnHUDController {
 				isAtaqueBasico,
 				() -> atualizarEstimativaDano(),
 				val -> {
+					if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.PaletaDeCores paleta) {
+						paleta.setOpcaoSelecionada(val);
+					}
 					atualizarDescricaoPorOpcao(val);
 					btnConfirmarAcao.setText(val.equalsIgnoreCase("Material") ? "ESCOLHER MATERIAL" : "CONFIRMAR AÇÃO");
 				});
@@ -1139,6 +1142,10 @@ public class DetailedTurnHUDController {
 			habilidadeParaExecutar = null;
 			habilidadeParaSelecionar = criarHabilidadeSelecaoAtaqueBasico();
 		} else if (habilidadeSelecionada != null) {
+			if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.PaletaDeCores paleta
+					&& toggleGroupOpcoes != null && toggleGroupOpcoes.getSelectedToggle() != null) {
+				paleta.setOpcaoSelecionada((String) toggleGroupOpcoes.getSelectedToggle().getUserData());
+			}
 			habilidadeParaSelecionar = criarHabilidadeSelecaoComGrandeRegente(habilidadeSelecionada);
 		} else if (fantasmaNobreSelecionado != null) {
 			FantasmaNobre fnRef = fantasmaNobreSelecionado;
@@ -1150,6 +1157,10 @@ public class DetailedTurnHUDController {
 				@Override public int getAlcanceMaximo() { return 99; }
 				@Override public TipoAlvo getSubtipoArea() { return fnRef.getSubtipoArea(); }
 				@Override public int getNumeroDeAreas() { return fnRef.getNumeroDeAreas(); }
+				@Override public boolean ignoraParedes() {
+					return fnRef instanceof br.com.dantesrpg.model.fantasmasnobres.AArteDoCaos
+							&& ((br.com.dantesrpg.model.fantasmasnobres.AArteDoCaos) fnRef).ignoraParedes();
+				}
 				@Override public void executar(Personagem c, List<Personagem> a, EstadoCombate es, CombatManager m) {}
 			};
 			habilidadeParaSelecionar = dummyFN;

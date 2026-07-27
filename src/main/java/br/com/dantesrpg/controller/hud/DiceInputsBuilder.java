@@ -196,6 +196,9 @@ public class DiceInputsBuilder {
 
 		boolean precisa = hab.getMultiplicadorDeDano() > 0;
 		String nome = hab.getNome();
+		if (nome.equals("Paleta de Cores")) {
+			precisa = true;
+		}
 		if (hab instanceof br.com.dantesrpg.model.habilidades.classe.DistortedSolo
 				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.WhaWhaSolo
 				|| hab instanceof br.com.dantesrpg.model.habilidades.classe.PlainSolo) {
@@ -231,6 +234,9 @@ public class DiceInputsBuilder {
 				|| hab instanceof br.com.dantesrpg.model.habilidades.BencaoDivina
 				|| hab instanceof br.com.dantesrpg.model.habilidades.ProtecaoDosCeus
 				|| hab instanceof br.com.dantesrpg.model.habilidades.HolySpirit) {
+			atr = Atributo.INSPIRACAO;
+		}
+		if (hab instanceof br.com.dantesrpg.model.habilidades.PaletaDeCores) {
 			atr = Atributo.INSPIRACAO;
 		}
 		return atr;

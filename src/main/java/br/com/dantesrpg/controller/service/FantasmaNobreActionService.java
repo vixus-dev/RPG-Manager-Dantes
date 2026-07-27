@@ -128,6 +128,8 @@ ator.getInventario().removerItem(essencia);
 				return new GrandeRegente();
 			case "Fimbulwinter":
 				return new Fimbulwinter();
+			case "AArteDoCaos":
+				return new br.com.dantesrpg.model.fantasmasnobres.AArteDoCaos();
 			case "InvocacaoMurasame":
 				return new InvocacaoMurasame();
 			case "InvocacaoSangrenta":
