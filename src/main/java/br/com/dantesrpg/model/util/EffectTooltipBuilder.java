@@ -58,6 +58,7 @@ public class EffectTooltipBuilder {
 		DESCRICOES.put("Força Ampliada V2 (+40% Dano)",
 				"Amplia enormemente a força, concedendo +40% de dano em todos os ataques.");
 		DESCRICOES.put("Escudo Divino (+Armadura)", "Proteção divina que aumenta a armadura total.");
+		DESCRICOES.put("Shield", "Reduz 99% do dano recebido. Removido por quebra de defesa ou golpe critico.");
 		DESCRICOES.put("Velocidade (+Movimento)", "Aumenta a velocidade de movimento em +2 casas.");
 
 		// --- Buffs de Classe ---

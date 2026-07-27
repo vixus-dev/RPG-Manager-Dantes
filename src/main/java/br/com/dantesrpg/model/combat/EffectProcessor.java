@@ -72,6 +72,21 @@ public class EffectProcessor {
 				+ efeito.getDuracaoTUInicial() + " TU).");
 	}
 
+	/** Aplica efeitos ambientais sem bloquear o dano pela proteção de protagonista. */
+	public void aplicarEfeitoAmbiental(Personagem alvo, Efeito efeito) {
+		if (alvo == null || efeito == null) {
+			return;
+		}
+		if ((alvo.getValorPropriedade("IMUNIDADE_DOT") > 0 || alvo.getValorPropriedade("MALDITO") > 0)
+				&& efeito.getTipo() == TipoEfeito.DOT) {
+			System.out.println(">>> IMUNE! " + alvo.getNome() + " é imune ao efeito ambiental: " + efeito.getNome());
+			return;
+		}
+		alvo.adicionarEfeito(efeito);
+		System.out.println(">>> Efeito ambiental [" + efeito.getNome() + "] aplicado em " + alvo.getNome()
+				+ " (" + efeito.getDuracaoTUInicial() + " TU).");
+	}
+
 	// ========== EFEITOS ON-HIT ==========
 
 	public void processarEfeitosOnHit(Personagem ator, Personagem alvo, Arma arma, double danoCausado,
@@ -265,6 +280,9 @@ alvo.removerEfeito("Charm");
 				ator.getRaca().onCriticalHit(ator, alvo, estado);
 			}
 		}
+		if (isCritico && alvo != null && alvo.getRaca() != null) {
+			alvo.getRaca().onCriticalHitTaken(alvo, ator, estado);
+		}
 		if (danoTick > 0 && ator.getFantasmaNobre() != null) {
 			ator.getFantasmaNobre().onDamageDealt(ator, alvo, danoTick, estado, combatManager);
 			if (isCritico) {
@@ -390,8 +408,7 @@ alvo.removerEfeito("Charm");
 			EstadoCombate estado, CombatManager manager) {
 		AcaoMestreInput lastInput = combatManager.getLastInput();
 		if (lastInput != null) {
-			habilidade.executar(conjurador, lastInput.getEpicentroX(), lastInput.getEpicentroY(), alvos, estado,
-					manager);
+			habilidade.executar(conjurador, lastInput.getAreasSelecionadas(), alvos, estado, manager);
 		} else {
 			habilidade.executar(conjurador, alvos, estado, manager);
 		}
