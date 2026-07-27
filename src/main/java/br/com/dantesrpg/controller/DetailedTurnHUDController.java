@@ -820,7 +820,11 @@ public class DetailedTurnHUDController {
 		}
 
 		if (toggleGroupOpcoes != null && toggleGroupOpcoes.getSelectedToggle() != null) {
-			input.setOpcaoEscolhida((String) toggleGroupOpcoes.getSelectedToggle().getUserData());
+			String opcao = (String) toggleGroupOpcoes.getSelectedToggle().getUserData();
+			input.setOpcaoEscolhida(opcao);
+			if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.PaletaDeCores paleta) {
+				paleta.setOpcaoSelecionada(opcao);
+			}
 		}
 
 		if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.classe.AprimorarPocao) {
@@ -1109,24 +1113,57 @@ public class DetailedTurnHUDController {
 	}
 
 	private Habilidade criarHabilidadeSelecaoComGrandeRegente(Habilidade origem) {
-		if (!podeUsarReservaGrandeRegente() || !origem.getTipoAlvoEfetivo().isFormatoAreaComEpicentro()) {
-			return origem;
+		Habilidade origemSelecao = origem;
+		if (origem instanceof br.com.dantesrpg.model.habilidades.PaletaDeCores paleta) {
+			String opcao = paleta.getOpcaoSelecionada();
+			if (toggleGroupOpcoes != null && toggleGroupOpcoes.getSelectedToggle() != null) {
+				opcao = (String) toggleGroupOpcoes.getSelectedToggle().getUserData();
+				paleta.setOpcaoSelecionada(opcao);
+			}
+			final String corSelecionada = opcao;
+			final TipoAlvo tipoCor = switch (corSelecionada) {
+			case br.com.dantesrpg.model.habilidades.PaletaDeCores.AMARELO -> TipoAlvo.AREA_QUADRADA;
+			case br.com.dantesrpg.model.habilidades.PaletaDeCores.PRETO -> TipoAlvo.LINHA;
+			default -> TipoAlvo.INDIVIDUAL;
+			};
+			final int tamanhoCor = corSelecionada.equals(br.com.dantesrpg.model.habilidades.PaletaDeCores.AMARELO)
+					? 3 : 0;
+			final int alcanceCor = corSelecionada.equals(br.com.dantesrpg.model.habilidades.PaletaDeCores.PRETO)
+					? 4 : 3;
+			final double multiplicadorCor = corSelecionada.equals(br.com.dantesrpg.model.habilidades.PaletaDeCores.PRETO)
+					? 0.75 : 0.0;
+			origemSelecao = new Habilidade(paleta.getNome(), paleta.getDescricao(), paleta.getTipo(),
+					paleta.getCustoMana(), paleta.getCustoTU(), paleta.getNivelNecessario(), tipoCor,
+					tamanhoCor, multiplicadorCor, paleta.getTicksDeDano(), paleta.getEfeitosAplicados()) {
+				@Override public int getAlcanceMaximo() { return alcanceCor; }
+				@Override public boolean afetaInimigos() { return paleta.afetaInimigos(); }
+				@Override public boolean afetaAliados() { return paleta.afetaAliados(); }
+				@Override public boolean afetaSiMesmo() { return paleta.afetaSiMesmo(); }
+				@Override public boolean ignoraParedes() { return paleta.ignoraParedes(); }
+				@Override public void executar(Personagem c, List<Personagem> a, EstadoCombate es, CombatManager m) { }
+			};
+		}
+
+		if (!podeUsarReservaGrandeRegente() || !origemSelecao.getTipoAlvoEfetivo().isFormatoAreaComEpicentro()) {
+			return origemSelecao;
 		}
 		int diametro = br.com.dantesrpg.model.fantasmasnobres.GrandeRegente
 				.calcularDiametro(obterMovimentoReservadoGrandeRegente());
-		return new Habilidade(origem.getNome(), origem.getDescricao(), origem.getTipo(), origem.getCustoMana(),
-				origem.getCustoTU(), origem.getNivelNecessario(), origem.getTipoAlvo(), diametro,
-				origem.getMultiplicadorDeDano(), origem.getTicksDeDano(), origem.getEfeitosAplicados()) {
-			@Override public int getAlcanceMaximo() { return origem.getAlcanceMaximo(); }
-			@Override public TipoAlvo getSubtipoArea() { return origem.getSubtipoArea(); }
-			@Override public int getNumeroDeAreas() { return origem.getNumeroDeAreas(); }
-			@Override public int getNumeroDeAlvos() { return origem.getNumeroDeAlvos(); }
-			@Override public int getForcaEmpuxo() { return origem.getForcaEmpuxo(); }
-			@Override public int getAnguloCone() { return origem.getAnguloCone(); }
-			@Override public boolean ignoraParedes() { return origem.ignoraParedes(); }
-			@Override public boolean afetaInimigos() { return origem.afetaInimigos(); }
-			@Override public boolean afetaAliados() { return origem.afetaAliados(); }
-			@Override public boolean afetaSiMesmo() { return origem.afetaSiMesmo(); }
+		final Habilidade origemFinal = origemSelecao;
+		return new Habilidade(origemFinal.getNome(), origemFinal.getDescricao(), origemFinal.getTipo(),
+				origemFinal.getCustoMana(), origemFinal.getCustoTU(), origemFinal.getNivelNecessario(),
+				origemFinal.getTipoAlvo(), diametro, origemFinal.getMultiplicadorDeDano(),
+				origemFinal.getTicksDeDano(), origemFinal.getEfeitosAplicados()) {
+			@Override public int getAlcanceMaximo() { return origemFinal.getAlcanceMaximo(); }
+			@Override public TipoAlvo getSubtipoArea() { return origemFinal.getSubtipoArea(); }
+			@Override public int getNumeroDeAreas() { return origemFinal.getNumeroDeAreas(); }
+			@Override public int getNumeroDeAlvos() { return origemFinal.getNumeroDeAlvos(); }
+			@Override public int getForcaEmpuxo() { return origemFinal.getForcaEmpuxo(); }
+			@Override public int getAnguloCone() { return origemFinal.getAnguloCone(); }
+			@Override public boolean ignoraParedes() { return origemFinal.ignoraParedes(); }
+			@Override public boolean afetaInimigos() { return origemFinal.afetaInimigos(); }
+			@Override public boolean afetaAliados() { return origemFinal.afetaAliados(); }
+			@Override public boolean afetaSiMesmo() { return origemFinal.afetaSiMesmo(); }
 			@Override public void executar(Personagem c, List<Personagem> a, EstadoCombate es, CombatManager m) { }
 		};
 	}

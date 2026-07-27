@@ -847,7 +847,8 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			// Verifica AoE
 			if (habilidadeAtual != null) {
 				TipoAlvo tipo = habilidadeAtual.getTipoAlvoEfetivo();
-				if (tipo == TipoAlvo.AREA || tipo.isFormatoAreaComEpicentro()) {
+				if (tipo == TipoAlvo.AREA || tipo.isFormatoAreaComEpicentro()
+						|| tipo == TipoAlvo.LINHA || tipo == TipoAlvo.CONE) {
 					selecionarAreaComEpicentro(x, y);
 					return;
 				}
@@ -1836,7 +1837,8 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			calcularEExibirAtaqueRange(ator, habilidade);
 			System.out.println("MAPA: Modo MULTI-AOE ativado. Áreas restantes: " + areasRestantes);
 		} else if (habilidade != null && (habilidade.getTipoAlvo() == TipoAlvo.AREA_QUADRADA
-				|| habilidade.getTipoAlvo() == TipoAlvo.AREA_CIRCULAR || habilidade.getTipoAlvo() == TipoAlvo.AREA)) {
+				|| habilidade.getTipoAlvo() == TipoAlvo.AREA_CIRCULAR || habilidade.getTipoAlvo() == TipoAlvo.AREA
+				|| habilidade.getTipoAlvo() == TipoAlvo.LINHA || habilidade.getTipoAlvo() == TipoAlvo.CONE)) {
 			setMoverMode(false);
 			System.out.println("MAPA: Modo Mirar Área (AoE) ativado.");
 			calcularEExibirAtaqueRange(ator, habilidade);

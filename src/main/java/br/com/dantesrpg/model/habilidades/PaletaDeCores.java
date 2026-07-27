@@ -24,6 +24,7 @@ public class PaletaDeCores extends Habilidade {
 	public static final String PRETO = "Preto";
 
 	private String opcaoSelecionada = VERMELHO;
+	private transient AcaoMestreInput ultimaEntradaExecutada;
 
 	public PaletaDeCores() {
 		super(NOME,
@@ -37,6 +38,10 @@ public class PaletaDeCores extends Habilidade {
 		if (getOpcoesSelection().contains(opcao)) {
 			this.opcaoSelecionada = opcao;
 		}
+	}
+
+	public String getOpcaoSelecionada() {
+		return opcaoSelecionada;
 	}
 
 	@Override
@@ -116,6 +121,12 @@ public class PaletaDeCores extends Habilidade {
 	public void executar(Personagem conjurador, List<Personagem> alvos, EstadoCombate estado,
 			CombatManager manager) {
 		AcaoMestreInput input = manager != null ? manager.getLastInput() : null;
+		if (input != null && input == ultimaEntradaExecutada) {
+			return;
+		}
+		if (input != null) {
+			ultimaEntradaExecutada = input;
+		}
 		String cor = input != null && getOpcoesSelection().contains(input.getOpcaoEscolhida())
 				? input.getOpcaoEscolhida() : opcaoSelecionada;
 		int dado = input != null ? input.getResultadoDado(DADO_INSPIRACAO) : -1;
