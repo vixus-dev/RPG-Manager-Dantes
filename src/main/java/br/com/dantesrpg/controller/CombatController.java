@@ -44,6 +44,7 @@ import br.com.dantesrpg.model.classes.Ilusionista;
 import br.com.dantesrpg.model.classes.Invocador;
 import br.com.dantesrpg.model.classes.Ladino;
 import br.com.dantesrpg.model.classes.Mago;
+import br.com.dantesrpg.model.classes.Elementalista;
 import br.com.dantesrpg.model.classes.MestreDasBalas;
 import br.com.dantesrpg.model.classes.Paladino;
 import br.com.dantesrpg.model.classes.Pistoleiro;
@@ -595,6 +596,8 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 			return new Alquimista();
 		if ("Mago".equalsIgnoreCase(nomeClasse))
 			return new Mago();
+		if ("Elementalista".equalsIgnoreCase(nomeClasse))
+			return new Elementalista();
 		System.err.println("Classe não reconhecida: " + nomeClasse);
 		return new ClassePlaceholder();
 	}

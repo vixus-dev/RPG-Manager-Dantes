@@ -452,7 +452,7 @@ public class DetailedTurnHUDController {
 				base = (int)(base * (1.0 + tirosExtras * 0.10));
 			}
 		} else if (habilidadeSelecionada != null) {
-			base = habilidadeSelecionada.getCustoTU();
+			base = habilidadeSelecionada.getCustoTUModificado(atorAtual);
 		} else if (fantasmaNobreSelecionado != null) {
 			base = fantasmaNobreSelecionado.getCustoTU();
 		} else if (itemSelecionado != null) {
@@ -700,6 +700,9 @@ public class DetailedTurnHUDController {
 					if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.PaletaDeCores paleta) {
 						paleta.setOpcaoSelecionada(val);
 					}
+					if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.classe.ManipulacaoElemental manipulacao) {
+						manipulacao.setOpcaoSelecionada(val);
+					}
 					atualizarDescricaoPorOpcao(val);
 					btnConfirmarAcao.setText(val.equalsIgnoreCase("Material") ? "ESCOLHER MATERIAL" : "CONFIRMAR AÇÃO");
 				});
@@ -824,6 +827,9 @@ public class DetailedTurnHUDController {
 			input.setOpcaoEscolhida(opcao);
 			if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.PaletaDeCores paleta) {
 				paleta.setOpcaoSelecionada(opcao);
+			}
+			if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.classe.ManipulacaoElemental manipulacao) {
+				manipulacao.setOpcaoSelecionada(opcao);
 			}
 		}
 
@@ -1152,7 +1158,7 @@ public class DetailedTurnHUDController {
 				.calcularDiametro(obterMovimentoReservadoGrandeRegente());
 		final Habilidade origemFinal = origemSelecao;
 		return new Habilidade(origemFinal.getNome(), origemFinal.getDescricao(), origemFinal.getTipo(),
-				origemFinal.getCustoMana(), origemFinal.getCustoTU(), origemFinal.getNivelNecessario(),
+				origemFinal.getCustoMana(), origemFinal.getCustoTUModificado(atorAtual), origemFinal.getNivelNecessario(),
 				origemFinal.getTipoAlvo(), diametro, origemFinal.getMultiplicadorDeDano(),
 				origemFinal.getTicksDeDano(), origemFinal.getEfeitosAplicados()) {
 			@Override public int getAlcanceMaximo() { return origemFinal.getAlcanceMaximo(); }

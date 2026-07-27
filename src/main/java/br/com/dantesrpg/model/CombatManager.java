@@ -971,7 +971,7 @@ public class CombatManager {
 			// --- LÓGICA DE HABILIDADE ---
 			tipoAcaoAtual = TipoAcao.HABILIDADE;
 			custoManaBase = habilidade.getCustoMana();
-			custoTUBase = habilidade.getCustoTU();
+			custoTUBase = habilidade.getCustoTUModificado(ator);
 
 			if (habilidade instanceof br.com.dantesrpg.model.habilidades.classe.JusticaDourada
 					&& !podeExecutarJusticaDourada(ator, input)) {
