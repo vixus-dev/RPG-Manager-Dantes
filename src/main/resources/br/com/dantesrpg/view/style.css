@@ -497,6 +497,12 @@
     -fx-effect: innershadow(gaussian, rgba(162, 102, 255, 0.72), 22, 0.55, 0, 0);
 }
 
+.zona-dominio-cerca-eletrica {
+    -fx-background-color: rgba(82, 215, 255, 0.24);
+    -fx-border-color: rgba(164, 239, 255, 0.95);
+    -fx-border-width: 1.5;
+}
+
 .hud-wind-rose-button {
     -fx-min-width: 42;
     -fx-min-height: 34;
