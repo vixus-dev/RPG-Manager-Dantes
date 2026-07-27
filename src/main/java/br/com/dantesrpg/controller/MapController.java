@@ -1,9 +1,11 @@
 package br.com.dantesrpg.controller;
 
 import br.com.dantesrpg.model.Arma;
+import br.com.dantesrpg.model.AcaoMestreInput;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
+import br.com.dantesrpg.model.map.CoordenadaMapa;
 import br.com.dantesrpg.model.util.ImageCache;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -42,6 +44,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import br.com.dantesrpg.controller.map.AoEShapeCalculator;
 import br.com.dantesrpg.controller.map.MapTokenRenderer;
@@ -101,6 +104,9 @@ public class MapController {
 	private boolean modoSelecaoMultipla = false;
 	private int alvosRestantes;
 	private List<Personagem> alvosSelecionadosMulti = new ArrayList<>();
+	private boolean modoSelecaoMultiAoE = false;
+	private int areasRestantes;
+	private final List<AcaoMestreInput.AreaSelecionada> areasSelecionadasMultiAoE = new ArrayList<>();
 	private Label labelContadorAlvos;
 
 	private boolean modoMovimentoLivre = false;
@@ -382,7 +388,7 @@ public class MapController {
 
 		double alcancePixels = habilidadeAtual.getAlcanceMaximo() * CELL_SIZE + (CELL_SIZE / 2.0);
 
-		TipoAlvo tipo = habilidadeAtual.getTipoAlvo();
+		TipoAlvo tipo = habilidadeAtual.getTipoAlvoEfetivo();
 		if (tipo == TipoAlvo.AREA) {
 			// Lógica "Cone 360": Círculo centrado no ATOR
 			// TamanhoArea é considerado o Diâmetro (ex: 5 = raio 2.5)
@@ -449,6 +455,20 @@ public class MapController {
 			gc.restore();
 
 		}
+
+		if (modoSelecaoMultiAoE && !areasSelecionadasMultiAoE.isEmpty()) {
+			gc.setFill(Color.rgb(255, 176, 32, 0.9));
+			gc.setStroke(Color.rgb(255, 225, 150, 1.0));
+			for (AcaoMestreInput.AreaSelecionada area : areasSelecionadasMultiAoE) {
+				double centroX = area.epicentro().x() * CELL_SIZE + CELL_SIZE / 2.0;
+				double centroY = area.epicentro().y() * CELL_SIZE + CELL_SIZE / 2.0;
+				double raioMarcador = Math.max(4.0, CELL_SIZE * 0.16);
+				gc.fillOval(centroX - raioMarcador, centroY - raioMarcador,
+						raioMarcador * 2, raioMarcador * 2);
+				gc.strokeOval(centroX - raioMarcador, centroY - raioMarcador,
+						raioMarcador * 2, raioMarcador * 2);
+			}
+		}
 	}
 
 	private void onGridCellMouseEntered(Pane cell, int x, int y) {
@@ -497,12 +517,16 @@ public class MapController {
 		}
 
 		if (!alvoNoAlcance) {
-			mainController.limparSelecaoDeAlvo();
-			limparDestaquesPeoes();
+			if (modoSelecaoMultiAoE && !areasSelecionadasMultiAoE.isEmpty()) {
+				atualizarPreviewMultiAoE(List.of());
+			} else {
+				mainController.limparSelecaoDeAlvo();
+				limparDestaquesPeoes();
+			}
 			return;
 		}
 
-		switch (habilidadeAtual.getTipoAlvo()) {
+		switch (habilidadeAtual.getTipoAlvoEfetivo()) {
 			case AREA_QUADRADA:
 				if (celularDiretamenteNoAlcance) desenharPreviewQuadrado(x, y);
 				break;
@@ -654,6 +678,11 @@ public class MapController {
 
 		// 2. Botão Esquerdo com peão já selecionado para movimento livre: Posiciona
 		if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && peaoSelecionadoParaMover != null) {
+			if (tentarCruzarBordaDominio(peaoSelecionadoParaMover, peaoSelecionadoParaMover.getPosX(),
+					peaoSelecionadoParaMover.getPosY(), x, y)) {
+				event.consume();
+				return;
+			}
 			if (paredesGrid[x][y]) {
 				System.out.println("MAPA (GM): Não pode soltar em parede.");
 				event.consume();
@@ -737,6 +766,10 @@ public class MapController {
 				return;
 			}
 
+			if (tentarCruzarBordaDominio(peaoSelecionadoParaMover, peaoSelecionadoParaMover.getPosX(),
+					peaoSelecionadoParaMover.getPosY(), x, y)) {
+				return;
+			}
 			if (paredesGrid[x][y]) {
 				System.out.println("MAPA (GM): Não pode soltar em parede.");
 				return;
@@ -772,6 +805,9 @@ public class MapController {
 		if (isMoverMode()) {
 			if (atorAtual.getRaca() != null && !atorAtual.getRaca().podeSeMover(atorAtual)) {
 				System.out.println("MAPA: " + atorAtual.getNome() + " nao pode se mover enquanto estiver em postura.");
+				return;
+			}
+			if (tentarCruzarBordaDominio(atorAtual, atorAtual.getPosX(), atorAtual.getPosY(), x, y)) {
 				return;
 			}
 			if (celulasAlcanceMovimento.contains(cell)) {
@@ -810,9 +846,8 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 
 			// Verifica AoE
 			if (habilidadeAtual != null) {
-				TipoAlvo tipo = habilidadeAtual.getTipoAlvo();
-				if (tipo == TipoAlvo.AREA_QUADRADA || tipo == TipoAlvo.AREA_CIRCULAR || tipo == TipoAlvo.LINHA
-						|| tipo == TipoAlvo.CONE || tipo == TipoAlvo.AREA) {
+				TipoAlvo tipo = habilidadeAtual.getTipoAlvoEfetivo();
+				if (tipo == TipoAlvo.AREA || tipo.isFormatoAreaComEpicentro()) {
 					selecionarAreaComEpicentro(x, y);
 					return;
 				}
@@ -846,7 +881,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 					if (modoSelecaoMultipla) {
 						alvosSelecionadosMulti.add(alvo);
 						alvosRestantes--;
-						labelContadorAlvos.setText("Alvos restantes: " + alvosRestantes);
+						atualizarTextoContadorSelecao();
 						if (alvosRestantes <= 0) {
 							mainController.adicionarAlvosSelecionados(alvosSelecionadosMulti);
 							sairModoSelecao();
@@ -1139,6 +1174,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -1503,6 +1539,44 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		return paredesGrid[x][y];
 	}
 
+	/** Intercepta a travessia de uma borda de domínio e aplica sua penalidade. */
+	public boolean tentarCruzarBordaDominio(Personagem personagem, int origemX, int origemY, int destinoX, int destinoY) {
+		if (personagem == null) return false;
+		for (Dominio dominio : dominiosAtivos.values()) {
+			if (!dominio.bloqueiaMovimento(origemX, origemY, destinoX, destinoY)) continue;
+
+			if (dominio.getDanoAoCruzarBorda() > 0.0 && mainController != null
+					&& mainController.getCombatManager() != null) {
+				mainController.getCombatManager().getDamageApplicator().aplicarDanoAoAlvo(
+						null, personagem, dominio.getDanoAoCruzarBorda(), false,
+						br.com.dantesrpg.model.enums.TipoAcao.AMBIENTE, mainController.getEstadoCombate());
+			}
+			if (dominio.getChoqueAoCruzarBordaTU() > 0 && mainController != null
+					&& mainController.getCombatManager() != null) {
+				br.com.dantesrpg.model.Efeito choque = br.com.dantesrpg.model.util.EffectFactory.criarEfeito(
+						"Choque", 1, dominio.getChoqueAoCruzarBordaTU());
+				mainController.getCombatManager().getEffectProcessor().aplicarEfeito(personagem, choque);
+			}
+			System.out.println(">>> " + personagem.getNome() + " atingiu a borda de " + dominio.getNomeEfeito() + ".");
+			return true;
+		}
+		return false;
+	}
+
+	/** Cria uma zona de escombros persistente que bloqueia movimento e linha de visão. */
+	public void criarEscombros(int centroX, int centroY, int tamanho) {
+		int raio = (Math.max(1, tamanho) - 1) / 2;
+		for (int y = centroY - raio; y <= centroY + raio; y++) {
+			for (int x = centroX - raio; x <= centroX + raio; x++) {
+				if (!dentroDoGrid(x, y) || paredesGrid[x][y]) continue;
+				Pane celula = celulasDoGrid[x][y];
+				if (celula == null) continue;
+				paredesGrid[x][y] = true;
+				celula.getStyleClass().add("map-escombros");
+			}
+		}
+	}
+
 	/** Largura do grid em tiles. */
 	public int getGridLargura() {
 		return gridLargura;
@@ -1731,13 +1805,28 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		this.habilidadeAtual = habilidade;
 		this.atorAtual = ator;
 		this.modoSelecaoMultipla = false;
+		this.modoSelecaoMultiAoE = false;
 		this.alvosRestantes = 0;
+		this.areasRestantes = 0;
 		this.alvosSelecionadosMulti.clear();
+		this.areasSelecionadasMultiAoE.clear();
 		removerLabelContador();
 
 		System.out.println("MAPA: " + ator.getNome() + " entrando em modo de seleção...");
 
-		if (habilidade != null && (habilidade.getTipoAlvo() == TipoAlvo.AREA_QUADRADA
+		if (habilidade != null && habilidade.getTipoAlvo() == TipoAlvo.MULTI_AOE) {
+			this.modoSelecaoMultiAoE = true;
+			this.areasRestantes = habilidade.getNumeroDeAreas();
+			if (areasRestantes <= 0) {
+				throw new IllegalStateException(
+						"Habilidade MULTI_AOE sem áreas selecionáveis: " + habilidade.getNome());
+			}
+			habilidade.getTipoAlvoEfetivo();
+			setMoverMode(false);
+			criarLabelContador();
+			calcularEExibirAtaqueRange(ator, habilidade);
+			System.out.println("MAPA: Modo MULTI-AOE ativado. Áreas restantes: " + areasRestantes);
+		} else if (habilidade != null && (habilidade.getTipoAlvo() == TipoAlvo.AREA_QUADRADA
 				|| habilidade.getTipoAlvo() == TipoAlvo.AREA_CIRCULAR || habilidade.getTipoAlvo() == TipoAlvo.AREA)) {
 			setMoverMode(false);
 			System.out.println("MAPA: Modo Mirar Área (AoE) ativado.");
@@ -1779,12 +1868,23 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			labelContadorAlvos = new Label();
 			labelContadorAlvos.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: yellow;");
 		}
-		labelContadorAlvos.setText("Alvos restantes: " + alvosRestantes);
+		atualizarTextoContadorSelecao();
 
 		// Adiciona na barra superior se não estiver lá (ignora em modo embedded sem
 		// toolbar)
 		if (topToolbar != null && !topToolbar.getItems().contains(labelContadorAlvos)) {
 			topToolbar.getItems().add(labelContadorAlvos);
+		}
+	}
+
+	private void atualizarTextoContadorSelecao() {
+		if (labelContadorAlvos == null) {
+			return;
+		}
+		if (modoSelecaoMultiAoE) {
+			labelContadorAlvos.setText("Áreas restantes: " + areasRestantes);
+		} else {
+			labelContadorAlvos.setText("Alvos restantes: " + alvosRestantes);
 		}
 	}
 
@@ -1818,6 +1918,24 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 
 		// Encontra os alvos (usando o novo método genérico)
 		List<Personagem> alvosNaArea = encontrarAlvosNaForma(epicentroX, epicentroY, habilidadeAtual, atorAtual);
+
+		if (modoSelecaoMultiAoE) {
+			AcaoMestreInput.AreaSelecionada area = new AcaoMestreInput.AreaSelecionada(
+					new CoordenadaMapa(epicentroX, epicentroY), alvosNaArea);
+			areasSelecionadasMultiAoE.add(area);
+			areasRestantes--;
+			atualizarTextoContadorSelecao();
+			atualizarPreviewMultiAoE(List.of());
+
+			if (areasRestantes > 0) {
+				System.out.println("MAPA: Área MULTI-AOE registrada. Restam " + areasRestantes + ".");
+				return;
+			}
+
+			mainController.adicionarAlvosMultiArea(List.copyOf(areasSelecionadasMultiAoE));
+			sairModoSelecao();
+			return;
+		}
 
 		// Envia os alvos E o epicentro (x,y) para a HUD
 		mainController.adicionarAlvosArea(alvosNaArea, epicentroX, epicentroY);
@@ -1857,27 +1975,42 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		List<Personagem> alvos = encontrarAlvosNaForma(cursorX, cursorY, habilidadeAtual, atorAtual);
 
 		// Apenas destaca os personagens (borda vermelha) e avisa o controle
-		destacarPeoesAlvo(alvos);
-		mainController.alvosIdentificadosNoMapa(alvos);
+		atualizarPreviewMultiAoE(alvos);
 	}
 
 	private void desenharPreviewQuadrado(int x, int y) {
 		List<Personagem> alvos = encontrarAlvosNaForma(x, y, habilidadeAtual, atorAtual);
-		destacarPeoesAlvo(alvos);
-		mainController.alvosIdentificadosNoMapa(alvos);
+		atualizarPreviewMultiAoE(alvos);
 	}
 
 	private void desenharPreviewCircular(int x, int y) {
 		// A lógica Manhattan está dentro de encontrarAlvosNaForma!
 		List<Personagem> alvos = encontrarAlvosNaForma(x, y, habilidadeAtual, atorAtual);
-		destacarPeoesAlvo(alvos);
-		mainController.alvosIdentificadosNoMapa(alvos);
+		atualizarPreviewMultiAoE(alvos);
 	}
 
 	private void desenharPreviewLinha(int cursorX, int cursorY) {
 		List<Personagem> alvos = encontrarAlvosNaForma(cursorX, cursorY, habilidadeAtual, atorAtual);
-		destacarPeoesAlvo(alvos);
-		mainController.alvosIdentificadosNoMapa(alvos);
+		atualizarPreviewMultiAoE(alvos);
+	}
+
+	private void atualizarPreviewMultiAoE(List<Personagem> alvosDaAreaAtual) {
+		if (!modoSelecaoMultiAoE) {
+			destacarPeoesAlvo(alvosDaAreaAtual);
+			mainController.alvosIdentificadosNoMapa(alvosDaAreaAtual);
+			return;
+		}
+
+		List<Personagem> impactos = new ArrayList<>();
+		for (AcaoMestreInput.AreaSelecionada area : areasSelecionadasMultiAoE) {
+			impactos.addAll(area.alvos());
+		}
+		if (alvosDaAreaAtual != null) {
+			impactos.addAll(alvosDaAreaAtual);
+		}
+
+		destacarPeoesAlvo(new ArrayList<>(new LinkedHashSet<>(impactos)));
+		mainController.alvosIdentificadosNoMapa(impactos);
 	}
 
 	public int calcularDistancia(int startX, int startY, int endX, int endY) {
@@ -1897,6 +2030,12 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		this.modoSelecaoAlvo = false;
 		this.habilidadeAtual = null;
 		this.atorAtual = null;
+		this.modoSelecaoMultipla = false;
+		this.modoSelecaoMultiAoE = false;
+		this.alvosRestantes = 0;
+		this.areasRestantes = 0;
+		this.alvosSelecionadosMulti.clear();
+		this.areasSelecionadasMultiAoE.clear();
 		System.out.println("MAPA: Saindo do modo de seleção.");
 
 		removerLabelContador(); // Apenas remove o texto
