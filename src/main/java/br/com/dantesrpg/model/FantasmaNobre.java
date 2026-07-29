@@ -52,7 +52,17 @@ public abstract class FantasmaNobre {
 	}
 
 	public List<String> getOpcoesSelection() {
-		return null; // PadrÃ£o: sem opÃ§Ãµes
+		return null; // Padrão: sem opções
+	}
+
+	/** Habilidades ativas concedidas enquanto este Fantasma Nobre estiver equipado. */
+	public List<Habilidade> getHabilidadesConcedidas() {
+		return List.of();
+	}
+
+	/** Indica se este FN possui uma ação própria além das habilidades concedidas. */
+	public boolean possuiAcaoAtiva() {
+		return true;
 	}
 
 	public boolean podeExecutar(Personagem conjurador) {

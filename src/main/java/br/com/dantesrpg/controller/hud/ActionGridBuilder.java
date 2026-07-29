@@ -58,7 +58,7 @@ public class ActionGridBuilder {
 		// Fantasma Nobre (apenas personagens não-clone)
 		if (!ator.isClone()) {
 			FantasmaNobre fn = ator.getFantasmaNobre();
-			if (fn != null) {
+			if (fn != null && fn.possuiAcaoAtiva()) {
 				Button btnFN = criarBotaoFantasmaNobre(fn, ator);
 				btnFN.setOnAction(e -> {
 					if (fn instanceof br.com.dantesrpg.model.fantasmasnobres.InvocacaoMurasame) {
