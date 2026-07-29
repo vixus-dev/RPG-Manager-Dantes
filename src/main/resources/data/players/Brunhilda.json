@@ -15,14 +15,14 @@
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
-  "escudoNormalAtual": 38.0,
+  "escudoNormalAtual": 0.0,
   "carteira": {
     "prata": 0,
     "ouro": 0,
     "bronze": 10000
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 1.0,
+  "vidaAtual": 39.0,
   "contadorTU": 4,
   "fantasmaNobre": "Fimbulwinter",
   "armaduraEquipada": "Armadura Leviatã",
