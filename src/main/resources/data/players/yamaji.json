@@ -1,0 +1,51 @@
+{
+  "iniciativaBase": 10,
+  "pecado": 0,
+  "atributosBase": {
+    "FORCA": 20,
+    "PERCEPCAO": 9,
+    "ENDURANCE": 15,
+    "CARISMA": 10,
+    "INTELIGENCIA": 1,
+    "DESTREZA": 10,
+    "SORTE": 1,
+    "INSPIRACAO": 20,
+    "SAGACIDADE": 1,
+    "TOPOR": 8
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 135.0,
+  "contadorTU": 3,
+  "fantasmaNobre": "OAnjoNascidoNoInferno",
+  "armaduraEquipada": "Nano-Armadura MK1",
+  "armaEquipada": "PunhosYamaji",
+  "inventario": {},
+  "xpAtual": 850,
+  "vidaMaximaBase": 100.0,
+  "classe": "Pugilista",
+  "armasEquipadas": [
+    "PunhosYamaji"
+  ],
+  "nome": "Yamaji",
+  "RaçaV2": true,
+  "segmentos": 0,
+  "grau": 1,
+  "posX": 6,
+  "posY": 4,
+  "vidas": 3,
+  "amuleto2": "Colar de Canopos Quebrados",
+  "amuleto1": "Medalhão da Tempestade",
+  "manaAtual": 5.5,
+  "escudoDivinoAtual": 0.0,
+  "raca": "Lobisomem",
+  "nivel": 10,
+  "wieldingMaximo": 2
+}

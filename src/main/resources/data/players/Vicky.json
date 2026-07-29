@@ -1,0 +1,51 @@
+{
+  "iniciativaBase": 10,
+  "pecado": 0,
+  "atributosBase": {
+    "FORCA": 10,
+    "PERCEPCAO": 14,
+    "ENDURANCE": 12,
+    "CARISMA": 7,
+    "INTELIGENCIA": 8,
+    "DESTREZA": 10,
+    "SORTE": 8,
+    "INSPIRACAO": 10,
+    "SAGACIDADE": 8,
+    "TOPOR": 8
+  },
+  "escudoSangueAtual": 0.0,
+  "pontosParaDistribuir": 0,
+  "escudoNormalAtual": 0.0,
+  "carteira": {
+    "prata": 0,
+    "ouro": 0,
+    "bronze": 0
+  },
+  "faccao": "JOGADOR",
+  "vidaAtual": 140.7,
+  "contadorTU": 1,
+  "fantasmaNobre": "BloodMoon",
+  "armaduraEquipada": "Armadura Leviatã",
+  "armaEquipada": "ChicoteVicky",
+  "inventario": {},
+  "xpAtual": 0,
+  "vidaMaximaBase": 50.0,
+  "classe": "Ladino",
+  "armasEquipadas": [
+    "ChicoteVicky"
+  ],
+  "nome": "Vicky",
+  "RaçaV2": true,
+  "segmentos": 0,
+  "grau": 0,
+  "posX": 5,
+  "posY": 5,
+  "vidas": 3,
+  "amuleto2": "Medalhão da Maré",
+  "amuleto1": "Medalhão da Tempestade",
+  "manaAtual": 7.5,
+  "escudoDivinoAtual": 0.0,
+  "raca": "Vampiro",
+  "nivel": 10,
+  "wieldingMaximo": 2
+}
