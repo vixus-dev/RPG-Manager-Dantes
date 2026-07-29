@@ -4,6 +4,11 @@ import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.habilidades.*;
 import br.com.dantesrpg.model.habilidades.boss.*;
 import br.com.dantesrpg.model.habilidades.classe.*;
+import br.com.dantesrpg.model.habilidades.fantasmasnobres.DestruirSangue;
+import br.com.dantesrpg.model.habilidades.fantasmasnobres.DobrarSangue;
+import br.com.dantesrpg.model.habilidades.fantasmasnobres.PrenderSangue;
+import br.com.dantesrpg.model.habilidades.fantasmasnobres.DancaMetamoru;
+import br.com.dantesrpg.model.habilidades.fantasmasnobres.Kamehameha;
 import br.com.dantesrpg.model.habilidades.PaletaDeCores;
 import java.util.Map;
 import java.util.Set;
@@ -153,6 +158,15 @@ public class HabilidadeFactory {
 		registro.put("Manipulação elemental", ManipulacaoElemental::new);
 		registro.put("Maestria elemental", MaestriaElemental::new);
 		registro.put("Mastermind", Mastermind::new);
+
+		// BloodMoon
+		registro.put("Prender Sangue", PrenderSangue::new);
+		registro.put("Dobrar Sangue", DobrarSangue::new);
+		registro.put("Destruir Sangue", DestruirSangue::new);
+
+		// O Anjo Nascido no Inferno
+		registro.put("Kamehameha", Kamehameha::new);
+		registro.put("Dança Metamoru", DancaMetamoru::new);
 
 		// KuangLi - Profeta de Behemoth
 		registro.put("Mergulho", Mergulho::new);
