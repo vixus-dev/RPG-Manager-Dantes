@@ -13,6 +13,7 @@ public class EstadoCombate {
 	private int xpAcumuladoPool = 0;
 	private CombatManager combatManager;
 	private final java.util.Map<Personagem, PosicaoMorteAmaldicoada> inimigosAguardandoArise = new java.util.LinkedHashMap<>();
+	private final java.util.Map<Personagem, br.com.dantesrpg.model.combat.FusaoMetamoru.Dados> fusoesMetamoru = new java.util.LinkedHashMap<>();
 
 	/** Posição preservada para a ressurreição amaldiçoada. */
 	public record PosicaoMorteAmaldicoada(int x, int y) {
@@ -115,6 +116,18 @@ public class EstadoCombate {
 
 	public void removerDaEsperaArise(Personagem personagem) {
 		inimigosAguardandoArise.remove(personagem);
+	}
+
+	public void registrarFusaoMetamoru(Personagem fusao, br.com.dantesrpg.model.combat.FusaoMetamoru.Dados dados) {
+		if (fusao != null && dados != null) fusoesMetamoru.put(fusao, dados);
+	}
+
+	public java.util.Map<Personagem, br.com.dantesrpg.model.combat.FusaoMetamoru.Dados> getFusoesMetamoru() {
+		return java.util.Map.copyOf(fusoesMetamoru);
+	}
+
+	public br.com.dantesrpg.model.combat.FusaoMetamoru.Dados removerFusaoMetamoru(Personagem fusao) {
+		return fusoesMetamoru.remove(fusao);
 	}
 
 	/**

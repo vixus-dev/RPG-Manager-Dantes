@@ -360,6 +360,10 @@ public class DamageApplicator {
 
 			// MORTE
 			if (vidaPre > 0 && !alvo.isAtivoNoCombate() && !alvo.isVivo()) {
+				if (FusaoMetamoru.eFusao(estado, alvo)) {
+					FusaoMetamoru.desfazerAoMorrer(alvo, estado, combatManager);
+					return;
+				}
 				if (combatManager.colocarEmEsperaParaArise(alvo, estado)) {
 					if (getController() != null) {
 						getController().atualizarInterfaceAposMorte();
