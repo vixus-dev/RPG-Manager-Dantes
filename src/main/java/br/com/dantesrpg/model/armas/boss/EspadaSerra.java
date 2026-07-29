@@ -10,7 +10,7 @@ public class EspadaSerra extends br.com.dantesrpg.model.ArmaMelee {
 	private boolean modoEngagedAtivo = false;
 
 	public EspadaSerra() {
-		super("Espada-Serra", "Arma Única", "Descrição", Raridade.LENDARIO, 0, 10, // Dano Base
+		super("Espada-Serra", "Arma Única", "Descrição", Raridade.LENDARIO, 0, 30, // Dano Base
 				1, Atributo.FORCA, 100, // Custo TU
 				2 // Alcance
 		);
