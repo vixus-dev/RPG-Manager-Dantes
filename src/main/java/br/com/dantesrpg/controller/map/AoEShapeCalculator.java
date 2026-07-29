@@ -165,8 +165,9 @@ public class AoEShapeCalculator {
 			}
 		} else if (tipo == TipoAlvo.LINHA) {
 			int comprimento = habilidade.getAlcanceMaximo();
-			int larguraLinha = habilidade.getTamanhoArea();
-			int raioLargura = (larguraLinha - 1) / 2;
+			int larguraLinha = Math.max(1, habilidade.getTamanhoArea());
+			int inicioLargura = -(larguraLinha / 2);
+			int fimLargura = inicioLargura + larguraLinha - 1;
 			double pxCenter = ator.getPosX() + (ator.getTamanhoX() - 1) / 2.0;
 			double pyCenter = ator.getPosY() + (ator.getTamanhoY() - 1) / 2.0;
 			int pxInt = (int) Math.round(pxCenter);
@@ -189,7 +190,7 @@ public class AoEShapeCalculator {
 				int baseY = pyInt + (i * dirY);
 				boolean bloqueado = false;
 
-				for (int j = -raioLargura; j <= raioLargura; j++) {
+				for (int j = inicioLargura; j <= fimLargura; j++) {
 					int currentX, currentY;
 					if (isDiagonal) {
 						currentX = baseX + (j * (-dirY));

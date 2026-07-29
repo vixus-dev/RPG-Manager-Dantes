@@ -19,6 +19,7 @@ import br.com.dantesrpg.model.enums.TipoEfeito;
 import br.com.dantesrpg.model.fantasmasnobres.AcertoDeContas;
 import br.com.dantesrpg.model.fantasmasnobres.AndJusticeForMySelf;
 import br.com.dantesrpg.model.fantasmasnobres.ApostadorIncansavel;
+import br.com.dantesrpg.model.fantasmasnobres.BloodMoon;
 import br.com.dantesrpg.model.fantasmasnobres.GodsWill;
 import br.com.dantesrpg.model.fantasmasnobres.Fimbulwinter;
 import br.com.dantesrpg.model.fantasmasnobres.GrandeRegente;
@@ -28,6 +29,7 @@ import br.com.dantesrpg.model.fantasmasnobres.IraDeAnthyros;
 import br.com.dantesrpg.model.fantasmasnobres.JihoGekkyuden;
 import br.com.dantesrpg.model.fantasmasnobres.LuaSombria;
 import br.com.dantesrpg.model.fantasmasnobres.ModoPolaris;
+import br.com.dantesrpg.model.fantasmasnobres.OAnjoNascidoNoInferno;
 import br.com.dantesrpg.model.fantasmasnobres.ProfetaDeBehemoth;
 import br.com.dantesrpg.model.fantasmasnobres.RingOfTheUndyingWill;
 import br.com.dantesrpg.model.fantasmasnobres.Ritual;
@@ -122,6 +124,8 @@ ator.getInventario().removerItem(essencia);
 				return new AndJusticeForMySelf();
 			case "ApostadorIncansavel":
 				return new ApostadorIncansavel();
+			case "BloodMoon":
+				return new BloodMoon();
 			case "AstrapiVasileas":
 				return new br.com.dantesrpg.model.fantasmasnobres.AstrapiVasileas();
 			case "GodsWill":
@@ -144,6 +148,9 @@ ator.getInventario().removerItem(essencia);
 				return new LuaSombria();
 			case "ModoPolaris":
 				return new ModoPolaris();
+			case "OAnjoNascidoNoInferno":
+			case "O Anjo Nascido no Inferno":
+				return new OAnjoNascidoNoInferno();
 			case "ProfetaDeBehemoth":
 				return new ProfetaDeBehemoth();
 			case "RevelacaoDeYaweh":

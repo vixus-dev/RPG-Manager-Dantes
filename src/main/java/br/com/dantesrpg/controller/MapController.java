@@ -443,7 +443,7 @@ public class MapController {
 						alcancePixels * 2, startAngle, anguloCone, ArcType.ROUND);
 			}
 		} else if (tipo == TipoAlvo.LINHA) {
-			double larguraLinha = CELL_SIZE;
+			double larguraLinha = CELL_SIZE * Math.max(1, habilidadeAtual.getTamanhoArea());
 			gc.save();
 			gc.translate(atorPixelX, atorPixelY);
 			double deltaX = mouseX - atorPixelX;
