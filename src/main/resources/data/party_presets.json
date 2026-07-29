@@ -1,5 +1,5 @@
 {
-  "equippedSlotName": "Encore E0",
+  "equippedSlotName": "Equipe 1",
   "presets": [
     {
       "name": "Equipe 1",
@@ -66,9 +66,11 @@
     {
       "name": "Encore E0",
       "characterNames": [
-        "Invictus",
         "Gilver",
-        "cassandra_drummond"
+        "cassandra_drummond",
+        "yamaji",
+        "Invictus",
+        "Vicky"
       ],
       "andarAtual": "NULO",
       "estadoVisualAndar": 0
