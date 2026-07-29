@@ -399,6 +399,22 @@ public class Personagem {
 		}
 	}
 
+	/** Consome o marcador genérico que bloqueia somente o próximo movimento. */
+	public boolean consumirBloqueioMovimentoProximoTurno() {
+		String nomeEfeito = getEfeitosAtivos().entrySet().stream()
+				.filter(entry -> entry.getValue().getModificadores() != null)
+				.filter(entry -> entry.getValue().getModificadores()
+						.containsKey("BLOQUEAR_MOVIMENTO_PROXIMO_TURNO"))
+				.map(Map.Entry::getKey)
+				.findFirst()
+				.orElse(null);
+		if (nomeEfeito == null) {
+			return false;
+		}
+		removerEfeito(nomeEfeito);
+		return true;
+	}
+
 	private void aplicarBonusEspecificos() {
 		// Bônus de Classe
 		if (this.classe instanceof Feiticeiro)
@@ -632,6 +648,8 @@ public class Personagem {
 			combinadas.addAll(habilidadesDeClasse);
 		if (habilidadesExtras != null)
 			combinadas.addAll(habilidadesExtras);
+		if (fantasmaNobre != null)
+			combinadas.addAll(fantasmaNobre.getHabilidadesConcedidas());
 
 		for (Arma arma : getArmasEquipadas()) {
 			if (arma instanceof br.com.dantesrpg.model.Grimorio) {

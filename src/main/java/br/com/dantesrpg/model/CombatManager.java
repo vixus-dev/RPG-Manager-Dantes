@@ -368,11 +368,21 @@ public class CombatManager {
 		}
 
 		// Se não pulou, prepara o turno
+		if (br.com.dantesrpg.model.habilidades.fantasmasnobres.Kamehameha.processarTurnoCarregando(atual)) {
+			proximoTurno(estado);
+			return;
+		}
 		auraManager.checarEfeitosDeInicioDeTurno(atual, estado);
 
 		// Hook de Raça (Half-Angel/Half-Demon manutenção)
 		if (atual.getRaca() != null) {
 			atual.getRaca().onTurnStart(atual, estado);
+		}
+
+		if (atual.consumirBloqueioMovimentoProximoTurno()) {
+			atual.setMovimentoRestanteTurno(0);
+			System.out.println(">>> " + atual.getNome() + " está imobilizado e não pode se mover neste turno.");
+			return;
 		}
 
 		atual.setMovimentoRestanteTurno(atual.getMovimento());
@@ -452,6 +462,7 @@ public class CombatManager {
 
 			int tempoGlobalAtual = estado.getTickCounter() + 1;
 			estado.setTickCounter(tempoGlobalAtual);
+			br.com.dantesrpg.model.combat.FusaoMetamoru.processarExpiracoes(estado, this);
 
 			if (mainController != null) {
 				mainController.processarTickEfeitoAndar();

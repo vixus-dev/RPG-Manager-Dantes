@@ -703,6 +703,16 @@ public class DetailedTurnHUDController {
 					if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.classe.ManipulacaoElemental manipulacao) {
 						manipulacao.setOpcaoSelecionada(val);
 					}
+					if (habilidadeSelecionada instanceof br.com.dantesrpg.model.habilidades.fantasmasnobres.Kamehameha kamehameha) {
+						try {
+							kamehameha.selecionarCarga(Integer.parseInt(val));
+						} catch (NumberFormatException ignored) {
+							kamehameha.selecionarCarga(0);
+						}
+						atualizarCustosExibidos();
+						configurarBotaoAlvo();
+						enviarTUPreview();
+					}
 					atualizarDescricaoPorOpcao(val);
 					btnConfirmarAcao.setText(val.equalsIgnoreCase("Material") ? "ESCOLHER MATERIAL" : "CONFIRMAR AÇÃO");
 				});

@@ -239,6 +239,9 @@ public class DiceInputsBuilder {
 		if (hab instanceof br.com.dantesrpg.model.habilidades.PaletaDeCores) {
 			atr = Atributo.INSPIRACAO;
 		}
+		if (hab instanceof br.com.dantesrpg.model.habilidades.fantasmasnobres.Kamehameha) {
+			atr = Atributo.INSPIRACAO;
+		}
 		return atr;
 	}
 
@@ -322,6 +325,11 @@ public class DiceInputsBuilder {
 		} else if (nome.equals("Caçada")) {
 			adicionarInputExtra("DADO_ATRIBUTO", "Rolagem DES/SAG:", inputsExtras);
 			adicionarInputExtra("DADO_CHANCE_CACADA_1D6", "Qtd. Tiros (1d6):", inputsExtras);
+		} else if (nome.equals("Dança Metamoru")) {
+			adicionarInputExtra(br.com.dantesrpg.model.habilidades.fantasmasnobres.DancaMetamoru.DADO_DESTREZA_USUARIO,
+					"Teste de Destreza do usuário:", inputsExtras);
+			adicionarInputExtra(br.com.dantesrpg.model.habilidades.fantasmasnobres.DancaMetamoru.DADO_DESTREZA_ALIADO,
+					"Teste de Destreza do aliado:", inputsExtras);
 		}
 	}
 
