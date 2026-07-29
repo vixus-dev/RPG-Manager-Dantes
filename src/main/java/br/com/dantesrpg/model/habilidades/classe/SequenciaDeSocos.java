@@ -15,7 +15,7 @@ public class SequenciaDeSocos extends Habilidade {
 		super("Sequência de Socos", // Nome
 				"Ataca 8 vezes, cada golpe causa 50% de dano.", // Descrição
 				TipoHabilidade.ATIVA, 2, // Custo de Mana
-				80, // Custo de TU
+				100, // Custo de TU
 				3, // Nível Necessário
 				TipoAlvo.INDIVIDUAL, 0.50, // Multiplicador de Dano (50%)
 				8, // Ticks de Dano (8 acertos)

@@ -8,7 +8,7 @@ public class SwordOfHope extends Habilidade {
 	public SwordOfHope() {
 		super("Sword of Hope",
 				"400% Dano Mágico em todos os inimigos. (dano é calculado usando a arma equipada + 2x inspiração)",
-				TipoHabilidade.ATIVA, 4, 400, 8, TipoAlvo.AREA,
+				TipoHabilidade.ATIVA, 4, 200, 8, TipoAlvo.AREA,
 				99, 4.0, 1, Collections.emptyList());
 	}
 

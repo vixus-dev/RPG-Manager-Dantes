@@ -13,7 +13,7 @@ public class SocoSerio extends Habilidade {
 
 	public SocoSerio() {
 		super("Soco Sério", // Nome
-				"Causa 500% de dano em uma linha central e 300% em um cone.", TipoHabilidade.ATIVA, 6, 300, 8,
+				"Causa 500% de dano em uma linha central e 300% em um cone.", TipoHabilidade.ATIVA, 6, 200, 8,
 				TipoAlvo.CONE, 5, // Tamanho
 				3.0, // Multiplicador BASE
 				1, Collections.emptyList());
