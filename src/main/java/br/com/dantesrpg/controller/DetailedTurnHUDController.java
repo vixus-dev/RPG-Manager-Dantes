@@ -23,6 +23,8 @@ public class DetailedTurnHUDController {
 	@FXML
 	private Label labelNomeAtor, labelClasseRaca, labelHP, labelMP, labelTU;
 	@FXML
+	private ProgressBar hpProgressBar, mpProgressBar;
+	@FXML
 	private VBox effectsContainer;
 	@FXML
 	private VBox municaoContainer;
@@ -40,7 +42,7 @@ public class DetailedTurnHUDController {
 
 	// --- Coluna 2 ---
 	@FXML
-	private Button btnAbaAtaques, btnAbaItens;
+	private ToggleButton btnAbaAtaques, btnAbaItens;
 	@FXML
 	private GridPane actionsGrid;
 	@FXML
@@ -50,7 +52,9 @@ public class DetailedTurnHUDController {
 
 	// --- Coluna 3 (Detalhes) ---
 	@FXML
-	private VBox actionDetailsColumn;
+	private ScrollPane actionDetailsColumn;
+	@FXML
+	private VBox actionEmptyState, actionFooter;
 	@FXML
 	private Label lblActionTitle, lblActionDesc;
 	@FXML
@@ -96,7 +100,7 @@ public class DetailedTurnHUDController {
 	@FXML
 	private Button btnConfirmarAcao;
 
-	// --- Coluna 4 (Rolagem de Dados) ---
+	// --- Rolagem integrada ao inspetor de ação ---
 	@FXML
 	private VBox diceRollColumn;
 	@FXML
@@ -172,7 +176,7 @@ public class DetailedTurnHUDController {
 		diceInputsBuilder = new DiceInputsBuilder(diceInputsBox, diceRollColumn,
 				lblDiceType, lblDiceResult, lblCritRate, lblCritResult);
 		characterInfoRenderer = new CharacterInfoRenderer(labelNomeAtor, labelClasseRaca,
-				labelHP, labelMP, labelTU,
+				labelHP, labelMP, labelTU, hpProgressBar, mpProgressBar,
 				effectsContainer, detailedAttributesScrollPane,
 				detailedAttributesPane, attributesGrid);
 	}
@@ -191,9 +195,8 @@ public class DetailedTurnHUDController {
 		// Abre na aba de ataques por padrão
 		onAbaAtaquesClick();
 
-		// Esconde a coluna de detalhes até selecionar algo
-		actionDetailsColumn.setVisible(false);
-		actionDetailsColumn.setManaged(false);
+		// Mantém o inspetor estável e exibe um estado vazio até selecionar algo.
+		exibirDetalhesAcao(false);
 		diceRollColumn.setVisible(false);
 		diceRollColumn.setManaged(false);
 
@@ -204,6 +207,18 @@ public class DetailedTurnHUDController {
 		boolean mostrarRecarregar = ator.getArmasEquipadas().stream().anyMatch(Arma::isRequerMunicao);
 		btnRecarregar.setVisible(mostrarRecarregar);
 		btnRecarregar.setManaged(mostrarRecarregar);
+	}
+
+	private void exibirDetalhesAcao(boolean exibir) {
+		actionDetailsColumn.setVisible(exibir);
+		actionDetailsColumn.setManaged(exibir);
+		actionFooter.setVisible(exibir);
+		actionFooter.setManaged(exibir);
+		actionEmptyState.setVisible(!exibir);
+		actionEmptyState.setManaged(!exibir);
+		if (exibir) {
+			actionDetailsColumn.setVvalue(0);
+		}
 	}
 
 	// --- ABAS ---
@@ -242,6 +257,7 @@ public class DetailedTurnHUDController {
 			alert.setTitle("Sem Essências");
 			alert.setHeaderText("Você não possui almas capturadas.");
 			alert.setContentText("Use a Murasame para matar inimigos.");
+			prepararDialogoTematico(alert);
 			alert.showAndWait();
 			return;
 		}
@@ -252,8 +268,7 @@ public class DetailedTurnHUDController {
 		dialog.setHeaderText("Escolha a alma para invocar:");
 		dialog.setContentText("Essência:");
 		dialog.setResultConverter(bt -> bt == ButtonType.OK ? dialog.getSelectedItem() : null);
-		dialog.getDialogPane().setStyle("-fx-background-color: #222;");
-		dialog.getDialogPane().lookup(".label").setStyle("-fx-text-fill: white;");
+		prepararDialogoTematico(dialog);
 
 		Optional<br.com.dantesrpg.model.items.EssenciaInimigo> result = dialog.showAndWait();
 		if (result.isPresent()) {
@@ -366,6 +381,7 @@ public class DetailedTurnHUDController {
 		dialog.setResultConverter(button -> button == btnConfirmar
 				? new SelecaoRecarga(comboArmas.getValue(), comboPacotes.getValue())
 				: null);
+		prepararDialogoTematico(dialog);
 
 		return dialog.showAndWait();
 	}
@@ -375,7 +391,23 @@ public class DetailedTurnHUDController {
 		alert.setTitle("Recarregar");
 		alert.setHeaderText(titulo);
 		alert.setContentText(mensagem);
+		prepararDialogoTematico(alert);
 		alert.showAndWait();
+	}
+
+	private void prepararDialogoTematico(Dialog<?> dialog) {
+		if (dialog == null) return;
+		var recursoCss = getClass().getResource("/br/com/dantesrpg/view/style.css");
+		if (recursoCss != null) {
+			String css = recursoCss.toExternalForm();
+			if (!dialog.getDialogPane().getStylesheets().contains(css)) {
+				dialog.getDialogPane().getStylesheets().add(css);
+			}
+		}
+		if (mainController != null) {
+			mainController.aplicarTemaEmRaiz(dialog.getDialogPane());
+			dialog.setOnHidden(evento -> mainController.removerTemaDeRaiz(dialog.getDialogPane()));
+		}
 	}
 
 	// --- PREPARAÇÃO DA AÇÃO (Coluna 3) ---
@@ -389,20 +421,22 @@ public class DetailedTurnHUDController {
 		this.areasNoMapa.clear();
 		this.epicentroX = -1;
 		this.epicentroY = -1;
+		btnConfirmarAcao.setText("CONFIRMAR AÇÃO");
+		btnConfirmarAcao.setOnAction(evento -> onConfirmarAcaoClick());
+		alternarClasse(btnConfirmarAcao, "hud-confirm-danger", false);
 
-		// Mostra painel
-		actionDetailsColumn.setVisible(true);
-		actionDetailsColumn.setManaged(true);
+		// Mostra o conteúdo no inspetor estável.
+		exibirDetalhesAcao(true);
 		lblActionTitle.setText(titulo);
 
 		// Visual ciano para arma overclockada
-		if (isBasicAttack && atorAtual.getArmaEquipada() != null && atorAtual.getArmaEquipada().isOverclockado()) {
+		boolean armaOverclockada = isBasicAttack && atorAtual.getArmaEquipada() != null
+				&& atorAtual.getArmaEquipada().isOverclockado();
+		if (armaOverclockada) {
 			Arma armaOC = atorAtual.getArmaEquipada();
 			lblActionTitle.setText(armaOC.getNomeComOverclock());
-			lblActionTitle.setStyle("-fx-text-fill: cyan; -fx-effect: dropshadow(gaussian, cyan, 4, 0.3, 0, 0);");
-		} else {
-			lblActionTitle.setStyle("");
 		}
+		alternarClasse(lblActionTitle, "hud-state-overclock", armaOverclockada);
 
 		// Descrição
 		if (hab != null) lblActionDesc.setText(hab.getDescricao());
@@ -478,14 +512,12 @@ public class DetailedTurnHUDController {
 		lblCustoTU.setText(String.valueOf(custoTU));
 		if (custoMana > 0) {
 			lblCustoMana.setText("-" + custoMana);
-			lblCustoMana.setStyle("-fx-text-fill: #66bbff; -fx-font-weight: bold; -fx-font-size: 13px;");
 		} else if (custoMana == 0 && isAtaqueBasico) {
 			lblCustoMana.setText("+0");
-			lblCustoMana.setStyle("-fx-text-fill: #888; -fx-font-weight: bold; -fx-font-size: 13px;");
 		} else {
 			lblCustoMana.setText("0");
-			lblCustoMana.setStyle("-fx-text-fill: #888; -fx-font-weight: bold; -fx-font-size: 13px;");
 		}
+		alternarClasse(lblCustoMana, "hud-value-muted", custoMana <= 0);
 	}
 
 	private void enviarTUPreview() {
@@ -495,6 +527,7 @@ public class DetailedTurnHUDController {
 	}
 
 	private void configurarBotaoAlvo() {
+		alternarClasse(btnSelecionarAlvo, "hud-target-selected", false);
 		boolean precisaAlvo = verificaSePrecisaAlvo();
 		if (precisaAlvo) {
 			btnSelecionarAlvo.setDisable(false);
@@ -580,8 +613,8 @@ public class DetailedTurnHUDController {
 
 		this.isModoCoronhadaSelecionado = false;
 		btnCoronhada.setText((arma != null) ? arma.getNomeAtaqueAlternativoBasico() : "Coronhada");
-		btnCoronhada.setStyle("");
-		lblActionDesc.setStyle("");
+		alternarClasse(btnCoronhada, "hud-state-selected", false);
+		alternarClasse(lblActionDesc, "hud-text-danger", false);
 
 		if (isRanged) {
 			toggleFraco.setVisible(false);
@@ -604,7 +637,7 @@ public class DetailedTurnHUDController {
 				}
 			}
 			lblActionDesc.setText(desc.toString());
-			if (semMunicao) lblActionDesc.setStyle("-fx-text-fill: red;");
+			alternarClasse(lblActionDesc, "hud-text-danger", semMunicao);
 
 			int maxTirosExtras = 0;
 			for (Arma a : armasSelecionadas) {
@@ -635,7 +668,7 @@ public class DetailedTurnHUDController {
 			}
 
 			btnCoronhada.setOnAction(e -> {
-				btnCoronhada.setStyle("-fx-base: #AA5500; -fx-border-color: white;");
+				alternarClasse(btnCoronhada, "hud-state-selected", true);
 				this.isModoCoronhadaSelecionado = true;
 				atualizarTextoModo();
 				atualizarEstimativaDano();
@@ -668,7 +701,7 @@ public class DetailedTurnHUDController {
 		toggleForte.setOnAction(e -> resetarCoronhada());
 		btnCoronhada.setOnAction(e -> {
 			this.isModoCoronhadaSelecionado = true;
-			btnCoronhada.setStyle("-fx-base: #AA5500; -fx-border-color: white;");
+			alternarClasse(btnCoronhada, "hud-state-selected", true);
 			atualizarTextoModo();
 			atualizarEstimativaDano();
 		});
@@ -679,7 +712,7 @@ public class DetailedTurnHUDController {
 
 	private void resetarCoronhada() {
 		this.isModoCoronhadaSelecionado = false;
-		btnCoronhada.setStyle("");
+		alternarClasse(btnCoronhada, "hud-state-selected", false);
 		atualizarTextoModo();
 		atualizarEstimativaDano();
 	}
@@ -858,6 +891,7 @@ public class DetailedTurnHUDController {
 				alert.setTitle("Aprimorar Poção");
 				alert.setHeaderText("Nenhuma poção aprimorável.");
 				alert.setContentText("Você não possui poções alquímicas básicas no inventário.");
+				prepararDialogoTematico(alert);
 				alert.showAndWait();
 				return;
 			}
@@ -874,11 +908,7 @@ public class DetailedTurnHUDController {
 			choiceDialog.setTitle("Aprimorar Poção");
 			choiceDialog.setHeaderText("Selecione a poção do inventário para aprimorar:");
 			choiceDialog.setContentText("Poção:");
-			choiceDialog.getDialogPane().setStyle("-fx-background-color: #222;");
-			DialogPane dp = choiceDialog.getDialogPane();
-			if (dp.lookup(".label") != null) {
-				dp.lookup(".label").setStyle("-fx-text-fill: white;");
-			}
+			prepararDialogoTematico(choiceDialog);
 
 			Optional<String> choiceResult = choiceDialog.showAndWait();
 			if (choiceResult.isEmpty()) {
@@ -905,6 +935,7 @@ public class DetailedTurnHUDController {
 				alert.setTitle("Arremessar Poção");
 				alert.setHeaderText("Nenhuma poção disponível.");
 				alert.setContentText("Você não possui poções no inventário para arremessar.");
+				prepararDialogoTematico(alert);
 				alert.showAndWait();
 				return;
 			}
@@ -924,11 +955,7 @@ public class DetailedTurnHUDController {
 			choiceDialog.setTitle("Arremessar Poção");
 			choiceDialog.setHeaderText("Selecione a poção do inventário para arremessar:");
 			choiceDialog.setContentText("Poção:");
-			choiceDialog.getDialogPane().setStyle("-fx-background-color: #222;");
-			DialogPane dp = choiceDialog.getDialogPane();
-			if (dp.lookup(".label") != null) {
-				dp.lookup(".label").setStyle("-fx-text-fill: white;");
-			}
+			prepararDialogoTematico(choiceDialog);
 
 			Optional<String> choiceResult = choiceDialog.showAndWait();
 			if (choiceResult.isEmpty()) {
@@ -991,9 +1018,9 @@ public class DetailedTurnHUDController {
 		lblDiceResult.setText(String.valueOf(resultado));
 
 		if (resultado == tipoDadoAtual) {
-			lblDiceResult.setStyle("-fx-text-fill: gold; -fx-font-size: 28px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, gold, 6, 0.4, 0, 0);");
+			alternarClasse(lblDiceResult, "hud-roll-maximum", true);
 		} else {
-			lblDiceResult.setStyle("-fx-text-fill: cyan; -fx-font-size: 28px; -fx-font-weight: bold;");
+			alternarClasse(lblDiceResult, "hud-roll-maximum", false);
 		}
 
 		if (inputDadoAtributo != null) inputDadoAtributo.setText(String.valueOf(resultado));
@@ -1009,11 +1036,10 @@ public class DetailedTurnHUDController {
 
 		if (critico) {
 			lblCritResult.setText("CRÍTICO!");
-			lblCritResult.setStyle("-fx-text-fill: #ff4444; -fx-font-size: 18px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, red, 6, 0.4, 0, 0);");
 		} else {
 			lblCritResult.setText("Normal");
-			lblCritResult.setStyle("-fx-text-fill: #888888; -fx-font-size: 18px; -fx-font-weight: bold;");
 		}
+		alternarClasse(lblCritResult, "hud-crit-success", critico);
 
 		atualizarEstimativaDano();
 	}
@@ -1051,10 +1077,10 @@ public class DetailedTurnHUDController {
 		if (criticoFoiRolado && criticoManualRolado && atorAtual != null) {
 			danoFinal = (int) (danoFinal * (1 + atorAtual.getDanoCritico()));
 			labelEstimativaDano.setText("Dano Est. (CRIT): " + danoFinal);
-			labelEstimativaDano.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff4444;");
+			alternarClasse(labelEstimativaDano, "hud-estimate-critical", true);
 		} else {
 			labelEstimativaDano.setText("Dano Base Est.: " + danoFinal);
-			labelEstimativaDano.setStyle("-fx-font-weight: bold; -fx-text-fill: lightgreen;");
+			alternarClasse(labelEstimativaDano, "hud-estimate-critical", false);
 		}
 	}
 
@@ -1070,19 +1096,16 @@ public class DetailedTurnHUDController {
 		enviarTUPreview();
 	}
 
-	private Button criarBotaoAcao(String texto, String style) {
-		Button btn = new Button(texto);
-		btn.setMaxWidth(Double.MAX_VALUE);
-		btn.setPrefHeight(60);
-		btn.setWrapText(true);
-		btn.setStyle(style + " -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
-		return btn;
+	private void estilizarBotaoAba(ToggleButton btn, boolean ativo) {
+		btn.setSelected(ativo);
 	}
 
-	private void estilizarBotaoAba(Button btn, boolean ativo) {
-		btn.getStyleClass().remove("hud-tab-active");
+	private static void alternarClasse(Node node, String classe, boolean ativo) {
+		if (node == null) return;
 		if (ativo) {
-			btn.getStyleClass().add("hud-tab-active");
+			if (!node.getStyleClass().contains(classe)) node.getStyleClass().add(classe);
+		} else {
+			node.getStyleClass().remove(classe);
 		}
 	}
 
@@ -1260,7 +1283,7 @@ public class DetailedTurnHUDController {
 	public void adicionarAlvos(List<Personagem> alvos) {
 		this.alvosNoMapa = alvos == null ? new ArrayList<>() : new ArrayList<>(alvos);
 		btnSelecionarAlvo.setText("Alvos: " + this.alvosNoMapa.size());
-		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");
+		alternarClasse(btnSelecionarAlvo, "hud-target-selected", true);
 		btnConfirmarAcao.setDisable(false);
 	}
 
@@ -1287,7 +1310,7 @@ public class DetailedTurnHUDController {
 		}
 		btnSelecionarAlvo.setText("Áreas: " + this.areasNoMapa.size()
 				+ " | impactos: " + this.alvosNoMapa.size());
-		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");
+		alternarClasse(btnSelecionarAlvo, "hud-target-selected", true);
 		btnConfirmarAcao.setDisable(false);
 	}
 
@@ -1299,7 +1322,7 @@ public class DetailedTurnHUDController {
 		this.epicentroY = -1;
 		this.alvosNoMapa.add(alvo);
 		btnSelecionarAlvo.setText("Alvo: " + alvo.getNome());
-		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");
+		alternarClasse(btnSelecionarAlvo, "hud-target-selected", true);
 		btnConfirmarAcao.setDisable(false);
 		atualizarEstimativaDano();
 	}
@@ -1307,20 +1330,19 @@ public class DetailedTurnHUDController {
 	public void limparAlvosHover() {
 		this.alvosNoMapa.clear();
 		btnSelecionarAlvo.setText("Selecionar Alvo (Mapa)");
-		btnSelecionarAlvo.setStyle("");
+		alternarClasse(btnSelecionarAlvo, "hud-target-selected", false);
 		if (verificaSePrecisaAlvo()) btnConfirmarAcao.setDisable(true);
 	}
 
 	public void configurarConfirmacaoSquad(int qtdAtaques) {
-		actionDetailsColumn.setVisible(true);
-		actionDetailsColumn.setManaged(true);
+		exibirDetalhesAcao(true);
 		lblActionTitle.setText("Ataque Coordenado");
 		lblActionDesc.setText(qtdAtaques + " clones posicionados e mirando.");
 		attackOptionsBox.setVisible(false);
 		attackOptionsBox.setManaged(false);
 		diceInputsBox.getChildren().clear();
 		btnConfirmarAcao.setText("EXECUTAR SQUAD");
-		btnConfirmarAcao.setStyle("-fx-base: #AA0000; -fx-font-weight: bold;");
+		alternarClasse(btnConfirmarAcao, "hud-confirm-danger", true);
 		btnConfirmarAcao.setDisable(false);
 		btnConfirmarAcao.setOnAction(e -> {
 			mainController.executarAtaqueSquadFinal();
@@ -1375,21 +1397,22 @@ public class DetailedTurnHUDController {
 			return;
 		}
 
-		Label titulo = new Label("Munição");
-		titulo.setStyle("-fx-font-weight: bold; -fx-text-fill: #cccccc;");
+		Label titulo = new Label("MUNIÇÃO");
+		titulo.getStyleClass().add("hud-eyebrow");
 		municaoContainer.getChildren().add(titulo);
 
 		for (Arma arma : armasComMunicao) {
 			Label nomeArma = new Label(arma.getNome());
-			nomeArma.setStyle("-fx-text-fill: #aaaaaa; -fx-font-size: 11px;");
+			nomeArma.getStyleClass().addAll("hud-text-muted", "hud-small-label");
 
 			ProgressBar barra = new ProgressBar(calcularProgressoMunicao(arma));
 			barra.setMaxWidth(Double.MAX_VALUE);
+			barra.getStyleClass().addAll("hud-resource-progress", "hud-ammo-progress");
 			HBox.setHgrow(barra, Priority.ALWAYS);
 
 			Label contador = new Label("[" + arma.getMunicaoAtual() + " / " + arma.getMunicaoMaxima() + "]");
 			contador.setMinWidth(58);
-			contador.setStyle("-fx-text-fill: white; -fx-font-size: 11px; -fx-font-family: monospace;");
+			contador.getStyleClass().addAll("hud-resource-value", "hud-small-label");
 
 			HBox linha = new HBox(8, barra, contador);
 			linha.setAlignment(javafx.geometry.Pos.CENTER_LEFT);

@@ -84,7 +84,7 @@ public class ActionGridBuilder {
 			Item itemModelo = mainController.getItem(entry.getKey());
 			if (itemModelo != null && itemModelo.isUsavelEmCombate()) {
 				int qtd = entry.getValue();
-				Button btn = criarBotaoAcao(itemModelo.getNome() + "\n(x" + qtd + ")", "hud-action-item");
+				Button btn = criarBotaoAcao(itemModelo.getNome() + "\nQuantidade: " + qtd, "hud-action-item");
 				btn.setOnAction(e -> selectionCb.onSelected(itemModelo.getNome(), null, itemModelo, null, false));
 				adicionarAoGrid(btn, col++, row);
 				if (col > 1) { col = 0; row++; }
@@ -104,17 +104,16 @@ public class ActionGridBuilder {
 					texto = arma.getNomeComOverclock();
 					estilo = "hud-action-overclock";
 				}
-				if (arma.isRequerMunicao()) {
-					texto += "\n(" + arma.getMunicaoAtual() + "/" + arma.getMunicaoMaxima() + ")";
-				}
+				texto += "\nTU " + arma.getCustoTU();
+				if (arma.isRequerMunicao()) texto += "  •  Munição " + arma.getMunicaoAtual() + "/" + arma.getMunicaoMaxima();
 			}
 			Button btn = criarBotaoAcao(texto, estilo);
 			btn.setOnAction(e -> cb.onSelected("Ataque Básico", null, null, null, true));
 			adicionarAoGrid(btn, col++, row);
 		} else {
 			Label lbl = new Label("Ataque Físico Bloqueado\n(Modo Justiça Ativo)");
-			lbl.getStyleClass().add("hud-text-muted");
-			lbl.setStyle("-fx-font-style: italic; -fx-font-size: 10px;");
+			lbl.setWrapText(true);
+			lbl.getStyleClass().add("hud-action-placeholder");
 			adicionarAoGrid(lbl, col++, row);
 		}
 		return col;
@@ -134,41 +133,37 @@ public class ActionGridBuilder {
 	}
 
 	private Button criarBotaoHabilidade(Habilidade hab, Personagem ator) {
-		Button btn = criarBotaoAcao(hab.getNome(), "hud-action-item");
+		String resumo = hab.getNome() + "\nMP " + hab.getCustoMana() + "  •  TU "
+				+ hab.getCustoTUModificado(ator);
+		Button btn = criarBotaoAcao(resumo, "hud-action-item");
 		String cdName = "CD:" + hab.getNome();
 		if (ator.isHabilidadeBloqueadaPorCoral(hab.getNome())) {
-			btn.setDisable(true);
-			btn.setText("\uD83E\uDEB8 CORAL\n" + hab.getNome());
-			btn.setTooltip(new Tooltip("A Maldição de Coral bloqueou esta habilidade."));
-			btn.getStyleClass().add("hud-action-blocked");
+			marcarIndisponivel(btn, hab.getNome() + "\nBLOQUEADA • CORAL",
+					"hud-action-blocked", "A Maldição de Coral bloqueou esta habilidade.");
 		} else if (ator.getEfeitosAtivos().containsKey(cdName)) {
-			btn.setDisable(true);
-			btn.setText(hab.getNome() + "\n(Recarga)");
+			marcarIndisponivel(btn, hab.getNome() + "\nEM RECARGA",
+					"hud-action-unavailable", "Esta habilidade ainda está em recarga.");
 		} else if (ator.getManaAtual() < hab.getCustoMana()) {
-			btn.setDisable(true);
-			btn.setStyle("-fx-opacity: 0.5;");
+			marcarIndisponivel(btn, hab.getNome() + "\nMANA INSUFICIENTE",
+					"hud-action-unavailable", "Mana insuficiente para usar esta habilidade.");
 		}
 		return btn;
 	}
 
 	private Button criarBotaoFantasmaNobre(FantasmaNobre fn, Personagem ator) {
-		Button btn = criarBotaoAcao("FN: " + fn.getNome(), "hud-action-ultimate");
+		Button btn = criarBotaoAcao("FN: " + fn.getNome() + "\nMP " + fn.getCustoMana()
+				+ "  •  TU " + fn.getCustoTU(), "hud-action-ultimate");
 		if (ator.getEfeitosAtivos().containsKey("CD:" + fn.getNome())) {
-			btn.setDisable(true);
-			btn.setText("FN: " + fn.getNome() + "\n(Recarga)");
-			btn.setTooltip(new Tooltip("Fantasma nobre em recarga."));
+			marcarIndisponivel(btn, "FN: " + fn.getNome() + "\nEM RECARGA",
+					"hud-action-unavailable", "Fantasma Nobre em recarga.");
 		} else if (ator.getManaAtual() < fn.getCustoMana()) {
-			btn.setDisable(true);
-			btn.setText("FN: " + fn.getNome() + "\n(Sem Mana)");
-			btn.setTooltip(new Tooltip("Mana insuficiente."));
-			btn.setStyle(btn.getStyle() + " -fx-opacity: 0.5;");
+			marcarIndisponivel(btn, "FN: " + fn.getNome() + "\nMANA INSUFICIENTE",
+					"hud-action-unavailable", "Mana insuficiente.");
 		} else {
 			String motivoBloqueio = fn.getMotivoBloqueio(ator);
 			if (motivoBloqueio != null) {
-				btn.setDisable(true);
-				btn.setText("FN: " + fn.getNome() + "\n(Indisponivel)");
-				btn.setTooltip(new Tooltip(motivoBloqueio));
-				btn.setStyle(btn.getStyle() + " -fx-opacity: 0.5;");
+				marcarIndisponivel(btn, "FN: " + fn.getNome() + "\nINDISPONÍVEL",
+						"hud-action-unavailable", motivoBloqueio);
 			}
 		}
 		return btn;
@@ -181,6 +176,17 @@ public class ActionGridBuilder {
 		btn.setWrapText(true);
 		btn.getStyleClass().addAll("hud-action-button", classeVisual);
 		return btn;
+	}
+
+	private void marcarIndisponivel(Button botao, String texto, String classe, String motivo) {
+		botao.setDisable(true);
+		botao.setText(texto);
+		botao.getStyleClass().add(classe);
+		Tooltip tooltip = new Tooltip(motivo);
+		tooltip.setWrapText(true);
+		tooltip.setMaxWidth(320);
+		tooltip.getStyleClass().add("hud-effect-tooltip");
+		botao.setTooltip(tooltip);
 	}
 
 	private void adicionarAoGrid(Node node, int col, int row) {

@@ -1,192 +1,254 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<HBox fx:id="detailedTurnHudRoot" spacing="0.0" prefWidth="1242.0" prefHeight="650.0" styleClass="turn-hud-root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.DetailedTurnHUDController">
-    
-    <VBox fx:id="detailsColumn" spacing="10.0" prefWidth="322.0" styleClass="turn-hud-column, turn-hud-sidebar">
-        
-        <Label fx:id="labelNomeAtor" styleClass="label-header, hud-title-primary" text="Nome do Personagem"/>
-        <Label fx:id="labelClasseRaca" text="Raça / Classe" styleClass="hud-text-muted"/>
-        
-        <Separator />
-        
-        <HBox spacing="10" alignment="CENTER_LEFT">
-             <Label text="HP:" style="-fx-font-weight: bold;"/>
-             <Label fx:id="labelHP" styleClass="label-value-hp" text="100/100"/>
+<HBox fx:id="detailedTurnHudRoot" minWidth="1000.0" prefWidth="1180.0" prefHeight="700.0"
+      spacing="0.0" styleClass="turn-hud-root" stylesheets="@style.css"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.com.dantesrpg.controller.DetailedTurnHUDController">
+
+    <VBox fx:id="detailsColumn" minWidth="250.0" prefWidth="270.0" maxWidth="310.0" spacing="12.0"
+          styleClass="turn-hud-column, turn-hud-sidebar">
+        <VBox spacing="3.0" styleClass="hud-actor-header">
+            <Label fx:id="labelNomeAtor" text="Nome do Personagem" wrapText="true"
+                   styleClass="label-header, hud-title-primary"/>
+            <Label fx:id="labelClasseRaca" text="Raça / Classe" wrapText="true"
+                   styleClass="hud-text-muted"/>
+        </VBox>
+
+        <Separator/>
+
+        <Label text="RECURSOS DO TURNO" styleClass="hud-eyebrow"/>
+        <VBox spacing="6.0" styleClass="hud-resource-card">
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label text="HP" styleClass="hud-resource-name, hud-life-text"/>
+                <Label fx:id="labelHP" text="100/100" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                       alignment="CENTER_RIGHT" styleClass="label-value-hp, hud-resource-value"/>
+            </HBox>
+            <ProgressBar fx:id="hpProgressBar" progress="1.0" maxWidth="Infinity"
+                         styleClass="hud-resource-progress, hud-hp-progress"/>
+        </VBox>
+        <VBox spacing="6.0" styleClass="hud-resource-card">
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label text="MP" styleClass="hud-resource-name, hud-mana-text"/>
+                <Label fx:id="labelMP" text="50/50" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                       alignment="CENTER_RIGHT" styleClass="label-value-mp, hud-resource-value"/>
+            </HBox>
+            <ProgressBar fx:id="mpProgressBar" progress="1.0" maxWidth="Infinity"
+                         styleClass="hud-resource-progress, hud-mp-progress"/>
+        </VBox>
+        <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="hud-tu-card">
+            <Label text="PRÓXIMA AÇÃO" styleClass="hud-resource-name"/>
+            <Label fx:id="labelTU" text="TU 0" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                   alignment="CENTER_RIGHT" styleClass="hud-value-tu, hud-tu-value"/>
         </HBox>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-             <Label text="MP:" style="-fx-font-weight: bold;"/>
-             <Label fx:id="labelMP" styleClass="label-value-mp" text="50/50"/>
+
+        <VBox fx:id="municaoContainer" spacing="6.0" visible="false" managed="false"
+              styleClass="hud-ammo-container"/>
+
+        <Separator/>
+
+        <HBox alignment="CENTER_LEFT">
+            <Label text="EFEITOS ATIVOS" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="hud-eyebrow"/>
+            <Label text="TU restante" styleClass="hud-text-muted, hud-micro-label"/>
         </HBox>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-             <Label text="TU:" style="-fx-font-weight: bold;"/>
-             <Label fx:id="labelTU" text="0" styleClass="hud-value-tu"/>
-        </HBox>
-        <VBox fx:id="municaoContainer" spacing="6.0" visible="false" managed="false" style="-fx-padding: 4 0 0 0;" />
-        
-        <Separator />
-        
-        <Label text="Efeitos Ativos:" styleClass="label-subheader"/>
-        <ScrollPane fx:id="effectsScrollPane" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" VBox.vgrow="ALWAYS">
-             <content>
-                <VBox fx:id="effectsContainer" spacing="5.0" />
-             </content>
+        <ScrollPane fx:id="effectsScrollPane" fitToWidth="true" VBox.vgrow="ALWAYS"
+                    styleClass="hud-scroll-pane, hud-effects-scroll">
+            <content>
+                <VBox fx:id="effectsContainer" spacing="6.0" styleClass="effects-container"/>
+            </content>
         </ScrollPane>
-        
-        <Button fx:id="btnDetalhes" text="Ver Atributos Detalhados" onAction="#onDetalhesClick" maxWidth="Infinity"/>
-        
-        <ScrollPane fx:id="detailedAttributesScrollPane" fitToWidth="true" managed="false" visible="false" 
-                    minHeight="200.0" prefHeight="250.0" styleClass="hud-attributes-scroll">
-             <content>
-                <VBox fx:id="detailedAttributesPane" spacing="5.0" styleClass="hud-attributes-pane">
-                     
-                     <Label text="Atributos S.P.E.C.I.A.L.I.S.T:" styleClass="hud-section-label"/>
-                     <GridPane fx:id="attributesGrid" hgap="10" vgap="5">
+
+        <Button fx:id="btnDetalhes" text="Ver atributos detalhados" maxWidth="Infinity"
+                onAction="#onDetalhesClick" styleClass="hud-secondary-button"/>
+
+        <ScrollPane fx:id="detailedAttributesScrollPane" fitToWidth="true" managed="false" visible="false"
+                    minHeight="200.0" prefHeight="280.0"
+                    styleClass="hud-scroll-pane, hud-attributes-scroll">
+            <content>
+                <VBox fx:id="detailedAttributesPane" spacing="7.0" styleClass="hud-attributes-pane">
+                    <Label text="Atributos S.P.E.C.I.A.L.I.S.T." wrapText="true"
+                           styleClass="hud-section-label"/>
+                    <GridPane fx:id="attributesGrid" hgap="10.0" vgap="5.0">
                         <columnConstraints>
-                            <ColumnConstraints percentWidth="40"/>
-                            <ColumnConstraints percentWidth="60"/>
+                            <ColumnConstraints percentWidth="40.0"/>
+                            <ColumnConstraints percentWidth="60.0"/>
                         </columnConstraints>
-                     </GridPane>
-                     
-                     <Separator />
-                     </VBox>
-             </content>
+                    </GridPane>
+                    <Separator/>
+                </VBox>
+            </content>
         </ScrollPane>
     </VBox>
 
-    <VBox fx:id="actionSelectorColumn" spacing="10.0" prefWidth="460.0" styleClass="turn-hud-column">
-        <Label text="Painel de Comando" styleClass="label-header"/>
-        
-        <HBox spacing="5.0">
-             <Button fx:id="btnAbaAtaques" text="Combate" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAbaAtaquesClick" styleClass="hud-tab-button, hud-tab-active"/>
-             <Button fx:id="btnAbaItens" text="Itens" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onAbaItensClick" styleClass="hud-tab-button"/>
+    <VBox fx:id="actionSelectorColumn" minWidth="360.0" prefWidth="430.0" maxWidth="Infinity"
+          spacing="12.0" HBox.hgrow="ALWAYS" styleClass="turn-hud-column, turn-hud-command-column">
+        <VBox spacing="3.0">
+            <Label text="Painel de Comando" styleClass="label-header, hud-column-title"/>
+            <Label text="Escolha uma ação para preparar o turno." styleClass="hud-text-muted, hud-small-label"/>
+        </VBox>
+
+        <HBox spacing="6.0" styleClass="hud-tab-bar">
+            <ToggleButton fx:id="btnAbaAtaques" text="Combate" selected="true" maxWidth="Infinity"
+                          HBox.hgrow="ALWAYS" onAction="#onAbaAtaquesClick" styleClass="hud-tab-button">
+                <toggleGroup><ToggleGroup fx:id="grupoAbas"/></toggleGroup>
+            </ToggleButton>
+            <ToggleButton fx:id="btnAbaItens" text="Itens" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                          toggleGroup="$grupoAbas" onAction="#onAbaItensClick" styleClass="hud-tab-button"/>
         </HBox>
-        
-        <Separator />
-        
-        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background: transparent; -fx-background-color: transparent;">
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    styleClass="hud-scroll-pane, hud-actions-scroll">
             <content>
-                <GridPane fx:id="actionsGrid" hgap="10" vgap="10">
+                <GridPane fx:id="actionsGrid" hgap="10.0" vgap="10.0" maxWidth="Infinity"
+                          styleClass="hud-actions-grid">
                     <columnConstraints>
-                        <ColumnConstraints percentWidth="50"/>
-                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50.0"/>
+                        <ColumnConstraints percentWidth="50.0"/>
                     </columnConstraints>
                 </GridPane>
             </content>
         </ScrollPane>
 
-        <Separator />
-        <HBox fx:id="tacticalButtonsBox" spacing="5.0">
-            <Button fx:id="btnMovimentar" text="Movimentar" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onMovimentarClick" styleClass="hud-tactical-button, hud-tactical-primary"/>
-            <Button fx:id="btnPassarVez" text="Passar a Vez" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onPassarVezClick" styleClass="hud-tactical-button, hud-tactical-confirm"/>
-            <Button fx:id="btnRecarregar" text="Recarregar" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onRecarregarClick" visible="false" managed="false" styleClass="hud-tactical-button"/>
-        </HBox>
-    </VBox>
-
-    <VBox fx:id="actionDetailsColumn" spacing="15.0" prefWidth="460.0" styleClass="turn-hud-column, turn-hud-details-column" visible="false" managed="false">
-
-        <Label fx:id="lblActionTitle" text="Ataque Básico" styleClass="label-header, hud-title-primary" wrapText="true"/>
-        <Label fx:id="lblActionDesc" text="Descrição..." wrapText="true" styleClass="hud-text-muted, hud-description"/>
-
-        <HBox fx:id="costInfoBox" spacing="15.0" alignment="CENTER_LEFT" styleClass="hud-info-panel">
-            <HBox spacing="5" alignment="CENTER_LEFT">
-                <Label text="TU:" styleClass="hud-text-muted, hud-small-label"/>
-                <Label fx:id="lblCustoTU" text="0" styleClass="hud-value-tu, hud-cost-value"/>
-            </HBox>
-            <HBox spacing="5" alignment="CENTER_LEFT">
-                <Label text="MP:" styleClass="hud-text-muted, hud-small-label"/>
-                <Label fx:id="lblCustoMana" text="0" styleClass="hud-value-mana, hud-cost-value"/>
-            </HBox>
-        </HBox>
-
-        <Separator />
-        
-        <VBox fx:id="attackOptionsBox" spacing="15.0" visible="false" managed="false" styleClass="hud-info-panel">
-            <VBox fx:id="boxSelecaoArmas" spacing="5.0" visible="false" managed="false">
-                <Label text="Armas:" styleClass="hud-section-label"/>
-                <ComboBox fx:id="comboArmasAtaque" maxWidth="Infinity"/>
-            </VBox>
-            <Label text="Modo de Ataque:" styleClass="hud-section-label"/>
-            
-            <HBox spacing="0.0">
-                <ToggleButton fx:id="toggleFraco" text="Fraco" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;">
-                    <toggleGroup><ToggleGroup fx:id="grupoModo"/></toggleGroup>
-                </ToggleButton>
-                <ToggleButton fx:id="toggleNormal" text="Normal" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" toggleGroup="$grupoModo" style="-fx-background-radius: 0; -fx-border-radius: 0;"/>
-                <ToggleButton fx:id="toggleForte" text="Forte" maxWidth="Infinity" HBox.hgrow="ALWAYS" toggleGroup="$grupoModo" style="-fx-background-radius: 0 5 5 0; -fx-border-radius: 0 5 5 0;"/>
-            </HBox>
-            <Label fx:id="lblInfoModo" text="Dano Normal, TU Normal" styleClass="hud-text-muted, hud-small-label" alignment="CENTER" maxWidth="Infinity"/>
-            
-            <Button fx:id="btnCoronhada" text="Coronhada (Melee)" maxWidth="Infinity" visible="false" managed="false"/>
-            
-            <VBox fx:id="boxRajada" spacing="5.0" visible="false" managed="false">
-                <Separator />
-                <Label text="Rajada / Full Auto:" styleClass="hud-section-label"/>
-                <Slider fx:id="sliderRajada" min="0" max="5" majorTickUnit="1" minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
-                <Label fx:id="lblInfoRajada" text="+0 Tiros (+0% TU)" styleClass="hud-value-tu, hud-small-label"/>
-            </VBox>
-        </VBox>
-        
-        <VBox fx:id="diceInputsBox" spacing="10.0">
-            </VBox>
-
-        <VBox fx:id="boxGrandeRegente" spacing="5.0" visible="false" managed="false" styleClass="hud-info-panel">
-            <Separator />
-            <Label text="Grande Regente — Movimento investido:" styleClass="hud-section-label"/>
-            <Slider fx:id="sliderGrandeRegente" min="0" max="10" majorTickUnit="1" minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
-            <Label fx:id="lblInfoGrandeRegente" text="0 quadrados: Bola 1x1." styleClass="hud-value-tu, hud-small-label" wrapText="true"/>
-        </VBox>
-        
-        <HBox alignment="CENTER" styleClass="hud-estimate-panel">
-             <Label fx:id="labelEstimativaDano" text="Estimativa: 0" styleClass="hud-value-positive"/>
-        </HBox>
-        
-        <VBox spacing="10" VBox.vgrow="ALWAYS" alignment="BOTTOM_CENTER">
-             <Button fx:id="btnSelecionarAlvo" text="Selecionar Alvo (Mapa)" maxWidth="Infinity" onAction="#onSelecionarAlvoClick" style="-fx-font-weight: bold;"/>
-             <Button fx:id="btnConfirmarAcao" text="CONFIRMAR AÇÃO" maxWidth="Infinity" prefHeight="40" styleClass="hud-confirm-button" onAction="#onConfirmarAcaoClick"/>
-        </VBox>
-        
-    </VBox>
-
-    <VBox fx:id="diceRollColumn" spacing="12.0" prefWidth="253.0" styleClass="turn-hud-column, turn-hud-details-column"
-          visible="false" managed="false">
-
-        <Label text="Rolagem" styleClass="label-header, hud-title-primary"/>
-        <Separator />
-
-        <VBox alignment="CENTER" spacing="8.0" styleClass="hud-dice-panel">
-            <Label fx:id="lblDiceType" text="d20" styleClass="hud-text-muted"/>
-            <Label fx:id="lblDiceResult" text="—" styleClass="hud-dice-result"/>
-            <Button fx:id="btnRolarDado" text="Rodar" maxWidth="Infinity" onAction="#onRolarDadoClick"
-                    styleClass="hud-tactical-button, hud-tactical-primary"/>
-        </VBox>
-
-        <Separator />
-
-        <VBox alignment="CENTER" spacing="8.0" styleClass="hud-dice-panel">
-            <Label text="Taxa Crítica" styleClass="hud-text-muted, hud-small-label"/>
-            <Label fx:id="lblCritRate" text="5.0%" styleClass="hud-value-tu, hud-cost-value"/>
-            <Button fx:id="btnRolarCritico" text="Rolar Crítico" maxWidth="Infinity" onAction="#onRolarCriticoClick"
+        <HBox fx:id="tacticalButtonsBox" spacing="8.0" styleClass="hud-tactical-bar">
+            <Button fx:id="btnMovimentar" text="Movimentar" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    onAction="#onMovimentarClick" styleClass="hud-tactical-button, hud-tactical-primary"/>
+            <Button fx:id="btnPassarVez" text="Passar a vez" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    onAction="#onPassarVezClick" styleClass="hud-tactical-button, hud-tactical-confirm"/>
+            <Button fx:id="btnRecarregar" text="Recarregar" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    onAction="#onRecarregarClick" visible="false" managed="false"
                     styleClass="hud-tactical-button"/>
-            <Label fx:id="lblCritResult" text="—" styleClass="hud-crit-result"/>
-        </VBox>
-
+        </HBox>
     </VBox>
 
+    <VBox fx:id="actionInspectorColumn" minWidth="390.0" prefWidth="480.0" maxWidth="Infinity"
+          spacing="12.0" HBox.hgrow="ALWAYS" styleClass="turn-hud-column, turn-hud-inspector-column">
+        <VBox spacing="3.0">
+            <Label text="Inspetor de Ação" styleClass="label-header, hud-column-title"/>
+            <Label text="Custos, opções, rolagem e confirmação." styleClass="hud-text-muted, hud-small-label"/>
+        </VBox>
+
+        <VBox fx:id="actionEmptyState" alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS"
+              styleClass="hud-empty-state">
+            <Label text="NENHUMA AÇÃO SELECIONADA" styleClass="hud-eyebrow, hud-empty-title"/>
+            <Label text="Selecione uma ação no Painel de Comando para revisar custos, configurar a rolagem e escolher alvos."
+                   maxWidth="330.0" wrapText="true" textAlignment="CENTER" styleClass="hud-text-muted, hud-empty-description"/>
+        </VBox>
+
+        <ScrollPane fx:id="actionDetailsColumn" fitToWidth="true" visible="false" managed="false"
+                    VBox.vgrow="ALWAYS" styleClass="hud-scroll-pane, hud-action-details-scroll">
+            <content>
+                <VBox fx:id="actionDetailsContent" spacing="12.0" styleClass="hud-action-details-content">
+                    <VBox spacing="4.0">
+                        <Label fx:id="lblActionTitle" text="Ataque Básico" wrapText="true"
+                               styleClass="label-header, hud-title-primary, hud-action-title"/>
+                        <Label fx:id="lblActionDesc" text="Descrição..." wrapText="true"
+                               styleClass="hud-text-muted, hud-description"/>
+                    </VBox>
+
+                    <HBox fx:id="costInfoBox" spacing="8.0" alignment="CENTER_LEFT" styleClass="hud-cost-row">
+                        <HBox spacing="5.0" alignment="CENTER_LEFT" styleClass="hud-cost-chip, hud-tu-chip">
+                            <Label text="TU" styleClass="hud-small-label"/>
+                            <Label fx:id="lblCustoTU" text="0" styleClass="hud-value-tu, hud-cost-value"/>
+                        </HBox>
+                        <HBox spacing="5.0" alignment="CENTER_LEFT" styleClass="hud-cost-chip, hud-mana-chip">
+                            <Label text="MP" styleClass="hud-small-label"/>
+                            <Label fx:id="lblCustoMana" text="0" styleClass="hud-value-mana, hud-cost-value"/>
+                        </HBox>
+                    </HBox>
+
+                    <VBox fx:id="attackOptionsBox" spacing="12.0" visible="false" managed="false"
+                          styleClass="hud-info-panel">
+                        <VBox fx:id="boxSelecaoArmas" spacing="6.0" visible="false" managed="false">
+                            <Label text="Armas" styleClass="hud-section-label"/>
+                            <ComboBox fx:id="comboArmasAtaque" maxWidth="Infinity"/>
+                        </VBox>
+                        <Label text="Modo de ataque" styleClass="hud-section-label"/>
+                        <HBox spacing="0.0" styleClass="hud-segmented-control">
+                            <ToggleButton fx:id="toggleFraco" text="Fraco" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                                          styleClass="hud-segment, hud-segment-left">
+                                <toggleGroup><ToggleGroup fx:id="grupoModo"/></toggleGroup>
+                            </ToggleButton>
+                            <ToggleButton fx:id="toggleNormal" text="Normal" selected="true" maxWidth="Infinity"
+                                          HBox.hgrow="ALWAYS" toggleGroup="$grupoModo"
+                                          styleClass="hud-segment, hud-segment-middle"/>
+                            <ToggleButton fx:id="toggleForte" text="Forte" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                                          toggleGroup="$grupoModo" styleClass="hud-segment, hud-segment-right"/>
+                        </HBox>
+                        <Label fx:id="lblInfoModo" text="Dano normal, TU normal" alignment="CENTER"
+                               maxWidth="Infinity" wrapText="true" styleClass="hud-text-muted, hud-small-label"/>
+
+                        <Button fx:id="btnCoronhada" text="Coronhada (Melee)" maxWidth="Infinity"
+                                visible="false" managed="false" styleClass="hud-secondary-button, hud-coronhada-button"/>
+
+                        <VBox fx:id="boxRajada" spacing="6.0" visible="false" managed="false">
+                            <Separator/>
+                            <Label text="Rajada / Full Auto" styleClass="hud-section-label"/>
+                            <Slider fx:id="sliderRajada" min="0.0" max="5.0" majorTickUnit="1.0"
+                                    minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
+                            <Label fx:id="lblInfoRajada" text="+0 tiros (+0% TU)"
+                                   styleClass="hud-value-tu, hud-small-label"/>
+                        </VBox>
+                    </VBox>
+
+                    <VBox fx:id="diceInputsBox" spacing="10.0" styleClass="hud-dynamic-inputs"/>
+
+                    <VBox fx:id="boxGrandeRegente" spacing="6.0" visible="false" managed="false"
+                          styleClass="hud-info-panel">
+                        <Label text="Grande Regente — movimento investido" wrapText="true"
+                               styleClass="hud-section-label"/>
+                        <Slider fx:id="sliderGrandeRegente" min="0.0" max="10.0" majorTickUnit="1.0"
+                                minorTickCount="0" snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
+                        <Label fx:id="lblInfoGrandeRegente" text="0 quadrados: bola 1x1." wrapText="true"
+                               styleClass="hud-value-tu, hud-small-label"/>
+                    </VBox>
+
+                    <HBox alignment="CENTER" styleClass="hud-estimate-panel">
+                        <Label fx:id="labelEstimativaDano" text="Estimativa: 0" styleClass="hud-value-positive"/>
+                    </HBox>
+
+                    <VBox fx:id="diceRollColumn" spacing="8.0" visible="false" managed="false"
+                          styleClass="hud-dice-section">
+                        <Label text="ROLAGEM" styleClass="hud-eyebrow"/>
+                        <HBox spacing="8.0">
+                            <VBox alignment="CENTER" spacing="7.0" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                                  styleClass="hud-dice-panel">
+                                <Label fx:id="lblDiceType" text="d20" styleClass="hud-text-muted, hud-small-label"/>
+                                <Label fx:id="lblDiceResult" text="—" styleClass="hud-dice-result"/>
+                                <Button fx:id="btnRolarDado" text="Rolar dado" maxWidth="Infinity"
+                                        onAction="#onRolarDadoClick" styleClass="hud-tactical-button, hud-tactical-primary"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="7.0" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                                  styleClass="hud-dice-panel">
+                                <Label text="Taxa crítica" styleClass="hud-text-muted, hud-small-label"/>
+                                <Label fx:id="lblCritRate" text="5.0%" styleClass="hud-value-tu, hud-cost-value"/>
+                                <Button fx:id="btnRolarCritico" text="Rolar crítico" maxWidth="Infinity"
+                                        onAction="#onRolarCriticoClick" styleClass="hud-tactical-button"/>
+                                <Label fx:id="lblCritResult" text="—" styleClass="hud-crit-result"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <VBox fx:id="actionFooter" spacing="8.0" visible="false" managed="false" styleClass="hud-action-footer">
+            <Button fx:id="btnSelecionarAlvo" text="Selecionar alvo no mapa" maxWidth="Infinity"
+                    onAction="#onSelecionarAlvoClick" styleClass="hud-target-button"/>
+            <Button fx:id="btnConfirmarAcao" text="CONFIRMAR AÇÃO" maxWidth="Infinity" prefHeight="44.0"
+                    onAction="#onConfirmarAcaoClick" styleClass="hud-confirm-button"/>
+        </VBox>
+    </VBox>
 </HBox>

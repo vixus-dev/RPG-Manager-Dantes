@@ -31,6 +31,8 @@ public class CharacterInfoRenderer {
 	private final Label labelHP;
 	private final Label labelMP;
 	private final Label labelTU;
+	private final ProgressBar hpProgressBar;
+	private final ProgressBar mpProgressBar;
 	private final VBox effectsContainer;
 	private final ScrollPane detailedScrollPane;
 	private final VBox detailedPane;
@@ -49,6 +51,7 @@ public class CharacterInfoRenderer {
 
 	public CharacterInfoRenderer(Label labelNome, Label labelClasseRaca,
 			Label labelHP, Label labelMP, Label labelTU,
+			ProgressBar hpProgressBar, ProgressBar mpProgressBar,
 			VBox effectsContainer, ScrollPane detailedScrollPane,
 			VBox detailedPane, GridPane attributesGrid) {
 		this.labelNome = labelNome;
@@ -56,6 +59,8 @@ public class CharacterInfoRenderer {
 		this.labelHP = labelHP;
 		this.labelMP = labelMP;
 		this.labelTU = labelTU;
+		this.hpProgressBar = hpProgressBar;
+		this.mpProgressBar = mpProgressBar;
 		this.effectsContainer = effectsContainer;
 		this.detailedScrollPane = detailedScrollPane;
 		this.detailedPane = detailedPane;
@@ -77,15 +82,15 @@ public class CharacterInfoRenderer {
 		}
 		String classe = (ator.getClasse() != null) ? ator.getClasse().getNome() : "N/A";
 		labelClasseRaca.setText(raca + " / " + classe);
-		labelClasseRaca.setStyle(racaV2 ? "-fx-text-fill: #FFD700;" : "-fx-text-fill: gray;");
+		alternarClasse(labelClasseRaca, "hud-race-v2", racaV2);
+		alternarClasse(labelHP, "hud-text-danger", false);
+		boolean hpOculto = ator.isProtagonista() || ator.isPoderoso();
 
 		if (ator.isProtagonista()) {
 			labelHP.setText("?/?");
-			labelHP.setStyle("");
 			labelMP.setText("?/?");
 		} else if (ator.isPoderoso()) {
 			labelHP.setText("?/?");
-			labelHP.setStyle("");
 			labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
 		} else {
 			double dividaContrato = br.com.dantesrpg.model.util.ContratoDeVidaUtils.getReducaoHpMaximoTotal(ator);
@@ -110,19 +115,22 @@ public class CharacterInfoRenderer {
 				}
 				text.append(")");
 				labelHP.setText(text.toString());
-				labelHP.setStyle("-fx-text-fill: #ffaaaa; -fx-font-weight: bold;");
+				alternarClasse(labelHP, "hud-text-danger", true);
 			} else if (ator.getEscudoAtual() > 0) {
 				String escudoTexto = formatarNumero(ator.getEscudoAtual());
 				labelHP.setText(escudoTexto + " / " + hpAtualTexto);
-				labelHP.setStyle("");
 			} else {
 				labelHP.setText(hpAtualTexto + "/" + hpMaxTexto);
-				labelHP.setStyle("");
 			}
 			labelMP.setText((int) ator.getManaAtual() + "/" + (int) ator.getManaMaxima());
 		}
-		
-		labelTU.setText("TU: " + ator.getContadorTU());
+
+		hpProgressBar.setProgress(hpOculto ? 0.0 : calcularProgresso(ator.getVidaAtual(), ator.getVidaMaxima()));
+		mpProgressBar.setProgress(ator.isProtagonista() ? 0.0
+				: calcularProgresso(ator.getManaAtual(), ator.getManaMaxima()));
+		alternarClasse(hpProgressBar, "hud-resource-unknown", hpOculto);
+		alternarClasse(mpProgressBar, "hud-resource-unknown", ator.isProtagonista());
+		labelTU.setText("TU " + ator.getContadorTU());
 
 		renderEffects(ator);
 	}
@@ -154,9 +162,9 @@ public class CharacterInfoRenderer {
 	private BadgeEfeito criarBadgeEfeito() {
 		Label label = new Label();
 		label.setMaxWidth(Double.MAX_VALUE);
+		label.getStyleClass().add("hud-effect-chip");
 		Tooltip tooltip = new Tooltip();
-		tooltip.setStyle("-fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-background-color: #1a1a2e; "
-				+ "-fx-text-fill: #e0e0e0; -fx-border-color: #444; -fx-border-width: 1; -fx-padding: 8;");
+		tooltip.getStyleClass().add("hud-effect-tooltip");
 		tooltip.setShowDelay(javafx.util.Duration.millis(200));
 		tooltip.setMaxWidth(350);
 		tooltip.setWrapText(true);
@@ -168,7 +176,8 @@ public class CharacterInfoRenderer {
 		String texto = efeito.getNome();
 		if (efeito.getStacks() > 0) texto += " (" + efeito.getStacks() + ")";
 		badge.label.setText(texto + " [" + efeito.getDuracaoTURestante() + "]");
-		badge.label.setStyle(resolverEstiloEfeito(efeito.getTipo()));
+		badge.label.getStyleClass().removeAll("hud-effect-buff", "hud-effect-debuff", "hud-effect-dot");
+		badge.label.getStyleClass().add(resolverClasseEfeito(efeito.getTipo()));
 		badge.tooltip.setText(EffectTooltipBuilder.buildTooltip(efeito));
 
 		String path = EffectIconResolver.getIconPath(efeito.getNome(), efeito.getTipo());
@@ -227,10 +236,10 @@ public class CharacterInfoRenderer {
 			int dado = DiceRoller.getTipoDado(valor);
 
 			Label lblNome = new Label(atr.name().substring(0, 3));
-			lblNome.setStyle("-fx-text-fill: #aaaaaa; -fx-font-weight: bold; -fx-font-size: 12px;");
+			lblNome.getStyleClass().add("hud-attribute-name");
 
 			Label lblValor = new Label(valor + " (d" + dado + ")");
-			lblValor.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px;");
+			lblValor.getStyleClass().add("hud-attribute-value");
 
 			attributesGrid.add(lblNome, 0, row);
 			attributesGrid.add(lblValor, 1, row);
@@ -273,33 +282,45 @@ public class CharacterInfoRenderer {
 
 	private void addStatLabel(String titulo, String valor) {
 		HBox row = new HBox(10);
+		row.getStyleClass().add("hud-stat-row");
 		Label t = new Label(titulo);
-		t.setStyle("-fx-text-fill: cyan;");
+		t.getStyleClass().add("hud-attribute-name");
 		Label v = new Label(valor);
-		v.setStyle("-fx-text-fill: white;");
+		v.getStyleClass().add("hud-attribute-value");
 		row.getChildren().addAll(t, v);
 		detailedPane.getChildren().add(row);
 	}
 
 	private void adicionarPecado(int pecado) {
 		HBox row = new HBox(10);
+		row.getStyleClass().add("hud-stat-row");
 		Label titulo = new Label("Pecado:");
-		titulo.setStyle("-fx-text-fill: cyan;");
+		titulo.getStyleClass().add("hud-attribute-name");
 		Label valor = new Label(String.valueOf(pecado));
-		valor.setStyle("-fx-text-fill: #b56cff; -fx-font-weight: bold;");
+		valor.getStyleClass().addAll("hud-attribute-value", "hud-value-arcane");
 		row.getChildren().addAll(titulo, valor);
 		detailedPane.getChildren().add(row);
 	}
 
-	private String resolverEstiloEfeito(TipoEfeito tipo) {
-		switch (tipo) {
-			case BUFF:
-				return "-fx-background-color: #004466; -fx-text-fill: cyan; -fx-padding: 3; -fx-background-radius: 3;";
-			case DEBUFF:
-				return "-fx-background-color: #660000; -fx-text-fill: #ffaaaa; -fx-padding: 3; -fx-background-radius: 3;";
-			default:
-				return "-fx-background-color: #440044; -fx-text-fill: violet; -fx-padding: 3; -fx-background-radius: 3;";
+	private String resolverClasseEfeito(TipoEfeito tipo) {
+		return switch (tipo) {
+			case BUFF -> "hud-effect-buff";
+			case DEBUFF -> "hud-effect-debuff";
+			default -> "hud-effect-dot";
+		};
+	}
+
+	private static void alternarClasse(javafx.scene.Node node, String classe, boolean ativo) {
+		if (ativo) {
+			if (!node.getStyleClass().contains(classe)) node.getStyleClass().add(classe);
+		} else {
+			node.getStyleClass().remove(classe);
 		}
+	}
+
+	private static double calcularProgresso(double atual, double maximo) {
+		if (maximo <= 0) return 0.0;
+		return Math.max(0.0, Math.min(1.0, atual / maximo));
 	}
 
 	private String formatarNumero(double valor) {

@@ -85,14 +85,14 @@ public class DiceInputsBuilder {
 			tipoDado = DiceRoller.getTipoDado(valorAtr);
 
 			Label lbl = new Label("Rolagem " + atr.name() + " (d" + tipoDado + "):");
-			lbl.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+			lbl.getStyleClass().add("hud-field-label");
 
 			inputDadoAtributo = new TextField();
 			inputDadoAtributo.setPromptText("Resultado do d" + tipoDado);
-			inputDadoAtributo.setStyle("-fx-background-color: #333; -fx-text-fill: cyan; -fx-font-weight: bold;");
+			inputDadoAtributo.getStyleClass().add("hud-dice-input");
 
 			Label lblFinalResult = new Label("");
-			lblFinalResult.setStyle("-fx-text-fill: #00FFFF; -fx-font-weight: bold; -fx-font-size: 13px;");
+			lblFinalResult.getStyleClass().add("hud-dice-final");
 
 			inputDadoAtributo.textProperty().addListener((o, ov, nv) -> {
 				if (nv == null || nv.isEmpty()) {
@@ -121,10 +121,10 @@ public class DiceInputsBuilder {
 			diceRollColumn.setManaged(true);
 			lblDiceType.setText("d" + tipoDado);
 			lblDiceResult.setText("—");
-			lblDiceResult.setStyle("-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;");
+			lblDiceResult.getStyleClass().remove("hud-roll-maximum");
 			lblCritRate.setText(String.format("%.1f%%", ator.getTaxaCritica() * 100));
 			lblCritResult.setText("—");
-			lblCritResult.setStyle("-fx-text-fill: gray; -fx-font-size: 18px; -fx-font-weight: bold;");
+			lblCritResult.getStyleClass().remove("hud-crit-success");
 		}
 
 
@@ -166,7 +166,7 @@ public class DiceInputsBuilder {
 					tb.setToggleGroup(group);
 					tb.setUserData(opt);
 					tb.setPrefWidth(120);
-					tb.setStyle("-fx-base: #333;");
+					tb.getStyleClass().add("hud-option-toggle");
 					flow.getChildren().add(tb);
 				}
 				seletor = flow;
@@ -181,7 +181,7 @@ public class DiceInputsBuilder {
 			group.getToggles().get(0).setSelected(true);
 
 			Label lblHeader = new Label("Configurar Ação:");
-			lblHeader.setStyle("-fx-text-fill: #00FFFF; -fx-font-weight: bold; -fx-padding: 5 0 0 0;");
+			lblHeader.getStyleClass().add("hud-section-label");
 			diceInputsBox.getChildren().addAll(lblHeader, seletor);
 		}
 
@@ -247,14 +247,15 @@ public class DiceInputsBuilder {
 
 	private void adicionarPainelIdleDeathGamble(Personagem ator, Map<String, TextField> inputsExtras) {
 		Label lblAposta = new Label("APOSTA - Idle Death Gamble");
-		lblAposta.setStyle("-fx-text-fill: cyan; -fx-font-weight: bold; -fx-font-size: 13px;");
+		lblAposta.getStyleClass().addAll("hud-section-label", "hud-value-tactical");
 		diceInputsBox.getChildren().add(lblAposta);
 
 		Efeito estrelas = ator.getEfeitosAtivos().get("Estrelas da Sorte");
 		int numEstrelas = (estrelas != null) ? estrelas.getStacks() : 0;
 		Label lblEstrelas = new Label("Estrelas da Sorte: " + numEstrelas + "/6"
 				+ (numEstrelas >= 6 ? " (JACKPOT GARANTIDO!)" : ""));
-		lblEstrelas.setStyle("-fx-text-fill: " + (numEstrelas >= 6 ? "gold" : "yellow") + "; -fx-font-size: 11px;");
+		lblEstrelas.getStyleClass().addAll("hud-small-label", "hud-gamble-stars");
+		alternarClasse(lblEstrelas, "hud-state-jackpot", numEstrelas >= 6);
 		diceInputsBox.getChildren().add(lblEstrelas);
 
 		adicionarInputExtra("DADO_LYRIA_1", "Dado 1 (d3):", inputsExtras);
@@ -262,12 +263,12 @@ public class DiceInputsBuilder {
 		adicionarInputExtra("DADO_LYRIA_3", "Dado 3 (d3):", inputsExtras);
 
 		Label lblResultado = new Label("");
-		lblResultado.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+		lblResultado.getStyleClass().add("hud-gamble-result");
 		lblResultado.setId("lblResultadoAposta");
 
 		Button btnRolar = new Button("Rolar Aposta (3d3)");
 		btnRolar.setMaxWidth(Double.MAX_VALUE);
-		btnRolar.setStyle("-fx-base: #2a2a4a; -fx-text-fill: cyan; -fx-font-weight: bold;");
+		btnRolar.getStyleClass().addAll("hud-secondary-button", "hud-tactical-primary");
 		btnRolar.setOnAction(e -> rolarAposta(inputsExtras, numEstrelas, lblResultado));
 
 		diceInputsBox.getChildren().addAll(btnRolar, lblResultado);
@@ -284,13 +285,12 @@ public class DiceInputsBuilder {
 		boolean jackpot = (d1 == d2 && d2 == d3) || numEstrelas >= 6;
 		if (jackpot) {
 			lblResultado.setText("[" + d1 + "] [" + d2 + "] [" + d3 + "]  JACKPOT!");
-			lblResultado.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: gold; "
-					+ "-fx-effect: dropshadow(gaussian, gold, 8, 0.5, 0, 0);");
 		} else {
 			int soma = d1 + d2 + d3;
 			lblResultado.setText("[" + d1 + "] [" + d2 + "] [" + d3 + "]  +" + soma + " TU recuperado");
-			lblResultado.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ff6666;");
 		}
+		alternarClasse(lblResultado, "hud-state-jackpot", jackpot);
+		alternarClasse(lblResultado, "hud-text-danger", !jackpot);
 	}
 
 	private void adicionarInputsEspecificosHabilidade(String nome, Personagem ator,
@@ -361,11 +361,11 @@ public class DiceInputsBuilder {
 		int maxInvestimento = ator.getInventario() != null ? ator.getInventario().getPesoTotalMoedas() : 0;
 
 		Label titulo = new Label("JUSTIÇA DOURADA");
-		titulo.setStyle("-fx-text-fill: gold; -fx-font-weight: bold; -fx-font-size: 13px;");
+		titulo.getStyleClass().addAll("hud-section-label", "hud-value-warning");
 
 		Label resumo = new Label("Investimento disponível: " + maxInvestimento
 				+ " pontos (Bronze=1, Prata=2, Ouro=5)");
-		resumo.setStyle("-fx-text-fill: #d6c27a; -fx-font-size: 11px;");
+		resumo.getStyleClass().addAll("hud-text-muted", "hud-small-label");
 		resumo.setWrapText(true);
 
 		Slider slider = new Slider(0, Math.max(0, maxInvestimento), 0);
@@ -377,8 +377,7 @@ public class DiceInputsBuilder {
 
 		TextField input = new TextField("0");
 		input.setPromptText("Moedas");
-		input.setStyle("-fx-background-color: #1f1a10; -fx-text-fill: gold; -fx-font-weight: bold; "
-				+ "-fx-border-color: #8a6d1d;");
+		input.getStyleClass().addAll("hud-dice-input", "hud-warning-field");
 		input.setMaxWidth(90);
 
 		slider.valueProperty().addListener((obs, oldValue, newValue) ->
@@ -403,8 +402,7 @@ public class DiceInputsBuilder {
 		linha.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 		VBox painel = new VBox(6, titulo, resumo, linha);
 		painel.setId("painelJusticaDourada");
-		painel.setStyle("-fx-background-color: #2b2412; -fx-border-color: #8a6d1d; "
-				+ "-fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 10;");
+		painel.getStyleClass().addAll("hud-special-panel", "hud-warning-panel");
 
 		inputsExtras.put(br.com.dantesrpg.model.habilidades.classe.JusticaDourada.INPUT_MOEDAS, input);
 		diceRollColumn.setVisible(true);
@@ -414,10 +412,10 @@ public class DiceInputsBuilder {
 
 	private void adicionarInputExtra(String key, String labelText, Map<String, TextField> inputsExtras) {
 		Label lbl = new Label(labelText);
-		lbl.setStyle("-fx-text-fill: yellow;");
+		lbl.getStyleClass().add("hud-field-label");
 		TextField tf = new TextField();
 		tf.setPromptText("Valor...");
-		tf.setStyle("-fx-background-color: #333; -fx-text-fill: white;");
+		tf.getStyleClass().add("hud-dice-input");
 		inputsExtras.put(key, tf);
 		diceInputsBox.getChildren().addAll(lbl, tf);
 	}
@@ -430,6 +428,14 @@ public class DiceInputsBuilder {
 			}
 		}
 		return opt;
+	}
+
+	private static void alternarClasse(javafx.scene.Node node, String classe, boolean ativo) {
+		if (ativo) {
+			if (!node.getStyleClass().contains(classe)) node.getStyleClass().add(classe);
+		} else {
+			node.getStyleClass().remove(classe);
+		}
 	}
 
 }

@@ -76,20 +76,566 @@
 .infernal-shield-bar-fill { -fx-fill: linear-gradient(to right, #ff4500, #ff8c00); -fx-stroke: transparent; }
 .debt-bar-fill { -fx-fill: linear-gradient(to right, #FF4444, #AA0000); -fx-stroke: transparent; -fx-effect: dropshadow(gaussian, red, 5, 0.3, 0, 0); }
 
-/* Detailed HUD */
-.turn-hud-root { -fx-background-color: #1a1a1a; -fx-border-color: yellow; -fx-border-width: 1; -fx-font-size: 13px; }
-.details-column { -fx-border-color: cyan; -fx-padding: 10; }
-.turn-hud-root .label { -fx-text-fill: white; }
-.turn-hud-root .label-header { -fx-font-weight: bold; -fx-font-size: 16px; }
-.turn-hud-root .label-subheader { -fx-font-weight: bold; -fx-text-fill: lightgrey; }
-.turn-hud-root .label-value-hp { -fx-text-fill: lightgreen; }
-.turn-hud-root .label-value-mp { -fx-text-fill: lightblue; }
-.turn-hud-root .button { -fx-background-color: #444444; -fx-text-fill: white; -fx-background-radius: 3; -fx-border-radius: 3; -fx-border-color: grey; -fx-border-width: 1; }
-.turn-hud-root .button:hover { -fx-background-color: #555555; -fx-border-color: cyan; }
-.turn-hud-root .button:pressed { -fx-background-color: #666666; }
-.detailed-attributes-pane { -fx-background-color: #D3D3D3; -fx-padding: 10; -fx-background-radius: 5; }
-.detailed-attributes-pane .label { -fx-text-fill: black; }
-.detailed-attributes-pane .label-header { -fx-font-weight: bold; }
+/* HUD detalhada — base semântica sobre o PrimerDark/AtlantaFX. */
+.turn-hud-root {
+    -hud-canvas: -rpg-bg-canvas;
+    -hud-panel: -rpg-surface-base;
+    -hud-panel-alt: -rpg-bg-navigation;
+    -hud-card: -rpg-surface-raised;
+    -hud-field: -rpg-bg-navigation;
+    -hud-hover: -rpg-surface-hover;
+    -hud-pressed: -rpg-surface-pressed;
+    -hud-border: -rpg-border-default;
+    -hud-border-subtle: -rpg-border-subtle;
+    -hud-focus: -rpg-border-focus;
+    -hud-primary: -rpg-accent-command;
+    -hud-tactical: -rpg-accent-tactical;
+    -hud-arcane: -rpg-accent-arcane;
+    -hud-text: -rpg-text-primary;
+    -hud-text-muted: -rpg-text-secondary;
+    -hud-text-subtle: -rpg-text-muted;
+    -hud-text-on-primary: #11151A;
+    -hud-success: -rpg-success;
+    -hud-warning: -rpg-warning;
+    -hud-danger: -rpg-danger;
+    -hud-life: -rpg-life;
+    -hud-mana: -rpg-mana;
+
+    -fx-background-color: -hud-canvas;
+    -fx-border-color: -hud-border-subtle;
+    -fx-border-width: 1;
+    -fx-font-size: 13px;
+    -fx-font-family: 'Oxanium';
+}
+
+.turn-hud-root .label {
+    -fx-text-fill: -hud-text;
+}
+
+.turn-hud-root .separator .line {
+    -fx-border-color: -hud-border-subtle transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.turn-hud-column {
+    -fx-padding: 16;
+}
+
+.turn-hud-sidebar {
+    -fx-background-color: -hud-panel-alt;
+    -fx-border-color: transparent -hud-border-subtle transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.turn-hud-command-column {
+    -fx-background-color: -hud-panel;
+}
+
+.turn-hud-inspector-column {
+    -fx-background-color: -hud-panel-alt;
+    -fx-border-color: transparent transparent transparent -hud-border-subtle;
+    -fx-border-width: 0 0 0 1;
+}
+
+.turn-hud-root .label-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 17px;
+}
+
+.turn-hud-root .hud-column-title {
+    -fx-font-size: 18px;
+}
+
+.turn-hud-root .hud-title-primary {
+    -fx-text-fill: -hud-primary;
+}
+
+.turn-hud-root .hud-text-muted {
+    -fx-text-fill: -hud-text-muted;
+}
+
+.turn-hud-root .hud-eyebrow {
+    -fx-text-fill: -hud-text-subtle;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.turn-hud-root .hud-small-label {
+    -fx-font-size: 11px;
+}
+
+.turn-hud-root .hud-micro-label {
+    -fx-font-size: 9px;
+}
+
+.turn-hud-root .hud-description {
+    -fx-line-spacing: 2px;
+}
+
+.hud-resource-card,
+.hud-tu-card,
+.hud-info-panel,
+.hud-estimate-panel,
+.hud-dice-panel,
+.hud-special-panel,
+.hud-empty-state {
+    -fx-background-color: -hud-card;
+    -fx-border-color: -hud-border-subtle;
+    -fx-border-width: 1;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+
+.hud-resource-name {
+    -fx-text-fill: -hud-text-muted;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.hud-resource-value,
+.hud-cost-value,
+.hud-tu-value {
+    -fx-font-weight: bold;
+}
+
+.hud-life-text,
+.turn-hud-root .label-value-hp {
+    -fx-text-fill: -hud-life;
+}
+
+.hud-mana-text,
+.turn-hud-root .label-value-mp,
+.turn-hud-root .hud-value-mana {
+    -fx-text-fill: -hud-mana;
+}
+
+.turn-hud-root .hud-value-tu {
+    -fx-text-fill: -hud-warning;
+}
+
+.hud-resource-progress {
+    -fx-min-height: 7;
+    -fx-pref-height: 7;
+    -fx-max-height: 7;
+}
+
+.hud-resource-progress > .track {
+    -fx-background-color: -hud-field;
+    -fx-background-radius: 99;
+}
+
+.hud-resource-progress > .bar {
+    -fx-background-insets: 0;
+    -fx-background-radius: 99;
+    -fx-padding: 3;
+}
+
+.hud-hp-progress > .bar { -fx-background-color: -hud-life; }
+.hud-mp-progress > .bar { -fx-background-color: -hud-mana; }
+.hud-ammo-progress > .bar { -fx-background-color: -hud-warning; }
+.hud-resource-progress.hud-resource-unknown > .bar { -fx-background-color: -hud-text-subtle; }
+
+.hud-ammo-container {
+    -fx-padding: 4 0 0 0;
+}
+
+.hud-scroll-pane,
+.hud-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.hud-scroll-pane {
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.hud-actions-grid,
+.hud-action-details-content {
+    -fx-padding: 2 3 10 2;
+}
+
+.hud-tab-bar,
+.hud-tactical-bar,
+.hud-action-footer {
+    -fx-padding: 10 0 0 0;
+    -fx-border-color: -hud-border-subtle transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.turn-hud-root .hud-tab-button,
+.turn-hud-root .hud-action-button,
+.turn-hud-root .hud-tactical-button,
+.turn-hud-root .hud-secondary-button,
+.turn-hud-root .hud-target-button,
+.turn-hud-root .hud-confirm-button,
+.turn-hud-root .hud-option-toggle,
+.turn-hud-root .hud-segment {
+    -fx-background-color: -hud-card;
+    -fx-text-fill: -hud-text;
+    -fx-border-color: -hud-border;
+    -fx-border-width: 1;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.turn-hud-root .hud-tab-button:hover,
+.turn-hud-root .hud-action-button:hover,
+.turn-hud-root .hud-tactical-button:hover,
+.turn-hud-root .hud-secondary-button:hover,
+.turn-hud-root .hud-target-button:hover,
+.turn-hud-root .hud-confirm-button:hover,
+.turn-hud-root .hud-option-toggle:hover,
+.turn-hud-root .hud-segment:hover {
+    -fx-background-color: -hud-hover;
+    -fx-border-color: -hud-primary;
+}
+
+.turn-hud-root .hud-tab-button:pressed,
+.turn-hud-root .hud-action-button:pressed,
+.turn-hud-root .hud-tactical-button:pressed,
+.turn-hud-root .hud-secondary-button:pressed,
+.turn-hud-root .hud-target-button:pressed,
+.turn-hud-root .hud-confirm-button:pressed,
+.turn-hud-root .hud-option-toggle:pressed,
+.turn-hud-root .hud-option-toggle:selected,
+.turn-hud-root .hud-segment:selected {
+    -fx-background-color: -hud-pressed;
+    -fx-border-color: -hud-tactical;
+}
+
+.turn-hud-root .hud-tab-button:focused,
+.turn-hud-root .hud-action-button:focused,
+.turn-hud-root .hud-tactical-button:focused,
+.turn-hud-root .hud-secondary-button:focused,
+.turn-hud-root .hud-target-button:focused,
+.turn-hud-root .hud-confirm-button:focused,
+.turn-hud-root .hud-option-toggle:focused,
+.turn-hud-root .hud-segment:focused,
+.turn-hud-root .hud-dice-input:focused {
+    -fx-border-color: -hud-focus;
+    -fx-border-width: 2;
+}
+
+.turn-hud-root .hud-tab-button:selected {
+    -fx-background-color: -hud-primary;
+    -fx-text-fill: -hud-text-on-primary;
+    -fx-border-color: -hud-primary;
+}
+
+.turn-hud-root .hud-action-button {
+    -fx-min-height: 64;
+    -fx-pref-height: 64;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-padding: 8 10;
+}
+
+.turn-hud-root .hud-action-basic {
+    -fx-background-color: -hud-pressed;
+    -fx-border-color: -hud-tactical;
+}
+
+.turn-hud-root .hud-action-ultimate {
+    -fx-border-color: -hud-warning;
+    -fx-border-width: 2;
+}
+
+.turn-hud-root .hud-action-overclock {
+    -fx-background-color: -hud-hover;
+    -fx-border-color: -hud-tactical;
+    -fx-border-width: 2;
+}
+
+.turn-hud-root .hud-action-button:disabled {
+    -fx-background-color: -hud-field;
+    -fx-text-fill: -hud-text-muted;
+    -fx-border-color: -hud-border-subtle;
+    -fx-opacity: 0.72;
+    -fx-cursor: default;
+}
+
+.turn-hud-root .hud-action-blocked:disabled {
+    -fx-background-color: rgba(214, 92, 101, 0.14);
+    -fx-text-fill: -hud-danger;
+    -fx-border-color: -hud-danger;
+    -fx-opacity: 1;
+}
+
+.hud-action-placeholder {
+    -fx-min-height: 64;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-text-fill: -hud-text-muted;
+    -fx-background-color: -hud-field;
+    -fx-border-color: -hud-border-subtle;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8;
+}
+
+.turn-hud-root .hud-tactical-button,
+.turn-hud-root .hud-secondary-button,
+.turn-hud-root .hud-target-button {
+    -fx-min-height: 36;
+}
+
+.turn-hud-root .hud-tactical-primary {
+    -fx-border-color: -hud-tactical;
+}
+
+.turn-hud-root .hud-tactical-confirm {
+    -fx-border-color: -hud-success;
+}
+
+.turn-hud-root .hud-confirm-button {
+    -fx-min-height: 44;
+    -fx-background-color: -hud-primary;
+    -fx-text-fill: -hud-text-on-primary;
+    -fx-border-color: -hud-primary;
+    -fx-font-size: 14px;
+}
+
+.turn-hud-root .hud-confirm-button:disabled {
+    -fx-background-color: -hud-field;
+    -fx-text-fill: -hud-text-subtle;
+    -fx-border-color: -hud-border-subtle;
+    -fx-opacity: 0.72;
+    -fx-cursor: default;
+}
+
+.turn-hud-root .hud-confirm-danger {
+    -fx-background-color: -hud-danger;
+    -fx-text-fill: white;
+    -fx-border-color: -hud-danger;
+}
+
+.turn-hud-root .hud-target-selected {
+    -fx-background-color: rgba(79, 187, 122, 0.16);
+    -fx-text-fill: -hud-text;
+    -fx-border-color: -hud-success;
+    -fx-border-width: 2;
+}
+
+.hud-empty-state {
+    -fx-background-color: -hud-field;
+    -fx-border-style: segments(5, 5);
+}
+
+.hud-empty-title {
+    -fx-text-fill: -hud-primary;
+}
+
+.hud-empty-description {
+    -fx-line-spacing: 3px;
+}
+
+.hud-cost-row {
+    -fx-padding: 2 0;
+}
+
+.hud-cost-chip {
+    -fx-background-color: -hud-card;
+    -fx-border-color: -hud-border-subtle;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-padding: 5 10;
+}
+
+.hud-tu-chip { -fx-border-color: -hud-warning; }
+.hud-mana-chip { -fx-border-color: -hud-mana; }
+
+.turn-hud-root .hud-value-muted {
+    -fx-text-fill: -hud-text-subtle;
+}
+
+.hud-segment-left {
+    -fx-background-radius: 6 0 0 6;
+    -fx-border-radius: 6 0 0 6;
+}
+
+.hud-segment-middle {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.hud-segment-right {
+    -fx-background-radius: 0 6 6 0;
+    -fx-border-radius: 0 6 6 0;
+}
+
+.hud-estimate-panel {
+    -fx-background-color: rgba(79, 187, 122, 0.10);
+    -fx-border-color: -hud-success;
+    -fx-padding: 8;
+}
+
+.turn-hud-root .hud-value-positive {
+    -fx-text-fill: -hud-success;
+    -fx-font-weight: bold;
+}
+
+.turn-hud-root .hud-estimate-critical,
+.turn-hud-root .hud-text-danger {
+    -fx-text-fill: -hud-danger;
+    -fx-font-weight: bold;
+}
+
+.hud-dice-section {
+    -fx-padding: 4 0 0 0;
+}
+
+.hud-dice-panel {
+    -fx-padding: 10;
+}
+
+.turn-hud-root .hud-dice-result {
+    -fx-text-fill: -hud-tactical;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.turn-hud-root .hud-roll-maximum,
+.turn-hud-root .hud-state-jackpot {
+    -fx-text-fill: -hud-warning;
+    -fx-effect: dropshadow(gaussian, -hud-warning, 7, 0.28, 0, 0);
+}
+
+.turn-hud-root .hud-crit-result {
+    -fx-text-fill: -hud-text-muted;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.turn-hud-root .hud-crit-success {
+    -fx-text-fill: -hud-danger;
+    -fx-effect: dropshadow(gaussian, -hud-danger, 7, 0.28, 0, 0);
+}
+
+.hud-field-label,
+.hud-section-label {
+    -fx-text-fill: -hud-text;
+    -fx-font-weight: bold;
+}
+
+.hud-dice-input {
+    -fx-background-color: -hud-field;
+    -fx-text-fill: -hud-text;
+    -fx-prompt-text-fill: -hud-text-subtle;
+    -fx-border-color: -hud-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-font-weight: bold;
+}
+
+.hud-dice-final,
+.turn-hud-root .hud-value-tactical {
+    -fx-text-fill: -hud-tactical;
+    -fx-font-weight: bold;
+}
+
+.hud-option-toggle {
+    -fx-min-height: 34;
+}
+
+.hud-gamble-stars,
+.turn-hud-root .hud-value-warning {
+    -fx-text-fill: -hud-warning;
+}
+
+.hud-gamble-result {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.hud-warning-panel {
+    -fx-background-color: rgba(224, 169, 67, 0.10);
+    -fx-border-color: -hud-warning;
+}
+
+.hud-warning-field {
+    -fx-text-fill: -hud-warning;
+    -fx-border-color: -hud-warning;
+}
+
+.turn-hud-root .hud-state-overclock {
+    -fx-text-fill: -hud-tactical;
+    -fx-effect: dropshadow(gaussian, -hud-tactical, 5, 0.22, 0, 0);
+}
+
+.turn-hud-root .hud-state-selected {
+    -fx-background-color: rgba(224, 169, 67, 0.14);
+    -fx-border-color: -hud-warning;
+    -fx-border-width: 2;
+}
+
+.turn-hud-root .hud-race-v2,
+.turn-hud-root .hud-value-arcane {
+    -fx-text-fill: -hud-arcane;
+    -fx-font-weight: bold;
+}
+
+.hud-effect-chip {
+    -fx-padding: 6 8;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+}
+
+.hud-effect-buff {
+    -fx-background-color: rgba(71, 190, 210, 0.13);
+    -fx-text-fill: -hud-tactical;
+    -fx-border-color: -hud-tactical;
+}
+
+.hud-effect-debuff {
+    -fx-background-color: rgba(214, 92, 101, 0.13);
+    -fx-text-fill: -hud-danger;
+    -fx-border-color: -hud-danger;
+}
+
+.hud-effect-dot {
+    -fx-background-color: rgba(155, 123, 211, 0.14);
+    -fx-text-fill: -hud-arcane;
+    -fx-border-color: -hud-arcane;
+}
+
+.tooltip.hud-effect-tooltip {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Oxanium';
+    -fx-background-color: -rpg-surface-raised;
+    -fx-text-fill: -rpg-text-primary;
+    -fx-border-color: -rpg-border-default;
+    -fx-border-width: 1;
+    -fx-padding: 8;
+}
+
+.hud-attributes-pane {
+    -fx-padding: 10;
+    -fx-background-color: -hud-card;
+}
+
+.hud-attribute-name {
+    -fx-text-fill: -hud-text-muted;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.hud-attribute-value {
+    -fx-text-fill: -hud-text;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.hud-stat-row {
+    -fx-alignment: center-left;
+}
 
 /* Efeitos */
 .effects-container .label { -fx-padding: 3 6; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 11px; }
@@ -253,8 +799,7 @@
 }
 
 .map-escombros {
-    -fx-background-color: #4a3a32;
-    -fx-background-image: linear-gradient(to bottom right, #8a7466 0%, #4a3a32 48%, #211a18 100%);
+    -fx-background-color: linear-gradient(to bottom right, #8a7466 0%, #4a3a32 48%, #211a18 100%);
     -fx-border-color: rgba(221, 185, 147, 0.72);
     -fx-border-width: 1;
 }
@@ -2828,205 +3373,39 @@
     -fx-border-color: rgba(0, 106, 120, 0.5);
 }
 
-/* HUD detalhada: usa os mesmos tokens do andar, inclusive nas janelas separadas. */
+/* O tema do andar altera tokens; os componentes continuam sob o mesmo contrato visual. */
 .tema-andar-ativo.turn-hud-root {
-    -fx-background-color: -andar-canvas;
-    -fx-border-color: -andar-borda;
-    -fx-border-width: 1;
-    -fx-text-fill: -andar-texto;
+    -hud-canvas: -andar-canvas;
+    -hud-panel: -andar-painel;
+    -hud-panel-alt: -andar-superficie;
+    -hud-card: -andar-card;
+    -hud-field: -andar-campo;
+    -hud-hover: -andar-hover;
+    -hud-pressed: -andar-pressionado;
+    -hud-border: -andar-borda;
+    -hud-border-subtle: -andar-borda;
+    -hud-focus: -andar-acento;
+    -hud-primary: -andar-primaria;
+    -hud-tactical: -andar-secundaria;
+    -hud-arcane: -andar-acento;
+    -hud-text: -andar-texto;
+    -hud-text-muted: -andar-texto-suave;
+    -hud-text-subtle: -andar-texto-suave;
+    -hud-text-on-primary: -andar-texto-sobre-primaria;
 }
 
-.tema-andar-ativo .turn-hud-column {
-    -fx-padding: 15;
-    -fx-background-color: -andar-painel;
+.tema-andar-ativo.tema-andar-claro.turn-hud-root {
+    -hud-warning: #855500;
+    -hud-success: #08783F;
+    -hud-danger: #B4232C;
+    -hud-life: #08783F;
+    -hud-mana: #155FA0;
+    -hud-tactical: #006A78;
+    -hud-arcane: #6D3D91;
 }
 
-.tema-andar-ativo .turn-hud-sidebar {
-    -fx-border-color: transparent -andar-borda transparent transparent;
-    -fx-border-width: 0 1 0 0;
-}
-
-.tema-andar-ativo .turn-hud-details-column {
-    -fx-background-color: -andar-card;
-    -fx-border-color: transparent transparent transparent -andar-borda;
-    -fx-border-width: 0 0 0 1;
-}
-
-.tema-andar-ativo.turn-hud-root .label {
-    -fx-text-fill: -andar-texto;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-title-primary {
-    -fx-text-fill: -andar-primaria;
-    -fx-font-size: 18px;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-text-muted {
-    -fx-text-fill: -andar-texto-suave;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-section-label {
-    -fx-text-fill: -andar-texto;
-    -fx-font-weight: bold;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-small-label {
-    -fx-font-size: 11px;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-description {
-    -fx-font-style: italic;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-value-tu {
-    -fx-text-fill: -andar-acento;
-    -fx-font-weight: bold;
-}
-
-.tema-andar-ativo.tema-andar-claro.turn-hud-root .hud-value-tu {
-    -fx-text-fill: #855500;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-value-mana {
-    -fx-text-fill: -andar-secundaria;
-    -fx-font-weight: bold;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-value-positive {
-    -fx-text-fill: #08783F;
-    -fx-font-weight: bold;
-}
-
-.tema-andar-ativo.tema-andar-escuro.turn-hud-root .hud-value-positive {
-    -fx-text-fill: #73FF8C;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-cost-value {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-}
-
-.tema-andar-ativo.turn-hud-root .button,
-.tema-andar-ativo.turn-hud-root .toggle-button {
-    -fx-background-color: -andar-superficie-elevada;
-    -fx-text-fill: -andar-texto;
-    -fx-border-color: -andar-borda;
-    -fx-border-width: 1;
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
-    -fx-font-weight: bold;
-}
-
-.tema-andar-ativo.turn-hud-root .button:hover,
-.tema-andar-ativo.turn-hud-root .toggle-button:hover {
-    -fx-background-color: -andar-hover;
-    -fx-border-color: -andar-primaria;
-}
-
-.tema-andar-ativo.turn-hud-root .button:pressed,
-.tema-andar-ativo.turn-hud-root .toggle-button:selected {
-    -fx-background-color: -andar-pressionado;
-    -fx-border-color: -andar-acento;
-}
-
-.tema-andar-ativo.turn-hud-root .button:disabled {
-    -fx-background-color: -andar-campo;
-    -fx-text-fill: -andar-texto-suave;
-    -fx-border-color: -andar-borda;
-    -fx-opacity: 0.68;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-tab-active,
-.tema-andar-ativo.turn-hud-root .hud-confirm-button {
-    -fx-background-color: -andar-primaria;
-    -fx-text-fill: -andar-texto-sobre-primaria;
-    -fx-border-color: -andar-acento;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-tab-active:hover,
-.tema-andar-ativo.turn-hud-root .hud-confirm-button:hover {
-    -fx-background-color: -andar-pressionado;
-    -fx-text-fill: -andar-texto;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-tactical-primary {
-    -fx-border-color: -andar-primaria;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-tactical-confirm {
-    -fx-border-color: #08783F;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-action-button {
-    -fx-pref-height: 60;
-    -fx-wrap-text: true;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-action-basic {
-    -fx-background-color: -andar-pressionado;
-    -fx-border-color: -andar-primaria;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-action-ultimate {
-    -fx-background-color: -andar-card;
-    -fx-border-color: -andar-acento;
-    -fx-border-width: 2;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-action-overclock {
-    -fx-background-color: -andar-hover;
-    -fx-border-color: -andar-secundaria;
-    -fx-effect: dropshadow(gaussian, -andar-secundaria, 5, 0.25, 0, 0);
-}
-
-.tema-andar-ativo.turn-hud-root .hud-action-blocked {
-    -fx-background-color: rgba(180, 44, 50, 0.18);
+.tema-andar-ativo.tema-andar-claro.turn-hud-root .hud-action-blocked:disabled {
     -fx-text-fill: #8E2028;
-    -fx-border-color: #B4232C;
-    -fx-border-width: 2;
-}
-
-.tema-andar-ativo.tema-andar-escuro.turn-hud-root .hud-action-blocked {
-    -fx-text-fill: #FFD5CB;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-info-panel,
-.tema-andar-ativo.turn-hud-root .hud-estimate-panel,
-.tema-andar-ativo.turn-hud-root .hud-dice-panel,
-.tema-andar-ativo.turn-hud-root .hud-attributes-pane {
-    -fx-background-color: -andar-campo;
-    -fx-border-color: -andar-borda;
-    -fx-border-width: 1;
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
-    -fx-padding: 10;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-estimate-panel {
-    -fx-padding: 5;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-dice-panel {
-    -fx-alignment: center;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-dice-result {
-    -fx-text-fill: -andar-primaria;
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-crit-result {
-    -fx-text-fill: -andar-texto-suave;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-}
-
-.tema-andar-ativo.turn-hud-root .hud-attributes-scroll,
-.tema-andar-ativo.turn-hud-root .hud-attributes-scroll > .viewport {
-    -fx-background-color: -andar-campo;
-    -fx-background: -andar-campo;
-    -fx-border-color: -andar-borda;
 }
 
 /* Campos e rótulos do editor/criador não podem depender da cor do fundo ilustrado. */
