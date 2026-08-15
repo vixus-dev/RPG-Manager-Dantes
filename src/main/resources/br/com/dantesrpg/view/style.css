@@ -253,8 +253,7 @@
 }
 
 .map-escombros {
-    -fx-background-color: #4a3a32;
-    -fx-background-image: linear-gradient(to bottom right, #8a7466 0%, #4a3a32 48%, #211a18 100%);
+    -fx-background-color: linear-gradient(to bottom right, #8a7466 0%, #4a3a32 48%, #211a18 100%);
     -fx-border-color: rgba(221, 185, 147, 0.72);
     -fx-border-width: 1;
 }
@@ -2834,6 +2833,30 @@
     -fx-border-color: -andar-borda;
     -fx-border-width: 1;
     -fx-text-fill: -andar-texto;
+}
+
+.turn-dock-host {
+    -fx-background-color: -rpg-surface-raised;
+    -fx-border-color: -rpg-border-default;
+    -fx-border-width: 0 0 0 1;
+}
+
+.turn-dock-header,
+.turn-flow-header {
+    -fx-padding: 12;
+    -fx-background-color: -rpg-surface-base;
+    -fx-border-color: -rpg-border-default;
+    -fx-border-width: 0 0 1 0;
+}
+
+.damage-resolution-root {
+    -fx-background-color: -rpg-surface-raised;
+    -fx-text-fill: -rpg-text-primary;
+}
+
+.hud-action-legacy {
+    -fx-border-style: segments(5, 4);
+    -fx-opacity: 0.88;
 }
 
 .tema-andar-ativo .turn-hud-column {

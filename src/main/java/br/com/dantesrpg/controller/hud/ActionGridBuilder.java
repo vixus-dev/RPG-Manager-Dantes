@@ -84,7 +84,9 @@ public class ActionGridBuilder {
 			Item itemModelo = mainController.getItem(entry.getKey());
 			if (itemModelo != null && itemModelo.isUsavelEmCombate()) {
 				int qtd = entry.getValue();
-				Button btn = criarBotaoAcao(itemModelo.getNome() + "\n(x" + qtd + ")", "hud-action-item");
+			Button btn = criarBotaoAcao(itemModelo.getNome() + "\n(x" + qtd + ")", "hud-action-item");
+			btn.getStyleClass().add("hud-action-legacy");
+			btn.setTooltip(new Tooltip("Esta ação ainda usa o fluxo clássico durante a migração transacional."));
 				btn.setOnAction(e -> selectionCb.onSelected(itemModelo.getNome(), null, itemModelo, null, false));
 				adicionarAoGrid(btn, col++, row);
 				if (col > 1) { col = 0; row++; }
@@ -109,6 +111,11 @@ public class ActionGridBuilder {
 				}
 			}
 			Button btn = criarBotaoAcao(texto, estilo);
+			if (mainController != null
+					&& !mainController.getCombatManager().isAcaoTransacionalSuportada(ator, null)) {
+				btn.getStyleClass().add("hud-action-legacy");
+				btn.setTooltip(new Tooltip("Ataque temporariamente encaminhado ao fluxo clássico por uma mecânica ativa."));
+			}
 			btn.setOnAction(e -> cb.onSelected("Ataque Básico", null, null, null, true));
 			adicionarAoGrid(btn, col++, row);
 		} else {
@@ -148,11 +155,17 @@ public class ActionGridBuilder {
 			btn.setDisable(true);
 			btn.setStyle("-fx-opacity: 0.5;");
 		}
+		if (!btn.isDisabled() && mainController != null
+				&& !mainController.getCombatManager().isAcaoTransacionalSuportada(ator, hab)) {
+			btn.getStyleClass().add("hud-action-legacy");
+			btn.setTooltip(new Tooltip("Habilidade especial ainda executada pelo fluxo clássico."));
+		}
 		return btn;
 	}
 
 	private Button criarBotaoFantasmaNobre(FantasmaNobre fn, Personagem ator) {
 		Button btn = criarBotaoAcao("FN: " + fn.getNome(), "hud-action-ultimate");
+		btn.getStyleClass().add("hud-action-legacy");
 		if (ator.getEfeitosAtivos().containsKey("CD:" + fn.getNome())) {
 			btn.setDisable(true);
 			btn.setText("FN: " + fn.getNome() + "\n(Recarga)");
