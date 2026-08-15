@@ -19,6 +19,7 @@ import br.com.dantesrpg.model.util.ArmaduraUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,46 @@ import java.util.Map;
  * modificadores de crítico, redução de armadura e mecânicas especiais (cascata, soco sério).
  */
 public class DamageCalculator {
+
+	public static final class PreviaDano {
+		private final Map<Personagem, List<DamageEvent>> danos;
+		private final Runnable aoComprometerAcao;
+		private final Runnable aoConfirmarMunicao;
+		private boolean acaoComprometida;
+		private boolean municaoConfirmada;
+
+		private PreviaDano(Map<Personagem, List<DamageEvent>> danos,
+				Runnable aoComprometerAcao, Runnable aoConfirmarMunicao) {
+			Map<Personagem, List<DamageEvent>> copia = new LinkedHashMap<>();
+			danos.forEach((alvo, eventos) -> copia.put(alvo, List.copyOf(eventos)));
+			this.danos = java.util.Collections.unmodifiableMap(copia);
+			this.aoComprometerAcao = aoComprometerAcao != null ? aoComprometerAcao : () -> { };
+			this.aoConfirmarMunicao = aoConfirmarMunicao != null ? aoConfirmarMunicao : () -> { };
+		}
+
+		public static PreviaDano criar(Map<Personagem, List<DamageEvent>> danos,
+				Runnable aoComprometerAcao, Runnable aoConfirmarMunicao) {
+			return new PreviaDano(danos, aoComprometerAcao, aoConfirmarMunicao);
+		}
+
+		public Map<Personagem, List<DamageEvent>> getDanos() {
+			return danos;
+		}
+
+		public synchronized void comprometerAcao() {
+			if (!acaoComprometida) {
+				aoComprometerAcao.run();
+				acaoComprometida = true;
+			}
+		}
+
+		public synchronized void confirmarMunicao() {
+			if (!municaoConfirmada) {
+				aoConfirmarMunicao.run();
+				municaoConfirmada = true;
+			}
+		}
+	}
 
 	private final CombatManager combatManager;
 
@@ -117,17 +158,31 @@ public class DamageCalculator {
 	public void resolverDanoPadrao(Personagem ator, Arma arma, int rolagemDadoAtributo, List<Personagem> alvos,
 			double multiplicadorHabilidade, TipoAcao tipoAcaoDano, Habilidade habilidade,
 			EstadoCombate estado, AcaoMestreInput input) {
+		PreviaDano previa = prepararDanoPadrao(ator, arma, rolagemDadoAtributo, alvos,
+				multiplicadorHabilidade, tipoAcaoDano, habilidade, estado, input);
+		if (previa == null || previa.getDanos().isEmpty()) {
+			return;
+		}
+		previa.comprometerAcao();
+		combatManager.setPendingMunicaoConsumption(previa::confirmarMunicao);
+		getController().abrirJanelaResolucao(ator, alvos, habilidade, previa.getDanos());
+	}
 
-		boolean estavaEmStealth = processarStealthInicial(ator);
-		boolean isTiroEspecial = processarTiroEspecial(ator);
+	/** Calcula os eventos sem alterar personagem, munição, efeitos ou custos. */
+	public PreviaDano prepararDanoPadrao(Personagem ator, Arma arma, int rolagemDadoAtributo,
+			List<Personagem> alvos, double multiplicadorHabilidade, TipoAcao tipoAcaoDano,
+			Habilidade habilidade, EstadoCombate estado, AcaoMestreInput input) {
+
+		boolean estavaEmStealth = ator.getEfeitosAtivos().containsKey("Stealth");
+		boolean isTiroEspecial = ator.getEfeitosAtivos().containsKey("Tiro Especial");
 		List<Arma> armasDaAcao = resolverArmasDaAcao(ator, arma, habilidade, input);
 		if (armasDaAcao.isEmpty()) {
 			System.out.println(ator.getNome() + " esta desarmado!");
-			return;
+			return null;
 		}
 		Arma armaPrincipal = armasDaAcao.get(0);
 
-		Map<Personagem, List<DamageEvent>> matrizDeDanos = new HashMap<>();
+		Map<Personagem, List<DamageEvent>> matrizDeDanos = new LinkedHashMap<>();
 
 		boolean isAtaqueBasico = habilidade == null;
 		List<Arma> armasDosTicksBasicos = isAtaqueBasico ? expandirArmasPorTicks(armasDaAcao) : List.of(armaPrincipal);
@@ -141,13 +196,14 @@ public class DamageCalculator {
 
 		int tirosExtrasSolicitados = input.getTirosExtras();
 		Map<Arma, Integer> tirosExtrasPorArma = new HashMap<>();
+		Runnable consumoMunicao = () -> { };
 
 		// Consumo de Munição (adiado até confirmação da janela de resolução)
 		if (habilidade == null && !isModoCoronhada) {
 			for (Arma armaSelecionada : armasDaAcao) {
 				if (armaSelecionada.isRequerMunicao() && armaSelecionada.getMunicaoAtual() < 1) {
 					System.out.println(">>> CLIQUE SECO! " + armaSelecionada.getNome() + " esta sem municao.");
-					return;
+					return null;
 				}
 			}
 
@@ -161,7 +217,7 @@ public class DamageCalculator {
 
 			final Map<Arma, Integer> tirosExtrasPorArmaFinal = new HashMap<>(tirosExtrasPorArma);
 			final List<Arma> armasParaConsumir = new ArrayList<>(armasDaAcao);
-			combatManager.setPendingMunicaoConsumption(() -> {
+			consumoMunicao = () -> {
 				int totalTirosAGastar = 0;
 				for (Arma armaSelecionada : armasParaConsumir) {
 					if (armaSelecionada.isRequerMunicao()) {
@@ -180,7 +236,7 @@ public class DamageCalculator {
 				} else {
 					System.out.println(">>> ARMA: Tiro único confirmado.");
 				}
-			});
+			};
 		}
 
 		double fatorSorte = 1.0 + ator.getSortePercentual();
@@ -300,11 +356,19 @@ public class DamageCalculator {
 			matrizDeDanos.computeIfAbsent(alvo, ignorado -> new ArrayList<>()).addAll(eventosDoAlvo);
 		}
 
-		finalizarAcao(ator, isTiroEspecial, alvos);
-
-		if (!matrizDeDanos.isEmpty()) {
-			getController().abrirJanelaResolucao(ator, alvos, habilidade, matrizDeDanos);
-		}
+		Runnable comprometerAcao = () -> {
+			if (estavaEmStealth && ator.getEfeitosAtivos().containsKey("Stealth")) {
+				System.out.println(">>> " + ator.getNome() + " saiu do modo Stealth para atacar!");
+				ator.removerEfeito("Stealth");
+				ator.recalcularAtributosEstatisticas();
+			}
+			if (isTiroEspecial && ator.getEfeitosAtivos().containsKey("Tiro Especial")) {
+				System.out.println(">>> Tiro Especial consumido.");
+				ator.removerEfeito("Tiro Especial");
+				ator.recalcularAtributosEstatisticas();
+			}
+		};
+		return new PreviaDano(matrizDeDanos, comprometerAcao, consumoMunicao);
 	}
 
 	public void resolverDeadEye(Personagem ator, Arma arma, int rolagemDadoAtributo, List<Personagem> alvos,

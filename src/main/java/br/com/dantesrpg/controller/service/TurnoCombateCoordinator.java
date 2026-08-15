@@ -12,6 +12,7 @@ import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Item;
 import br.com.dantesrpg.model.Personagem;
+import br.com.dantesrpg.model.combat.PlanoAcao;
 import javafx.stage.Stage;
 
 public class TurnoCombateCoordinator {
@@ -30,6 +31,10 @@ public class TurnoCombateCoordinator {
 	private final Supplier<Personagem> getProximoAtorCalculado;
 	private final BooleanSupplier verificarFimDeCombate;
 	private final Runnable atualizarTimelineTU;
+	private final Consumer<PlanoAcao> abrirRevisaoPlano;
+	private final Consumer<String> exibirFalhaPreparacao;
+	private final Runnable ocultarHud;
+	private final Consumer<Personagem> prepararProximoTurno;
 
 	public TurnoCombateCoordinator(Supplier<EstadoCombate> estadoSupplier,
 			Supplier<CombatManager> combatManagerSupplier, Supplier<MapController> mapControllerSupplier,
@@ -37,7 +42,9 @@ public class TurnoCombateCoordinator {
 			Predicate<Personagem> devePassarSquadDeClones, Runnable passarTurnoSquadAtual,
 			Consumer<Personagem> aplicarPassarVez, Runnable limparTUPreview, Runnable popularListasDeCombatentes,
 			Runnable removerDestaques, Supplier<Personagem> getProximoAtorCalculado,
-			BooleanSupplier verificarFimDeCombate, Runnable atualizarTimelineTU) {
+			BooleanSupplier verificarFimDeCombate, Runnable atualizarTimelineTU,
+			Consumer<PlanoAcao> abrirRevisaoPlano, Consumer<String> exibirFalhaPreparacao, Runnable ocultarHud,
+			Consumer<Personagem> prepararProximoTurno) {
 		this.estadoSupplier = estadoSupplier;
 		this.combatManagerSupplier = combatManagerSupplier;
 		this.mapControllerSupplier = mapControllerSupplier;
@@ -52,6 +59,10 @@ public class TurnoCombateCoordinator {
 		this.getProximoAtorCalculado = getProximoAtorCalculado;
 		this.verificarFimDeCombate = verificarFimDeCombate;
 		this.atualizarTimelineTU = atualizarTimelineTU;
+		this.abrirRevisaoPlano = abrirRevisaoPlano;
+		this.exibirFalhaPreparacao = exibirFalhaPreparacao;
+		this.ocultarHud = ocultarHud;
+		this.prepararProximoTurno = prepararProximoTurno;
 	}
 
 	public void resolverAcaoDoMestre(AcaoMestreInput input) {
@@ -60,7 +71,20 @@ public class TurnoCombateCoordinator {
 			return;
 		}
 
-		combatManagerSupplier.get().resolverAcao(input, estado);
+		CombatManager manager = combatManagerSupplier.get();
+		if (manager.isAcaoTransacionalSuportada(input.getAtor(), input.getHabilidade())) {
+			var plano = manager.prepararAcaoTransacional(input, estado);
+			if (plano.isPresent()) {
+				abrirRevisaoPlano.accept(plano.get());
+			} else {
+				exibirFalhaPreparacao.accept(manager.getUltimaFalhaPreparacaoAcao());
+			}
+			// Uma ação padrão inválida deve permanecer na HUD para correção. Ela
+			// nunca pode cair no pipeline clássico e encerrar o turno por engano.
+			return;
+		}
+
+		manager.resolverAcao(input, estado);
 		fecharHudEAvancar();
 	}
 
@@ -131,10 +155,7 @@ public class TurnoCombateCoordinator {
 
 	public void fecharHudEAvancar() {
 		limparTUPreview.run();
-		Stage detailedTurnHudStage = detailedTurnHudStageSupplier.get();
-		if (detailedTurnHudStage != null && detailedTurnHudStage.isShowing()) {
-			detailedTurnHudStage.hide();
-		}
+		ocultarHud.run();
 		avancarParaProximoTurno();
 	}
 
@@ -166,6 +187,7 @@ public class TurnoCombateCoordinator {
 					+ (proximoCalculado != null ? proximoCalculado.getNome() : "Ninguém")
 					+ ". Aguardando 'Iniciar Turno'.");
 			atualizarTimelineTU.run();
+			prepararProximoTurno.accept(proximoCalculado);
 		}
 	}
 }
