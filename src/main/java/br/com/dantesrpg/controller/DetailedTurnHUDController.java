@@ -8,14 +8,20 @@ import br.com.dantesrpg.model.*;
 import br.com.dantesrpg.model.CombatManager.PacoteMunicao;
 import br.com.dantesrpg.model.enums.*;
 import br.com.dantesrpg.model.util.DiceRoller;
+import br.com.dantesrpg.model.combat.PlanoAcao;
+import br.com.dantesrpg.model.combat.EtapaFluxoTurno;
+import br.com.dantesrpg.model.combat.OrigemRolagem;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.StringConverter;
 import java.util.*;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import java.io.IOException;
 
 public class DetailedTurnHUDController {
 
@@ -103,6 +109,10 @@ public class DetailedTurnHUDController {
 	private Label lblDiceType, lblDiceResult, lblCritRate, lblCritResult;
 	@FXML
 	private Button btnRolarDado, btnRolarCritico;
+	@FXML
+	private Label lblEtapaFluxo, lblInstrucaoFluxo;
+	@FXML
+	private VBox inlineResolutionContainer;
 
 	// --- Lógica Interna ---
 	private Personagem atorAtual;
@@ -128,6 +138,8 @@ public class DetailedTurnHUDController {
 	private int tipoDadoAtual = 20;
 	private boolean criticoFoiRolado = false;
 	private boolean criticoManualRolado = false;
+	private OrigemRolagem origemRolagemAtributo = OrigemRolagem.MANUAL;
+	private boolean preenchendoRolagemAutomatica;
 
 	// Alvos selecionados no mapa
 	private List<Personagem> alvosNoMapa = new ArrayList<>();
@@ -138,6 +150,107 @@ public class DetailedTurnHUDController {
 	private ActionGridBuilder actionGridBuilder;
 	private DiceInputsBuilder diceInputsBuilder;
 	private CharacterInfoRenderer characterInfoRenderer;
+	private DamageResolutionController revisaoAtual;
+	private Parent revisaoInlineAtual;
+
+	public void exibirRevisaoPlano(PlanoAcao plano, Runnable aoConcluir) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(
+					"/br/com/dantesrpg/view/DamageResolutionView.fxml"));
+			Parent revisao = loader.load();
+			this.revisaoInlineAtual = revisao;
+			mainController.aplicarTemaEmRaiz(revisao);
+			DamageResolutionController controller = loader.getController();
+			this.revisaoAtual = controller;
+			controller.setEmbutido(true);
+			controller.setMainController(mainController);
+			controller.setupResolution(plano, mainController.getEstadoCombate());
+			controller.setAoConcluir(aoConcluir);
+			controller.setAoCancelar(() -> {
+				mainController.registrarCancelamentoPlano(plano);
+				encerrarRevisaoInline(revisao);
+			});
+
+			inlineResolutionContainer.getChildren().setAll(revisao);
+			inlineResolutionContainer.setVisible(true);
+			inlineResolutionContainer.setManaged(true);
+			atualizarEtapa(EtapaFluxoTurno.COLETANDO_REACOES,
+					"Defina reações, confira os valores e aplique a ação.");
+			actionsGrid.setDisable(true);
+			tacticalButtonsBox.setDisable(true);
+			actionDetailsColumn.setDisable(true);
+			diceRollColumn.setDisable(true);
+			revisao.requestFocus();
+		} catch (IOException e) {
+			plano.cancelar();
+			throw new IllegalStateException("Não foi possível abrir a revisão da ação.", e);
+		}
+	}
+
+	private void encerrarRevisaoInline(Parent revisao) {
+		mainController.removerTemaDeRaiz(revisao);
+		inlineResolutionContainer.getChildren().clear();
+		revisaoAtual = null;
+		revisaoInlineAtual = null;
+		inlineResolutionContainer.setVisible(false);
+		inlineResolutionContainer.setManaged(false);
+		actionsGrid.setDisable(false);
+		tacticalButtonsBox.setDisable(false);
+		actionDetailsColumn.setDisable(false);
+		diceRollColumn.setDisable(false);
+		atualizarEtapa(EtapaFluxoTurno.REVISANDO,
+				"A prévia foi descartada. Ajuste a ação ou confirme novamente.");
+	}
+
+	public void confirmarEtapaAtual() {
+		if (revisaoAtual != null) {
+			revisaoAtual.confirmarPorAtalho();
+		} else if (btnConfirmarAcao != null && !btnConfirmarAcao.isDisabled()
+				&& btnConfirmarAcao.isVisible()) {
+			btnConfirmarAcao.fire();
+		}
+	}
+
+	public boolean voltarEtapaAtual() {
+		if (revisaoAtual != null) {
+			revisaoAtual.cancelarPorAtalho();
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isRevisaoAtiva() {
+		return revisaoAtual != null;
+	}
+
+	public void cancelarRevisaoPendente() {
+		if (revisaoAtual != null) {
+			revisaoAtual.cancelarPorAtalho();
+		}
+	}
+
+	public void notificarSelecaoCancelada() {
+		atualizarEtapa(EtapaFluxoTurno.REVISANDO,
+				"Seleção cancelada. Ajuste a ação ou escolha os alvos novamente.");
+	}
+
+	private void atualizarEtapa(EtapaFluxoTurno etapa, String instrucao) {
+		if (lblEtapaFluxo != null) {
+			lblEtapaFluxo.setText(switch (etapa) {
+			case MOVIMENTANDO -> "MOVIMENTO";
+			case SELECIONANDO_ALVOS -> "ALVOS";
+			case COLETANDO_DADOS -> "ROLAGENS";
+			case COLETANDO_REACOES -> "REAÇÕES E DANO";
+			case REVISANDO -> "REVISÃO";
+			case APLICANDO -> "APLICANDO";
+			case CONCLUIDO -> "CONCLUÍDO";
+			default -> "AÇÃO";
+			});
+		}
+		if (lblInstrucaoFluxo != null) {
+			lblInstrucaoFluxo.setText(instrucao);
+		}
+	}
 
 	@FXML
 	public void initialize() {
@@ -180,8 +293,24 @@ public class DetailedTurnHUDController {
 	public void setAtor(Personagem ator, CombatController controller) {
 		this.atorAtual = ator;
 		this.mainController = controller;
+		if (inlineResolutionContainer != null) {
+			if (revisaoInlineAtual != null && mainController != null) {
+				mainController.removerTemaDeRaiz(revisaoInlineAtual);
+			}
+			inlineResolutionContainer.getChildren().clear();
+			inlineResolutionContainer.setVisible(false);
+			inlineResolutionContainer.setManaged(false);
+			revisaoAtual = null;
+			revisaoInlineAtual = null;
+			actionsGrid.setDisable(false);
+			tacticalButtonsBox.setDisable(false);
+			actionDetailsColumn.setDisable(false);
+			diceRollColumn.setDisable(false);
+		}
 		this.alvosNoMapa.clear();
 		this.areasNoMapa.clear();
+		atualizarEtapa(EtapaFluxoTurno.ESCOLHENDO_ACAO,
+				"Escolha movimento, ataque, habilidade, item ou outra ação tática.");
 
 		// Reconstrói ActionGridBuilder com o controller correto
 		actionGridBuilder = new ActionGridBuilder(actionsGrid, mainController);
@@ -270,12 +399,14 @@ public class DetailedTurnHUDController {
 
 	@FXML
 	private void onMovimentarClick() {
+		atualizarEtapa(EtapaFluxoTurno.MOVIMENTANDO,
+				"Mova o personagem no mapa e confirme o deslocamento.");
 		mainController.iniciarMovimentoTaticoComRetorno(atorAtual);
 	}
 
 	@FXML
 	private void onPassarVezClick() {
-		mainController.resolverAcaoPassarVez(new AcaoMestreInput(atorAtual, new ArrayList<>(), (Habilidade) null));
+		mainController.confirmarPassarVezPorAtalho();
 	}
 
 	@FXML
@@ -385,6 +516,9 @@ public class DetailedTurnHUDController {
 		this.itemSelecionado = item;
 		this.fantasmaNobreSelecionado = fn;
 		this.isAtaqueBasico = isBasicAttack;
+		this.origemRolagemAtributo = OrigemRolagem.MANUAL;
+		atualizarEtapa(EtapaFluxoTurno.COLETANDO_DADOS,
+				"Configure a ação, informe ou role os dados e selecione os alvos.");
 		this.alvosNoMapa.clear();
 		this.areasNoMapa.clear();
 		this.epicentroX = -1;
@@ -718,6 +852,13 @@ public class DetailedTurnHUDController {
 				});
 
 		this.inputDadoAtributo = result.inputDadoAtributo;
+		if (inputDadoAtributo != null) {
+			inputDadoAtributo.textProperty().addListener((obs, anterior, atual) -> {
+				if (!preenchendoRolagemAutomatica) {
+					origemRolagemAtributo = OrigemRolagem.MANUAL;
+				}
+			});
+		}
 		this.inputsExtras = result.inputsExtras;
 		this.tipoDadoAtual = result.tipoDado;
 		this.toggleGroupOpcoes = result.toggleGroupOpcoes;
@@ -955,6 +1096,8 @@ public class DetailedTurnHUDController {
 				int rolagemFinal = DiceRoller.aplicarBonusRankESorte(rolagemBruta, valorAtr, valorSorte);
 				input.adicionarResultadoDado("DADO_ATRIBUTO", rolagemFinal);
 				input.adicionarResultadoDado("DADO_ATRIBUTO_NATURAL", rolagemBruta);
+				input.definirOrigemResultadoDado("DADO_ATRIBUTO", origemRolagemAtributo);
+				input.definirOrigemResultadoDado("DADO_ATRIBUTO_NATURAL", origemRolagemAtributo);
 			} catch (Exception ignored) {}
 		}
 
@@ -963,6 +1106,7 @@ public class DetailedTurnHUDController {
 			if (!entry.getValue().getText().isEmpty()) {
 				try {
 					input.adicionarResultadoDado(entry.getKey(), Integer.parseInt(entry.getValue().getText()));
+					input.definirOrigemResultadoDado(entry.getKey(), OrigemRolagem.MANUAL);
 				} catch (Exception ignored) {}
 			}
 		}
@@ -975,6 +1119,25 @@ public class DetailedTurnHUDController {
 			input.setArmasSelecionadas(obterArmasSelecionadasAtaque());
 			input.setModoAtaque(obterModoAtaqueAtual());
 			if (boxRajada.isVisible()) input.setTirosExtras((int) sliderRajada.getValue());
+		}
+
+		boolean fluxoClassico = fantasmaNobreSelecionado != null || itemSelecionado != null
+				|| !mainController.getCombatManager().isAcaoTransacionalSuportada(atorAtual,
+						habilidadeSelecionada);
+		if (fluxoClassico) {
+			String nome = fantasmaNobreSelecionado != null ? fantasmaNobreSelecionado.getNome()
+					: itemSelecionado != null ? itemSelecionado.getNome()
+					: habilidadeSelecionada != null ? habilidadeSelecionada.getNome() : "Ataque Básico";
+			Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
+					"Ação: " + nome + "\nAlvos: " + input.getAlvos().stream()
+							.map(Personagem::getNome).toList()
+							+ "\nCusto previsto: " + obterCustoTUAtual() + " TU e "
+							+ obterCustoManaAtual() + " MP\n\nEsta ação usa o fluxo clássico e não poderá ser cancelada após confirmar.",
+					ButtonType.CANCEL, ButtonType.OK);
+			confirmacao.setHeaderText("Confirmar ação clássica");
+			if (confirmacao.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+				return;
+			}
 		}
 
 		// Despacha para o controller principal
@@ -996,7 +1159,15 @@ public class DetailedTurnHUDController {
 			lblDiceResult.setStyle("-fx-text-fill: cyan; -fx-font-size: 28px; -fx-font-weight: bold;");
 		}
 
-		if (inputDadoAtributo != null) inputDadoAtributo.setText(String.valueOf(resultado));
+		if (inputDadoAtributo != null) {
+			preenchendoRolagemAutomatica = true;
+			try {
+				inputDadoAtributo.setText(String.valueOf(resultado));
+			} finally {
+				preenchendoRolagemAutomatica = false;
+			}
+		}
+		origemRolagemAtributo = OrigemRolagem.AUTOMATICA;
 	}
 
 	@FXML
@@ -1211,6 +1382,8 @@ public class DetailedTurnHUDController {
 	@FXML
 	private void onSelecionarAlvoClick() {
 		if (mainController == null) return;
+		atualizarEtapa(EtapaFluxoTurno.SELECIONANDO_ALVOS,
+				"Selecione os alvos ou epicentros diretamente no mapa.");
 
 		Habilidade habilidadeParaExecutar = habilidadeSelecionada;
 		Habilidade habilidadeParaSelecionar = null;
@@ -1254,7 +1427,6 @@ public class DetailedTurnHUDController {
 			mainController.iniciarSelecaoDeAlvo(habilidadeParaSelecionar, atorAtual);
 		}
 
-		btnConfirmarAcao.getScene().getWindow().hide();
 	}
 
 	public void adicionarAlvos(List<Personagem> alvos) {
@@ -1262,6 +1434,8 @@ public class DetailedTurnHUDController {
 		btnSelecionarAlvo.setText("Alvos: " + this.alvosNoMapa.size());
 		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");
 		btnConfirmarAcao.setDisable(false);
+		atualizarEtapa(EtapaFluxoTurno.REVISANDO,
+				"Alvos recebidos. Confira dados, custos e confirme para calcular o dano.");
 	}
 
 	public void adicionarAlvosArea(List<Personagem> alvos, int x, int y) {
@@ -1289,6 +1463,8 @@ public class DetailedTurnHUDController {
 				+ " | impactos: " + this.alvosNoMapa.size());
 		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");
 		btnConfirmarAcao.setDisable(false);
+		atualizarEtapa(EtapaFluxoTurno.REVISANDO,
+				"Áreas recebidas. Confira impactos, dados e custos antes de confirmar.");
 	}
 
 	public void adicionarAlvo(Personagem alvo) {
@@ -1302,6 +1478,8 @@ public class DetailedTurnHUDController {
 		btnSelecionarAlvo.setStyle("-fx-background-color: #004400; -fx-text-fill: white;");
 		btnConfirmarAcao.setDisable(false);
 		atualizarEstimativaDano();
+		atualizarEtapa(EtapaFluxoTurno.REVISANDO,
+				"Alvo recebido. Confira dados, custos e confirme para calcular o dano.");
 	}
 
 	public void limparAlvosHover() {

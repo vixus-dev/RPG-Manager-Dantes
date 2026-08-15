@@ -12,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -73,6 +75,7 @@ import br.com.dantesrpg.model.AcaoMestreInput;
 import br.com.dantesrpg.controller.service.BestiarioSpawnService;
 import br.com.dantesrpg.controller.service.CatalogoItensService;
 import br.com.dantesrpg.controller.service.CombatUiRefresher;
+import br.com.dantesrpg.controller.service.CombatAuditService;
 import br.com.dantesrpg.controller.service.CriadorLojasService;
 import br.com.dantesrpg.controller.service.EstadoJogadoresService;
 import br.com.dantesrpg.controller.service.EstadoAndarService;
@@ -87,6 +90,7 @@ import br.com.dantesrpg.controller.service.SquadCombateCoordinator;
 import br.com.dantesrpg.controller.service.TurnoCombateCoordinator;
 import br.com.dantesrpg.controller.service.TemaAndarService;
 import br.com.dantesrpg.model.theme.ConfiguracaoAndar;
+import br.com.dantesrpg.model.combat.PlanoAcao;
 
 public class CombatController {
 
@@ -100,6 +104,10 @@ public class CombatController {
 	private BorderPane contextPane;
 	@FXML
 	private StackPane mainCombatStack;
+	@FXML
+	private VBox turnDockHost;
+	@FXML
+	private StackPane turnDockContent;
 	@FXML
 	private ScrollPane playerScrollPane;
 	@FXML
@@ -153,6 +161,7 @@ public class CombatController {
 	private Map<String, Map<String, Object>> itempediaDatabase;
 	private Map<String, Map<String, Object>> bestiarioDatabase;
 	private final CatalogoItensService catalogoItensService = new CatalogoItensService();
+	private final CombatAuditService combatAuditService = new CombatAuditService();
 	private final EstadoAndarService estadoAndarService = new EstadoAndarService();
 	private final EfeitosAndarService efeitosAndarService = new EfeitosAndarService(this,
 			() -> estadoCombate, () -> combatManager, estadoAndarService::getEstadoAtual,
@@ -177,6 +186,7 @@ public class CombatController {
 	// --- Referências da Pop-up HUD de Turno ---
 	private Stage detailedTurnHudStage;
 	private DetailedTurnHUDController detailedTurnHudController;
+	private Parent detailedTurnHudRoot;
 
 	// --- REFERÊNCIAS DO MAPA ---
 	private MapController mapController;
@@ -204,7 +214,8 @@ public class CombatController {
 			() -> combatManager, () -> mapController, () -> detailedTurnHudStage, this::forEachMap,
 			this::devePassarSquadDeClones, this::passarTurnoSquadAtual, this::aplicarPassarVez, this::limparTUPreview,
 			this::popularListasDeCombatentes, this::removerDestaques, this::getProximoAtorCalculado,
-			this::verificarFimDeCombate, this::atualizarTimelineTU);
+			this::verificarFimDeCombate, this::atualizarTimelineTU, this::abrirRevisaoPlano,
+			this::mostrarFalhaPreparacaoAcao, this::ocultarPainelTurno, this::prepararBotaoProximoTurno);
 
 	private String efeitoAndarAtual = "Nenhum";
 	private boolean efeitoAndarAtivo = false;
@@ -309,8 +320,32 @@ public class CombatController {
 				rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
 					if (newScene != null) {
 						newScene.setOnKeyPressed(event -> {
-							if (event.getCode() == javafx.scene.input.KeyCode.SPACE) {
-								onSpacebarPressed();
+							if (newScene.getFocusOwner() instanceof javafx.scene.control.TextInputControl
+									&& !(event.isControlDown()
+											&& event.getCode() == javafx.scene.input.KeyCode.ENTER)) {
+								return;
+							}
+							if (event.isControlDown() && event.getCode() == javafx.scene.input.KeyCode.ENTER
+									&& detailedTurnHudController != null) {
+								detailedTurnHudController.confirmarEtapaAtual();
+								event.consume();
+							} else if (event.getCode() == javafx.scene.input.KeyCode.ESCAPE
+									&& detailedTurnHudController != null
+									&& detailedTurnHudController.voltarEtapaAtual()) {
+								event.consume();
+							} else if (event.getCode() == javafx.scene.input.KeyCode.ESCAPE
+									&& cancelarSelecaoTaticaAtual()) {
+								event.consume();
+							} else if (event.getCode() == javafx.scene.input.KeyCode.P) {
+								confirmarPassarVezPorAtalho();
+								event.consume();
+							} else if (event.getCode() == javafx.scene.input.KeyCode.M
+									&& estadoCombate != null && estadoCombate.getAtorAtual() != null
+									&& !isSelecaoTaticaAtiva()
+									&& (detailedTurnHudController == null
+											|| !detailedTurnHudController.isRevisaoAtiva())) {
+								iniciarMovimentoTaticoComRetorno(estadoCombate.getAtorAtual());
+								event.consume();
 							}
 						});
 					}
@@ -501,6 +536,9 @@ public class CombatController {
 		} else {
 			// --- COMBATE ENCERRADO (OFF) ---
 			System.out.println("\n=== COMBATE ENCERRADO ===");
+			if (detailedTurnHudController != null) {
+				detailedTurnHudController.cancelarRevisaoPendente();
+			}
 			btnCombateState.setText("COMBATE: OFF");
 			btnCombateState.setStyle(
 					"-fx-background-color: #333; -fx-text-fill: gray; -fx-border-color: gray; -fx-font-weight: bold; -fx-font-size: 14px;");
@@ -521,6 +559,9 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 
 			// Limpa dados temporários
 			estadoCombate.setAtorAtual(null);
+			ocultarPainelTurno();
+			btnIniciarTurno.setText("INICIAR TURNO");
+			btnIniciarTurno.setDisable(true);
 		}
 
 		atualizarInterfaceTotal();
@@ -641,6 +682,8 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 	private void onIniciarTurnoClick() {
 		if (estadoCombate == null || !estadoCombate.isCombateAtivo())
 			return;
+		btnIniciarTurno.setDisable(true);
+		btnIniciarTurno.setText("TURNO EM ANDAMENTO");
 
 		for (Personagem p : estadoCombate.getCombatentes()) {
 			if (p.getRaca() instanceof Humano) {
@@ -649,6 +692,8 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				if (humano.getEstadoAtual() == Humano.EstadoEmprestimo.PENDENTE_RESOLUCAO) {
 					// PAUSA TUDO E ABRE O POP-UP
 					abrirResolucaoEmprestimo(p, humano);
+					btnIniciarTurno.setText("CONTINUAR TURNO");
+					btnIniciarTurno.setDisable(false);
 					return; // NÃO AVANÇA O TURNO AINDA
 				}
 			}
@@ -735,26 +780,25 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 		// if (mapController != null) mapController.centralizarEm(ator); <- não apagar
 
 		try {
-			if (detailedTurnHudStage == null) {
+			if (detailedTurnHudRoot == null) {
 				FXMLLoader loader = new FXMLLoader(
 						getClass().getResource("/br/com/dantesrpg/view/DetailedTurnHUD.fxml"));
 				if (loader.getLocation() == null)
 					throw new IOException("DetailedTurnHUD.fxml não encontrado");
-				Parent detailedTurnHudRoot = loader.load();
+				detailedTurnHudRoot = loader.load();
 				aplicarTemaEmRaiz(detailedTurnHudRoot);
 				detailedTurnHudController = loader.getController();
-				detailedTurnHudStage = new Stage();
-				Window ownerWindow = rootPane.getScene() != null ? rootPane.getScene().getWindow() : null;
-				if (ownerWindow != null)
-					detailedTurnHudStage.initOwner(ownerWindow);
-				detailedTurnHudStage.setResizable(true);
-				detailedTurnHudStage.setMinWidth(1060);
-				detailedTurnHudStage.setMinHeight(600);
-				detailedTurnHudStage.setScene(new Scene(detailedTurnHudRoot));
+				turnDockContent.getChildren().setAll(detailedTurnHudRoot);
 			}
-			detailedTurnHudStage.setTitle("Ações Detalhadas de " + ator.getNome());
 			detailedTurnHudController.setAtor(ator, this);
-			detailedTurnHudStage.show();
+			if (detailedTurnHudStage != null && detailedTurnHudStage.getScene() != null) {
+				detailedTurnHudStage.setTitle("Fluxo do Turno — " + ator.getNome());
+				detailedTurnHudStage.show();
+				detailedTurnHudStage.toFront();
+			} else {
+				turnDockHost.setVisible(true);
+				turnDockHost.setManaged(true);
+			}
 		} catch (Exception e) {
 			System.err.println("Erro crítico ao carregar/mostrar DetailedTurnHUD.fxml:");
 			e.printStackTrace();
@@ -988,6 +1032,163 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				detailedTurnHudStage.show();
 				detailedTurnHudStage.toFront();
 			}
+		}
+	}
+
+	public void confirmarPassarVezPorAtalho() {
+		if (estadoCombate == null || !estadoCombate.isCombateAtivo()
+				|| estadoCombate.getAtorAtual() == null) {
+			return;
+		}
+		if (detailedTurnHudController != null && detailedTurnHudController.isRevisaoAtiva()) {
+			mostrarFalhaPreparacaoAcao("Volte da revisão atual antes de passar a vez.");
+			return;
+		}
+		Personagem ator = estadoCombate.getAtorAtual();
+		javafx.scene.control.Alert alerta = new javafx.scene.control.Alert(
+				javafx.scene.control.Alert.AlertType.CONFIRMATION,
+				"Encerrar a ação de " + ator.getNome() + " e passar a vez?",
+				javafx.scene.control.ButtonType.CANCEL, javafx.scene.control.ButtonType.OK);
+		alerta.setHeaderText("Passar a vez");
+		if (alerta.showAndWait().orElse(javafx.scene.control.ButtonType.CANCEL)
+				== javafx.scene.control.ButtonType.OK) {
+			resolverAcaoPassarVez(new AcaoMestreInput(ator, new ArrayList<>(), (Habilidade) null));
+		}
+	}
+
+	private boolean cancelarSelecaoTaticaAtual() {
+		if (!isSelecaoTaticaAtiva()) {
+			return false;
+		}
+		forEachMap(MapController::sairModoSelecao);
+		if (detailedTurnHudController != null) {
+			detailedTurnHudController.notificarSelecaoCancelada();
+		}
+		if (detailedTurnHudStage != null && detailedTurnHudStage.getScene() != null) {
+			detailedTurnHudStage.show();
+			detailedTurnHudStage.toFront();
+		}
+		return true;
+	}
+
+	private boolean isSelecaoTaticaAtiva() {
+		return (embeddedMapController != null && embeddedMapController.isModoSelecaoAlvo())
+				|| (mapController != null && mapController.isModoSelecaoAlvo());
+	}
+
+	private void prepararBotaoProximoTurno(Personagem proximo) {
+		if (btnIniciarTurno == null || estadoCombate == null || !estadoCombate.isCombateAtivo()) {
+			return;
+		}
+		btnIniciarTurno.setText(proximo != null ? "INICIAR: " + proximo.getNome() : "PRÓXIMO TURNO");
+		btnIniciarTurno.setDisable(proximo == null);
+	}
+
+	@FXML
+	private void onDestacarPainelTurno() {
+		if (detailedTurnHudRoot == null) {
+			return;
+		}
+		turnDockContent.getChildren().remove(detailedTurnHudRoot);
+		turnDockHost.setVisible(false);
+		turnDockHost.setManaged(false);
+		if (detailedTurnHudStage == null) {
+			detailedTurnHudStage = new Stage();
+			Window ownerWindow = rootPane.getScene() != null ? rootPane.getScene().getWindow() : null;
+			if (ownerWindow != null) {
+				detailedTurnHudStage.initOwner(ownerWindow);
+			}
+			detailedTurnHudStage.setResizable(true);
+			detailedTurnHudStage.setMinWidth(480);
+			detailedTurnHudStage.setMinHeight(620);
+			detailedTurnHudStage.setOnCloseRequest(event -> {
+				event.consume();
+				acoplarPainelTurno();
+			});
+		}
+		detailedTurnHudStage.setScene(new Scene(detailedTurnHudRoot));
+		detailedTurnHudStage.setTitle("Fluxo do Turno");
+		detailedTurnHudStage.show();
+	}
+
+	private void acoplarPainelTurno() {
+		if (detailedTurnHudRoot == null) {
+			return;
+		}
+		if (detailedTurnHudStage != null) {
+			detailedTurnHudStage.hide();
+			detailedTurnHudStage.setScene(null);
+		}
+		turnDockContent.getChildren().setAll(detailedTurnHudRoot);
+		turnDockHost.setVisible(true);
+		turnDockHost.setManaged(true);
+	}
+
+	private void ocultarPainelTurno() {
+		if (detailedTurnHudStage != null && detailedTurnHudStage.isShowing()) {
+			detailedTurnHudStage.hide();
+		}
+		if (turnDockHost != null) {
+			turnDockHost.setVisible(false);
+			turnDockHost.setManaged(false);
+		}
+	}
+
+	private void abrirRevisaoPlano(PlanoAcao plano) {
+		combatAuditService.registrar(plano, "PREPARADO");
+		Runnable aoConcluir = () -> {
+			combatAuditService.registrar(plano, "APLICADO");
+			atualizarInterfaceTotal();
+			turnoCombateCoordinator.fecharHudEAvancar();
+		};
+		if (detailedTurnHudController != null) {
+			detailedTurnHudController.exibirRevisaoPlano(plano, aoConcluir);
+		} else {
+			janelasCombateCoordinator.abrirRevisaoPlano(plano, aoConcluir);
+		}
+	}
+
+	private void mostrarFalhaPreparacaoAcao(String mensagem) {
+		javafx.scene.control.Alert alerta = new javafx.scene.control.Alert(
+				javafx.scene.control.Alert.AlertType.WARNING,
+				mensagem != null ? mensagem : "A ação não pôde ser preparada.",
+				javafx.scene.control.ButtonType.OK);
+		alerta.setHeaderText("Revise a ação");
+		alerta.showAndWait();
+	}
+
+	public void registrarCancelamentoPlano(PlanoAcao plano) {
+		combatAuditService.registrar(plano, "CANCELADO");
+	}
+
+	@FXML
+	private void onAuditoriaCombate() {
+		TextArea texto = new TextArea(combatAuditService.formatarResumo());
+		texto.setEditable(false);
+		texto.setWrapText(false);
+		texto.setPrefColumnCount(90);
+		texto.setPrefRowCount(22);
+		ButtonType exportar = new ButtonType("Exportar JSON", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+		javafx.scene.control.Dialog<ButtonType> dialogo = new javafx.scene.control.Dialog<>();
+		dialogo.setTitle("Auditoria da sessão");
+		dialogo.getDialogPane().setContent(texto);
+		dialogo.getDialogPane().getButtonTypes().addAll(exportar, ButtonType.CLOSE);
+		if (dialogo.showAndWait().orElse(ButtonType.CLOSE) != exportar) {
+			return;
+		}
+		javafx.stage.FileChooser seletor = new javafx.stage.FileChooser();
+		seletor.setTitle("Exportar auditoria de combate");
+		seletor.setInitialFileName("auditoria-combate.json");
+		seletor.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("JSON", "*.json"));
+		File destino = seletor.showSaveDialog(rootPane.getScene().getWindow());
+		if (destino == null) {
+			return;
+		}
+		try {
+			combatAuditService.exportar(destino.toPath());
+		} catch (IOException e) {
+			new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR,
+					"Não foi possível exportar a auditoria: " + e.getMessage()).showAndWait();
 		}
 	}
 

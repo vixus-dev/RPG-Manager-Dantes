@@ -6,6 +6,7 @@ import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.habilidades.classe.BashStrike;
 import br.com.dantesrpg.model.util.DamageEvent;
 import br.com.dantesrpg.model.enums.TipoAcao;
+import br.com.dantesrpg.model.combat.PlanoAcao;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -30,12 +31,18 @@ public class DamageResolutionController {
 	@FXML
 	private Button btnConfirmar;
 	@FXML
+	private Button btnCancelar;
+	@FXML
 	private CheckBox cbContraAtaqueUnico;
 
 	private GridPane damageGrid;
 	private Personagem atacante;
 	private Habilidade habilidade;
 	private EstadoCombate estado;
+	private PlanoAcao planoAcao;
+	private Runnable aoConcluir;
+	private Runnable aoCancelar;
+	private boolean fecharJanelaAoConcluir = true;
 	private List<DamageTargetRow> linhasDeDano = new ArrayList<>();
 
 	// --- CONTRA-ATAQUE ---
@@ -125,14 +132,49 @@ public class DamageResolutionController {
 				checkBoxesContraAtaque.put(alvo, cbContra);
 
 				// A linha compacta abaixo mantém o checkbox junto do nome do alvo.
-				DamageTargetRow linha = new DamageTargetRow(alvo, eventos, cbContra);
+				DamageTargetRow linha = new DamageTargetRow(alvo, eventos, cbContra, row);
 				adicionarLinha(linha, row);
 			} else {
 				this.alvoUnico = alvo;
-				DamageTargetRow linha = new DamageTargetRow(alvo, eventos, null);
+				DamageTargetRow linha = new DamageTargetRow(alvo, eventos, null, row);
 				adicionarLinha(linha, row);
 			}
 			row++;
+		}
+	}
+
+	public void setupResolution(PlanoAcao plano, EstadoCombate estadoCombate) {
+		this.planoAcao = plano;
+		setupResolution(plano.getAtor(), plano.getHabilidade(), plano.getDanos(), estadoCombate);
+		lblTituloHabilidade.setText("Revisão: " + plano.getNomeAcao()
+				+ "  •  " + plano.getCustoTU() + " TU"
+				+ (plano.getCustoMana() > 0 ? "  •  " + plano.getCustoMana() + " MP" : ""));
+		btnConfirmar.setText("APLICAR AÇÃO");
+	}
+
+	public void setAoConcluir(Runnable aoConcluir) {
+		this.aoConcluir = aoConcluir;
+	}
+
+	public void setAoCancelar(Runnable aoCancelar) {
+		this.aoCancelar = aoCancelar;
+	}
+
+	public void setEmbutido(boolean embutido) {
+		this.fecharJanelaAoConcluir = !embutido;
+	}
+
+	@FXML
+	private void onCancelarAction() {
+		if (planoAcao != null) {
+			planoAcao.cancelar();
+		}
+		if (aoCancelar != null) {
+			aoCancelar.run();
+		}
+		if (fecharJanelaAoConcluir
+				&& btnCancelar.getScene().getWindow() instanceof javafx.stage.Stage stage) {
+			stage.hide();
 		}
 	}
 
@@ -173,15 +215,39 @@ public class DamageResolutionController {
 
 	@FXML
 	private void onConfirmarAction() {
+		for (DamageTargetRow linha : linhasDeDano) {
+			if (!linha.validarReacao()) {
+				Alert alerta = new Alert(Alert.AlertType.WARNING,
+						"Informe um valor inteiro para toda reação diferente de Nada.", ButtonType.OK);
+				alerta.setHeaderText("Fila de reações incompleta");
+				alerta.showAndWait();
+				return;
+			}
+		}
+		if (planoAcao != null) {
+			try {
+				planoAcao.confirmar();
+			} catch (IllegalStateException e) {
+				Alert alerta = new Alert(Alert.AlertType.WARNING, e.getMessage(), ButtonType.OK);
+				alerta.setHeaderText("A prévia precisa ser recalculada");
+				alerta.showAndWait();
+				return;
+			}
+		}
 		// Confirma consumo de munição que foi adiado até este momento
-		if (mainController != null) {
+		if (mainController != null && planoAcao == null) {
 			mainController.getCombatManager().confirmarMunicaoPendente();
 		}
 
 		// Aplica os danos
 		double danoTotalCausado = 0;
+		Map<String, Double> danoResolvidoPorAlvo = new LinkedHashMap<>();
+		Map<String, String> reacoesResolvidas = new LinkedHashMap<>();
 		for (DamageTargetRow linha : linhasDeDano) {
-			danoTotalCausado += linha.aplicarDanos();
+			double danoResolvido = linha.aplicarDanos();
+			danoTotalCausado += danoResolvido;
+			danoResolvidoPorAlvo.merge(linha.getNomeAlvo(), danoResolvido, Double::sum);
+			reacoesResolvidas.put(linha.getNomeAlvo(), linha.descreverReacao());
 		}
 
 		// Hook: Bash Strike — retorno de dano ao atacante
@@ -200,6 +266,10 @@ public class DamageResolutionController {
 		} else {
 			filaFinal.addAll(filaContraAtaque);
 		}
+		if (planoAcao != null) {
+			planoAcao.registrarResultado(reacoesResolvidas, danoResolvidoPorAlvo,
+					filaFinal.stream().map(Personagem::getNome).toList());
+		}
 
 		if (!filaFinal.isEmpty() && mainController != null && estado != null) {
 			mainController.getCombatManager().processarContraAtaques(filaFinal, estado);
@@ -210,7 +280,21 @@ public class DamageResolutionController {
 			mainController.atualizarInterfaceTotal();
 		}
 
-		btnConfirmar.getScene().getWindow().hide();
+		if (aoConcluir != null) {
+			aoConcluir.run();
+		}
+		if (fecharJanelaAoConcluir
+				&& btnConfirmar.getScene().getWindow() instanceof javafx.stage.Stage stage) {
+			stage.hide();
+		}
+	}
+
+	public void confirmarPorAtalho() {
+		onConfirmarAction();
+	}
+
+	public void cancelarPorAtalho() {
+		onCancelarAction();
 	}
 
 	// --- LINHA COMPACTA POR ALVO ---
@@ -227,14 +311,17 @@ public class DamageResolutionController {
 		private final VBox alvoNode = new VBox(2);
 		private final VBox sliderNode = new VBox(2);
 
-		DamageTargetRow(Personagem alvo, List<DamageEvent> eventos, CheckBox checkboxContraAtaque) {
+		private final int ordem;
+
+		DamageTargetRow(Personagem alvo, List<DamageEvent> eventos, CheckBox checkboxContraAtaque, int ordem) {
 			this.alvo = alvo;
 			this.eventos = eventos != null ? eventos : List.of();
+			this.ordem = ordem;
 			configurarInterface(checkboxContraAtaque);
 		}
 
 		private void configurarInterface(CheckBox checkboxContraAtaque) {
-			Label lblNome = new Label(alvo.getNome());
+			Label lblNome = new Label("#" + ordem + "  " + alvo.getNome());
 			lblNome.setTextFill(Color.WHITE);
 			lblNome.setFont(Font.font("System", FontWeight.BOLD, 13));
 			alvoNode.setAlignment(Pos.CENTER_LEFT);
@@ -282,6 +369,19 @@ public class DamageResolutionController {
 
 		Node getAlvoNode() {
 			return alvoNode;
+		}
+
+		String getNomeAlvo() {
+			return alvo.getNome();
+		}
+
+		String descreverReacao() {
+			String reacao = cmbReacao.getValue();
+			if ("Nada".equals(reacao)) {
+				return "Nada";
+			}
+			return reacao + " (dado " + obterValorDado() + ", "
+					+ obterQuantidadeTicksAfetados() + "/" + eventos.size() + " ticks)";
 		}
 
 		Node getQuantidadeTicksNode() {
@@ -341,6 +441,11 @@ public class DamageResolutionController {
 				return 0;
 			}
 			return Integer.parseInt(texto);
+		}
+
+		private boolean validarReacao() {
+			return "Nada".equals(cmbReacao.getValue())
+					|| (txtInputDado.getText() != null && txtInputDado.getText().matches("\\d+"));
 		}
 
 		private double obterBonusMantoDivino() {
