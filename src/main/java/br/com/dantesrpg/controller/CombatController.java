@@ -748,8 +748,8 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 				if (ownerWindow != null)
 					detailedTurnHudStage.initOwner(ownerWindow);
 				detailedTurnHudStage.setResizable(true);
-				detailedTurnHudStage.setMinWidth(1060);
-				detailedTurnHudStage.setMinHeight(600);
+				detailedTurnHudStage.setMinWidth(1100);
+				detailedTurnHudStage.setMinHeight(640);
 				detailedTurnHudStage.setScene(new Scene(detailedTurnHudRoot));
 			}
 			detailedTurnHudStage.setTitle("Ações Detalhadas de " + ator.getNome());
