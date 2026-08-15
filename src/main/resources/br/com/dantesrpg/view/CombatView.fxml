@@ -54,7 +54,9 @@
    </bottom>
 
    <center>
-      <BorderPane fx:id="contextPane" BorderPane.alignment="CENTER">
+      <HBox fx:id="combatWorkspace" minWidth="0.0" minHeight="0.0">
+       <children>
+        <BorderPane fx:id="contextPane" minWidth="0.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
 
          <top>
              <HBox fx:id="timelineBar" alignment="CENTER_LEFT" prefHeight="80.0" spacing="10.0" styleClass="timeline-bar">
@@ -105,6 +107,19 @@
                </children>
             </StackPane>
          </center>
-      </BorderPane>
+        </BorderPane>
+        <VBox fx:id="turnDockHost" visible="false" managed="false" minWidth="430.0" prefWidth="500.0"
+              maxWidth="620.0" styleClass="turn-dock-host">
+           <children>
+              <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="turn-dock-header">
+                 <Label text="Fluxo do Turno" styleClass="label-header" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                 <Button text="Auditoria" onAction="#onAuditoriaCombate" styleClass="hud-tactical-button"/>
+                 <Button text="Destacar" onAction="#onDestacarPainelTurno" styleClass="hud-tactical-button"/>
+              </HBox>
+              <StackPane fx:id="turnDockContent" minWidth="0.0" minHeight="0.0" VBox.vgrow="ALWAYS"/>
+           </children>
+        </VBox>
+       </children>
+      </HBox>
    </center>
 </BorderPane>

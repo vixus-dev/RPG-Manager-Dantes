@@ -17,9 +17,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox fx:id="detailedTurnHudRoot" spacing="0.0" prefWidth="1242.0" prefHeight="650.0" styleClass="turn-hud-root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.DetailedTurnHUDController">
+<ScrollPane fx:id="detailedTurnHudRoot" fitToWidth="true" prefWidth="500.0" prefHeight="720.0"
+            styleClass="turn-hud-root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.dantesrpg.controller.DetailedTurnHUDController">
+ <content>
+  <VBox spacing="0.0" maxWidth="Infinity">
+    <VBox spacing="4.0" styleClass="turn-flow-header">
+        <Label fx:id="lblEtapaFluxo" text="AÇÃO" styleClass="label-header, hud-title-primary"/>
+        <Label fx:id="lblInstrucaoFluxo" text="Escolha a ação do personagem." wrapText="true" styleClass="hud-text-muted"/>
+    </VBox>
     
-    <VBox fx:id="detailsColumn" spacing="10.0" prefWidth="322.0" styleClass="turn-hud-column, turn-hud-sidebar">
+    <VBox fx:id="detailsColumn" spacing="10.0" prefWidth="480.0" maxWidth="Infinity" styleClass="turn-hud-column, turn-hud-sidebar">
         
         <Label fx:id="labelNomeAtor" styleClass="label-header, hud-title-primary" text="Nome do Personagem"/>
         <Label fx:id="labelClasseRaca" text="Raça / Classe" styleClass="hud-text-muted"/>
@@ -70,7 +78,7 @@
         </ScrollPane>
     </VBox>
 
-    <VBox fx:id="actionSelectorColumn" spacing="10.0" prefWidth="460.0" styleClass="turn-hud-column">
+    <VBox fx:id="actionSelectorColumn" spacing="10.0" prefWidth="480.0" maxWidth="Infinity" styleClass="turn-hud-column">
         <Label text="Painel de Comando" styleClass="label-header"/>
         
         <HBox spacing="5.0">
@@ -99,7 +107,7 @@
         </HBox>
     </VBox>
 
-    <VBox fx:id="actionDetailsColumn" spacing="15.0" prefWidth="460.0" styleClass="turn-hud-column, turn-hud-details-column" visible="false" managed="false">
+    <VBox fx:id="actionDetailsColumn" spacing="15.0" prefWidth="480.0" maxWidth="Infinity" styleClass="turn-hud-column, turn-hud-details-column" visible="false" managed="false">
 
         <Label fx:id="lblActionTitle" text="Ataque Básico" styleClass="label-header, hud-title-primary" wrapText="true"/>
         <Label fx:id="lblActionDesc" text="Descrição..." wrapText="true" styleClass="hud-text-muted, hud-description"/>
@@ -164,7 +172,10 @@
         
     </VBox>
 
-    <VBox fx:id="diceRollColumn" spacing="12.0" prefWidth="253.0" styleClass="turn-hud-column, turn-hud-details-column"
+    <VBox fx:id="inlineResolutionContainer" spacing="8.0" prefWidth="480.0" maxWidth="Infinity"
+          visible="false" managed="false" styleClass="turn-hud-column, turn-hud-details-column"/>
+
+    <VBox fx:id="diceRollColumn" spacing="12.0" prefWidth="480.0" maxWidth="Infinity" styleClass="turn-hud-column, turn-hud-details-column"
           visible="false" managed="false">
 
         <Label text="Rolagem" styleClass="label-header, hud-title-primary"/>
@@ -189,4 +200,6 @@
 
     </VBox>
 
-</HBox>
+  </VBox>
+ </content>
+</ScrollPane>
