@@ -19,6 +19,7 @@ import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.util.DamageEvent;
+import br.com.dantesrpg.model.combat.PlanoAcao;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -136,6 +137,43 @@ public class JanelasCombateCoordinator {
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("Erro ao abrir janela de resolução de dano.");
+		}
+	}
+
+	public void abrirRevisaoPlano(PlanoAcao plano, Runnable aoConcluir) {
+		try {
+			FXMLLoader loader = new FXMLLoader(
+					controller.getClass().getResource("/br/com/dantesrpg/view/DamageResolutionView.fxml"));
+			Parent root = loader.load();
+			controller.aplicarTemaEmRaiz(root);
+
+			DamageResolutionController resolutionController = loader.getController();
+			resolutionController.setMainController(controller);
+			resolutionController.setupResolution(plano, estadoSupplier.get());
+			resolutionController.setAoConcluir(aoConcluir);
+
+			Stage stage = new Stage();
+			stage.setTitle("Revisão da Ação");
+			stage.setScene(new Scene(root));
+			stage.setWidth(940);
+			stage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight() * 0.62, 600));
+			stage.setMinWidth(780);
+			stage.setMinHeight(320);
+			stage.initModality(Modality.WINDOW_MODAL);
+			Stage hud = detailedTurnHudStageSupplier.get();
+			if (hud != null) {
+				stage.initOwner(hud);
+			}
+			stage.setOnHidden(e -> {
+				if (plano.getStatus() == PlanoAcao.Status.PENDENTE) {
+					plano.cancelar();
+				}
+			});
+			stage.show();
+		} catch (IOException e) {
+			plano.cancelar();
+			e.printStackTrace();
+			System.err.println("Erro ao abrir a revisão transacional da ação.");
 		}
 	}
 

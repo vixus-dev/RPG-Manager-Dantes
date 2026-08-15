@@ -6,6 +6,7 @@ import java.util.Map;
 
 import br.com.dantesrpg.model.enums.ModoAtaque;
 import br.com.dantesrpg.model.map.CoordenadaMapa;
+import br.com.dantesrpg.model.combat.OrigemRolagem;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class AcaoMestreInput {
 	private String opcaoEscolhida;
 	private List<AreaSelecionada> areasSelecionadas = new ArrayList<>();
 	private Map<String, Integer> resultadosDados;
+	private Map<String, OrigemRolagem> origensDados = new HashMap<>();
 	private Boolean criticoManual = null; // null = auto, true = crit forçado, false = sem crit
 
 	public AcaoMestreInput(Personagem ator, List<Personagem> alvos, Habilidade habilidade) {
@@ -87,6 +89,20 @@ public class AcaoMestreInput {
 
 	public int getResultadoDado(String nomeDado) {
 		return this.resultadosDados.getOrDefault(nomeDado, -1);
+	}
+
+	public Map<String, Integer> getResultadosDados() {
+		return Map.copyOf(this.resultadosDados);
+	}
+
+	public void definirOrigemResultadoDado(String nomeDado, OrigemRolagem origem) {
+		if (nomeDado != null && origem != null) {
+			origensDados.put(nomeDado, origem);
+		}
+	}
+
+	public Map<String, OrigemRolagem> getOrigensDados() {
+		return Map.copyOf(origensDados);
 	}
 
 	public Item getItemSendoUsado() {

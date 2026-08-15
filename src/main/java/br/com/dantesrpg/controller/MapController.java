@@ -2132,6 +2132,10 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		atualizarBotaoPularSquad();
 	}
 
+	public boolean isModoSelecaoAlvo() {
+		return modoSelecaoAlvo || modoSelecaoMultipla || modoSelecaoMultiAoE;
+	}
+
 	public boolean isModoMovimentoLivre() {
 		return this.modoMovimentoLivre;
 	}

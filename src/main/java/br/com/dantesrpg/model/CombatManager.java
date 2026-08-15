@@ -8,6 +8,7 @@ import br.com.dantesrpg.model.combat.DamageCalculator;
 import br.com.dantesrpg.model.combat.DomainManager;
 import br.com.dantesrpg.model.combat.EffectProcessor;
 import br.com.dantesrpg.model.combat.KnockbackProcessor;
+import br.com.dantesrpg.model.combat.PlanoAcao;
 import br.com.dantesrpg.model.enums.Atributo;
 import br.com.dantesrpg.model.enums.ModoAtaque;
 import br.com.dantesrpg.model.enums.TipoAcao;
@@ -52,6 +53,7 @@ public class CombatManager {
 	private Personagem atorAtualAnterior;
 	private TipoAcao ultimoTipoAcao = TipoAcao.MOVIMENTO;
 	private Runnable pendingMunicaoConsumption;
+	private String ultimaFalhaPreparacaoAcao;
 
 	// Subsistemas extraídos
 	private final DamageCalculator damageCalculator;
@@ -852,6 +854,187 @@ public class CombatManager {
 	}
 
 	// ========== RESOLUÇÃO DE AÇÃO ==========
+
+	/**
+	 * Prepara ataques básicos e habilidades de dano padrão sem alterar o estado do
+	 * combate. Ações com pipelines exclusivos retornam vazio e continuam usando o
+	 * adaptador clássico durante a migração.
+	 */
+	public Optional<PlanoAcao> prepararAcaoTransacional(AcaoMestreInput input, EstadoCombate estado) {
+		ultimaFalhaPreparacaoAcao = null;
+		if (input == null || input.getAtor() == null || estado == null || !estado.isCombateAtivo()
+				|| input.getAtor() != estado.getAtorAtual()) {
+			return falharPreparacao("O ator atual ou o estado do combate mudou.");
+		}
+
+		Personagem ator = input.getAtor();
+		Habilidade habilidade = input.getHabilidade();
+		if (!isAcaoTransacionalSuportada(ator, habilidade)) {
+			return Optional.empty();
+		}
+		if (habilidade != null && ator.isHabilidadeBloqueadaPorCoral(habilidade.getNome())) {
+			return falharPreparacao("O coral impede o uso de " + habilidade.getNome() + ".");
+		}
+		if (habilidade != null && ator.getEfeitosAtivos().containsKey("CD:" + habilidade.getNome())) {
+			return falharPreparacao(habilidade.getNome() + " está em cooldown.");
+		}
+		if (habilidade != null) {
+			String motivo = habilidade.getMotivoBloqueio(ator, input.getAlvos(), estado);
+			if (motivo != null) {
+				return falharPreparacao(motivo);
+			}
+		}
+
+		List<Personagem> alvos = input.getAlvos();
+		if (alvos == null) {
+			return falharPreparacao("A seleção de alvos está ausente.");
+		}
+		if (habilidade != null && (habilidade.getTipoAlvo() == TipoAlvo.AREA
+				|| habilidade.getTipoAlvo() == TipoAlvo.EQUIPE)) {
+			alvos.clear();
+			alvos.addAll(encontrarAlvosAoRedorDoAtor(ator, habilidade, estado));
+		}
+		if (alvos == null || alvos.isEmpty()) {
+			return falharPreparacao("Selecione ao menos um alvo válido.");
+		}
+
+		TipoAcao tipo = habilidade == null ? TipoAcao.ATAQUE_BASICO : TipoAcao.HABILIDADE;
+		List<Arma> armas = input.getArmasSelecionadas();
+		if (armas == null || armas.isEmpty()) {
+			return falharPreparacao(ator.getNome() + " está desarmado.");
+		}
+		Arma armaPrincipal = armas.get(0);
+		int rolagem = input.getResultadoDado("DADO_ATRIBUTO");
+		if (rolagem < 0) {
+			return falharPreparacao("Informe o dado de atributo.");
+		}
+
+		int custoManaBase = habilidade != null ? habilidade.getCustoMana() : 0;
+		int custoTUBase = habilidade != null
+				? habilidade.getCustoTUModificado(ator)
+				: calcularCustoTUAtaqueBasico(armas);
+		if (input.getModoAtaque() == ModoAtaque.FRACO) {
+			custoTUBase = (int) (custoTUBase * 0.80);
+		} else if (input.getModoAtaque() == ModoAtaque.FORTE) {
+			custoTUBase = (int) (custoTUBase * 1.20);
+		} else if (input.getModoAtaque() == ModoAtaque.CORONHADA) {
+			custoTUBase = (int) (custoTUBase * armaPrincipal.getCustoTUMultiplierAtaqueAlternativo());
+		}
+		if (habilidade != null && ator.getEfeitosAtivos().containsKey("ALL OUT PIRATE")) {
+			custoTUBase = (int) Math.ceil(custoTUBase * 0.70);
+		}
+		if (input.getTirosExtras() > 0) {
+			custoTUBase = (int) (custoTUBase * (1.0 + input.getTirosExtras() * 0.10));
+		}
+		if (br.com.dantesrpg.model.fantasmasnobres.GrandeRegente.temReservaAtiva(ator, input)) {
+			custoTUBase = (int) Math.round(custoTUBase * (1.0 + 0.05 * input.getMovimentoReservado()));
+		}
+
+		int custoManaFinal = calcularCustoManaFinal(ator, habilidade, custoManaBase);
+		if (custoManaFinal > ator.getManaAtual()) {
+			return falharPreparacao("Mana insuficiente para esta ação.");
+		}
+		int custoTUFinal = calcularCustoTUFinal(ator, custoTUBase, habilidade, tipo, estado);
+		custoTUFinal = (int) (custoTUFinal * ator.getMultiplicadorCustoTU());
+		boolean consumirJusticaDourada = ator.getEfeitosAtivos().containsKey("Justiça Dourada");
+		if (consumirJusticaDourada) {
+			custoTUFinal += 100;
+		}
+
+		DamageCalculator.PreviaDano previa = damageCalculator.prepararDanoPadrao(ator, armaPrincipal, rolagem,
+				alvos, habilidade != null ? habilidade.getMultiplicadorDeDano() : 1.0,
+				tipo, habilidade, estado, input);
+		if (previa == null || previa.getDanos().isEmpty()) {
+			return falharPreparacao("Não foi possível calcular dano para os alvos selecionados.");
+		}
+
+		String assinatura = criarAssinaturaAcao(ator, alvos);
+		final int manaAplicada = custoManaFinal;
+		final int tuAplicado = custoTUFinal;
+		final boolean removerJustica = consumirJusticaDourada;
+		Runnable confirmar = () -> {
+			this.lastInput = input;
+			if (br.com.dantesrpg.model.fantasmasnobres.GrandeRegente.temReservaAtiva(ator, input)) {
+				br.com.dantesrpg.model.fantasmasnobres.GrandeRegente.consumirMovimentoReservado(ator, input);
+			}
+			if (habilidade != null && (!ator.isClone() || habilidadePodeSerCopiadaPorClone(habilidade))) {
+				effectProcessor.aplicarEfeitosDaHabilidade(ator, habilidade, alvos, estado, this);
+				int cooldown = habilidade.getCooldownTU();
+				if (cooldown > 0) {
+					effectProcessor.aplicarEfeito(ator,
+							new Efeito("CD:" + habilidade.getNome(), TipoEfeito.DEBUFF, cooldown, null, 0, 0));
+				}
+			}
+			if (removerJustica) {
+				ator.removerEfeito("Justiça Dourada");
+			}
+			ator.setManaAtual(ator.getManaAtual() - manaAplicada);
+			ator.setContadorTU(ator.getContadorTU() + tuAplicado);
+			effectProcessor.chamarHookAcaoUsada(ator, tipo, estado);
+			if (habilidade != null) {
+				ator.setUltimaHabilidadeUsada(normalizarHabilidadeCopiavelParaClone(habilidade));
+			}
+			effectProcessor.verificarManaPassivaModoJustica(ator, estado);
+		};
+
+		return Optional.of(new PlanoAcao(input, tipo, habilidade, custoManaFinal, custoTUFinal,
+				previa, () -> estado.isCombateAtivo() && estado.getAtorAtual() == ator
+						&& assinatura.equals(criarAssinaturaAcao(ator, alvos)), confirmar));
+	}
+
+	private Optional<PlanoAcao> falharPreparacao(String mensagem) {
+		ultimaFalhaPreparacaoAcao = mensagem;
+		System.out.println(">>> AÇÃO BLOQUEADA: " + mensagem);
+		return Optional.empty();
+	}
+
+	public String getUltimaFalhaPreparacaoAcao() {
+		return ultimaFalhaPreparacaoAcao;
+	}
+
+	public boolean isAcaoTransacionalSuportada(Personagem ator, Habilidade habilidade) {
+		if (ator == null || ator.getEfeitosAtivos().containsKey("Domínio: Idle Death Gamble")) {
+			return false;
+		}
+		if (habilidade == null) {
+			return !ator.getEfeitosAtivos().containsKey("Restrição Celestial");
+		}
+		if (habilidade.getMultiplicadorDeDano() <= 0) {
+			return false;
+		}
+		String nome = habilidade.getNome();
+		return !("Fulgor Negro".equals(nome) || "Soco Sério".equals(nome) || "Caçada".equals(nome)
+				|| habilidade instanceof br.com.dantesrpg.model.habilidades.classe.DeadEye
+				|| habilidade instanceof DistortedSolo || habilidade instanceof WhaWhaSolo
+				|| habilidade instanceof PlainSolo);
+	}
+
+	private String criarAssinaturaAcao(Personagem ator, List<Personagem> alvos) {
+		StringBuilder assinatura = new StringBuilder();
+		adicionarAssinaturaPersonagem(assinatura, ator);
+		for (Personagem alvo : alvos) {
+			adicionarAssinaturaPersonagem(assinatura, alvo);
+		}
+		return assinatura.toString();
+	}
+
+	private void adicionarAssinaturaPersonagem(StringBuilder assinatura, Personagem personagem) {
+		assinatura.append(System.identityHashCode(personagem)).append('|')
+				.append(personagem.getVidaAtual()).append('|').append(personagem.getManaAtual()).append('|')
+				.append(personagem.getContadorTU()).append('|').append(personagem.getPosX()).append('|')
+				.append(personagem.getPosY()).append('|').append(personagem.getEscudoNormalAtual()).append('|')
+				.append(personagem.getEscudoSangueAtual()).append('|').append(personagem.getEscudoDivinoAtual()).append('|')
+				.append(personagem.getEscudoInfernalAtual()).append('|');
+		personagem.getEfeitosAtivos().entrySet().stream()
+				.sorted(Map.Entry.comparingByKey())
+				.forEach(entry -> assinatura.append(entry.getKey()).append(':')
+						.append(entry.getValue().getDuracaoTURestante()).append(':')
+						.append(entry.getValue().getStacks()).append(','));
+		assinatura.append('|');
+		personagem.getArmasEquipadas().forEach(arma -> assinatura.append(arma.getNome()).append(':')
+				.append(arma.getMunicaoAtual()).append(','));
+		assinatura.append(';');
+	}
 
 	public void resolverAcao(AcaoMestreInput input, EstadoCombate estado) {
 		this.lastInput = input;
