@@ -13,6 +13,7 @@ import br.com.dantesrpg.model.util.FileLoader;
 import atlantafx.base.theme.PrimerDark;
 
 public class Main extends Application {
+    private CombatController controller;
 
     @Override
     public void start(Stage primaryStage) {
@@ -36,7 +37,7 @@ public class Main extends Application {
                     TileRegistry.getInstance().load();
                     primaryStage.getIcons().add(new Image(FileLoader.carregarArquivo("/logoTrasnp.png")));
 
-                    CombatController controller = loader.getController();
+                    controller = loader.getController();
                     controller.inicializacaoTardia();
                 } catch (Exception e) {
                     System.err.println("Erro na inicialização tardia:");
@@ -47,6 +48,11 @@ public class Main extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void stop() {
+        if(controller!=null)controller.forEachMap(br.com.dantesrpg.controller.MapController::liberarRecursos);
     }
 
     public static void main(String[] args) {
