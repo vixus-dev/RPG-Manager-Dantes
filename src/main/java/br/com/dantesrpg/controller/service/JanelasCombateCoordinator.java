@@ -1,11 +1,9 @@
 package br.com.dantesrpg.controller.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import br.com.dantesrpg.controller.BestiarioController;
@@ -13,7 +11,6 @@ import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.controller.DamageResolutionController;
 import br.com.dantesrpg.controller.DiceRollPromptController;
 import br.com.dantesrpg.controller.GerenciadorCombateController;
-import br.com.dantesrpg.controller.MapController;
 import br.com.dantesrpg.model.CombatManager;
 import br.com.dantesrpg.model.EstadoCombate;
 import br.com.dantesrpg.model.Habilidade;
@@ -34,14 +31,9 @@ public class JanelasCombateCoordinator {
 	private final Supplier<Map<String, Map<String, Object>>> armorySupplier;
 	private final Supplier<Map<String, Map<String, Object>>> itempediaSupplier;
 	private final Supplier<Map<String, Map<String, Object>>> bestiarioSupplier;
-	private final Supplier<File> arquivoMapaAtualSupplier;
-	private final Consumer<MapController> mapControllerSetter;
-	private final Consumer<File> carregarMetadadosDoMapa;
 	private final Supplier<Stage> detailedTurnHudStageSupplier;
 
 	private final List<GerenciadorCombateController> gerenciadoresAtivos = new ArrayList<>();
-	private Stage mapStage;
-	private MapController mapController;
 	private Stage diceRollStage;
 	private DiceRollPromptController diceRollController;
 	private Stage bestiarioStage;
@@ -51,8 +43,7 @@ public class JanelasCombateCoordinator {
 			Supplier<CombatManager> combatManagerSupplier,
 			Supplier<Map<String, Map<String, Object>>> armorySupplier,
 			Supplier<Map<String, Map<String, Object>>> itempediaSupplier,
-			Supplier<Map<String, Map<String, Object>>> bestiarioSupplier, Supplier<File> arquivoMapaAtualSupplier,
-			Consumer<MapController> mapControllerSetter, Consumer<File> carregarMetadadosDoMapa,
+			Supplier<Map<String, Map<String, Object>>> bestiarioSupplier,
 			Supplier<Stage> detailedTurnHudStageSupplier) {
 		this.controller = controller;
 		this.estadoSupplier = estadoSupplier;
@@ -60,51 +51,7 @@ public class JanelasCombateCoordinator {
 		this.armorySupplier = armorySupplier;
 		this.itempediaSupplier = itempediaSupplier;
 		this.bestiarioSupplier = bestiarioSupplier;
-		this.arquivoMapaAtualSupplier = arquivoMapaAtualSupplier;
-		this.mapControllerSetter = mapControllerSetter;
-		this.carregarMetadadosDoMapa = carregarMetadadosDoMapa;
 		this.detailedTurnHudStageSupplier = detailedTurnHudStageSupplier;
-	}
-
-	public void abrirMapaExterno() {
-		try {
-			if (mapStage == null) {
-				FXMLLoader loader = new FXMLLoader(
-						controller.getClass().getResource("/br/com/dantesrpg/view/MapView.fxml"));
-				Parent mapRoot = loader.load();
-				controller.aplicarTemaEmRaiz(mapRoot);
-
-				mapController = loader.getController();
-				mapController.setMainController(controller);
-				mapControllerSetter.accept(mapController);
-
-				mapStage = new Stage();
-				mapStage.setTitle("Modo Combate");
-				mapStage.setScene(new Scene(mapRoot));
-				mapStage.setResizable(true);
-
-				sincronizarMapaExternoComMapaAtual();
-			}
-			mapStage.show();
-			mapStage.toFront();
-		} catch (Exception e) {
-			System.err.println("Erro crítico ao carregar MapView.fxml ou imagem do mapa:");
-			e.printStackTrace();
-		}
-	}
-
-	private void sincronizarMapaExternoComMapaAtual() {
-		File arquivoMapaAtual = arquivoMapaAtualSupplier.get();
-		if (arquivoMapaAtual == null || mapController == null) {
-			return;
-		}
-
-		mapController.carregarMapaDeImagem(arquivoMapaAtual);
-		carregarMetadadosDoMapa.accept(arquivoMapaAtual);
-		EstadoCombate estado = estadoSupplier.get();
-		if (estado != null) {
-			mapController.desenharPeoes(estado.getCombatentes());
-		}
 	}
 
 	public void abrirJanelaResolucao(Personagem atacante, List<Personagem> alvos, Habilidade habilidade,
