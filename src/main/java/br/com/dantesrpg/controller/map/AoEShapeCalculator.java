@@ -4,8 +4,8 @@ import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import br.com.dantesrpg.model.enums.TipoAlvo;
 import br.com.dantesrpg.model.map.Dominio;
-import javafx.scene.layout.Pane;
-import javafx.util.Pair;
+import br.com.dantesrpg.model.map.CoordenadaMapa;
+
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -19,18 +19,16 @@ import java.util.function.Supplier;
 public class AoEShapeCalculator {
 
 	private final boolean[][] paredesGrid;
-	private final Pane[][] celulasDoGrid;
 	private final int largura;
 	private final int altura;
 	private final BiFunction<Integer, Integer, Personagem> personagemLocator;
 	private final Supplier<List<Personagem>> combatentesSupplier;
 
-	public AoEShapeCalculator(boolean[][] paredesGrid, Pane[][] celulasDoGrid,
+	public AoEShapeCalculator(boolean[][] paredesGrid,
 			int largura, int altura,
 			BiFunction<Integer, Integer, Personagem> personagemLocator,
 			Supplier<List<Personagem>> combatentesSupplier) {
 		this.paredesGrid = paredesGrid;
-		this.celulasDoGrid = celulasDoGrid;
 		this.largura = largura;
 		this.altura = altura;
 		this.personagemLocator = personagemLocator;
@@ -43,24 +41,24 @@ public class AoEShapeCalculator {
 	 * Calcula as células alcançáveis via movimento (BFS ortogonal, respeita domínios).
 	 * Não aplica CSS — o chamador é responsável por estilizar as células retornadas.
 	 */
-	public Set<Pane> calcularCelulasMovimento(int startX, int startY, int maxDist,
+	public Set<CoordenadaMapa> calcularCelulasMovimento(int startX, int startY, int maxDist,
 			Map<String, Dominio> dominiosAtivos) {
-		Set<Pane> resultado = new HashSet<>();
-		if (maxDist <= 0) return resultado;
+		Set<CoordenadaMapa> resultado = new HashSet<>();
+		if (maxDist <= 0 || !dentroDoGrid(startX, startY)) return resultado;
 
-		Queue<Pair<Integer, Integer>> fila = new LinkedList<>();
+		Queue<CoordenadaMapa> fila = new LinkedList<>();
 		int[][] distancias = new int[largura][altura];
 		for (int i = 0; i < largura; i++) java.util.Arrays.fill(distancias[i], -1);
 
-		fila.add(new Pair<>(startX, startY));
+		fila.add(new CoordenadaMapa(startX, startY));
 		distancias[startX][startY] = 0;
 		int[] dx = {0, 0, 1, -1};
 		int[] dy = {1, -1, 0, 0};
 
 		while (!fila.isEmpty()) {
-			Pair<Integer, Integer> atual = fila.poll();
-			int x = atual.getKey();
-			int y = atual.getValue();
+			CoordenadaMapa atual = fila.poll();
+			int x = atual.x();
+			int y = atual.y();
 			if (distancias[x][y] + 1 > maxDist) continue;
 
 			for (int i = 0; i < 4; i++) {
@@ -79,8 +77,8 @@ public class AoEShapeCalculator {
 
 				if (!paredesGrid[novoX][novoY] && distancias[novoX][novoY] == -1) {
 					distancias[novoX][novoY] = distancias[x][y] + 1;
-					fila.add(new Pair<>(novoX, novoY));
-					resultado.add(celulasDoGrid[novoX][novoY]);
+					fila.add(new CoordenadaMapa(novoX, novoY));
+					resultado.add(new CoordenadaMapa(novoX, novoY));
 				}
 			}
 		}
@@ -93,9 +91,9 @@ public class AoEShapeCalculator {
 	 * Calcula as células atacáveis com linha de visão (Chebyshev + Bresenham).
 	 * Não aplica CSS — o chamador é responsável por estilizar as células retornadas.
 	 */
-	public Set<Pane> calcularCelulasAtaque(int startX, int startY, int maxDist) {
-		Set<Pane> resultado = new HashSet<>();
-		if (maxDist <= 0) return resultado;
+	public Set<CoordenadaMapa> calcularCelulasAtaque(int startX, int startY, int maxDist) {
+		Set<CoordenadaMapa> resultado = new HashSet<>();
+		if (maxDist <= 0 || !dentroDoGrid(startX, startY)) return resultado;
 
 		for (int y = startY - maxDist; y <= startY + maxDist; y++) {
 			for (int x = startX - maxDist; x <= startX + maxDist; x++) {
@@ -116,7 +114,7 @@ public class AoEShapeCalculator {
 				if (dist > maxDist) continue;
 
 				if (temLinhaDeVisao(startX, startY, x, y)) {
-					resultado.add(celulasDoGrid[x][y]);
+					resultado.add(new CoordenadaMapa(x, y));
 				}
 			}
 		}
@@ -127,10 +125,36 @@ public class AoEShapeCalculator {
 
 	public List<Personagem> encontrarAlvosNaForma(int centroX, int centroY, Habilidade habilidade, Personagem ator) {
 		List<Personagem> alvosEncontrados = new ArrayList<>();
+		Set<CoordenadaMapa> celulasDaForma = calcularForma(centroX, centroY, habilidade, ator);
+
+		for (Personagem p : combatentesSupplier.get()) {
+			if (p == null) continue;
+			boolean alvoValido = p.isAtivoNoCombate();
+			if (!alvoValido && p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
+				alvoValido = ((br.com.dantesrpg.model.elementos.ObjetoDestrutivel) p).isIntacto();
+			}
+			if (!alvoValido) continue;
+
+			if (personagemIntersecaForma(p, celulasDaForma)) {
+				boolean isAliado = p.getFaccao().equals(ator.getFaccao());
+				if (p == ator && !habilidade.afetaSiMesmo()) continue;
+				if (isAliado && !habilidade.afetaAliados()) continue;
+				if (!isAliado && !habilidade.afetaInimigos() && !p.getFaccao().equals("OBJETO")) continue;
+				if (ator.isClone() && p.isClone()) {
+					if (ator.getCriador() == p.getCriador()) continue;
+				}
+				alvosEncontrados.add(p);
+			}
+		}
+		return alvosEncontrados;
+	}
+
+	public Set<CoordenadaMapa> calcularForma(int centroX, int centroY, Habilidade habilidade, Personagem ator) {
+		if (habilidade == null || ator == null) return Set.of();
 		boolean atravessaParedes = habilidade.ignoraParedes();
 		TipoAlvo tipo = habilidade.getTipoAlvoEfetivo();
 
-		Set<Pane> celulasDaForma = new HashSet<>();
+		Set<CoordenadaMapa> celulasDaForma = new HashSet<>();
 
 		if (tipo == TipoAlvo.AREA) {
 			int raio = (habilidade.getTamanhoArea()) / 2;
@@ -253,31 +277,14 @@ public class AoEShapeCalculator {
 			}
 		}
 
-		for (Personagem p : combatentesSupplier.get()) {
-			boolean alvoValido = p.isAtivoNoCombate();
-			if (!alvoValido && p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
-				alvoValido = ((br.com.dantesrpg.model.elementos.ObjetoDestrutivel) p).isIntacto();
-			}
-			if (!alvoValido) continue;
-
-			if (personagemIntersecaForma(p, celulasDaForma)) {
-				boolean isAliado = p.getFaccao().equals(ator.getFaccao());
-				if (p == ator && !habilidade.afetaSiMesmo()) continue;
-				if (isAliado && !habilidade.afetaAliados()) continue;
-				if (!isAliado && !habilidade.afetaInimigos() && !p.getFaccao().equals("OBJETO")) continue;
-				if (ator.isClone() && p.isClone()) {
-					if (ator.getCriador() == p.getCriador()) continue;
-				}
-				alvosEncontrados.add(p);
-			}
-		}
-		return alvosEncontrados;
+		return celulasDaForma;
 	}
 
 	// ========== UTILITÁRIOS ==========
 
 	/** Bresenham line-of-sight check. */
 	public boolean temLinhaDeVisao(int x0, int y0, int x1, int y1) {
+		if (!dentroDoGrid(x0, y0) || !dentroDoGrid(x1, y1)) return false;
 		int dx = Math.abs(x1 - x0);
 		int dy = -Math.abs(y1 - y0);
 		int sx = (x0 < x1) ? 1 : -1;
@@ -309,20 +316,20 @@ public class AoEShapeCalculator {
 
 	/** BFS distance through walkable terrain (-1 se inalcançável ou parede). */
 	public int calcularDistancia(int startX, int startY, int endX, int endY) {
-		if (paredesGrid[endX][endY]) return -1;
+		if (!dentroDoGrid(startX, startY) || !dentroDoGrid(endX, endY) || paredesGrid[endX][endY]) return -1;
 
-		Queue<Pair<Integer, Integer>> fila = new LinkedList<>();
+		Queue<CoordenadaMapa> fila = new LinkedList<>();
 		int[][] distancias = new int[largura][altura];
 		for (int i = 0; i < largura; i++) java.util.Arrays.fill(distancias[i], -1);
-		fila.add(new Pair<>(startX, startY));
+		fila.add(new CoordenadaMapa(startX, startY));
 		distancias[startX][startY] = 0;
 		int[] dx = {0, 0, 1, -1};
 		int[] dy = {1, -1, 0, 0};
 
 		while (!fila.isEmpty()) {
-			Pair<Integer, Integer> atual = fila.poll();
-			int x = atual.getKey();
-			int y = atual.getValue();
+			CoordenadaMapa atual = fila.poll();
+			int x = atual.x();
+			int y = atual.y();
 			if (x == endX && y == endY) return distancias[x][y];
 
 			for (int i = 0; i < 4; i++) {
@@ -331,7 +338,7 @@ public class AoEShapeCalculator {
 				if (novoX >= 0 && novoX < largura && novoY >= 0 && novoY < altura) {
 					if (!paredesGrid[novoX][novoY] && distancias[novoX][novoY] == -1) {
 						distancias[novoX][novoY] = distancias[x][y] + 1;
-						fila.add(new Pair<>(novoX, novoY));
+						fila.add(new CoordenadaMapa(novoX, novoY));
 					}
 				}
 			}
@@ -345,9 +352,9 @@ public class AoEShapeCalculator {
 
 	// ========== PRIVADOS ==========
 
-	private boolean coletarCelula(int x, int y, boolean atravessaParedes, Set<Pane> celulasColetadas) {
+	private boolean coletarCelula(int x, int y, boolean atravessaParedes, Set<CoordenadaMapa> celulasColetadas) {
 		if (x >= 0 && x < largura && y >= 0 && y < altura) {
-			Pane cell = celulasDoGrid[x][y];
+			CoordenadaMapa cell = new CoordenadaMapa(x, y);
 			if (cell != null) {
 				if (paredesGrid[x][y] && !atravessaParedes) {
 					Personagem p = personagemLocator.apply(x, y);
@@ -361,13 +368,13 @@ public class AoEShapeCalculator {
 		return false;
 	}
 
-	private boolean personagemIntersecaForma(Personagem personagem, Set<Pane> celulasDaForma) {
+	private boolean personagemIntersecaForma(Personagem personagem, Set<CoordenadaMapa> celulasDaForma) {
 		if (personagem == null || celulasDaForma == null || celulasDaForma.isEmpty()) return false;
 
 		for (int y = personagem.getPosY(); y < personagem.getPosY() + personagem.getTamanhoY(); y++) {
 			for (int x = personagem.getPosX(); x < personagem.getPosX() + personagem.getTamanhoX(); x++) {
 				if (!dentroDoGrid(x, y)) continue;
-				if (celulasDaForma.contains(celulasDoGrid[x][y])) return true;
+				if (celulasDaForma.contains(new CoordenadaMapa(x, y))) return true;
 			}
 		}
 		return false;
