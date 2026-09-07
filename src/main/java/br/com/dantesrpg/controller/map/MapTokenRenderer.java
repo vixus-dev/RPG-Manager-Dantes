@@ -27,7 +27,7 @@ public class MapTokenRenderer {
 
 	private final GridPane mapGrid;
 	private final CombatController mainController;
-	private final Pane[][] celulasDoGrid;
+	private final java.util.function.BiFunction<Integer,Integer,Pane> celulasDoGrid;
 	private final int gridLargura;
 	private final int gridAltura;
 	private final int CELL_SIZE;
@@ -53,7 +53,7 @@ public class MapTokenRenderer {
 			"zona-aura-master-call-green-75");
 
 	public MapTokenRenderer(GridPane mapGrid, CombatController mainController,
-			Pane[][] celulasDoGrid, int gridLargura, int gridAltura, int cellSize,
+			java.util.function.BiFunction<Integer,Integer,Pane> celulasDoGrid, int gridLargura, int gridAltura, int cellSize,
 			Predicate<Personagem> estaEmAguaProfunda) {
 		this.mapGrid = mapGrid;
 		this.mainController = mainController;
@@ -180,7 +180,7 @@ public class MapTokenRenderer {
 								int tileRealX = p.getPosX() + dx;
 								int tileRealY = p.getPosY() + dy;
 								if (tileRealX >= 0 && tileRealX < gridLargura && tileRealY >= 0 && tileRealY < gridAltura) {
-									Pane cell = celulasDoGrid[tileRealX][tileRealY];
+									Pane cell = celulasDoGrid.apply(tileRealX,tileRealY);
 									if (!cell.getStyleClass().contains("enemy-hitbox-extra")) {
 										cell.getStyleClass().add("enemy-hitbox-extra");
 									}
@@ -192,7 +192,12 @@ public class MapTokenRenderer {
 			}
 		}
 
-		// Auras e barras de vida
+		atualizarAuras(combatentes);
+		desenharBarrasDeVidaObjetos(combatentes);
+	}
+
+	public void atualizarAuras(List<Personagem> combatentes) {
+		// Auras
 		for (Personagem p : combatentes) {
 			if (p.isAtivoNoCombate() && p.getEfeitosAtivos().containsKey("Modo Justiça")) {
 				desenharAuraDarrell(p);
@@ -284,7 +289,6 @@ public class MapTokenRenderer {
 			limparAuraTheMastersCallCrash();
 		}
 
-		desenharBarrasDeVidaObjetos(combatentes);
 	}
 
 	private void adicionarSobreposicaoOxigenio(Pane peaoContainer, Personagem personagem, boolean isPlayer,
@@ -362,7 +366,7 @@ public class MapTokenRenderer {
 				peoesAtualmenteDestacados.add(alvo);
 			} else {
 				if (alvo instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
-					Pane cell = celulasDoGrid[alvo.getPosX()][alvo.getPosY()];
+					Pane cell = celulasDoGrid.apply(alvo.getPosX(),alvo.getPosY());
 					if (cell != null) {
 						cell.setStyle("-fx-border-color: red; -fx-border-width: 3;");
 					}
@@ -391,7 +395,7 @@ public class MapTokenRenderer {
 		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
 			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
 				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane cell = celulasDoGrid[x][y];
+					Pane cell = celulasDoGrid.apply(x,y);
 					if (cell != null) {
 						cell.getStyleClass().add("zona-aura-darrell");
 						celulasAuraDarrell.add(cell);
@@ -408,7 +412,7 @@ public class MapTokenRenderer {
 		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
 			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
 				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane cell = celulasDoGrid[x][y];
+					Pane cell = celulasDoGrid.apply(x,y);
 					if (cell != null) {
 						cell.getStyleClass().add("zona-aura-rock-do-sol");
 						celulasAuraRockDoSol.add(cell);
@@ -424,7 +428,7 @@ public class MapTokenRenderer {
 		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
 			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
 				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane cell = celulasDoGrid[x][y];
+					Pane cell = celulasDoGrid.apply(x,y);
 					if (cell != null) {
 						cell.getStyleClass().add("zona-aura-zero");
 						celulasAuraZero.add(cell);
@@ -441,7 +445,7 @@ public class MapTokenRenderer {
 		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
 			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
 				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane cell = celulasDoGrid[x][y];
+					Pane cell = celulasDoGrid.apply(x,y);
 					if (cell != null) {
 						cell.getStyleClass().add("zona-aura-bad-omen");
 						celulasAuraBadOmen.add(cell);
@@ -458,7 +462,7 @@ public class MapTokenRenderer {
 		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
 			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
 				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane cell = celulasDoGrid[x][y];
+					Pane cell = celulasDoGrid.apply(x,y);
 					if (cell != null) {
 						cell.getStyleClass().add("zona-aura-sangue");
 						celulasAuraSangue.add(cell);
@@ -474,7 +478,7 @@ public class MapTokenRenderer {
 		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
 			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
 				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane cell = celulasDoGrid[x][y];
+					Pane cell = celulasDoGrid.apply(x,y);
 					if (cell != null) {
 						int distancia = Math.max(Math.abs(x - centro.getPosX()), Math.abs(y - centro.getPosY()));
 						String classe = resolverClasseEcstasy(distancia);
@@ -492,7 +496,7 @@ public class MapTokenRenderer {
 		for (int y = centro.getPosY() - raio; y <= centro.getPosY() + raio; y++) {
 			for (int x = centro.getPosX() - raio; x <= centro.getPosX() + raio; x++) {
 				if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-					Pane cell = celulasDoGrid[x][y];
+					Pane cell = celulasDoGrid.apply(x,y);
 					if (cell != null) {
 						cell.getStyleClass().add("zona-aura-master-call-crash");
 						celulasAuraTheMastersCallCrash.add(cell);
@@ -540,7 +544,7 @@ public class MapTokenRenderer {
 	private void desenharBarrasDeVidaObjetos(List<Personagem> combatentes) {
 		for (int x = 0; x < gridLargura; x++) {
 			for (int y = 0; y < gridAltura; y++) {
-				Pane cell = celulasDoGrid[x][y];
+				Pane cell = celulasDoGrid.apply(x,y);
 				if (cell != null) {
 					cell.getChildren().removeIf(node -> node.getStyleClass().contains("obj-hp-bar"));
 				}
@@ -549,7 +553,7 @@ public class MapTokenRenderer {
 		for (Personagem p : combatentes) {
 			if (p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel) {
 				if (p.getVidaAtual() < p.getVidaMaxima() && p.isVivo()) {
-					Pane cell = celulasDoGrid[p.getPosX()][p.getPosY()];
+					Pane cell = celulasDoGrid.apply(p.getPosX(),p.getPosY());
 					if (cell != null) {
 						double pct = (double) p.getVidaAtual() / (double) p.getVidaMaxima();
 
@@ -576,8 +580,8 @@ public class MapTokenRenderer {
 	public void limparHitboxesExtras() {
 		for (int x = 0; x < gridLargura; x++) {
 			for (int y = 0; y < gridAltura; y++) {
-				if (celulasDoGrid[x][y] != null) {
-					celulasDoGrid[x][y].getStyleClass().remove("enemy-hitbox-extra");
+				if (celulasDoGrid.apply(x,y) != null) {
+					celulasDoGrid.apply(x,y).getStyleClass().remove("enemy-hitbox-extra");
 				}
 			}
 		}
