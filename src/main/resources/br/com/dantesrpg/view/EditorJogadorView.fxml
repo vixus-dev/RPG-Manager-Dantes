@@ -21,13 +21,14 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.shape.Rectangle?>
+<?import br.com.dantesrpg.controller.util.ResponsiveGridPane?>
 
 <StackPane fx:id="editorThemeRoot" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="br.com.dantesrpg.controller.EditorJogadorController" prefHeight="700.0" prefWidth="1100.0"
-           styleClass="editor-background" stylesheets="@style.css">
+           minWidth="0.0" minHeight="0.0" styleClass="editor-background" stylesheets="@style.css">
     <children>
         <ImageView fx:id="editorThemeBackground" mouseTransparent="true" preserveRatio="false" smooth="true" />
-        <BorderPane styleClass="editor-content" prefHeight="700.0" prefWidth="1100.0">
+        <BorderPane styleClass="editor-content" minWidth="0.0" minHeight="0.0">
 
     <!-- SIDEBAR ESQUERDA: Lista de Jogadores -->
     <left>
@@ -45,33 +46,38 @@
     <center>
         <VBox spacing="0">
             <!-- HEADER DO PERSONAGEM (GLASS GRADIENT) -->
-            <HBox fx:id="characterHeader" styleClass="character-header" spacing="15.0" alignment="CENTER_LEFT">
-                <StackPane prefWidth="68" prefHeight="68" styleClass="portrait-container">
-                    <StackPane minWidth="64.0" minHeight="64.0" prefWidth="64.0" prefHeight="64.0" maxWidth="64.0" maxHeight="64.0">
-                        <ImageView fx:id="imgPortrait" fitWidth="64" fitHeight="64" preserveRatio="true" />
-                        <clip>
-                            <Rectangle width="64" height="64" arcWidth="10" arcHeight="10" />
-                        </clip>
-                    </StackPane>
-                    <Region mouseTransparent="true" maxWidth="Infinity" maxHeight="Infinity" styleClass="portrait-container-border" />
-                </StackPane>
-                <VBox spacing="4" alignment="CENTER_LEFT">
-                    <Label fx:id="labelNomePersonagem" text="Selecione um jogador" styleClass="label-name"/>
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label fx:id="labelClassePersonagem" text="" styleClass="label-class"/>
-                        <Label text="|" style="-fx-text-fill: #444455;"/>
-                        <Label fx:id="labelRacaPersonagem" text="" styleClass="label-race"/>
+            <ResponsiveGridPane fx:id="characterHeader" styleClass="character-header" hgap="16.0" vgap="8.0"
+                                maxColumns="2" minColumnWidth="320.0">
+                <children>
+                    <HBox spacing="15.0" alignment="CENTER_LEFT" minWidth="0.0">
+                        <StackPane prefWidth="68" prefHeight="68" styleClass="portrait-container">
+                            <StackPane minWidth="64.0" minHeight="64.0" prefWidth="64.0" prefHeight="64.0" maxWidth="64.0" maxHeight="64.0">
+                                <ImageView fx:id="imgPortrait" fitWidth="64" fitHeight="64" preserveRatio="true" />
+                                <clip>
+                                    <Rectangle width="64" height="64" arcWidth="10" arcHeight="10" />
+                                </clip>
+                            </StackPane>
+                            <Region mouseTransparent="true" maxWidth="Infinity" maxHeight="Infinity" styleClass="portrait-container-border" />
+                        </StackPane>
+                        <VBox spacing="4" alignment="CENTER_LEFT" minWidth="0.0" HBox.hgrow="ALWAYS">
+                            <Label fx:id="labelNomePersonagem" text="Selecione um jogador" styleClass="label-name"
+                                   wrapText="true" minWidth="0.0" maxWidth="Infinity"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label fx:id="labelClassePersonagem" text="" styleClass="label-class" textOverrun="ELLIPSIS"/>
+                                <Label text="|" style="-fx-text-fill: #444455;"/>
+                                <Label fx:id="labelRacaPersonagem" text="" styleClass="label-race" textOverrun="ELLIPSIS"/>
+                            </HBox>
+                        </VBox>
                     </HBox>
-                </VBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                <VBox minWidth="220.0" prefWidth="220.0" spacing="4" alignment="CENTER">
-                    <Label fx:id="labelNivelXP" text="" styleClass="label-level"/>
-                    <StackPane minHeight="22.0" prefHeight="22.0" maxHeight="22.0" styleClass="xp-progress-container">
-                        <ProgressBar fx:id="progressXp" progress="0.0" maxWidth="Infinity" styleClass="xp-progress-bar" />
-                        <Label fx:id="labelXp" text="XP 0/0" mouseTransparent="true" styleClass="xp-progress-text" />
-                    </StackPane>
-                </VBox>
-            </HBox>
+                    <VBox minWidth="0.0" spacing="4" alignment="CENTER">
+                        <Label fx:id="labelNivelXP" text="" styleClass="label-level"/>
+                        <StackPane minHeight="22.0" prefHeight="22.0" maxHeight="22.0" styleClass="xp-progress-container">
+                            <ProgressBar fx:id="progressXp" progress="0.0" maxWidth="Infinity" styleClass="xp-progress-bar" />
+                            <Label fx:id="labelXp" text="XP 0/0" mouseTransparent="true" styleClass="xp-progress-text" />
+                        </StackPane>
+                    </VBox>
+                </children>
+            </ResponsiveGridPane>
 
             <!-- CONTEÚDO PRINCIPAL: TAB PANELS ESTILIZADOS -->
             <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" styleClass="editor-tab-pane">
@@ -81,9 +87,12 @@
                         <content>
                             <ScrollPane fitToWidth="true" styleClass="editor-content-scroll">
                                 <content>
-                                    <HBox spacing="15.0" style="-fx-padding: 15;">
+                                    <ResponsiveGridPane fx:id="editorAttributesGrid" hgap="15.0" vgap="15.0"
+                                                        maxColumns="3" minColumnWidth="280.0">
+                                        <padding><javafx.geometry.Insets top="15.0" right="15.0" bottom="15.0" left="15.0" /></padding>
+                                        <children>
                                 <!-- Atributos Base -->
-                                <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="350.0" spacing="12.0">
+                                <VBox styleClass="editor-column, bento-card" minHeight="420.0" maxWidth="Infinity" spacing="12.0">
                                     <Label text="Atributos do personagem" styleClass="header-label"/>
                                     <Label fx:id="labelPontosParaDistribuir" text="" visible="false" managed="false" styleClass="points-available"/>
                                     <!-- Os 8px de padding, somados aos 12px do VBox, formam a margem de 20px. -->
@@ -111,13 +120,13 @@
                                 </VBox>
                                 
                                 <!-- Radar Chart -->
-                                <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="380.0" spacing="12.0" alignment="CENTER">
+                                <VBox styleClass="editor-column, bento-card" minHeight="420.0" maxWidth="Infinity" spacing="12.0" alignment="CENTER">
                                     <Label text="Gráfico de Atributos" styleClass="header-label" maxWidth="Infinity"/>
                                     <Pane fx:id="radarChartPlaceholder" VBox.vgrow="ALWAYS" styleClass="radar-chart-pane" />
                                 </VBox>
                                 
                                 <!-- Atributos de Combate e retrato de vidas -->
-                                <VBox HBox.hgrow="ALWAYS" prefWidth="350.0" spacing="12.0" alignment="TOP_CENTER">
+                                <VBox minHeight="420.0" maxWidth="Infinity" spacing="12.0" alignment="TOP_CENTER">
                                     <VBox styleClass="editor-column, bento-card" spacing="12.0">
                                         <Label text="Estátisticas de Combate" styleClass="header-label"/>
                                         <ScrollPane fx:id="detailedAttributesScrollPane" prefHeight="300.0" maxHeight="300.0" fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
@@ -126,7 +135,8 @@
                                     </VBox>
                                     <StackPane fx:id="vidasContainer" minWidth="120.0" minHeight="120.0" prefWidth="265.0" prefHeight="265.0" maxWidth="265.0" maxHeight="265.0" styleClass="bento-card" style="-fx-padding: 0;" />
                                 </VBox>
-                                    </HBox>
+                                        </children>
+                                    </ResponsiveGridPane>
                                 </content>
                             </ScrollPane>
                         </content>
@@ -135,9 +145,13 @@
                     <!-- TAB 2: ARSENAL & MOCHILA -->
                     <Tab text="Inventário" styleClass="editor-tab">
                         <content>
-                            <HBox spacing="15.0" style="-fx-padding: 15;">
+                            <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" styleClass="editor-content-scroll">
+                                <ResponsiveGridPane fx:id="editorInventoryGrid" hgap="15.0" vgap="15.0"
+                                                    maxColumns="2" minColumnWidth="320.0">
+                                    <padding><javafx.geometry.Insets top="15.0" right="15.0" bottom="15.0" left="15.0" /></padding>
+                                    <children>
                                 <!-- Arsenal (Equipados) -->
-                                <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="480.0" spacing="12.0">
+                                <VBox styleClass="editor-column, bento-card" minHeight="420.0" maxWidth="Infinity" spacing="12.0">
                                     <Label text="Arsenal Equipado" styleClass="header-label"/>
                                     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                                         <VBox fx:id="equipmentContainer" spacing="10.0" />
@@ -145,7 +159,7 @@
                                 </VBox>
                                 
                                 <!-- Mochila (Inventário) -->
-                                <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="520.0" spacing="12.0">
+                                <VBox styleClass="editor-column, bento-card" minHeight="420.0" maxWidth="Infinity" spacing="12.0">
                                     <HBox alignment="CENTER_LEFT" spacing="10.0">
                                         <Label text="Inventário" styleClass="header-label" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                                         <TextField fx:id="txtPesquisaInventario" promptText="Filtrar itens..." styleClass="editor-search-field" prefWidth="180.0"/>
@@ -159,22 +173,28 @@
                                     <ListView fx:id="inventarioListView" VBox.vgrow="ALWAYS" styleClass="editor-list-view"/>
                                     <Button fx:id="btnDoarItem" text="Doar Item Selecionado" onAction="#onDoarItemClick" maxWidth="Infinity" styleClass="editor-btn-save"/>
                                 </VBox>
-                            </HBox>
+                                    </children>
+                                </ResponsiveGridPane>
+                            </ScrollPane>
                         </content>
                     </Tab>
                     
                     <!-- TAB 3: HABILIDADES & GRIMÓRIO -->
                     <Tab text="Habilidades" styleClass="editor-tab">
                         <content>
-                            <HBox spacing="15.0" style="-fx-padding: 15;">
+                            <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" styleClass="editor-content-scroll">
+                                <ResponsiveGridPane fx:id="editorSkillsGrid" hgap="15.0" vgap="15.0"
+                                                    maxColumns="2" minColumnWidth="320.0">
+                                    <padding><javafx.geometry.Insets top="15.0" right="15.0" bottom="15.0" left="15.0" /></padding>
+                                    <children>
                                 <!-- Habilidades -->
-                                <VBox styleClass="editor-column, bento-card" HBox.hgrow="ALWAYS" prefWidth="500.0" spacing="12.0">
+                                <VBox styleClass="editor-column, bento-card" minHeight="420.0" maxWidth="Infinity" spacing="12.0">
                                     <Label text="Técnicas &amp; Habilidades" styleClass="header-label"/>
                                     <ListView fx:id="habilidadesListView" VBox.vgrow="ALWAYS" styleClass="editor-list-view"/>
                                 </VBox>
                                 
                                 <!-- Painel Dinâmico: Boas-vindas ou Inspetor de Habilidade -->
-                                <StackPane HBox.hgrow="ALWAYS" prefWidth="500.0">
+                                <StackPane minHeight="420.0" maxWidth="Infinity">
                                     <!-- 1. Boas-vindas (Grimório) -->
                                     <VBox fx:id="skillWelcomePane" styleClass="editor-column, bento-card" spacing="15.0" alignment="CENTER">
                                         <Label text="Descrição" styleClass="header-label" maxWidth="Infinity"/>
@@ -220,7 +240,9 @@
                                         </HBox>
                                     </VBox>
                                 </StackPane>
-                            </HBox>
+                                    </children>
+                                </ResponsiveGridPane>
+                            </ScrollPane>
                         </content>
                     </Tab>
                 </tabs>

@@ -11,53 +11,67 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.image.ImageView?>
+<?import br.com.dantesrpg.controller.util.ResponsiveGridPane?>
 
 <StackPane fx:id="lojaThemeRoot" styleClass="loja-background" stylesheets="@style.css"
            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="br.com.dantesrpg.controller.LojaController" prefWidth="1100.0" prefHeight="700.0">
+           fx:controller="br.com.dantesrpg.controller.LojaController" prefWidth="1100.0" prefHeight="700.0"
+           minWidth="0.0" minHeight="0.0">
    <children>
       <ImageView fx:id="lojaThemeBackground" mouseTransparent="true" preserveRatio="false" smooth="true" />
-      <BorderPane styleClass="loja-content" prefWidth="1100.0" prefHeight="700.0">
+      <BorderPane styleClass="loja-content" minWidth="0.0" minHeight="0.0">
 
    <!-- HEADER DA LOJA -->
    <top>
-      <VBox spacing="0">
-         <HBox fx:id="lojaHeader" styleClass="loja-header" spacing="15.0" alignment="CENTER_LEFT">
-            <Label text="LOJA" styleClass="loja-titulo"/>
-            <ComboBox fx:id="comboSelecaoLoja" prefWidth="220.0" promptText="Selecione a Loja..." styleClass="loja-combo"/>
-            <Label fx:id="labelNomeLoja" text="" styleClass="loja-nome-loja"/>
-            <Label fx:id="labelTipoLoja" text="" />
+      <ResponsiveGridPane fx:id="lojaHeader" styleClass="loja-header" hgap="12.0" vgap="8.0"
+                          maxColumns="3" minColumnWidth="260.0">
+         <children>
+            <HBox spacing="12.0" alignment="CENTER_LEFT" minWidth="0.0">
+               <Label text="LOJA" styleClass="loja-titulo"/>
+               <ComboBox fx:id="comboSelecaoLoja" minWidth="120.0" prefWidth="190.0"
+                         promptText="Selecione a Loja..." styleClass="loja-combo" HBox.hgrow="ALWAYS"/>
+               <VBox spacing="2.0" minWidth="0.0">
+                  <Label fx:id="labelNomeLoja" text="" styleClass="loja-nome-loja" textOverrun="ELLIPSIS"/>
+                  <Label fx:id="labelTipoLoja" text="" textOverrun="ELLIPSIS"/>
+               </VBox>
+            </HBox>
 
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <HBox fx:id="compradoresContainer" spacing="10.0" alignment="CENTER_LEFT" />
+            <ScrollPane fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                        minHeight="64.0" prefHeight="64.0" styleClass="loja-buyers-scroll">
+               <HBox fx:id="compradoresContainer" spacing="10.0" alignment="CENTER_LEFT" />
+            </ScrollPane>
 
             <HBox styleClass="moeda-container" spacing="12.0" alignment="CENTER_LEFT">
                <Label fx:id="labelMoedasOuro" text="0" styleClass="moeda-ouro"/>
                <Label fx:id="labelMoedasPrata" text="0" styleClass="moeda-prata"/>
                <Label fx:id="labelMoedasBronze" text="0" styleClass="moeda-bronze"/>
             </HBox>
-         </HBox>
-      </VBox>
+         </children>
+      </ResponsiveGridPane>
    </top>
 
    <!-- CONTEÚDO: 3 Colunas -->
    <center>
-      <HBox spacing="10.0" style="-fx-padding: 10;">
+      <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER"
+                  styleClass="responsive-content-scroll">
+         <ResponsiveGridPane fx:id="lojaResponsiveGrid" hgap="10.0" vgap="10.0"
+                             maxColumns="3" minColumnWidth="280.0">
+            <padding><Insets top="10.0" right="10.0" bottom="10.0" left="10.0" /></padding>
+            <children>
 
          <!-- Coluna 1: Itens à Venda -->
-         <VBox styleClass="loja-section" HBox.hgrow="ALWAYS" prefWidth="400.0" spacing="8.0">
+         <VBox fx:id="painelItensVenda" styleClass="loja-section" minHeight="360.0" maxWidth="Infinity" spacing="8.0">
             <Label text="Itens à Venda" styleClass="loja-section-title"/>
             <VBox spacing="8.0" style="-fx-padding: 0 0 5 0;">
                <HBox spacing="8.0" alignment="CENTER_LEFT">
                   <TextField fx:id="txtBusca" promptText="Buscar item..." HBox.hgrow="ALWAYS" styleClass="editor-search-field"/>
                   <ComboBox fx:id="comboFiltroCategoria" prefWidth="130.0" styleClass="loja-combo"/>
                </HBox>
-               <HBox spacing="8.0" alignment="CENTER_LEFT">
-                  <ComboBox fx:id="comboFiltroRaridade" prefWidth="110.0" promptText="Raridade" styleClass="loja-combo"/>
-                  <ComboBox fx:id="comboFiltroWielding" prefWidth="110.0" promptText="Wielding" styleClass="loja-combo"/>
-                  <ComboBox fx:id="comboFiltroTipoArma" prefWidth="110.0" promptText="Tipo" styleClass="loja-combo"/>
-               </HBox>
+               <ResponsiveGridPane hgap="8.0" vgap="8.0" maxColumns="3" minColumnWidth="90.0">
+                  <ComboBox fx:id="comboFiltroRaridade" maxWidth="Infinity" promptText="Raridade" styleClass="loja-combo"/>
+                  <ComboBox fx:id="comboFiltroWielding" maxWidth="Infinity" promptText="Wielding" styleClass="loja-combo"/>
+                  <ComboBox fx:id="comboFiltroTipoArma" maxWidth="Infinity" promptText="Tipo" styleClass="loja-combo"/>
+               </ResponsiveGridPane>
             </VBox>
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                <VBox fx:id="itensVendaContainer" spacing="6.0" />
@@ -65,7 +79,7 @@
          </VBox>
 
          <!-- Coluna 2: Preview do Item -->
-         <VBox styleClass="loja-preview-panel" HBox.hgrow="NEVER" prefWidth="300.0" spacing="6.0">
+         <VBox fx:id="painelPreviewLoja" styleClass="loja-preview-panel" minHeight="360.0" maxWidth="Infinity" spacing="6.0">
             <HBox alignment="CENTER">
                <javafx.scene.layout.StackPane fx:id="previewImageContainer" prefWidth="160.0" prefHeight="160.0" minWidth="160.0" minHeight="160.0" style="-fx-background-color: #0b0914; -fx-border-color: #3a3a4a; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
                   <javafx.scene.image.ImageView fx:id="previewImageView" fitWidth="150" fitHeight="150" preserveRatio="true"/>
@@ -80,14 +94,16 @@
          </VBox>
 
          <!-- Coluna 3: Inventário do Jogador -->
-         <VBox styleClass="loja-section" HBox.hgrow="ALWAYS" prefWidth="300.0" spacing="8.0">
+         <VBox fx:id="painelInventarioLoja" styleClass="loja-section" minHeight="360.0" maxWidth="Infinity" spacing="8.0">
             <Label text="Seu Inventário" styleClass="loja-section-title"/>
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
                <VBox fx:id="inventarioJogadorContainer" spacing="6.0" />
             </ScrollPane>
          </VBox>
 
-      </HBox>
+            </children>
+         </ResponsiveGridPane>
+      </ScrollPane>
    </center>
       </BorderPane>
    </children>

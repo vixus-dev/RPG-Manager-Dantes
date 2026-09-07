@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.Pane?>
@@ -31,7 +32,7 @@
    </left>
 
    <bottom>
-      <HBox fx:id="gmToolbar" alignment="CENTER" prefHeight="60.0" spacing="15.0" styleClass="gm-toolbar">
+      <FlowPane fx:id="gmToolbar" alignment="CENTER" hgap="15.0" vgap="8.0" prefWrapLength="900.0" styleClass="gm-toolbar">
          <children>
             <Button fx:id="btnCarregarArena" mnemonicParsing="false" onAction="#onCarregarArenaClick" text="Carregar Arena" />
             <Button fx:id="btnBestiarioToolbar" mnemonicParsing="false" onAction="#onBestiarioClick" text="Bestiário" />
@@ -50,7 +51,7 @@
          <padding>
             <Insets bottom="10.0" top="10.0" />
          </padding>
-      </HBox>
+      </FlowPane>
    </bottom>
 
    <center>
