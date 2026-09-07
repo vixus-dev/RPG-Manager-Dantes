@@ -1,6 +1,6 @@
 {
   "iniciativaBase": 22,
-  "pecado": 3,
+  "pecado": 12,
   "atributosBase": {
     "FORCA": 17,
     "PERCEPCAO": 2,
@@ -22,18 +22,23 @@
     "bronze": 10000
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 39.0,
-  "contadorTU": 4,
+  "vidaAtual": 155.0,
+  "contadorTU": -642,
   "fantasmaNobre": "Fimbulwinter",
   "armaduraEquipada": "Armadura Leviatã",
   "armaEquipada": "Tridente",
   "inventario": {
+    "PocaoDeManaMédia": 1,
     "Peitoral da Guarda de Marfim": 1,
     "PocaoDeCuraMédia": 1,
+    "PocaoForcaPequena": 2,
+    "Amuleto de Bronze": 1,
     "Sabre do Kraken": 1,
-    "Machado Jötunbani": 1
+    "Cajado Eólico da Luxúria": 1,
+    "Machado Jötunbani": 1,
+    "Rifle Submersível XM-12": 1
   },
-  "xpAtual": 100,
+  "xpAtual": 2100,
   "vidaMaximaBase": 55.0,
   "classe": "Barbaro",
   "armasEquipadas": [
@@ -42,12 +47,12 @@
   "nome": "Brunhilda",
   "segmentos": 0,
   "grau": 0,
-  "posX": 5,
-  "posY": 5,
+  "posX": 2,
+  "posY": 14,
   "vidas": 0,
   "amuleto2": "Colar de Tinta Seca",
   "amuleto1": "Medalhão da Promessa",
-  "manaAtual": 1.5,
+  "manaAtual": 5.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Orc",
   "nivel": 8,

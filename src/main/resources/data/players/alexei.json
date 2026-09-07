@@ -1,9 +1,9 @@
 {
   "iniciativaBase": 27,
-  "pecado": 37,
+  "pecado": 39,
   "atributosBase": {
     "FORCA": 20,
-    "PERCEPCAO": 16,
+    "PERCEPCAO": 20,
     "ENDURANCE": 10,
     "CARISMA": 3,
     "INTELIGENCIA": 3,
@@ -15,8 +15,10 @@
   },
   "escudoSangueAtual": 0.0,
   "pontosParaDistribuir": 0,
+  "inventarioOverclock": {
+    "Punho Infinito": 1
+  },
   "escudoNormalAtual": 0.0,
-  "armaOverclock": 1,
   "carteira": {
     "prata": 64,
     "ouro": 0,
@@ -24,29 +26,30 @@
   },
   "faccao": "JOGADOR",
   "vidaAtual": 144.0,
-  "contadorTU": 82,
+  "contadorTU": -643,
   "fantasmaNobre": "RingOfTheUndyingWill",
   "armaduraEquipada": "Exoesqueleto Oceânico",
-  "armaEquipada": "Punho Infinito",
+  "armaEquipada": "Espada Atômica",
   "inventario": {
     "Armadura de Mergulho": 1,
-    "Espada Atômica": 1,
-    "MoedaDeAjuda": 1
+    "Souna, o Chicote do Primeiro Desejo": 1,
+    "Besta Pesada": 1,
+    "Seixo da Absolvição": 1,
+    "Núcleo Abissal": 1,
+    "MoedaDeAjuda": 1,
+    "Punho Infinito": 1
   },
   "xpAtual": 1421,
   "vidaMaximaBase": 104.0,
   "classe": "Pugilista",
   "armasEquipadas": [
-    {
-      "overclock": 1,
-      "nome": "Punho Infinito"
-    }
+    "Espada Atômica"
   ],
   "nome": "Alexei",
   "segmentos": 0,
   "grau": 2,
-  "posX": 5,
-  "posY": 5,
+  "posX": 4,
+  "posY": 12,
   "vidas": 3,
   "amuleto2": "Anel Esofágico",
   "amuleto1": "Medalhão da Promessa SHINY",

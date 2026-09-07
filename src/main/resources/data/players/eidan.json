@@ -1,15 +1,15 @@
 {
   "iniciativaBase": 43,
-  "pecado": 10,
+  "pecado": 12,
   "atributosBase": {
-    "FORCA": 13,
+    "FORCA": 14,
     "PERCEPCAO": 8,
     "ENDURANCE": 11,
     "CARISMA": 4,
     "INTELIGENCIA": 4,
-    "DESTREZA": 9,
+    "DESTREZA": 10,
     "SORTE": 3,
-    "INSPIRACAO": 13,
+    "INSPIRACAO": 15,
     "SAGACIDADE": 6,
     "TOPOR": 2
   },
@@ -19,11 +19,11 @@
   "carteira": {
     "prata": 145,
     "ouro": 5,
-    "bronze": 45935
+    "bronze": 125935
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 157.8,
-  "contadorTU": 2,
+  "vidaAtual": 181.3,
+  "contadorTU": 200,
   "fantasmaNobre": "VigiliaEterna",
   "armaduraEquipada": "Armadura do Mestre",
   "armaEquipada": "Pálida Vigília",
@@ -33,10 +33,10 @@
     "Lança Cesariana": 1,
     "Couraça do Capitão": 1,
     "Devoradora Primordial": 1,
-    "PocaoDeCuraGrande": 1,
-    "Martelo de vidro": 1
+    "Martelo de vidro": 1,
+    "Medalhão Ardanico": 1
   },
-  "xpAtual": 1407,
+  "xpAtual": 2132,
   "vidaMaximaBase": 141.0,
   "classe": "Paladino",
   "armasEquipadas": [
@@ -45,12 +45,12 @@
   "nome": "Eidan",
   "segmentos": 0,
   "grau": 2,
-  "posX": 5,
-  "posY": 5,
+  "posX": 6,
+  "posY": 15,
   "vidas": 3,
   "amuleto2": "Colar da Baleia Azul",
   "amuleto1": "Cranio de esqueleto shiny",
-  "manaAtual": 6.5,
+  "manaAtual": 10.0,
   "escudoDivinoAtual": 0.0,
   "raca": "Half-Angel",
   "nivel": 9,

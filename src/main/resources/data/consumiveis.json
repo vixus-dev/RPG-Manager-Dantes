@@ -641,7 +641,17 @@
     "classeItem": "Consumivel",
     "nome": "Barril de Sal especial",
     "descricao": "Barriel de sal fodastico que explode em contato com a agua e brilha com energia branca",
-    "valorMoedas": 1200,
+    "valorMoedas": 1200.0,
+    "tipoMoeda": "BRONZE",
+    "custoTU": 100.0,
+    "usavelEmCombate": false,
+    "efeitos": {}
+  },
+  "Medalhão Ardanico": {
+    "classeItem": "Consumivel",
+    "nome": "Medalhão Ardanico",
+    "descricao": "medalhão de garin mordeau",
+    "valorMoedas": 12500,
     "tipoMoeda": "BRONZE",
     "custoTU": 100,
     "usavelEmCombate": false,

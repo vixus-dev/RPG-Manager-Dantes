@@ -22,34 +22,28 @@
     "bronze": 15392
   },
   "faccao": "JOGADOR",
-  "vidaAtual": 89.5,
+  "vidaAtual": 114.0,
   "contadorTU": 1,
   "fantasmaNobre": "ModoPolaris",
   "armaduraEquipada": "Nano-Armadura MK1",
-  "armaEquipada": "Núcleo Abissal",
+  "armaEquipada": "Thompson",
   "inventario": {
-    "PocaoDeManaMédia": 1,
     "Bússola do Navegador": 1,
-    "Amuleto de Bronze": 1,
     "Cranio do Mustaine": 1,
-    "Besta Pesada": 1,
-    "Souna, o Chicote do Primeiro Desejo": 1,
     "Colt M1911": 1,
     "Adaga da Alma": 1,
     "P E D R A": 1,
-    "PocaoForcaPequena": 2,
     "Faca de Brinquedo": 1,
-    "Caixa de Bailarina": 1,
-    "Cajado Eólico da Luxúria": 1,
-    "Seixo da Absolvição": 1,
-    "Thompson": 1,
-    "Rifle Submersível XM-12": 1
+    "Caixa de Bailarina": 1
   },
   "xpAtual": 806,
   "vidaMaximaBase": 49.0,
   "classe": "Ilusionista",
   "armasEquipadas": [
-    "Núcleo Abissal"
+    {
+      "municaoAtual": 20,
+      "nome": "Thompson"
+    }
   ],
   "nome": "Darrell",
   "segmentos": 0,
@@ -59,7 +53,7 @@
   "vidas": 3,
   "amuleto2": "Pingente do Olhar Desejado",
   "amuleto1": "Pingente de Coração",
-  "manaAtual": 11.5,
+  "manaAtual": 13.5,
   "escudoDivinoAtual": 0.0,
   "raca": "Anjo-Caido",
   "nivel": 8,
