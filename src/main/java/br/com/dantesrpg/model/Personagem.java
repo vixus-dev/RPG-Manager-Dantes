@@ -72,6 +72,7 @@ public class Personagem {
 	private double reducaoDanoTopor;
 	private double reducaoDoTTopor;
 	private double bonusDanoPercentual;
+	private double multiplicadorDanoCausado = 1.0;
 	private double poolRegeneracao = 0.0;
 	private double reducaoCuraPercentual = 0.0;
 	private double manaMaximaBase = 6.0;
@@ -1050,6 +1051,18 @@ public class Personagem {
 
 	public double getBonusDanoPercentual() {
 		return bonusDanoPercentual;
+	}
+
+	public double getMultiplicadorDanoCausado() {
+		return multiplicadorDanoCausado;
+	}
+
+	public void setMultiplicadorDanoCausado(double multiplicadorDanoCausado) {
+		this.multiplicadorDanoCausado = Math.max(0.0, multiplicadorDanoCausado);
+	}
+
+	public double aplicarMultiplicadorDanoCausado(double dano) {
+		return Math.max(0.0, dano) * multiplicadorDanoCausado;
 	}
 
 	public double getReducaoCuraPercentual() {

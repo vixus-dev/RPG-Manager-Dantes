@@ -34,14 +34,14 @@ public class DamageApplicator {
 
 	public void aplicarDanoAoAlvo(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado) {
-		aplicarDanoAoAlvoInterno(ator, alvo, aplicarBonusDanoRadiante(ator, dano), ignoraEscudo, tipoAcaoDano, estado,
-				0, false);
+		aplicarDanoAoAlvoInterno(ator, alvo, aplicarMultiplicadoresDanoAtacante(ator, dano), ignoraEscudo,
+				tipoAcaoDano, estado, 0, false);
 	}
 
 	public void aplicarDanoAoAlvo(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal) {
-		aplicarDanoAoAlvoInterno(ator, alvo, aplicarBonusDanoRadiante(ator, dano), ignoraEscudo, tipoAcaoDano, estado,
-				ataqueTotal, false);
+		aplicarDanoAoAlvoInterno(ator, alvo, aplicarMultiplicadoresDanoAtacante(ator, dano), ignoraEscudo,
+				tipoAcaoDano, estado, ataqueTotal, false);
 	}
 
 	public void aplicarDanoAoAlvoResolvido(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
@@ -51,12 +51,16 @@ public class DamageApplicator {
 
 	public void aplicarDanoAoAlvoResolvido(Personagem ator, Personagem alvo, double dano, boolean ignoraEscudo,
 			TipoAcao tipoAcaoDano, EstadoCombate estado, int ataqueTotal) {
-		aplicarDanoAoAlvoInterno(ator, alvo, aplicarBonusDanoRadiante(ator, dano), ignoraEscudo, tipoAcaoDano, estado,
-				ataqueTotal, true);
+		aplicarDanoAoAlvoInterno(ator, alvo, aplicarMultiplicadoresDanoAtacante(ator, dano), ignoraEscudo,
+				tipoAcaoDano, estado, ataqueTotal, true);
 	}
 
-	private double aplicarBonusDanoRadiante(Personagem ator, double dano) {
-		return ator == null ? dano : ator.aplicarMultiplicadorDanoRadiante(dano);
+	private double aplicarMultiplicadoresDanoAtacante(Personagem ator, double dano) {
+		if (ator == null) {
+			return dano;
+		}
+		double danoRadiante = ator.aplicarMultiplicadorDanoRadiante(dano);
+		return ator.aplicarMultiplicadorDanoCausado(danoRadiante);
 	}
 
 	// ========== FANTASMA DO DESERTO ==========

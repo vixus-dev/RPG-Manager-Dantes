@@ -359,7 +359,7 @@ public class DamageResolutionController {
 			int dificuldade = 2 + ((atacante != null ? atacante.getGrau() : 0) * 2);
 			double danoTotal = 0;
 			for (int i = 0; i < eventos.size(); i++) {
-				double dano = eventos.get(i).getValorDano();
+				double dano = aplicarMultiplicadorDanoAtacante(eventos.get(i).getValorDano());
 				if (i < quantidadeAfetada && "Esquiva".equals(selecao) && valorDado >= dificuldade) {
 					dano = 0;
 				} else if (i < quantidadeAfetada && "Bloqueio".equals(selecao)) {
@@ -402,20 +402,25 @@ public class DamageResolutionController {
 				System.out.println(">>> " + alvo.getNome() + " BLOQUEOU " + evento.getLabel() + ". Dano: " + danoFinal);
 			}
 
+			double danoAplicado = aplicarMultiplicadorDanoAtacante(danoFinal);
 			if (mainController != null) {
-				if (danoFinal > 0) {
+				if (danoAplicado > 0) {
 					TipoAcao tipo = habilidade != null ? TipoAcao.HABILIDADE : TipoAcao.ATAQUE_BASICO;
 					if (evento.getLabel().contains("Eco")) {
 						tipo = TipoAcao.ECO;
 					}
 					mainController.getCombatManager().aplicarDanoAoAlvoResolvido(atacante, alvo, danoFinal, false,
 							tipo, estado, 0);
-					evento.aplicarEfeitos(danoFinal);
+					evento.aplicarEfeitos(danoAplicado);
 				} else {
 					System.out.println(">>> Dano anulado (Esquiva/Bloqueio total). Efeitos on-hit cancelados.");
 				}
 			}
-			return danoFinal;
+			return danoAplicado;
+		}
+
+		private double aplicarMultiplicadorDanoAtacante(double dano) {
+			return atacante == null ? dano : atacante.aplicarMultiplicadorDanoCausado(dano);
 		}
 	}
 }
