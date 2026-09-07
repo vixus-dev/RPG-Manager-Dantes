@@ -32,6 +32,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
 
 public class BestiarioSpawnService {
+	private static final double MULTIPLICADOR_VIDA_ATE_ANDAR_5 = 0.67;
+	private static final double MULTIPLICADOR_DANO_ATE_ANDAR_5 = 0.80;
+	private static final Pattern ANDAR_NUMERICO_PATTERN = Pattern.compile("^\\s*(\\d+(?:[.,]\\d+)?)\\s*$");
 
 	private final CombatController controller;
 	private final CatalogoItensService catalogoItensService;
@@ -72,6 +75,37 @@ public class BestiarioSpawnService {
 		return bestiarioDatabase;
 	}
 
+	static boolean isAndarAbaixoDoSexto(String andar) {
+		if (andar == null) {
+			return false;
+		}
+		Matcher matcher = ANDAR_NUMERICO_PATTERN.matcher(andar);
+		if (!matcher.matches()) {
+			return false;
+		}
+		double numeroAndar = Double.parseDouble(matcher.group(1).replace(',', '.'));
+		return numeroAndar < 6.0;
+	}
+
+	static double calcularVidaBalanceada(double vidaBase, String andar) {
+		if (!isAndarAbaixoDoSexto(andar)) {
+			return vidaBase;
+		}
+		return Math.max(1.0, vidaBase * MULTIPLICADOR_VIDA_ATE_ANDAR_5);
+	}
+
+	private void aplicarBalanceamentoDeDano(Personagem monstro, String andar) {
+		if (monstro == null) {
+			return;
+		}
+		boolean balanceado = isAndarAbaixoDoSexto(andar);
+		monstro.setMultiplicadorDanoCausado(balanceado ? MULTIPLICADOR_DANO_ATE_ANDAR_5 : 1.0);
+		if (balanceado) {
+			System.out.println(">>> BALANCEAMENTO: " + monstro.getNome()
+					+ " recebe -30% HP e -10% dano causado (andar " + andar + ").");
+		}
+	}
+
 	/**
 	 * Substitui os dados de combate de um inimigo morto pela variante maldita
 	 * correspondente do bestiário, mantendo a mesma instância no combate.
@@ -90,7 +124,9 @@ public class BestiarioSpawnService {
 		monstro.setNome(aplicarSufixoDeInstancia(monstro.getNome(), nomeMaldito));
 		monstro.setNomeBaseImagem((String) dadosMalditos.getOrDefault("nomeBaseImagem", nomeMaldito));
 
-		double vida = ((Number) dadosMalditos.getOrDefault("vida", monstro.getVidaMaxima())).doubleValue();
+		String andar = (String) dadosMalditos.getOrDefault("andar", "Não informado");
+		double vidaBase = ((Number) dadosMalditos.getOrDefault("vida", monstro.getVidaMaxima())).doubleValue();
+		double vida = calcularVidaBalanceada(vidaBase, andar);
 		double mana = ((Number) dadosMalditos.getOrDefault("mana", 0.0)).doubleValue();
 		int agilidade = lerAgilidade(dadosMalditos);
 		int defesa = ((Number) dadosMalditos.getOrDefault("defesa", 0.0)).intValue();
@@ -103,7 +139,7 @@ public class BestiarioSpawnService {
 		monstro.setXpReward(((Number) dadosMalditos.getOrDefault("xpReward", monstro.getXpReward())).intValue());
 		monstro.setGrau(((Number) dadosMalditos.getOrDefault("grau", 0.0)).intValue());
 		monstro.setSegmentosVida(((Number) dadosMalditos.getOrDefault("segmentos", 0.0)).intValue());
-		monstro.setAndar((String) dadosMalditos.getOrDefault("andar", "Não informado"));
+		monstro.setAndar(andar);
 		monstro.setPesoEntidade(PesoEntidade.fromJsonId((String) dadosMalditos.getOrDefault("peso", "medio_padrao")));
 		monstro.setTamanhoX(((Number) dadosMalditos.getOrDefault("tamanhoX", 1.0)).intValue());
 		monstro.setTamanhoY(((Number) dadosMalditos.getOrDefault("tamanhoY", 1.0)).intValue());
@@ -115,6 +151,7 @@ public class BestiarioSpawnService {
 		monstro.setPropriedades(propriedadesMalditas);
 		monstro.setPoderoso(Boolean.TRUE.equals(dadosMalditos.get("poderoso")));
 		monstro.setRadiante(Boolean.TRUE.equals(dadosMalditos.get("radiante")));
+		aplicarBalanceamentoDeDano(monstro, andar);
 
 		equiparArma(monstro, (String) dadosMalditos.getOrDefault("arma", null));
 		monstro.recalcularAtributosEstatisticas();
@@ -244,7 +281,7 @@ public class BestiarioSpawnService {
 		Map<String, Object> data = bestiarioDatabase.get(idMonstro);
 		String nomeBase = (String) data.getOrDefault("nome", idMonstro);
 		String nomeBaseImagem = (String) data.getOrDefault("nomeBaseImagem", nomeBase);
-		int vidaMax = ((Double) data.getOrDefault("vida", 10.0)).intValue();
+		double vidaBase = ((Number) data.getOrDefault("vida", 10.0)).doubleValue();
 		int agilidade = ((Double) data.getOrDefault("agilidade", 1.0)).intValue();
 		int defesa = ((Double) data.getOrDefault("defesa", 0.0)).intValue();
 		String nomeArma = (String) data.getOrDefault("arma", null);
@@ -255,6 +292,7 @@ public class BestiarioSpawnService {
 		int grau = ((Number) data.getOrDefault("grau", 0.0)).intValue();
 		String pesoStr = (String) data.getOrDefault("peso", "medio_padrao");
 		String andar = (String) data.getOrDefault("andar", "Não informado");
+		double vidaMax = calcularVidaBalanceada(vidaBase, andar);
 
 		boolean radiante = Boolean.TRUE.equals(data.get("radiante"));
 		Map<Atributo, Integer> atributos = atributosBase(agilidade);
@@ -287,6 +325,7 @@ public class BestiarioSpawnService {
 		boolean poderoso = data.containsKey("poderoso") && (Boolean) data.get("poderoso");
 		monstro.setPoderoso(poderoso);
 		monstro.setRadiante(radiante);
+		aplicarBalanceamentoDeDano(monstro, andar);
 		
 		equiparArma(monstro, nomeArma, data.containsKey("arma"));
 		aplicarEscudosDePropriedade(monstro, vidaMax);
@@ -318,7 +357,7 @@ public class BestiarioSpawnService {
 
 		String nome = (String) dadosMonstro.getOrDefault("nome", idMonstro);
 		String nomeBaseImagem = (String) dadosMonstro.getOrDefault("nomeBaseImagem", nome);
-		double vida = ((Number) dadosMonstro.getOrDefault("vida", 10.0)).doubleValue();
+		double vidaBase = ((Number) dadosMonstro.getOrDefault("vida", 10.0)).doubleValue();
 		double mana = ((Number) dadosMonstro.getOrDefault("mana", 0.0)).doubleValue();
 		int agilidade = lerAgilidade(dadosMonstro);
 		int defesa = ((Number) dadosMonstro.getOrDefault("defesa", 0.0)).intValue();
@@ -331,6 +370,7 @@ public class BestiarioSpawnService {
 		int segmentos = ((Number) dadosMonstro.getOrDefault("segmentos", 0.0)).intValue();
 		String nomeArma = (String) dadosMonstro.getOrDefault("arma", null);
 		String andar = (String) dadosMonstro.getOrDefault("andar", "Não informado");
+		double vida = calcularVidaBalanceada(vidaBase, andar);
 
 		if (idMonstro.equalsIgnoreCase("Nebrion")) {
 			tamanhoX = 7;
@@ -370,6 +410,7 @@ public class BestiarioSpawnService {
 		boolean poderoso = dadosMonstro.containsKey("poderoso") && (Boolean) dadosMonstro.get("poderoso");
 		monstro.setPoderoso(poderoso);
 		monstro.setRadiante(radiante);
+		aplicarBalanceamentoDeDano(monstro, andar);
 
 		equiparArma(monstro, nomeArma, dadosMonstro.containsKey("arma"));
 		aplicarEscudosDePropriedade(monstro, vida);
