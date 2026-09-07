@@ -3073,3 +3073,26 @@
     -fx-border-radius: 4;
     -fx-effect: dropshadow(gaussian, rgba(255, 75, 75, 0.35), 6, 0.4, 0, 0);
 }
+.mapa3d-raiz { -fx-background-color: -rpg-surface-base; }
+.mapa3d-amostra-fundo { -fx-fill: -rpg-surface-base; }
+.mapa3d-amostra-chao { -fx-fill: -rpg-surface-raised; }
+.tema-andar-ativo .mapa3d-amostra-fundo { -fx-fill: -andar-canvas; }
+.tema-andar-ativo .mapa3d-amostra-chao { -fx-fill: -andar-superficie-elevada; }
+.mapa3d-controles, .mapa3d-mensagem, .mapa3d-legenda {
+    -fx-background-color: -rpg-surface-base;
+    -fx-background-radius: 6;
+    -fx-border-color: -rpg-surface-hover;
+    -fx-border-radius: 6;
+    -fx-padding: 4 8 4 8;
+    -fx-text-fill: -rpg-text-primary;
+}
+.mapa3d-controles .button, .mapa3d-controles .toggle-button { -fx-padding: 4 8 4 8; -fx-cursor: hand; }
+.mapa3d-legenda { -fx-font-size: 11px; -fx-text-alignment: center; }
+.mapa3d-legenda:selected { -fx-border-color: -rpg-accent-tactical; -fx-border-width: 2; }
+.mapa-vista-toggle { -fx-cursor: hand; -fx-font-weight: bold; }
+.tema-andar-ativo .mapa3d-controles, .tema-andar-ativo .mapa3d-mensagem,
+.tema-andar-ativo .mapa3d-legenda {
+    -fx-background-color: -andar-superficie;
+    -fx-border-color: -andar-borda;
+    -fx-text-fill: -andar-texto;
+}
