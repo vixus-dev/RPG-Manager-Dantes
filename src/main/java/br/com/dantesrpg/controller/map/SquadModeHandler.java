@@ -3,7 +3,7 @@ package br.com.dantesrpg.controller.map;
 import br.com.dantesrpg.model.Habilidade;
 import br.com.dantesrpg.model.Personagem;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.Pane;
+import br.com.dantesrpg.model.map.CoordenadaMapa;
 
 import java.util.*;
 
@@ -18,7 +18,7 @@ public class SquadModeHandler {
 	private final AoEShapeCalculator aoeCalc;
 	private final ToggleButton toggleMover;
 	private final ToggleButton toggleMirar;
-	private final Set<Pane> celulasAlcanceMovimento;
+	private final Set<CoordenadaMapa> celulasAlcanceMovimento;
 
 	// Estado próprio (movido de MapController)
 	private final Queue<Personagem> filaClonesSquad = new LinkedList<>();
@@ -29,13 +29,20 @@ public class SquadModeHandler {
 	public SquadModeHandler(br.com.dantesrpg.controller.MapController mapController,
 			AoEShapeCalculator aoeCalc,
 			ToggleButton toggleMover, ToggleButton toggleMirar,
-			Set<Pane> celulasAlcanceMovimento) {
+			Set<CoordenadaMapa> celulasAlcanceMovimento) {
 		this.mapController = mapController;
 		this.aoeCalc = aoeCalc;
 		this.toggleMover = toggleMover;
 		this.toggleMirar = toggleMirar;
 		this.celulasAlcanceMovimento = celulasAlcanceMovimento;
 	}
+
+    public void sincronizarDe(SquadModeHandler origem) {
+        if(origem==null || origem==this)return;
+        modoSquad=origem.modoSquad;rolagemSquadGlobal=origem.rolagemSquadGlobal;
+        filaClonesSquad.clear();filaClonesSquad.addAll(origem.filaClonesSquad);
+        ataquesDeclaradosSquad.clear();ataquesDeclaradosSquad.putAll(origem.ataquesDeclaradosSquad);
+    }
 
 	// ========== API PÚBLICA ==========
 
@@ -56,7 +63,7 @@ public class SquadModeHandler {
 		prepararProximoCloneSquad();
 	}
 
-	public void tratarCliqueSquad(Pane cell, int x, int y) {
+	public void tratarCliqueSquad(int x, int y) {
 		Personagem atorAtual = mapController.getAtorAtual();
 		if (atorAtual == null) return;
 
@@ -69,7 +76,7 @@ public class SquadModeHandler {
 		}
 
 		if (isMover) {
-			if (celulasAlcanceMovimento.contains(cell)) {
+			if (celulasAlcanceMovimento.contains(new CoordenadaMapa(x, y))) {
 				if (mapController.getPersonagemNaCelula(x, y) == null) {
 					int dist = aoeCalc.calcularDistancia(atorAtual.getPosX(), atorAtual.getPosY(), x, y);
 					if (dist != -1 && dist <= atorAtual.getMovimentoRestanteTurno()) {
@@ -85,7 +92,7 @@ public class SquadModeHandler {
 		}
 
 		if (isMirar) {
-			if (celulasAlcanceMovimento.contains(cell)) {
+			if (celulasAlcanceMovimento.contains(new CoordenadaMapa(x, y))) {
 				Personagem alvo = mapController.getPersonagemNaCelula(x, y);
 				if (alvo != null && (!alvo.equals(atorAtual) || (mapController.getHabilidadeAtual() != null && mapController.getHabilidadeAtual().afetaSiMesmo()))) {
 					if (alvo.isClone() && alvo.getCriador() == atorAtual.getCriador()) {

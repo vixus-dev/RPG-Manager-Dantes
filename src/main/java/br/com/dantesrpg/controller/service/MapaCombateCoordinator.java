@@ -115,7 +115,7 @@ EstadoCombate estado = estadoSupplier.get();
 		
 		arquivoMapaAtualSetter.accept(null); // Sem arquivo associado
 		
-		forEachMap.accept(m -> m.carregarMapaProcedural(matriz));
+		primaryMapSupplier.get().carregarMapaProcedural(matriz);
 		
 		estado.resetarIniciativa();
 
@@ -159,7 +159,9 @@ EstadoCombate estado = estadoSupplier.get();
 		encerrarEmprestimosOvertime();
 		encerrarContratosBarbaros();
 		limparClonesDoCombate();
-		forEachMap.accept(m -> m.carregarMapaDeImagem(mapaFile));
+		primaryMapSupplier.get().carregarMapaDeImagem(mapaFile);
+        arquivoMapaAtualSetter.accept(mapaFile);
+        carregarMetadadosDoMapa(mapaFile);
 		estado.resetarIniciativa();
 
 		for (Personagem personagem : estado.getCombatentes()) {
@@ -180,7 +182,7 @@ EstadoCombate estado = estadoSupplier.get();
 		try (InputStream is = FileLoader.carregarArquivo(caminhoRecurso)) {
 			if (is != null) {
 				String nomeMapa = caminhoRecurso.contains("/") ? caminhoRecurso.substring(caminhoRecurso.lastIndexOf('/') + 1) : caminhoRecurso;
-				forEachMap.accept(m -> m.carregarMapaDeImagem(is, nomeMapa));
+				primaryMapSupplier.get().carregarMapaDeImagem(is, nomeMapa);
 			} else {
 				System.err.println("Erro: Não foi possível carregar a imagem do mapa " + caminhoRecurso);
 			}
@@ -268,7 +270,7 @@ EstadoCombate estado = estadoSupplier.get();
 			System.out.println("MAPA: Metadados encontrados: " + jsonFile.getName());
 			try (FileReader reader = new FileReader(jsonFile)) {
 				MapMetadata meta = new Gson().fromJson(reader, MapMetadata.class);
-				forEachMap.accept(m -> m.aplicarMetadados(meta));
+				primaryMapSupplier.get().aplicarMetadados(meta);
 			} catch (Exception e) {
 				System.err.println("Erro ao ler JSON do mapa: " + e.getMessage());
 			}
@@ -284,7 +286,7 @@ EstadoCombate estado = estadoSupplier.get();
 				System.out.println("MAPA: Metadados encontrados no recurso: " + pathJson);
 				try (InputStreamReader reader = new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8)) {
 					MapMetadata meta = new Gson().fromJson(reader, MapMetadata.class);
-					forEachMap.accept(m -> m.aplicarMetadados(meta));
+					primaryMapSupplier.get().aplicarMetadados(meta);
 				}
 			} else {
 				System.out.println("MAPA: Nenhum JSON de metadados encontrado no recurso. Usando imagem pura.");
@@ -486,9 +488,11 @@ combatManagerSupplier.get().distribuirXpAposCombate(estadoSupplier.get());
 		}
 	}
 
-	public void criarObjetoNoMapa(int x, int y) {
+	public void criarObjetoNoMapa(int x, int y) { criarObjetoNoMapa(x,y,50); }
+
+    public void criarObjetoNoMapa(int x, int y, int hp) {
 		removerObjetoNoMapa(x, y);
-		ObjetoDestrutivel barreira = new ObjetoDestrutivel("Barricada de Madeira", 50, 5, true);
+		ObjetoDestrutivel barreira = new ObjetoDestrutivel("Barricada de Madeira", Math.max(1,hp), 5, true);
 		barreira.setPosX(x);
 		barreira.setPosY(y);
 		estadoSupplier.get().getCombatentes().add(barreira);
@@ -507,7 +511,8 @@ combatManagerSupplier.get().distribuirXpAposCombate(estadoSupplier.get());
 	public void toggleMovimentoLivre() {
 		System.out.println("Botão 'Movimento Livre' clicado no Painel Mestre.");
 		MapController primaryMap = primaryMapSupplier.get();
-		forEachMap.accept(m -> m.toggleModoMovimentoLivre(!primaryMap.isModoMovimentoLivre()));
+		boolean ativar = !primaryMap.isModoMovimentoLivre();
+        forEachMap.accept(m -> m.toggleModoMovimentoLivre(ativar));
 	}
 
 	public void toggleEditorMapa() {

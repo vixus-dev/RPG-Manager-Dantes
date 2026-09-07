@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapMetadata {
+    // Opcional: preserva pintura de terrenos sem alterar o formato dos mapas antigos.
+    private List<TileData> tiles = new ArrayList<>();
+    public List<TileData> getTiles() { return tiles == null ? List.of() : tiles; }
+    public void adicionarTile(int x,int y,String id) { tiles.add(new TileData(x,y,id)); }
+    public record TileData(int x,int y,String id) { }
+
 	private List<Ponto> paredes = new ArrayList<>();
 	private List<Ponto> saidas = new ArrayList<>();
 	private List<ObjetoData> objetos = new ArrayList<>();
