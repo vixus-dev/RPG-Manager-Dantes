@@ -65,7 +65,6 @@ public class LojaController {
 	@FXML private StackPane lojaThemeRoot;
 	@FXML private ImageView lojaThemeBackground;
 
-	@FXML private HBox lojaHeader;
 	@FXML private Label labelNomeLoja;
 	@FXML private Label labelTipoLoja;
 	@FXML private Label labelMoedasOuro;

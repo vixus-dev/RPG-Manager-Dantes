@@ -59,9 +59,6 @@ public class EditorJogadorController {
 
     // --- Header ---
     @FXML
-    private HBox characterHeader;
-
-    @FXML
     private ImageView imgPortrait;
 
     @FXML

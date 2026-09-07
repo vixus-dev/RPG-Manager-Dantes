@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -98,7 +99,7 @@ public class CombatController {
 	@FXML
 	private VBox leftNavBar;
 	@FXML
-	private HBox gmToolbar;
+	private Region gmToolbar;
 	@FXML
 	private BorderPane contextPane;
 	@FXML
