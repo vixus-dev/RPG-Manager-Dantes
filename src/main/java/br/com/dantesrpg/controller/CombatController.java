@@ -89,6 +89,9 @@ import br.com.dantesrpg.controller.service.TemaAndarService;
 import br.com.dantesrpg.model.theme.ConfiguracaoAndar;
 
 public class CombatController {
+    private final br.com.dantesrpg.model.map.EstadoMapa estadoMapa = new br.com.dantesrpg.model.map.EstadoMapa();
+    public br.com.dantesrpg.model.map.EstadoMapa getEstadoMapa() { return estadoMapa; }
+
 
 	@FXML
 	private BorderPane rootPane;
@@ -179,15 +182,13 @@ public class CombatController {
 	private DetailedTurnHUDController detailedTurnHudController;
 
 	// --- REFERÊNCIAS DO MAPA ---
-	private MapController mapController;
 	private MapController embeddedMapController;
 
 	private File arquivoMapaAtual = null;
 
 	private final JanelasCombateCoordinator janelasCombateCoordinator = new JanelasCombateCoordinator(this,
 			() -> estadoCombate, () -> combatManager, () -> armoryDatabase, () -> itempediaDatabase,
-			() -> bestiarioDatabase, () -> arquivoMapaAtual, map -> this.mapController = map,
-			this::carregarMetadadosDoMapa, () -> detailedTurnHudStage);
+			() -> bestiarioDatabase, () -> detailedTurnHudStage);
 	private final PromptCombateService promptCombateService = new PromptCombateService(() -> estadoCombate,
 			() -> combatManager, () -> detailedTurnHudStage, janelasCombateCoordinator, this::getBonusDificuldadeAndar,
 			this::atualizarInterfaceTotal, this::popularListasDeCombatentes);
@@ -201,7 +202,7 @@ public class CombatController {
 			() -> combatManager, () -> detailedTurnHudStage, () -> detailedTurnHudController, this::forEachMap,
 			this::avancarTurnoAposAcao, this::aplicarPassarVez, this::fecharHudEAvançar);
 	private final TurnoCombateCoordinator turnoCombateCoordinator = new TurnoCombateCoordinator(() -> estadoCombate,
-			() -> combatManager, () -> mapController, () -> detailedTurnHudStage, this::forEachMap,
+			() -> combatManager, this::getPrimaryMap, () -> detailedTurnHudStage, this::forEachMap,
 			this::devePassarSquadDeClones, this::passarTurnoSquadAtual, this::aplicarPassarVez, this::limparTUPreview,
 			this::popularListasDeCombatentes, this::removerDestaques, this::getProximoAtorCalculado,
 			this::verificarFimDeCombate, this::atualizarTimelineTU);
@@ -392,9 +393,6 @@ public class CombatController {
 		}
 	}
 
-	private void launchMapWindow() {
-		janelasCombateCoordinator.abrirMapaExterno();
-	}
 
 
 	/**
@@ -410,6 +408,7 @@ public class CombatController {
 			this.embeddedMapController = loader.getController();
 			this.embeddedMapController.setMainController(this);
 			mainCombatStack.getChildren().add(0, embeddedRoot);
+            embeddedMapController.elevarControlesSobre(mainCombatStack);
 		} catch (Exception e) {
 			System.err.println("Erro crítico ao carregar EmbeddedMapView.fxml:");
 			e.printStackTrace();
@@ -417,22 +416,19 @@ public class CombatController {
 	}
 
 	/**
-	 * Executa uma ação em todas as instâncias ativas de MapController
-	 * (embedded sempre, externo se aberto). Usado para manter ambos sincronizados.
+	 * Encaminha os comandos existentes à única instância do mapa, integrada ao combate.
 	 */
 	public void forEachMap(java.util.function.Consumer<MapController> action) {
 		if (embeddedMapController != null)
 			action.accept(embeddedMapController);
-		if (mapController != null)
-			action.accept(mapController);
 	}
 
 	/**
 	 * Retorna o MapController primário para consultas de leitura.
-	 * Prefere o embedded (sempre existe); cai para o externo se necessário.
+	 * O mapa pertence exclusivamente à janela de combate.
 	 */
 	public MapController getPrimaryMap() {
-		return embeddedMapController != null ? embeddedMapController : mapController;
+		return embeddedMapController;
 	}
 
 	private void atualizarInterfaceRoster() {
@@ -1370,6 +1366,10 @@ mapaCombateCoordinator.encerrarEmprestimosOvertime();
 	public void criarObjetoNoMapa(int x, int y) {
 		mapaCombateCoordinator.criarObjetoNoMapa(x, y);
 	}
+
+    public void criarObjetoNoMapa(int x,int y,int hp) {
+        mapaCombateCoordinator.criarObjetoNoMapa(x,y,hp);
+    }
 
 	// Chamado pelo Editor de Mapa (ao apagar) ou pelo CombatManager (ao destruir)
 	public void removerObjetoNoMapa(int x, int y) {
