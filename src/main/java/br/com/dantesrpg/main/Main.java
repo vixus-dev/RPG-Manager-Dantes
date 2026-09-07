@@ -5,11 +5,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import br.com.dantesrpg.controller.CombatController;
 import br.com.dantesrpg.model.map.TileRegistry;
-import br.com.dantesrpg.model.util.FileLoader;
 import atlantafx.base.theme.PrimerDark;
 
 public class Main extends Application {
@@ -29,13 +27,13 @@ public class Main extends Application {
             primaryStage.setTitle("A Decadencia Combat Manager");
             primaryStage.setScene(scene);
             primaryStage.setMaximized(true);
+            ApplicationWindowIconService.install(primaryStage);
             primaryStage.show(); // Mostra a janela IMEDIATAMENTE
 
             // Carregamentos pesados APÓS a janela aparecer
             Platform.runLater(() -> {
                 try {
                     TileRegistry.getInstance().load();
-                    primaryStage.getIcons().add(new Image(FileLoader.carregarArquivo("/logoTrasnp.png")));
 
                     controller = loader.getController();
                     controller.inicializacaoTardia();
@@ -52,6 +50,7 @@ public class Main extends Application {
 
     @Override
     public void stop() {
+        ApplicationWindowIconService.uninstall();
         if(controller!=null)controller.forEachMap(br.com.dantesrpg.controller.MapController::liberarRecursos);
     }
 
