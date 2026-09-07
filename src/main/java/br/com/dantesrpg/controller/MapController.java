@@ -57,6 +57,21 @@ import javax.imageio.ImageIO;
 import java.io.FileInputStream;
 
 public class MapController {
+    private br.com.dantesrpg.model.map.EstadoMapa estadoMapa = new br.com.dantesrpg.model.map.EstadoMapa();
+    private final Consumer<CoordenadaMapa> ouvinteMapa = this::sincronizarEstadoMapa;
+    private br.com.dantesrpg.controller.map.RenderizadorMapa2D renderizador2D;
+    private br.com.dantesrpg.controller.map.RenderizadorMapa3D renderizador3D;
+    private boolean visualizacao3D;
+    private ToggleButton alternarVisualizacao;
+    private final List<Node> controlesElevados=new ArrayList<>();
+    private boolean sincronizandoCelulas;
+    private boolean sincronizandoInteracao;
+    private javafx.stage.Window janelaObservada;
+    private final javafx.beans.value.ChangeListener<Boolean> ouvinteVisibilidade = (o,a,b) -> atualizarVisibilidadeJanela();
+    private final Map<CoordenadaMapa, EfeitoInstance> efeitosDesenhados = new HashMap<>();
+    private CoordenadaMapa cursorGrade;
+    private final Set<CoordenadaMapa> previewAtual = new LinkedHashSet<>();
+
 
 	@FXML
 	private GridPane mapGrid;
@@ -146,7 +161,7 @@ public class MapController {
 	private SquadModeHandler squadHandler;
 
 	private Personagem atorAtual;
-	private Set<Pane> celulasAlcanceMovimento = new HashSet<>();
+	private Set<CoordenadaMapa> celulasAlcanceMovimento = new HashSet<>();
 
 	private Pane[][] celulasDoGrid = new Pane[gridLargura][gridAltura];
 	private boolean[][] paredesGrid = new boolean[gridLargura][gridAltura];
@@ -204,6 +219,9 @@ public class MapController {
 			clip.heightProperty().bind(mapViewport.heightProperty());
 			mapViewport.setClip(clip);
 		}
+        inicializarRenderizadores();
+        estadoMapa.observar(ouvinteMapa);
+
 	}
 
 	private void configurarZoomEPan() {
@@ -211,7 +229,7 @@ public class MapController {
 
 		// Zoom com Ctrl + Scroll
 		mapViewport.addEventFilter(ScrollEvent.SCROLL, event -> {
-			if (event.isControlDown()) {
+			if (!visualizacao3D && event.isControlDown()) {
 				event.consume();
 				double delta = event.getDeltaY();
 				
@@ -237,6 +255,7 @@ public class MapController {
 
 		// Drag com botao do meio ou botao esquerdo para pan
 		mapViewport.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (visualizacao3D) return;
 			if (event.isMiddleButtonDown() || event.isPrimaryButtonDown()) {
 				dragAnchorX = event.getSceneX();
 				dragAnchorY = event.getSceneY();
@@ -250,6 +269,7 @@ public class MapController {
 		});
 
 		mapViewport.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
+            if (visualizacao3D) return;
 			if (event.isMiddleButtonDown() || event.isPrimaryButtonDown()) {
 				double deltaX = event.getSceneX() - dragAnchorX;
 				double deltaY = event.getSceneY() - dragAnchorY;
@@ -266,6 +286,7 @@ public class MapController {
 	}
 
 	public void zoomIn() {
+        if (visualizacao3D) { renderizador3D.zoom(.85); return; }
 		if (mapContent == null) return;
 		zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP);
 		mapContent.setScaleX(zoomLevel);
@@ -273,6 +294,7 @@ public class MapController {
 	}
 
 	public void zoomOut() {
+        if (visualizacao3D) { renderizador3D.zoom(1.15); return; }
 		if (mapContent == null) return;
 		zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP);
 		mapContent.setScaleX(zoomLevel);
@@ -280,6 +302,7 @@ public class MapController {
 	}
 
 	public void resetZoom() {
+        if (visualizacao3D) { renderizador3D.restaurar(); return; }
 		if (mapContent == null) return;
 		zoomLevel = 1.0;
 		mapContent.setScaleX(1.0);
@@ -332,6 +355,7 @@ public class MapController {
 	}
 
 	private void onMouseMovedNoGrid(MouseEvent event) {
+        cursorGrade = new CoordenadaMapa((int)(event.getX()/CELL_SIZE),(int)(event.getY()/CELL_SIZE));
 		if (modoSelecaoExplosaoAmbiental) {
 			desenharPreviewExplosaoAmbiental(event.getX(), event.getY());
 			return;
@@ -367,6 +391,8 @@ public class MapController {
 	}
 
 	public void limparCanvas() {
+        previewAtual.clear();
+        if(renderizador3D!=null)renderizador3D.apresentarPreview(List.of(),"aoe",areasSelecionadasMultiAoE.stream().map(AcaoMestreInput.AreaSelecionada::epicentro).toList());
 		if (aoeCanvas != null) {
 			GraphicsContext gc = aoeCanvas.getGraphicsContext2D();
 			gc.clearRect(0, 0, aoeCanvas.getWidth(), aoeCanvas.getHeight());
@@ -377,6 +403,8 @@ public class MapController {
 		limparCanvas();
 		if (atorAtual == null)
 			return;
+
+        if(aoeCalc!=null)previewAtual.addAll(aoeCalc.calcularForma((int)(mouseX/CELL_SIZE),(int)(mouseY/CELL_SIZE),habilidadeAtual,atorAtual));
 
 		GraphicsContext gc = aoeCanvas.getGraphicsContext2D();
 		gc.setFill(Color.rgb(148, 0, 211, 0.3)); // Roxo translúcido
@@ -498,7 +526,7 @@ public class MapController {
 			return;
 		}
 
-		boolean celularDiretamenteNoAlcance = celulasAlcanceMovimento.contains(cell);
+		boolean celularDiretamenteNoAlcance = celulasAlcanceMovimento.contains(new CoordenadaMapa(x, y));
 		Personagem hoverTarget = getPersonagemNaCelula(x, y);
 		boolean alvoNoAlcance = celularDiretamenteNoAlcance;
 
@@ -506,7 +534,7 @@ public class MapController {
 			for (int alvoX = hoverTarget.getPosX(); alvoX < hoverTarget.getPosX() + hoverTarget.getTamanhoX(); alvoX++) {
 				for (int alvoY = hoverTarget.getPosY(); alvoY < hoverTarget.getPosY() + hoverTarget.getTamanhoY(); alvoY++) {
 					if (alvoX >= 0 && alvoX < gridLargura && alvoY >= 0 && alvoY < gridAltura) {
-						if (celulasAlcanceMovimento.contains(celulasDoGrid[alvoX][alvoY])) {
+						if (celulasAlcanceMovimento.contains(new CoordenadaMapa(alvoX, alvoY))) {
 							alvoNoAlcance = true;
 							break;
 						}
@@ -564,7 +592,7 @@ public class MapController {
 				if (dentroDoGrid(x, y)) {
 					// Opcional: Verificar linha de visão se o guardião não atravessa paredes
 					if (!paredesGrid[x][y] || (x == centroX && y == centroY)) {
-						Pane cell = celulasDoGrid[x][y];
+						Pane cell = obterCelula(x,y);
 						cell.getStyleClass().add("alcance-guardiao");
 						celulasGuardiaoDestacadas.add(cell);
 					}
@@ -590,7 +618,7 @@ public class MapController {
 			for (int x = centroX - raio; x <= centroX + raio; x++) {
 				if (dentroDoGrid(x, y)) {
 					if (!paredesGrid[x][y] || (x == centroX && y == centroY)) {
-						Pane cell = celulasDoGrid[x][y];
+						Pane cell = obterCelula(x,y);
 						cell.getStyleClass().add("alcance-vigilia");
 						celulasVigiliaDestacadas.add(cell);
 					}
@@ -616,7 +644,7 @@ public class MapController {
 			for (int x = centroX - raio; x <= centroX + raio; x++) {
 				if (dentroDoGrid(x, y)) {
 					if (!paredesGrid[x][y] || (x == centroX && y == centroY)) {
-						Pane cell = celulasDoGrid[x][y];
+						Pane cell = obterCelula(x,y);
 						cell.getStyleClass().add("alcance-harmonia");
 						celulasHarmoniaDestacadas.add(cell);
 					}
@@ -635,6 +663,11 @@ public class MapController {
 	}
 
 	private void onGridCellClicked(MouseEvent event, Pane cell, int x, int y) {
+        try { processarCliqueCelula(event,cell,x,y); }
+        finally { publicarInteracao(); }
+    }
+
+    private void processarCliqueCelula(MouseEvent event, Pane cell, int x, int y) {
 		if (dragOcorreu) {
 			dragOcorreu = false;
 			event.consume();
@@ -810,14 +843,14 @@ public class MapController {
 			if (tentarCruzarBordaDominio(atorAtual, atorAtual.getPosX(), atorAtual.getPosY(), x, y)) {
 				return;
 			}
-			if (celulasAlcanceMovimento.contains(cell)) {
+			if (celulasAlcanceMovimento.contains(new CoordenadaMapa(x, y))) {
 				// Prioridade: Saída
-				if (cell.getStyleClass().contains("map-exit")) {
+				if (estadoMapa.getTerreno(x,y)==TipoTerreno.SAIDA) {
 					mainController.acionarTransicaoDeMapa(atorAtual);
 					return;
 				}
 				int custoMovimento = calcularDistancia(atorAtual.getPosX(), atorAtual.getPosY(), x, y);
-				if (custoMovimento > atorAtual.getMovimentoRestanteTurno())
+				if (custoMovimento < 0 || custoMovimento > atorAtual.getMovimentoRestanteTurno())
 					return;
 
 
@@ -825,7 +858,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 				atorAtual.setPosX(x);
 				atorAtual.setPosY(y);
 
-				desenharPeoes(mainController.getCombatentes());
+				mainController.forEachMap(m -> m.desenharPeoes(mainController.getCombatentes()));
 
 				if (mainController != null) {
 					mainController.verificarInteracaoTerreno(atorAtual);
@@ -856,14 +889,14 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 
 			// Verifica Single Target (Peão ou Objeto)
 			Personagem alvo = getPersonagemNaCelula(x, y);
-			boolean alvoNoAlcance = celulasAlcanceMovimento.contains(cell);
+			boolean alvoNoAlcance = celulasAlcanceMovimento.contains(new CoordenadaMapa(x, y));
 
 			if (!alvoNoAlcance && alvo != null) {
 				for (int alvoX = alvo.getPosX(); alvoX < alvo.getPosX() + alvo.getTamanhoX(); alvoX++) {
 					for (int alvoY = alvo.getPosY(); alvoY < alvo.getPosY() + alvo.getTamanhoY(); alvoY++) {
 						if (dentroDoGrid(alvoX, alvoY)) {
-							Pane alvoCell = celulasDoGrid[alvoX][alvoY];
-							if (celulasAlcanceMovimento.contains(alvoCell)) {
+							Pane alvoCell = obterCelula(alvoX,alvoY);
+							if (celulasAlcanceMovimento.contains(new CoordenadaMapa(alvoX, alvoY))) {
 								alvoNoAlcance = true;
 								break;
 							}
@@ -901,7 +934,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			return;
 		limparDestaquesAlcance();
 
-		Set<Pane> celulas;
+		Set<CoordenadaMapa> celulas;
 		if (cssClass.equals(CSS_ALCANCE_MOVIMENTO)) {
 			celulas = aoeCalc.calcularCelulasMovimento(startX, startY, maxDist, dominiosAtivos);
 		} else if (habilidadeAtual != null && habilidadeAtual.ignoraParedes()) {
@@ -909,19 +942,19 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			for (int x = 0; x < gridLargura; x++) {
 				for (int y = 0; y < gridAltura; y++) {
 					if (Math.max(Math.abs(x - startX), Math.abs(y - startY)) <= maxDist) {
-						celulas.add(celulasDoGrid[x][y]);
+						celulas.add(new CoordenadaMapa(x, y));
 					}
 				}
 			}
 		} else {
 			celulas = aoeCalc.calcularCelulasAtaque(startX, startY, maxDist);
 			if (habilidadeAtual != null && habilidadeAtual.afetaSiMesmo()) {
-				celulas.add(celulasDoGrid[startX][startY]);
+				celulas.add(new CoordenadaMapa(startX, startY));
 			}
 		}
-		for (Pane cell : celulas) {
-			cell.getStyleClass().add(cssClass);
-			celulasAlcanceMovimento.add(cell);
+		for (CoordenadaMapa c : celulas) {
+			obterCelula(c.x(),c.y()).getStyleClass().add(cssClass);
+			celulasAlcanceMovimento.add(c);
 		}
 	}
 
@@ -930,6 +963,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	}
 
 	private void onToggleModo() {
+        if(sincronizandoInteracao)return;
 		if (atorAtual == null)
 			return;
 
@@ -942,6 +976,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			System.out.println("MAPA: Modo Mirar (Squad/Normal).");
 			calcularEExibirAtaqueRange(atorAtual, habilidadeAtual);
 		}
+        publicarInteracao();
 	}
 
 	public void atualizarBotaoPularSquad() {
@@ -954,7 +989,11 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	}
 
 	public void setMainController(CombatController mainController) {
-		this.mainController = mainController;
+        estadoMapa.desobservar(ouvinteMapa);
+        this.mainController = mainController;
+        estadoMapa = mainController.getEstadoMapa();
+        estadoMapa.observar(ouvinteMapa);
+        if (estadoMapa.getLargura() > 0) sincronizarEstadoMapa(null);
 		setSobreposicaoAguaTempestadeAtiva(mainController != null
 				&& mainController.isSobreposicaoAguaTempestadeAtiva());
 	}
@@ -1004,151 +1043,229 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		}
 	}
 
-	public void carregarMapaDeImagem(InputStream is, String nomeMapa) {
-		System.out.println("MAPA: Carregando mapa de recurso/stream: " + nomeMapa);
+    public void carregarMapaDeImagem(InputStream is, String nomeMapa) {
+        Image imagem = new Image(is);
+        if (imagem.isError()) throw new IllegalArgumentException("Não foi possível ler o mapa " + nomeMapa, imagem.getException());
+        TileRegistry registro = TileRegistry.getInstance();
+        TileDefinition[][] tiles = new TileDefinition[(int) imagem.getWidth()][(int) imagem.getHeight()];
+        PixelReader leitor = imagem.getPixelReader();
+        for (int x=0;x<tiles.length;x++) for (int y=0;y<tiles[x].length;y++) {
+            int rgb = leitor.getArgb(x,y);
+            tiles[x][y] = registro.getByRgb((rgb >> 16)&255,(rgb >> 8)&255,rgb&255);
+        }
+        carregarMapaProcedural(tiles);
+    }
 
-		try {
-			Image mapaImage = new Image(is);
-			if (mapaImage.isError())
-				throw new Exception("Falha ao carregar imagem: " + nomeMapa);
+    public void carregarMapaProcedural(TileDefinition[][] matrizTiles) {
+        estadoMapa.carregar(matrizTiles, TileRegistry.getInstance().getDefault());
+    }
 
-			PixelReader pixelReader = mapaImage.getPixelReader();
+    public br.com.dantesrpg.model.map.EstadoMapa getEstadoMapa() { return estadoMapa; }
 
-			this.gridLargura = (int) mapaImage.getWidth();
-			this.gridAltura = (int) mapaImage.getHeight();
+    private void sincronizarEstadoMapa(CoordenadaMapa c) {
+        if (c == null) {
+            gridLargura=estadoMapa.getLargura(); gridAltura=estadoMapa.getAltura();
+            paredesGrid=estadoMapa.paredesParaConsulta(); gridTerreno=estadoMapa.terrenosParaConsulta();
+            gridEfeitos=estadoMapa.efeitosParaConsulta();
+            celulasAlcanceMovimento.clear(); efeitosDesenhados.clear(); celulasVisuaisDominios.clear(); dominiosAtivos.clear();
+            celulasGuardiaoDestacadas.clear(); celulasVigiliaDestacadas.clear(); celulasHarmoniaDestacadas.clear();
+            mapGrid.getChildren().clear(); mapGrid.getColumnConstraints().clear(); mapGrid.getRowConstraints().clear();
+            celulasDoGrid=new Pane[gridLargura][gridAltura];
+            aoeCanvas.setWidth(gridLargura*CELL_SIZE); aoeCanvas.setHeight(gridAltura*CELL_SIZE);
+            inicializarHelpers();
+            renderizador2D.carregar(estadoMapa);
+            if (renderizador3D!=null) renderizador3D.carregar(estadoMapa);
+            desenharPeoes(getCombatentes()); resetZoom();
+        } else {
+            sincronizarCelula(c.x(),c.y());
+            if(renderizador3D!=null)renderizador3D.atualizarCelula(c);
+        }
+    }
 
-			if (aoeCanvas != null) {
-				aoeCanvas.setWidth(gridLargura * CELL_SIZE);
-				aoeCanvas.setHeight(gridAltura * CELL_SIZE);
-			}
+    private Pane obterCelula(int x,int y) {
+        if(!dentroDoGrid(x,y))return null;
+        Pane existente=celulasDoGrid[x][y];
+        if(existente!=null)return existente;
+        Pane cell=new Pane();celulasDoGrid[x][y]=cell;
+        cell.setOnMouseClicked(e -> onGridCellClicked(e,cell,x,y));
+        cell.setOnMouseEntered(e -> onGridCellMouseEntered(cell,x,y));
+        cell.getStyleClass().addListener((javafx.collections.ListChangeListener<String>) change -> {
+            if(sincronizandoCelulas)return;
+            List<String> marcas=new ArrayList<>(cell.getStyleClass());
+            marcas.removeAll(TileRegistry.getInstance().getAllCssClasses());marcas.remove("map-cell");
+            estadoMapa.definirMarcas(x,y,marcas);
+        });
+        sincronizarCelula(x,y);
+        return cell;
+    }
 
-			System.out.println("MAPA: Tamanho detectado " + gridLargura + "x" + gridAltura);
+    private void prepararGrade2D() {
+        if(mapGrid.getColumnConstraints().isEmpty()) {
+            for(int x=0;x<gridLargura;x++)mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
+            for(int y=0;y<gridAltura;y++)mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
+        }
+        for(int x=0;x<gridLargura;x++)for(int y=0;y<gridAltura;y++) {
+            Pane cell=obterCelula(x,y);
+            if(cell.getParent()==null)mapGrid.add(cell,x,y);
+        }
+    }
 
-			paredesGrid = new boolean[gridLargura][gridAltura];
-			celulasDoGrid = new Pane[gridLargura][gridAltura];
+    private void sincronizarCelula(int x,int y) {
+        if (!dentroDoGrid(x,y) || celulasDoGrid[x][y]==null) return;
+        boolean anterior=sincronizandoCelulas; sincronizandoCelulas=true;
+        try {
+            Pane cell=celulasDoGrid[x][y];
+            List<String> classes=new ArrayList<>();
+            classes.add("map-cell"); classes.add(estadoMapa.getTile(x,y).getCssClass()); classes.addAll(estadoMapa.getMarcas(x,y));
+            if (!cell.getStyleClass().equals(classes)) cell.getStyleClass().setAll(classes);
+            CoordenadaMapa c=new CoordenadaMapa(x,y);
+            if (efeitosDesenhados.get(c)!=gridEfeitos[x][y]) {
+                efeitosDesenhados.put(c,gridEfeitos[x][y]); atualizarVisualTerreno(x,y);
+            }
+        } finally { sincronizandoCelulas=anterior; }
+    }
 
-			gridTerreno = new TipoTerreno[gridLargura][gridAltura];
-			gridEfeitos = new EfeitoInstance[gridLargura][gridAltura];
+    private void inicializarRenderizadores() {
+        renderizador2D=new br.com.dantesrpg.controller.map.RenderizadorMapa2D(mapContent,
+                lista -> { prepararGrade2D(); if(tokenRenderer!=null)tokenRenderer.desenharPeoes(lista); },
+                lista -> { if(tokenRenderer!=null)tokenRenderer.destacarPeoesAlvo(lista); });
+        boolean suporta=javafx.application.Platform.isSupported(javafx.application.ConditionalFeature.SCENE3D);
+        ToggleButton alternar=new ToggleButton("3D"); alternarVisualizacao=alternar; alternar.getStyleClass().add("mapa-vista-toggle");
+        alternar.setTooltip(new javafx.scene.control.Tooltip(suporta?"Alternar entre tabuleiro 2D e 3D":"3D indisponível neste dispositivo"));
+        alternar.setDisable(!suporta);
+        if(suporta) {
+            renderizador3D=new br.com.dantesrpg.controller.map.RenderizadorMapa3D(this::clicarEm3D,this::apontarEm3D,
+                    p -> mainController!=null && mainController.isPlayer(p),this::getAtorAtual);
+            mapViewport.getChildren().add(renderizador3D.getNode());
+        }
+        mapViewport.getChildren().add(alternar);
+        StackPane.setAlignment(alternar,javafx.geometry.Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(alternar,new javafx.geometry.Insets(8));
+        alternar.setOnAction(e -> definirVisualizacao3D(alternar.isSelected()));
+        alternar.setSelected(suporta); definirVisualizacao3D(suporta);
+        mapViewport.sceneProperty().addListener((o,anterior,nova) -> {
+            if(nova==null){observarJanela(null);suspenderVisualizacao(true);return;}
+            nova.windowProperty().addListener((w,antiga,janela) -> observarJanela(janela));
+            observarJanela(nova.getWindow());
+        });
+    }
 
-			mapGrid.getChildren().clear();
-			mapGrid.getColumnConstraints().clear();
-			mapGrid.getRowConstraints().clear();
+    /** Mantém comandos acima do sombreado e do roster, sem interceptar o restante do mapa. */
+    public void elevarControlesSobre(StackPane destino) {
+        List<Node> controles=new ArrayList<>();
+        controles.add(alternarVisualizacao);
+        if(floatingToggleBox!=null)controles.add(floatingToggleBox);
+        if(renderizador3D!=null)controles.add(renderizador3D.getControles());
+        for(Node controle:controles) {
+            if(controle.getParent() instanceof Pane origem)origem.getChildren().remove(controle);
+            destino.getChildren().add(controle);
+            if(!controlesElevados.contains(controle))controlesElevados.add(controle);
+        }
+    }
 
-			for (int x = 0; x < gridLargura; x++) {
-				mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
-			}
-			for (int y = 0; y < gridAltura; y++) {
-				mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
-			}
+    private void observarJanela(javafx.stage.Window janela) {
+        if(janelaObservada==janela)return;
+        if(janelaObservada!=null) {
+            janelaObservada.showingProperty().removeListener(ouvinteVisibilidade);
+            if(janelaObservada instanceof javafx.stage.Stage stage)stage.iconifiedProperty().removeListener(ouvinteVisibilidade);
+        }
+        janelaObservada=janela;
+        if(janela!=null) {
+            janela.showingProperty().addListener(ouvinteVisibilidade);
+            if(janela instanceof javafx.stage.Stage stage)stage.iconifiedProperty().addListener(ouvinteVisibilidade);
+        }
+        atualizarVisibilidadeJanela();
+    }
 
-			for (int y = 0; y < gridAltura; y++) {
-				for (int x = 0; x < gridLargura; x++) {
+    private void atualizarVisibilidadeJanela() {
+        suspenderVisualizacao(janelaObservada==null || !janelaObservada.isShowing()
+                || janelaObservada instanceof javafx.stage.Stage stage && stage.isIconified());
+    }
 
-					Pane cell = new Pane();
-					Color corPixel = pixelReader.getColor(x, y);
-					final int cellX = x;
-					final int cellY = y;
+    public void definirVisualizacao3D(boolean valor) {
+        visualizacao3D=valor && renderizador3D!=null;
+        if(alternarVisualizacao!=null)alternarVisualizacao.setSelected(visualizacao3D);
+        renderizador2D.ativar(!visualizacao3D);
+        if(renderizador3D!=null)renderizador3D.ativar(visualizacao3D);
+        if(!visualizacao3D && cursorGrade!=null && habilidadeAtual!=null && modoSelecaoAlvo && !isMoverMode())
+            desenharVisualAoE((cursorGrade.x()+.5)*CELL_SIZE,(cursorGrade.y()+.5)*CELL_SIZE);
+        if(renderizador3D!=null)renderizador3D.apresentarPreview(previewAtual,"aoe",
+                areasSelecionadasMultiAoE.stream().map(AcaoMestreInput.AreaSelecionada::epicentro).toList());
+    }
 
-					int r = (int) (corPixel.getRed() * 255);
-					int g = (int) (corPixel.getGreen() * 255);
-					int b = (int) (corPixel.getBlue() * 255);
+    public void sincronizarInteracaoDe(MapController origem) {
+        if(origem==null || origem==this)return;
+        sincronizandoInteracao=true;
+        try {
+            modoSelecaoAlvo=origem.modoSelecaoAlvo; habilidadeAtual=origem.habilidadeAtual; atorAtual=origem.atorAtual;
+            modoSelecaoMultipla=origem.modoSelecaoMultipla; alvosRestantes=origem.alvosRestantes;
+            modoSelecaoMultiAoE=origem.modoSelecaoMultiAoE; areasRestantes=origem.areasRestantes;
+            alvosSelecionadosMulti.clear();alvosSelecionadosMulti.addAll(origem.alvosSelecionadosMulti);
+            areasSelecionadasMultiAoE.clear();areasSelecionadasMultiAoE.addAll(origem.areasSelecionadasMultiAoE);
+            celulasAlcanceMovimento.clear();celulasAlcanceMovimento.addAll(origem.celulasAlcanceMovimento);
+            modoMovimentoLivre=origem.modoMovimentoLivre;peaoSelecionadoParaMover=origem.peaoSelecionadoParaMover;
+            modoSpawnInimigo=origem.modoSpawnInimigo;idMonstroEmSpawn=origem.idMonstroEmSpawn;cargasSpawnRestantes=origem.cargasSpawnRestantes;
+            modoSelecaoExplosaoAmbiental=origem.modoSelecaoExplosaoAmbiental;
+            aoSelecionarExplosaoAmbiental=origem.aoSelecionarExplosaoAmbiental;aoCancelarSelecaoExplosaoAmbiental=origem.aoCancelarSelecaoExplosaoAmbiental;
+            setMoverMode(origem.isMoverMode());
+            if(squadHandler!=null)squadHandler.sincronizarDe(origem.squadHandler);
+            atualizarBotaoPularSquad();
+            if(floatingToggleBox!=null){floatingToggleBox.setVisible(modoSelecaoAlvo);floatingToggleBox.setManaged(modoSelecaoAlvo);}
+            if(modoSelecaoMultipla || modoSelecaoMultiAoE)criarLabelContador();else removerLabelContador();
+            previewAtual.clear();previewAtual.addAll(origem.previewAtual);
+            if(renderizador3D!=null)renderizador3D.apresentarPreview(previewAtual,"aoe",areasSelecionadasMultiAoE.stream().map(AcaoMestreInput.AreaSelecionada::epicentro).toList());
+        } finally {sincronizandoInteracao=false;}
+    }
 
-					// Lookup via TileRegistry (substitui o if-else chain)
-					TileRegistry registry = TileRegistry.getInstance();
-					TileDefinition tile = registry.getByRgb(r, g, b);
-					if (tile == null) {
-						tile = registry.getDefault();
-					}
+    private void publicarInteracao() {
+        if(mainController!=null && !sincronizandoInteracao)mainController.forEachMap(m -> m.sincronizarInteracaoDe(this));
+    }
 
-					// Aplica CSS, propriedades de terreno e efeitos a partir da definicao
-					aplicarTileNaCelula(cell, tile, x, y);
+    public void suspenderVisualizacao(boolean suspender) {
+        if(renderizador3D!=null)renderizador3D.ativar(!suspender && visualizacao3D);
+    }
 
-					cell.getStyleClass().add("map-cell");
-					cell.setOnMouseClicked(event -> onGridCellClicked(event, cell, cellX, cellY));
-					cell.setOnMouseEntered(event -> onGridCellMouseEntered(cell, cellX, cellY));
-					mapGrid.add(cell, x, y);
-					celulasDoGrid[x][y] = cell;
-				}
-			}
+    public void liberarRecursos() {
+        observarJanela(null);
+        for(Node controle:controlesElevados)
+            if(controle.getParent() instanceof Pane origem)origem.getChildren().remove(controle);
+        controlesElevados.clear();
+        estadoMapa.desobservar(ouvinteMapa);
+        if(renderizador3D!=null)renderizador3D.close();
+        if(renderizador2D!=null)renderizador2D.close();
+    }
 
-			inicializarHelpers();
-			resetZoom();
+    private void clicarEm3D(CoordenadaMapa c, MouseEvent evento) {
+        if(c!=null && dentroDoGrid(c.x(),c.y())) onGridCellClicked(evento,obterCelula(c.x(),c.y()),c.x(),c.y());
+        else if(evento.getButton()==javafx.scene.input.MouseButton.SECONDARY) {
+            if(modoSelecaoExplosaoAmbiental)cancelarModoSelecaoExplosaoAmbiental();
+            else if(modoSpawnInimigo && mainController!=null)mainController.notifySpawnConcluido();
+            else peaoSelecionadoParaMover=null;
+        }
+        desenharPeoes(getCombatentes());
+        if(cursorGrade!=null)apontarEm3D(cursorGrade);
+    }
 
-		} catch (Exception e) {
-			System.err.println("Erro crítico ao carregar mapa de imagem.");
-			e.printStackTrace();
-			preencherComChaoPadrao();
-		}
-	}
-
-	public void carregarMapaProcedural(TileDefinition[][] matrizTiles) {
-		System.out.println("MAPA: Carregando mapa gerado proceduralmente...");
-
-		try {
-			this.gridLargura = matrizTiles.length;
-			this.gridAltura = matrizTiles[0].length;
-
-			if (aoeCanvas != null) {
-				aoeCanvas.setWidth(gridLargura * CELL_SIZE);
-				aoeCanvas.setHeight(gridAltura * CELL_SIZE);
-			}
-
-			System.out.println("MAPA: Tamanho do mapa procedural: " + gridLargura + "x" + gridAltura);
-
-			paredesGrid = new boolean[gridLargura][gridAltura];
-			celulasDoGrid = new Pane[gridLargura][gridAltura];
-
-			gridTerreno = new TipoTerreno[gridLargura][gridAltura];
-			gridEfeitos = new EfeitoInstance[gridLargura][gridAltura];
-
-			mapGrid.getChildren().clear();
-			mapGrid.getColumnConstraints().clear();
-			mapGrid.getRowConstraints().clear();
-
-			for (int x = 0; x < gridLargura; x++) {
-				mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
-			}
-			for (int y = 0; y < gridAltura; y++) {
-				mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
-			}
-
-			for (int y = 0; y < gridAltura; y++) {
-				for (int x = 0; x < gridLargura; x++) {
-
-					Pane cell = new Pane();
-					TileDefinition tile = matrizTiles[x][y];
-					if (tile == null) {
-						tile = TileRegistry.getInstance().getDefault();
-					}
-
-					final int cellX = x;
-					final int cellY = y;
-
-					aplicarTileNaCelula(cell, tile, x, y);
-
-					cell.getStyleClass().add("map-cell");
-					cell.setOnMouseClicked(event -> onGridCellClicked(event, cell, cellX, cellY));
-					cell.setOnMouseEntered(event -> onGridCellMouseEntered(cell, cellX, cellY));
-					mapGrid.add(cell, x, y);
-					celulasDoGrid[x][y] = cell;
-				}
-			}
-
-			inicializarHelpers();
-			resetZoom();
-
-		} catch (Exception e) {
-			System.err.println("Erro crítico ao carregar mapa procedural.");
-			e.printStackTrace();
-			preencherComChaoPadrao();
-		}
-	}
+    private void apontarEm3D(CoordenadaMapa c) {
+        cursorGrade=c;
+        if(c==null || !dentroDoGrid(c.x(),c.y())) { limparCanvas(); return; }
+        onGridCellMouseEntered(obterCelula(c.x(),c.y()),c.x(),c.y());
+        previewAtual.clear();
+        if(modoSelecaoExplosaoAmbiental) {
+            for(int x=c.x()-1;x<=c.x()+1;x++)for(int y=c.y()-1;y<=c.y()+1;y++)
+                if(dentroDoGrid(x,y) && Math.abs(x-c.x())+Math.abs(y-c.y())<=1)previewAtual.add(new CoordenadaMapa(x,y));
+        } else if(modoSelecaoAlvo && !isMoverMode() && habilidadeAtual!=null && aoeCalc!=null) {
+            previewAtual.addAll(aoeCalc.calcularForma(c.x(),c.y(),habilidadeAtual,atorAtual));
+        }
+        if(renderizador3D!=null)renderizador3D.apresentarPreview(previewAtual,"aoe",
+                areasSelecionadasMultiAoE.stream().map(AcaoMestreInput.AreaSelecionada::epicentro).toList());
+    }
 
 	private void inicializarHelpers() {
-		aoeCalc = new AoEShapeCalculator(paredesGrid, celulasDoGrid, gridLargura, gridAltura,
+		aoeCalc = new AoEShapeCalculator(paredesGrid, gridLargura, gridAltura,
 				this::getPersonagemNaCelula,
 				() -> mainController != null ? mainController.getCombatentes() : new ArrayList<>());
-		tokenRenderer = new MapTokenRenderer(mapGrid, mainController, celulasDoGrid,
+		tokenRenderer = new MapTokenRenderer(mapGrid, mainController, this::obterCelula,
 				gridLargura, gridAltura, CELL_SIZE, this::estaEmAguaProfunda);
 		// Recria squadHandler com a nova referência a aoeCalc
 		squadHandler = new SquadModeHandler(this, aoeCalc, toggleMover, toggleMirar, celulasAlcanceMovimento);
@@ -1161,52 +1278,22 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		atualizarSobreposicaoAguaTempestade();
 	}
 
-	private void atualizarSobreposicaoAguaTempestade() {
-		if (celulasDoGrid == null) {
-			return;
-		}
-		for (int x = 0; x < celulasDoGrid.length; x++) {
-			for (int y = 0; y < celulasDoGrid[x].length; y++) {
-				Pane celula = celulasDoGrid[x][y];
-				if (celula == null) {
-					continue;
-				}
-				celula.getChildren().removeIf(node -> ID_SOBREPOSICAO_AGUA_TEMPESTADE.equals(node.getId()));
-				if (sobreposicaoAguaTempestadeAtiva) {
-					Pane agua = new Pane();
-					agua.setId(ID_SOBREPOSICAO_AGUA_TEMPESTADE);
-					agua.getStyleClass().add("tempestade-agua-overlay");
-					agua.setMouseTransparent(true);
-					agua.setPrefSize(CELL_SIZE, CELL_SIZE);
-					agua.setMinSize(CELL_SIZE, CELL_SIZE);
-					agua.setMaxSize(CELL_SIZE, CELL_SIZE);
-					celula.getChildren().add(agua);
-				}
-			}
-		}
-
-	}
+    private void atualizarSobreposicaoAguaTempestade() {
+        for(int x=0;x<gridLargura;x++)for(int y=0;y<gridAltura;y++) {
+            List<String> marcas=new ArrayList<>(estadoMapa.getMarcas(x,y));
+            marcas.remove("tempestade-agua-overlay");
+            if(sobreposicaoAguaTempestadeAtiva)marcas.add("tempestade-agua-overlay");
+            estadoMapa.definirMarcas(x,y,marcas);
+        }
+    }
 
 	/**
 	 * Aplica uma TileDefinition em uma celula do grid.
 	 * Metodo central usado pelo carregamento de PNG e pelo editor.
 	 */
-	private void aplicarTileNaCelula(Pane cell, TileDefinition tile, int x, int y) {
-		cell.getStyleClass().add(tile.getCssClass());
-		paredesGrid[x][y] = !tile.isWalkable();
-		gridTerreno[x][y] = TipoTerreno.valueOf(tile.getTerrainType());
-
-		TileDefinition.EffectConfig ec = tile.getEffect();
-		if (ec != null) {
-			EfeitoInstance efeito = new EfeitoInstance(
-					TipoEfeitoSolo.valueOf(ec.getTipo()),
-					ec.getDuracao(),
-					ec.getDano(),
-					null);
-			efeito.setPermanente(ec.isPermanente());
-			gridEfeitos[x][y] = efeito;
-		}
-	}
+    private void aplicarTileNaCelula(Pane cell, TileDefinition tile, int x, int y) {
+        estadoMapa.aplicarTile(x,y,tile);
+    }
 
 	/**
 	 * Aplica um tile no editor, limpando o estado anterior da celula.
@@ -1227,26 +1314,16 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			System.out.println("EDITOR GLOBAL: (" + x + "," + y + ") -> " + tile.getName() + " [" + tile.getId() + "]");
 
 			// Atualiza a visualização e arrays internos de TODOS os mapas abertos
-			mainController.forEachMap(m -> m.aplicarTileSomenteVisual(tile, x, y));
+			aplicarTileSomenteVisual(tile, x, y);
 		} else {
 			aplicarTileSomenteVisual(tile, x, y);
 			System.out.println("EDITOR LOCAL: (" + x + "," + y + ") -> " + tile.getName() + " [" + tile.getId() + "]");
 		}
 	}
 
-	public void aplicarTileSomenteVisual(TileDefinition tile, int x, int y) {
-		if (!dentroDoGrid(x, y))
-			return;
-		Pane c = celulasDoGrid[x][y];
-		if (c == null)
-			return;
-
-		TileRegistry registry = TileRegistry.getInstance();
-		c.getStyleClass().removeAll(registry.getAllCssClasses());
-		gridEfeitos[x][y] = null;
-
-		aplicarTileNaCelula(c, tile, x, y);
-	}
+    public void aplicarTileSomenteVisual(TileDefinition tile, int x, int y) {
+        estadoMapa.aplicarTile(x,y,tile);
+    }
 
 	public void criarAreaDeFogo(int centroX, int centroY, int raio, int dano, Personagem criador) {
 		System.out.println("MAPA: Criando área de fogo centrada em (" + centroX + "," + centroY + ")");
@@ -1322,7 +1399,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 
 					if (efeito.expirou()) {
 						System.out.println("MAPA: Efeito em (" + x + "," + y + ") expirou.");
-						gridEfeitos[x][y] = null; // Remove o efeito
+						estadoMapa.definirEfeito(x,y,null); // Remove o efeito
 						atualizarVisualTerreno(x, y); // Atualiza CSS
 						visualMudou = true;
 					}
@@ -1354,7 +1431,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 
 				// Transforma em Fogo Permanente
 				novoEfeito.setPermanente(true);
-				gridEfeitos[x][y] = novoEfeito;
+				estadoMapa.definirEfeito(x,y,novoEfeito);
 
 				System.out.println("TERRENO: Carvão aceso em (" + x + "," + y + ")!");
 				atualizarVisualTerreno(x, y);
@@ -1365,14 +1442,14 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			// CASO B: Chão Comum (ou Objeto)
 			else {
 				// Apenas aplica o efeito temporário
-				gridEfeitos[x][y] = novoEfeito;
+				estadoMapa.definirEfeito(x,y,novoEfeito);
 				atualizarVisualTerreno(x, y);
 			}
 		}
 		// --- OUTROS EFEITOS Proximos andares rs---
 		else {
 			// Lógica padrão para ácido, gás, etc.
-			gridEfeitos[x][y] = novoEfeito;
+			estadoMapa.definirEfeito(x,y,novoEfeito);
 			atualizarVisualTerreno(x, y);
 		}
 	}
@@ -1402,7 +1479,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		if (!dentroDoGrid(x, y))
 			return;
 
-		Pane cell = celulasDoGrid[x][y];
+		Pane cell = obterCelula(x,y);
 		EfeitoInstance efeito = gridEfeitos[x][y];
 		TipoTerreno terreno = gridTerreno[x][y];
 
@@ -1484,28 +1561,16 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		}
 	}
 
-	private void preencherComChaoPadrao() {
-		mapGrid.getChildren().clear();
-		for (int y = 0; y < gridAltura; y++) {
-			for (int x = 0; x < gridLargura; x++) {
-				Pane cell = new Pane();
-				cell.getStyleClass().add("map-floor");
-				final int cellX = x;
-				final int cellY = y;
-				cell.setOnMouseClicked(event -> onGridCellClicked(event, cell, cellX, cellY));
-				cell.setOnMouseEntered(event -> onGridCellMouseEntered(cell, cellX, cellY));
-				mapGrid.add(cell, x, y);
-				celulasDoGrid[x][y] = cell;
-			}
-		}
-		paredesGrid = new boolean[gridLargura][gridAltura];
-		inicializarHelpers();
-	}
+    private void preencherComChaoPadrao() {
+        carregarMapaProcedural(new TileDefinition[Math.max(1,gridLargura)][Math.max(1,gridAltura)]);
+    }
 
-	public void desenharPeoes(List<Personagem> combatentes) {
-		if (tokenRenderer != null)
-			tokenRenderer.desenharPeoes(combatentes);
-	}
+    public void desenharPeoes(List<Personagem> combatentes) {
+        List<Personagem> lista=combatentes.stream().filter(java.util.Objects::nonNull).toList();
+        if(tokenRenderer!=null && visualizacao3D)tokenRenderer.atualizarAuras(lista);
+        if(renderizador2D!=null)renderizador2D.atualizarCombatentes(lista);
+        if(renderizador3D!=null)renderizador3D.atualizarCombatentes(lista);
+    }
 
 	public Personagem getPersonagemNaCelula(int x, int y) {
 		if (mainController == null)
@@ -1526,13 +1591,12 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	}
 
 	private void destacarPeoesAlvo(List<Personagem> alvos) {
-		if (tokenRenderer != null)
-			tokenRenderer.destacarPeoesAlvo(alvos);
+		if(renderizador2D!=null)renderizador2D.destacar(alvos);
+        if(renderizador3D!=null)renderizador3D.destacar(alvos);
 	}
 
 	public void limparDestaquesPeoes() {
-		if (tokenRenderer != null)
-			tokenRenderer.limparDestaquesPeoes();
+		destacarPeoesAlvo(List.of());
 	}
 
 	private Node getPeaoNode(Personagem p) {
@@ -1633,9 +1697,9 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		for (int y = centroY - raio; y <= centroY + raio; y++) {
 			for (int x = centroX - raio; x <= centroX + raio; x++) {
 				if (!dentroDoGrid(x, y) || paredesGrid[x][y]) continue;
-				Pane celula = celulasDoGrid[x][y];
+				Pane celula = obterCelula(x,y);
 				if (celula == null) continue;
-				paredesGrid[x][y] = true;
+				estadoMapa.definirBloqueio(x,y,true);
 				celula.getStyleClass().add("map-escombros");
 			}
 		}
@@ -1665,6 +1729,8 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	 * @param colidiu    true se o empuxo termina em colisão (parede/borda).
 	 */
 	public void desenharPreviewEmpuxo(java.util.List<int[]> trajetoria, boolean colidiu) {
+        if(renderizador3D!=null && trajetoria!=null)renderizador3D.apresentarPreview(
+                trajetoria.stream().map(p -> new CoordenadaMapa(p[0],p[1])).toList(), colidiu?"colisao":"empuxo",List.of());
 		if (aoeCanvas == null || trajetoria == null || trajetoria.isEmpty())
 			return;
 
@@ -1800,49 +1866,9 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		editorTile = null;
 	}
 
-	private void ciclarTerreno(Pane cell, int x, int y) {
-		// Verifica o estado atual pelo CSS
-		boolean isParede = cell.getStyleClass().contains("map-wall");
-		boolean isObjeto = cell.getStyleClass().contains("map-object-light");
-		boolean isChao = cell.getStyleClass().contains("map-floor"); // ou padrão
-
-		// Limpa estilos de terreno
-		cell.getStyleClass().remove("map-wall");
-		cell.getStyleClass().remove("map-object-light");
-		cell.getStyleClass().remove("map-floor");
-		cell.getStyleClass().remove("map-exit"); // Remove saída se houver
-
-		mainController.removerObjetoNoMapa(x, y);
-
-		if (isChao || (!isParede && !isObjeto)) {
-			// Chão -> Parede
-			cell.getStyleClass().add("map-wall");
-			paredesGrid[x][y] = true;
-			System.out.println("EDITOR: (" + x + "," + y + ") definido como PAREDE.");
-
-		} else if (isParede) {
-			// Virou OBJETO DESTRUTÍVEL
-			cell.getStyleClass().add("map-object-light");
-			paredesGrid[x][y] = true; // Bloqueia movimento
-
-			mainController.criarObjetoNoMapa(x, y);
-
-		} else {
-			// Objeto -> Chão
-			cell.getStyleClass().add("map-floor");
-			paredesGrid[x][y] = false; // Desbloqueia
-			System.out.println("EDITOR: (" + x + "," + y + ") definido como CHÃO.");
-		}
-	}
-
-	public void atualizarCelulaParaChao(int x, int y) {
-		if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-			Pane cell = celulasDoGrid[x][y];
-			cell.getStyleClass().remove("map-object-light");
-			cell.getStyleClass().add("map-floor");
-			paredesGrid[x][y] = false; // Libera passagem
-		}
-	}
+    public void atualizarCelulaParaChao(int x, int y) {
+        estadoMapa.aplicarTile(x,y,TileRegistry.getInstance().getById("floor"));
+    }
 
 	public void gerarMapaPngVazio(String nomeArquivo, int largura, int altura) {
 		System.out.println("GERADOR: Gerando PNG de mapa vazio: " + nomeArquivo + " (" + largura + "x" + altura + ")");
@@ -1921,7 +1947,8 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	}
 
 	private void limparDestaquesGridAtaque() {
-		for (Pane cell : celulasAlcanceMovimento) { // Assumindo que celulasAlcanceMovimento inclui as células que
+		for (CoordenadaMapa c : celulasAlcanceMovimento) {
+			Pane cell = obterCelula(c.x(),c.y()); // Assumindo que celulasAlcanceMovimento inclui as células que
 													// poderiam ser alvo
 			cell.getStyleClass().remove(CSS_ALCANCE_ATAQUE_MELEE);
 			cell.getStyleClass().remove(CSS_ALCANCE_ATAQUE_RANGED);
@@ -1931,7 +1958,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	private void criarLabelContador() {
 		if (labelContadorAlvos == null) {
 			labelContadorAlvos = new Label();
-			labelContadorAlvos.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: yellow;");
+			labelContadorAlvos.getStyleClass().add("mapa3d-mensagem");
 		}
 		atualizarTextoContadorSelecao();
 
@@ -1939,20 +1966,24 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		// toolbar)
 		if (topToolbar != null && !topToolbar.getItems().contains(labelContadorAlvos)) {
 			topToolbar.getItems().add(labelContadorAlvos);
-		}
+        } else if(topToolbar==null && !mapViewport.getChildren().contains(labelContadorAlvos)) {
+            mapViewport.getChildren().add(labelContadorAlvos);
+            StackPane.setAlignment(labelContadorAlvos,javafx.geometry.Pos.TOP_LEFT);
+            StackPane.setMargin(labelContadorAlvos,new javafx.geometry.Insets(8));
+        }
 	}
 
 	/** Aplica uma parede ou chão neste mapa; o chamador sincroniza mapas abertos. */
 	public void aplicarParedeDaArteDoCaos(int x, int y, boolean criar) {
 		if (!dentroDoGrid(x, y)) return;
-		if (celulasDoGrid[x][y] == null) return;
-		Pane cell = celulasDoGrid[x][y];
+		if (obterCelula(x,y) == null) return;
+		Pane cell = obterCelula(x,y);
 		cell.getStyleClass().removeAll(TileRegistry.getInstance().getAllCssClasses());
 		TileDefinition tile = TileRegistry.getInstance().getById(criar ? "wall" : "floor");
 		if (tile == null) tile = TileRegistry.getInstance().getDefault();
 		aplicarTileNaCelula(cell, tile, x, y);
 		cell.getStyleClass().add("map-cell");
-		gridEfeitos[x][y] = null;
+		estadoMapa.definirEfeito(x,y,null);
 	}
 
 	private void atualizarTextoContadorSelecao() {
@@ -1970,10 +2001,12 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		if (labelContadorAlvos != null && topToolbar != null) {
 			topToolbar.getItems().remove(labelContadorAlvos);
 		}
+        if(labelContadorAlvos!=null)mapViewport.getChildren().remove(labelContadorAlvos);
 	}
 
 	public void limparDestaquesAlcance() {
-		for (Pane cell : celulasAlcanceMovimento) {
+		for (CoordenadaMapa c : celulasAlcanceMovimento) {
+			Pane cell = obterCelula(c.x(),c.y());
 			cell.getStyleClass().remove(CSS_ALCANCE_MOVIMENTO);
 			cell.getStyleClass().remove(CSS_ALCANCE_ATAQUE_MELEE);
 			cell.getStyleClass().remove(CSS_ALCANCE_ATAQUE_RANGED);
@@ -1985,8 +2018,8 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		limparCanvas();
 
 		if (habilidadeAtual != null && habilidadeAtual.getTipoAlvo() != TipoAlvo.AREA) {
-			Pane celulaClicada = celulasDoGrid[epicentroX][epicentroY];
-			if (!celulasAlcanceMovimento.contains(celulaClicada)) {
+			Pane celulaClicada = obterCelula(epicentroX,epicentroY);
+			if (!celulasAlcanceMovimento.contains(new CoordenadaMapa(epicentroX, epicentroY))) {
 				System.out.println(">>> ALVO FORA DO ALCANÇE de conjuração!");
 				return;
 			}
@@ -2114,6 +2147,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		this.areasRestantes = 0;
 		this.alvosSelecionadosMulti.clear();
 		this.areasSelecionadasMultiAoE.clear();
+        limparCanvas();
 		System.out.println("MAPA: Saindo do modo de seleção.");
 
 		removerLabelContador(); // Apenas remove o texto
@@ -2208,9 +2242,10 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 			int x = (int) (coordKey >> 32);
 			int y = (int) coordKey;
 			if (x >= 0 && x < gridLargura && y >= 0 && y < gridAltura) {
-				Pane celulaDoGrid = celulasDoGrid[x][y];
+				Pane celulaDoGrid = obterCelula(x,y);
 				if (celulaDoGrid != null) {
-					celulaDoGrid.getStyleClass().add(dominio.getCssClass());
+					if(!celulaDoGrid.getStyleClass().contains(dominio.getCssClass()))
+                        celulaDoGrid.getStyleClass().add(dominio.getCssClass());
 					celulasVisuais.add(celulaDoGrid);
 
 					// Adiciona sprite overlay (ImageView) se disponível
@@ -2232,20 +2267,21 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	}
 
 	/** Remove um domínio pelo ID, limpando visuais e dados lógicos. */
-	public void removerDominio(String dominioId) {
-		Dominio removido = dominiosAtivos.remove(dominioId);
-		List<Pane> celulas = celulasVisuaisDominios.remove(dominioId);
-		if (removido == null || celulas == null)
-			return;
-
-		String fxId = "dominio-fx-" + dominioId;
-		System.out.println("MAPA: Limpando domínio [" + dominioId + "].");
-		for (Pane cell : celulas) {
-			cell.getStyleClass().remove(removido.getCssClass());
-			// Remove sprite overlays do domínio
-			cell.getChildren().removeIf(node -> fxId.equals(node.getId()));
-		}
-	}
+    public void removerDominio(String dominioId) {
+        Dominio removido=dominiosAtivos.remove(dominioId);
+        celulasVisuaisDominios.remove(dominioId);
+        if(removido==null)return;
+        String fxId="dominio-fx-"+dominioId;
+        for(long chave:removido.getCoordenadas()) {
+            int x=(int)(chave>>32),y=(int)chave;
+            if(!dentroDoGrid(x,y))continue;
+            Pane cell=obterCelula(x,y);
+            boolean outraFonte=dominiosAtivos.values().stream().anyMatch(d ->
+                    java.util.Objects.equals(d.getCssClass(),removido.getCssClass()) && d.contemCoordenada(x,y));
+            if(!outraFonte)cell.getStyleClass().removeIf(c -> java.util.Objects.equals(c,removido.getCssClass()));
+            cell.getChildren().removeIf(n -> fxId.equals(n.getId()));
+        }
+    }
 
 	/** Remove todos os domínios ativos do mapa. */
 	public void limparTodosDominios() {
@@ -2403,14 +2439,15 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		// Escaneia o Grid (Paredes, Saídas, Objetos)
 		for (int x = 0; x < gridLargura; x++) {
 			for (int y = 0; y < gridAltura; y++) {
-				Pane cell = celulasDoGrid[x][y];
-				if (cell.getStyleClass().contains("map-wall")) {
+				meta.adicionarTile(x,y,estadoMapa.getTile(x,y).getId());
+				if (estadoMapa.getTerreno(x,y)==TipoTerreno.PAREDE) {
 					meta.getParedes().add(new br.com.dantesrpg.model.map.MapMetadata.Ponto(x, y));
-				} else if (cell.getStyleClass().contains("map-exit")) {
+				} else if (estadoMapa.getTerreno(x,y)==TipoTerreno.SAIDA) {
 					meta.getSaidas().add(new br.com.dantesrpg.model.map.MapMetadata.Ponto(x, y));
-				} else if (cell.getStyleClass().contains("map-object-light")) {
+				} else if (estadoMapa.getTerreno(x,y)==TipoTerreno.OBJETO) {
 					// Salva a posição do objeto (HP padrão por enquanto)
-					meta.getObjetos().add(new br.com.dantesrpg.model.map.MapMetadata.ObjetoData(x, y, 50));
+					meta.getObjetos().add(new br.com.dantesrpg.model.map.MapMetadata.ObjetoData(x, y,
+                            getPersonagemNaCelula(x,y) instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel objeto ? (int)Math.ceil(objeto.getVidaAtual()) : 50));
 				}
 			}
 		}
@@ -2444,7 +2481,7 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 	}
 
 	private void tratarCliqueSquad(Pane cell, int x, int y) {
-		squadHandler.tratarCliqueSquad(cell, x, y);
+		squadHandler.tratarCliqueSquad(x, y);
 	}
 
 	@FXML
@@ -2494,53 +2531,36 @@ atorAtual.setMovimentoRestanteTurno(atorAtual.getMovimentoRestanteTurno() - cust
 		}
 	}
 
-	public void aplicarMetadados(br.com.dantesrpg.model.map.MapMetadata meta) {
-		System.out.println("MAPA: Aplicando metadados salvos...");
-		// Limpa tudo primeiro
-		for (int x = 0; x < gridLargura; x++) {
-			for (int y = 0; y < gridAltura; y++) {
-				// Reseta para chão
-				Pane cell = celulasDoGrid[x][y];
-				cell.getStyleClass().removeAll("map-wall", "map-exit", "map-object-light", "map-floor");
-				cell.getStyleClass().add("map-floor");
-				paredesGrid[x][y] = false;
-				mainController.removerObjetoNoMapa(x, y);
-			}
-		}
+    public void aplicarMetadados(br.com.dantesrpg.model.map.MapMetadata meta) {
+        if(meta==null)return;
+        TileRegistry registro=TileRegistry.getInstance();
+        for(int x=0;x<gridLargura;x++)for(int y=0;y<gridAltura;y++) {
+            TipoTerreno tipo=estadoMapa.getTerreno(x,y);
+            if(tipo==TipoTerreno.PAREDE || tipo==TipoTerreno.SAIDA || tipo==TipoTerreno.OBJETO)
+                estadoMapa.aplicarTile(x,y,registro.getById("floor"));
+        }
+        if(mainController!=null)mainController.getCombatentes().removeIf(p -> p instanceof br.com.dantesrpg.model.elementos.ObjetoDestrutivel);
+        for(var p:meta.getTiles()) {
+            TileDefinition tile=registro.getById(p.id());
+            if(tile==null)throw new IllegalArgumentException("Tile desconhecido nos metadados: "+p.id());
+            estadoMapa.aplicarTile(p.x(),p.y(),tile);
+        }
+        for(var p:meta.getParedes()) estadoMapa.aplicarTile(p.x,p.y,registro.getById("wall"));
+        for(var p:meta.getSaidas()) estadoMapa.aplicarTile(p.x,p.y,tileDoTipo(TipoTerreno.SAIDA));
+        for(var p:meta.getObjetos()) if(dentroDoGrid(p.x,p.y)) {
+            estadoMapa.aplicarTile(p.x,p.y,tileDoTipo(TipoTerreno.OBJETO));
+            if(mainController!=null) {
+                mainController.criarObjetoNoMapa(p.x,p.y,Math.max(1,p.hp));
+            }
+        }
+        if(mainController!=null)for(var p:meta.getInimigos())if(dentroDoGrid(p.x,p.y))mainController.spawnarMonstro(p.idMonstro,p.x,p.y);
+        desenharPeoes(getCombatentes());
+    }
 
-		// Aplica Paredes
-		for (br.com.dantesrpg.model.map.MapMetadata.Ponto p : meta.getParedes()) {
-			if (dentroDoGrid(p.x, p.y)) {
-				celulasDoGrid[p.x][p.y].getStyleClass().add("map-wall");
-				paredesGrid[p.x][p.y] = true;
-			}
-		}
-
-		// Aplica Saídas
-		for (br.com.dantesrpg.model.map.MapMetadata.Ponto p : meta.getSaidas()) {
-			if (dentroDoGrid(p.x, p.y)) {
-				celulasDoGrid[p.x][p.y].getStyleClass().add("map-exit");
-			}
-		}
-
-		// Aplica Objetos (Visual + Lógico)
-		for (br.com.dantesrpg.model.map.MapMetadata.ObjetoData obj : meta.getObjetos()) {
-			if (dentroDoGrid(obj.x, obj.y)) {
-				celulasDoGrid[obj.x][obj.y].getStyleClass().add("map-object-light");
-				paredesGrid[obj.x][obj.y] = true;
-				// Cria a entidade lógica com HP
-				mainController.criarObjetoNoMapa(obj.x, obj.y);
-			}
-		}
-
-		// Aplica Inimigos (Spawn)
-		for (br.com.dantesrpg.model.map.MapMetadata.InimigoSpawn spawn : meta.getInimigos()) {
-			if (dentroDoGrid(spawn.x, spawn.y)) {
-				// Tenta encontrar o ID no bestiário
-				mainController.spawnarMonstro(spawn.idMonstro, spawn.x, spawn.y);
-			}
-		}
-	}
+    private TileDefinition tileDoTipo(TipoTerreno tipo) {
+        return TileRegistry.getInstance().getAllTiles().stream()
+                .filter(t -> tipo.name().equals(t.getTerrainType())).findFirst().orElse(TileRegistry.getInstance().getDefault());
+    }
 
 	private boolean dentroDoGrid(int x, int y) {
 		return x >= 0 && x < gridLargura && y >= 0 && y < gridAltura;
