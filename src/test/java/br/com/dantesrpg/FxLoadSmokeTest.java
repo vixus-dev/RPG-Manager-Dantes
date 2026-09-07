@@ -40,7 +40,7 @@ public final class FxLoadSmokeTest {
 						"GerenciadorCombateView.fxml",
 						"DetailedTurnHUD.fxml",
 						"DamageResolutionView.fxml",
-						"MapView.fxml",
+                        "EmbeddedMapView.fxml",
 						"DiceRollPrompt.fxml",
 						"BestiarioView.fxml"
 				};
