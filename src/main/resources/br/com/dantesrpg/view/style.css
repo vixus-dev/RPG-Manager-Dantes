@@ -1359,6 +1359,22 @@
     -fx-padding: 12 20;
 }
 
+.responsive-content-scroll,
+.loja-buyers-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0;
+}
+
+.responsive-content-scroll > .viewport,
+.loja-buyers-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.loja-buyers-scroll .scroll-bar:horizontal {
+    -fx-pref-height: 8px;
+}
+
 .loja-header .loja-titulo {
     -fx-font-size: 22px;
     -fx-font-weight: bold;
